@@ -1,21 +1,27 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {Stage} from 'react-pixi';
-import { addDot } from '../../actions/'
-
-import dot from './images/dot.png';
-
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots} from '../../actions/'
+import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
+import BaseSelector from '../../components/BaseSelector';
+import PlaceValueSwitch from '../../components/PlaceValueSwitch';
+import ResetButton from '../../components/ResetButton';
+import MagicWand from '../../components/MagicWand';
+import ActivityDescriptor from '../../components/ActivityDescriptor';
+import Operand from '../../components/Operand';
+import Operator from '../../components/Operator';
 
 const mapStateToProps = (store) => {
     return {
-        bunnies: store.bunnies,
+        dots: store.dots,
+        base: store.base
     }
 };
 
 const mapDispatchToProps = (dispatch) =>{
     return bindActionCreators({
-        addDot: addDot
+        addDot: addDot,
+        removeDot: removeDot
     }, dispatch);
 };
 
@@ -27,53 +33,14 @@ const mapDispatchToProps = (dispatch) =>{
 class DotsMachine extends Component {
 
     static propTypes = {
-        //bunnies: PropTypes.array,
+
     };
 
     constructor(props) {
         super(props);
-        this.state = {};
-        this.state.id = props.id;
-        this.state.GAME_WIDTH = 800;
-        this.state.GAME_HEIGHT = 600;
-        this.state.gravity = 0.75;
-
-        this.state.maxX = this.state.GAME_WIDTH;
-        this.state.minX = 0;
-        this.state.maxY = this.state.GAME_HEIGHT;
-        this.state.minY = 0;
-        this.state.dots = [];
-
-        this.state.dotTexture = new PIXI.Texture.fromImage(dot);
-
     }
 
     componentDidMount(){
-        console.log('componentDidMount', this.state);
-
-        var options = {
-            view: this.canvas,
-            transparent: true,
-            antialias: false,
-            preserveDrawingBuffer: false,
-            resolution: window.devicePixelRatio,
-            autoResize: true
-        };
-
-        let preventWebGL = false;
-        this.state.app = new PIXI.Application(this.state.GAME_WIDTH, this.state.GAME_HEIGHT, options, preventWebGL);
-        this.state.stage = this.state.app.stage;
-        this.state.renderer = this.state.app.renderer;
-        this.state.view = this.state.renderer.view;
-        this.state.container = new PIXI.Container();
-        this.state.stage.addChild(this.state.container);
-
-        console.log('constructor is webGL', (this.state.renderer instanceof PIXI.WebGLRenderer));
-        this.state.renderer.view.style["transform"] = "translatez(0)";
-        //this.state.renderer.backgroundColor = 0xFFFFFF;
-
-        this.addDot(this.state.id, 0, [100,100]);
-        requestAnimationFrame(this.animationCallback.bind(this));
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -81,31 +48,42 @@ class DotsMachine extends Component {
         const w = window.innerWidth;
         const h = window.innerHeight;
         let ratio = Math.min( w / this.state.GAME_WIDTH, h / this.state.GAME_HEIGHT);
-        this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-        this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));
+        /*this.state.stage.scale.x = this.state.stage.scale.y = ratio;
+        this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));*/
     };
-
-    animationCallback(...args){
-        /*this.state.stats.begin();
-        this.state.renderer.render(this.state.stage);
-        requestAnimationFrame(this.animationCallback.bind(this));
-        this.state.stats.end();*/
-    }
-
-
-    shouldComponentUpdate(nextProps){
-        return true;
-    }
 
     addDot(id, zone, position) {
         this.props.addDot(id, zone, position);
-        console.log("AddDot", event);
+    }
+
+    removeDot(id, zone, position){
+
+    }
+
+    moveDot(id, zone, position){
+
+    }
+
+    changeBase(){
+
     }
 
     render() {
-        console.log('render');
+        console.log('render Dot Machine');
         return (
-           <canvas ref={(canvas) => { this.canvas = canvas; }} />
+            <div>
+                <BaseSelector />
+                <PlaceValueSwitch />
+                <ResetButton />
+                <MagicWand />
+                <ActivityDescriptor>
+                    <Operand/>
+                    <Operator/>
+                    <Operand/>
+                    <button/>
+                </ActivityDescriptor>
+                <CanvasPIXI dots={this.props.dots} base={this.props.base} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} moveDot={this.moveDot.bind(this)} />
+            </div>
         );
     }
 }

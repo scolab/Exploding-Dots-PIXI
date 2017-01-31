@@ -5,7 +5,7 @@ const dotsReducer = (state = null, action) => {
             BaseSelectorDisplay:true,
             PlaceValueSwitch:true,
             zones: 5,
-            dots: [{x: 10, y: 20, zone: 0, id: 'dot' + Math.random()}],
+            dots: [],
             dotsRayon: 22,
             positiveDotsCount: 0,
             negativeDotsCount: 0,
@@ -14,6 +14,7 @@ const dotsReducer = (state = null, action) => {
         };
         return {
             dots: [],
+            state: initialState
         };
     }
 
