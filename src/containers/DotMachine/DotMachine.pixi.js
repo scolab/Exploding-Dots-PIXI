@@ -13,15 +13,15 @@ import Operator from '../../components/Operator';
 
 const mapStateToProps = (store) => {
     return {
-        dots: store.dots,
-        base: store.base
+        dotsMachine: store.dotsMachine
     }
 };
 
 const mapDispatchToProps = (dispatch) =>{
     return bindActionCreators({
         addDot: addDot,
-        removeDot: removeDot
+        removeDot: removeDot,
+        rezoneDot: rezoneDot
     }, dispatch);
 };
 
@@ -33,15 +33,28 @@ const mapDispatchToProps = (dispatch) =>{
 class DotsMachine extends Component {
 
     static propTypes = {
-
+        addDot: React.PropTypes.func.isRequired,
+        removeDot:React.PropTypes.func.isRequired,
+        dotsMachine:React.PropTypes.shape({
+            dots: React.PropTypes.array,
+            machineState: React.PropTypes.shape({
+                PlaceValueSwitch: React.PropTypes.bool.isRequired,
+                base: React.PropTypes.array.isRequired,
+                dots: React.PropTypes.array,
+                maxViewableDots: React.PropTypes.number.isRequired,
+                mode: React.PropTypes.oneOf(['display', 'add', 'subtract', 'multiply', 'divide']).isRequired,
+                zones: React.PropTypes.number.isRequired
+            })
+        })
     };
 
     constructor(props) {
+        console.log('constructor', props);
         super(props);
     }
 
     componentDidMount(){
-        window.addEventListener('resize', this.resize.bind(this));
+        //window.addEventListener('resize', this.resize.bind(this));
     }
 
     resize(event) {
@@ -60,7 +73,7 @@ class DotsMachine extends Component {
 
     }
 
-    moveDot(id, zone, position){
+    rezoneDot(id, zone, position){
 
     }
 
@@ -69,10 +82,10 @@ class DotsMachine extends Component {
     }
 
     render() {
-        console.log('render Dot Machine');
+        console.log('render Dot Machine', this.props.dotsMachine.machineState.base);
         return (
             <div>
-                <BaseSelector />
+                <BaseSelector base={this.props.dotsMachine.machineState.base}/>
                 <PlaceValueSwitch />
                 <ResetButton />
                 <MagicWand />
@@ -82,7 +95,7 @@ class DotsMachine extends Component {
                     <Operand/>
                     <button/>
                 </ActivityDescriptor>
-                <CanvasPIXI dots={this.props.dots} base={this.props.base} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} moveDot={this.moveDot.bind(this)} />
+                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} placeValueOn={this.props.dotsMachine.machineState.PlaceValueSwitch} />
             </div>
         );
     }

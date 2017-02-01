@@ -2,10 +2,11 @@ const dotsReducer = (state = null, action) => {
     if (state === null) {
         const initialState = {
             base:[1,2],
+            mode:'divide',
             BaseSelectorDisplay:true,
             PlaceValueSwitch:true,
             zones: 5,
-            dots: [],
+            initialDots: [],
             dotsRayon: 22,
             positiveDotsCount: 0,
             negativeDotsCount: 0,
@@ -14,12 +15,11 @@ const dotsReducer = (state = null, action) => {
         };
         return {
             dots: [],
-            state: initialState
+            machineState: initialState
         };
     }
 
     var stateCopy;
-
     switch (action.type) {
         case 'ADD_DOT':
             console.log('ADD_DOT');
