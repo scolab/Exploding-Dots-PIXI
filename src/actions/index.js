@@ -1,8 +1,9 @@
-export const addDot = (parentId, zoneId, position) => ({
+export const addDot = (parentId, zoneId, position, isPositive) => ({
     type: 'ADD_DOT',
     parentId,
     zoneId,
-    position
+    position,
+    isPositive
 });
 
 export const removeDot = (parentId, zoneId, dotId) => ({

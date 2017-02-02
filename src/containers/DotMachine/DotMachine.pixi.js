@@ -38,7 +38,8 @@ class DotsMachine extends Component {
         dotsMachine:React.PropTypes.shape({
             dots: React.PropTypes.array,
             machineState: React.PropTypes.shape({
-                PlaceValueSwitch: React.PropTypes.bool.isRequired,
+                placeValueSwitch: React.PropTypes.bool.isRequired,
+                baseSelectorDisplay: React.PropTypes.bool.isRequired,
                 base: React.PropTypes.array.isRequired,
                 dots: React.PropTypes.array,
                 maxViewableDots: React.PropTypes.number.isRequired,
@@ -49,7 +50,7 @@ class DotsMachine extends Component {
     };
 
     constructor(props) {
-        console.log('constructor', props);
+        console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -82,7 +83,6 @@ class DotsMachine extends Component {
     }
 
     render() {
-        console.log('render Dot Machine', this.props.dotsMachine.machineState.base);
         return (
             <div>
                 <BaseSelector base={this.props.dotsMachine.machineState.base}/>
@@ -95,7 +95,7 @@ class DotsMachine extends Component {
                     <Operand/>
                     <button/>
                 </ActivityDescriptor>
-                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} placeValueOn={this.props.dotsMachine.machineState.PlaceValueSwitch} />
+                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
             </div>
         );
     }
