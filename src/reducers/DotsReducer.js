@@ -1,9 +1,9 @@
-import {makeUID} from '../MathUtils'
+import {makeUID} from '../utils/MathUtils'
 
 const dotsReducer = (state = null, action) => {
     if (state === null) {
         const initialState = {
-            base:[1,2],
+            base:[1,'x'],
             mode:'divide',
             baseSelectorDisplay:true,
             placeValueSwitch:true,
@@ -11,7 +11,7 @@ const dotsReducer = (state = null, action) => {
             maxViewableDots: 150,
         };
         return {
-            dots: [{x:100, y:100, zone:0, isPositive:false, id:makeUID()}],
+            dots: [{x:100, y:100, zone:0, isPositive:true, id:makeUID()}],
             machineState: initialState
         };
     }
@@ -19,7 +19,7 @@ const dotsReducer = (state = null, action) => {
     var stateCopy;
     switch (action.type) {
         case 'ADD_DOT':
-            console.log('ADD_DOT');
+            console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
             const point = {
                 x: action.position[0],

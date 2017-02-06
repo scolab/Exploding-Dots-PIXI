@@ -21,7 +21,8 @@ const mapDispatchToProps = (dispatch) =>{
     return bindActionCreators({
         addDot: addDot,
         removeDot: removeDot,
-        rezoneDot: rezoneDot
+        rezoneDot: rezoneDot,
+        addMultipleDots: addMultipleDots
     }, dispatch);
 };
 
@@ -35,6 +36,8 @@ class DotsMachine extends Component {
     static propTypes = {
         addDot: React.PropTypes.func.isRequired,
         removeDot:React.PropTypes.func.isRequired,
+        rezoneDot:React.PropTypes.func.isRequired,
+        addMultipleDots: React.PropTypes.func.isRequired,
         dotsMachine:React.PropTypes.shape({
             dots: React.PropTypes.array,
             machineState: React.PropTypes.shape({
@@ -66,16 +69,20 @@ class DotsMachine extends Component {
         this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));*/
     };
 
-    addDot(id, zone, position) {
-        this.props.addDot(id, zone, position);
+    addDot(id, zone, position, isPositive) {
+        this.props.addDot(id, zone, position, isPositive);
     }
 
     removeDot(id, zone, position){
-
+        this.props.removeDot(id, zone, position);
     }
 
     rezoneDot(id, zone, position){
+        this.props.rezoneDot(id, zone, position);
+    }
 
+    addMultipleDots(id, zone, positions){
+        this.prop.addMultipleDots(id, zone, positions);
     }
 
     changeBase(){
@@ -95,7 +102,8 @@ class DotsMachine extends Component {
                     <Operand/>
                     <button/>
                 </ActivityDescriptor>
-                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
+                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} addMultipleDots={this.addMultipleDots.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
+
             </div>
         );
     }

@@ -1,0 +1,92 @@
+{"frames": {
+
+"active_antidot.png":
+{
+	"frame": {"x":450,"y":409,"w":45,"h":45},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":45},
+	"sourceSize": {"w":45,"h":45}
+},
+"active_dot.png":
+{
+	"frame": {"x":497,"y":409,"w":45,"h":45},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":45,"h":45},
+	"sourceSize": {"w":45,"h":45}
+},
+"antidot_div_value.png":
+{
+	"frame": {"x":324,"y":409,"w":61,"h":75},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":61,"h":75},
+	"sourceSize": {"w":61,"h":75}
+},
+"antidot_value.png":
+{
+	"frame": {"x":324,"y":1,"w":246,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":25,"w":246,"h":202},
+	"sourceSize": {"w":302,"h":252}
+},
+"box.png":
+{
+	"frame": {"x":1,"y":1,"w":321,"h":485},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":321,"h":485},
+	"sourceSize": {"w":321,"h":485}
+},
+"dot_div_value.png":
+{
+	"frame": {"x":387,"y":409,"w":61,"h":75},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":61,"h":75},
+	"sourceSize": {"w":61,"h":75}
+},
+"dot_value.png":
+{
+	"frame": {"x":324,"y":205,"w":246,"h":202},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":27,"y":25,"w":246,"h":202},
+	"sourceSize": {"w":302,"h":252}
+},
+"inactive_antidot.png":
+{
+	"frame": {"x":450,"y":456,"w":43,"h":43},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":43,"h":43},
+	"sourceSize": {"w":43,"h":43}
+},
+"inactive_dot.png":
+{
+	"frame": {"x":495,"y":456,"w":39,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":39,"h":39},
+	"sourceSize": {"w":39,"h":39}
+},
+"separator.png":
+{
+	"frame": {"x":1,"y":488,"w":306,"h":2},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":306,"h":2},
+	"sourceSize": {"w":306,"h":2}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "machine@2x.png",
+	"format": "RGBA8888",
+	"size": {"w":571,"h":500},
+	"scale": "0.5",
+	"smartupdate": "$TexturePacker:SmartUpdate:631bd3ca9e6a050a2d55060d87ccea6b:669be41eda7c4a0e2a00c8b1cd4a166d:4796a15fbc349289e0bf0ffff273cc77$"
+}
+}
