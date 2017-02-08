@@ -21,6 +21,7 @@ const mapDispatchToProps = (dispatch) =>{
     return bindActionCreators({
         addDot: addDot,
         removeDot: removeDot,
+        removeMultipleDots: removeMultipleDots,
         rezoneDot: rezoneDot,
         addMultipleDots: addMultipleDots
     }, dispatch);
@@ -77,12 +78,16 @@ class DotsMachine extends Component {
         this.props.removeDot(id, zone, position);
     }
 
+    removeMultipleDots(id, zone, amount){
+        this.props.removeMultipleDots(id, zone, amount);
+    }
+
     rezoneDot(id, zone, position){
         this.props.rezoneDot(id, zone, position);
     }
 
-    addMultipleDots(id, zone, positions){
-        this.prop.addMultipleDots(id, zone, positions);
+    addMultipleDots(id, zone, positions, isPositive){
+        this.props.addMultipleDots(id, zone, positions, isPositive);
     }
 
     changeBase(){
@@ -102,7 +107,7 @@ class DotsMachine extends Component {
                     <Operand/>
                     <button/>
                 </ActivityDescriptor>
-                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} addMultipleDots={this.addMultipleDots.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
+                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} addMultipleDots={this.addMultipleDots.bind(this)} removeMultipleDots={this.removeMultipleDots.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
 
             </div>
         );

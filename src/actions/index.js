@@ -1,5 +1,7 @@
+import {DOTS} from './Constants';
+
 export const addDot = (parentId, zoneId, position, isPositive) => ({
-    type: 'ADD_DOT',
+    type: DOTS.ADD_DOT,
     parentId,
     zoneId,
     position,
@@ -7,28 +9,29 @@ export const addDot = (parentId, zoneId, position, isPositive) => ({
 });
 
 export const removeDot = (parentId, zoneId, dotId) => ({
-    type: 'REMOVE_DOT',
+    type: DOTS.REMOVE_DOT,
     parentId,
     zoneId,
     dotId
 });
 
-export const addMultipleDots = (parentId, zoneId, dotsPos) => ({
-    type: 'ADD_MULTIPLE_DOTS',
+export const addMultipleDots = (parentId, zoneId, dotsPos, isPositive) => ({
+    type: DOTS.ADD_MULTIPLE_DOTS,
     parentId,
     zoneId,
-    dotsPos
+    dotsPos,
+    isPositive
 });
 
-export const removeMultipleDots = (parentId, zoneId, dotsAmount) => ({
-    type: 'REMOVE_MULTIPLE_DOTS',
+export const removeMultipleDots = (parentId, zoneId, dots) => ({
+    type: DOTS.REMOVE_MULTIPLE_DOTS,
     parentId,
     zoneId,
-    dotsAmount
+    dots
 });
 
 export const rezoneDot = (parentId, zoneId, dot) => ({
-    type: 'REZONE_DOT',
+    type: DOTS.REZONE_DOT,
         parentId,
         zoneId,
         dot

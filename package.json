@@ -48,6 +48,8 @@
   "dependencies": {
     "babel-runtime": "^6.11.6",
     "express": "^4.14.1",
+    "gsap": "^1.19.1",
+    "pixi-filters": "^1.0.6",
     "pixi.js": "^4.3.4",
     "react-pixi": "^0.9.5",
     "react-redux": "^5.0.1",
