@@ -5,7 +5,7 @@ module.exports = function(config, env) {
     var config = genDefaultConfig(config, env);
 
     config.devtool = "eval-source-map";
-    
+
     config.module = config.module || {};
     config.module.noParse = /pixi-filters/;
 
