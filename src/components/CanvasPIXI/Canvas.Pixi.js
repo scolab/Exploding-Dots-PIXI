@@ -366,10 +366,13 @@ class CanvasPIXI extends Component {
 
         for(let i = 0; i < this.props.numZone; ++i) {
             if(positiveZoneAreEmpty[i] === true && negativeZoneAreEmpty[i] === true){
-                var filter = new filters.DotFilter();
-                this.state.allZones[i].filter = [filter];
+                var filter = new PIXI.filters.RGBSplitFilter();
+                filter.blue = new Point(0,0);
+                filter.green = new Point(0,0);
+                filter.red = new Point(-10,-10);
+                this.state.allZones[i].filters = [filter];
             }else{
-                this.state.allZones[i].filter = null;
+                this.state.allZones[i].filters = null;
 
             }
         }
