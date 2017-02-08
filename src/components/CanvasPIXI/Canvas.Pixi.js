@@ -3,7 +3,7 @@ import {isIntersecting} from '../../utils/MathUtils'
 import {Stage} from 'react-pixi';
 import { TweenLite } from "gsap";
 import {Point} from 'pixi.js';
-var filters = require('pixi-filters/bin/filters');
+import filters from 'pixi-filters';
 
 class CanvasPIXI extends Component {
 
