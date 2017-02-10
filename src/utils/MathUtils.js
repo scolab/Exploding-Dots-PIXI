@@ -66,3 +66,13 @@ export const hitTestRectangle = (r1, r2) => {
     //`hit` will be either `true` or `false`
     return hit;
 };
+
+export const isPointInRectangle = (point, rect) => {
+    if(point.x > rect.x &&
+        point.x < (rect.x + rect.width) &&
+        point.y > rect.y &&
+        point.y < rect.y + rect.height){
+        return true;
+    }
+    return false;
+}

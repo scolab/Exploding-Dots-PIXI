@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, oneStepStabilize, stabilize, operandChanged} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -10,6 +10,8 @@ import MagicWand from '../../components/MagicWand';
 import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
+import Text from '../../components/Text'
+import {MODE} from '../../Constants';
 
 const mapStateToProps = (store) => {
     return {
@@ -23,7 +25,13 @@ const mapDispatchToProps = (dispatch) =>{
         removeDot: removeDot,
         removeMultipleDots: removeMultipleDots,
         rezoneDot: rezoneDot,
-        addMultipleDots: addMultipleDots
+        addMultipleDots: addMultipleDots,
+        changeBase: changeBase,
+        resetMachine: resetMachine,
+        showHidePlaceValue: showHidePlaceValue,
+        oneStepStabilize: oneStepStabilize,
+        stabilize: stabilize,
+        operandChanged: operandChanged
     }, dispatch);
 };
 
@@ -44,17 +52,19 @@ class DotsMachine extends Component {
             machineState: React.PropTypes.shape({
                 placeValueSwitch: React.PropTypes.bool.isRequired,
                 baseSelectorDisplay: React.PropTypes.bool.isRequired,
+                magicWandVisible: React.PropTypes.bool.isRequired,
+                resetVisible: React.PropTypes.bool.isRequired,
                 base: React.PropTypes.array.isRequired,
                 dots: React.PropTypes.array,
                 maxViewableDots: React.PropTypes.number.isRequired,
-                mode: React.PropTypes.oneOf(['display', 'add', 'subtract', 'multiply', 'divide']).isRequired,
+                mode: React.PropTypes.oneOf([MODE.DISPLAY, MODE.ADDITION, MODE.SUBTRACT, MODE.MULTIPLY, MODE.DIVIDE]).isRequired,
                 zones: React.PropTypes.number.isRequired
             })
         })
     };
 
     constructor(props) {
-        console.log('DotsMachine constructor props', props);
+        //console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -94,20 +104,49 @@ class DotsMachine extends Component {
 
     }
 
+    operandChange(e, pos){
+        if(e.target.value)
+        this.props.operandChanged(this.id, pos, e.target.value);
+    }
+
     render() {
         return (
             <div>
-                <BaseSelector base={this.props.dotsMachine.machineState.base}/>
-                <PlaceValueSwitch />
-                <ResetButton />
-                <MagicWand />
+                <BaseSelector visible={this.props.dotsMachine.machineState.baseSelectorDisplay}
+                              base={this.props.dotsMachine.machineState.base}
+                              onClick={this.props.changeBase}/>
+                <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitch}
+                                  onClick={this.props.showHidePlaceValue}/>
+                <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
+                             onClick={this.props.resetMachine}/>
+                <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
+                           onClick={this.props.oneStepStabilize}/>
                 <ActivityDescriptor>
-                    <Operand/>
-                    <Operator/>
-                    <Operand/>
-                    <button/>
+                    <Text mode={this.props.dotsMachine.machineState.mode} />
+                    <Operand value={this.props.dotsMachine.machineState.operandA}
+                             onChange={this.operandChange.bind(this)}
+                             mode={this.props.dotsMachine.machineState.mode}
+                             pos="A"/>
+                    <Operator mode={this.props.dotsMachine.machineState.mode}/>
+                    <Operand value={this.props.dotsMachine.machineState.operandB}
+                             mode={this.props.dotsMachine.machineState.mode}
+                             onChange={this.operandChange.bind(this)}
+                             pos="B"/>
+                    {/*<button>GO</button>*/}
                 </ActivityDescriptor>
-                <CanvasPIXI numZone={this.props.dotsMachine.machineState.zones} dots={this.props.dotsMachine.dots} base={this.props.dotsMachine.machineState.base} mode={this.props.dotsMachine.machineState.mode} addDot={this.addDot.bind(this)} removeDot={this.removeDot.bind(this)} rezoneDot={this.rezoneDot.bind(this)} addMultipleDots={this.addMultipleDots.bind(this)} removeMultipleDots={this.removeMultipleDots.bind(this)} placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch} />
+                <CanvasPIXI
+                            id="0"
+                            numZone={this.props.dotsMachine.machineState.zones}
+                            dots={this.props.dotsMachine.dots}
+                            base={this.props.dotsMachine.machineState.base}
+                            mode={this.props.dotsMachine.machineState.mode}
+                            addDot={this.addDot.bind(this)}
+                            removeDot={this.removeDot.bind(this)}
+                            rezoneDot={this.rezoneDot.bind(this)}
+                            addMultipleDots={this.addMultipleDots.bind(this)}
+                            removeMultipleDots={this.removeMultipleDots.bind(this)}
+                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch}
+                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
 
             </div>
         );

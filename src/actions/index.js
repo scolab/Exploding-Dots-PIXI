@@ -1,7 +1,7 @@
-import {DOTS} from './Constants';
+import {ACTIONS} from './StoreConstants';
 
 export const addDot = (parentId, zoneId, position, isPositive) => ({
-    type: DOTS.ADD_DOT,
+    type: ACTIONS.ADD_DOT,
     parentId,
     zoneId,
     position,
@@ -9,14 +9,14 @@ export const addDot = (parentId, zoneId, position, isPositive) => ({
 });
 
 export const removeDot = (parentId, zoneId, dotId) => ({
-    type: DOTS.REMOVE_DOT,
+    type: ACTIONS.REMOVE_DOT,
     parentId,
     zoneId,
     dotId
 });
 
 export const addMultipleDots = (parentId, zoneId, dotsPos, isPositive) => ({
-    type: DOTS.ADD_MULTIPLE_DOTS,
+    type: ACTIONS.ADD_MULTIPLE_DOTS,
     parentId,
     zoneId,
     dotsPos,
@@ -24,15 +24,42 @@ export const addMultipleDots = (parentId, zoneId, dotsPos, isPositive) => ({
 });
 
 export const removeMultipleDots = (parentId, zoneId, dots) => ({
-    type: DOTS.REMOVE_MULTIPLE_DOTS,
+    type: ACTIONS.REMOVE_MULTIPLE_DOTS,
     parentId,
     zoneId,
     dots
 });
 
 export const rezoneDot = (parentId, zoneId, dot) => ({
-    type: DOTS.REZONE_DOT,
+    type: ACTIONS.REZONE_DOT,
         parentId,
         zoneId,
         dot
+});
+
+export const changeBase = () =>({
+    type: ACTIONS.BASE_CHANGED
+});
+
+export const resetMachine = () => ({
+    type: ACTIONS.RESET
+});
+
+export const showHidePlaceValue = () =>({
+    type: ACTIONS.SHOW_HIDE_PLACE_VALUE
+});
+
+export const oneStepStabilize = () => ({
+    type: ACTIONS.ONE_STEP_STABILIZE
+});
+
+export const stabilize = () => ({
+    type: ACTIONS.STABILIZE
+});
+
+export const operandChanged = (parentId, operandPos, value) => ({
+    type: ACTIONS.OPERAND_CHANGED,
+        parentId,
+        operandPos,
+        value
 });

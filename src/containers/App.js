@@ -1,5 +1,6 @@
 import 'pixi.js';
 import '../ExplodingDots.css';
+import '../font-awesome.min.css';
 import React, {Component} from 'react';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';

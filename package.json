@@ -8,7 +8,6 @@
   },
   "license": "MIT",
   "scripts": {
-    "prepublish": ". ./.scripts/prepublish.sh",
     "lint": "eslint src",
     "lintfix": "eslint src --fix",
     "testonly": "mocha --require .scripts/mocha_runner src/**/tests/**/*.js",
@@ -51,7 +50,6 @@
     "gsap": "^1.19.1",
     "pixi-filters": "^1.0.6",
     "pixi.js": "^4.3.4",
-    "react-pixi": "^0.9.5",
     "react-redux": "^5.0.1",
     "redux": "^3.6.0"
   },

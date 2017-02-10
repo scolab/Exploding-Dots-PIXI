@@ -1,24 +1,36 @@
 import {makeUID} from '../utils/MathUtils'
-import {DOTS} from '../actions/Constants'
+import {ACTIONS} from '../actions/StoreConstants'
+import {MODE} from '../Constants'
+import {BASE} from '../Constants'
+
+
 const dotsReducer = (state = null, action) => {
     if (state === null) {
         const initialState = {
             base:[1,2],
-            mode:'divide',
+            mode:MODE.DISPLAY,
             baseSelectorDisplay:true,
             placeValueSwitch:true,
+            magicWandVisible:true,
+            resetVisible:true,
             zones: 5,
             maxViewableDots: 150,
+            operandA: 12,
+            operandB: ''
         };
+        let dots = [];
+        /*for(let i = 0; i < initialState.zones; i++){
+            dots.push([]);
+        }*/
         return {
-            dots: [{x:100, y:100, powerZone:0, isPositive:true, id:makeUID()}, {x:50, y:50, powerZone:0, isPositive:true, id:makeUID()}],
+            dots: dots,
             machineState: initialState
         };
     }
 
     var stateCopy;
     switch (action.type) {
-        case DOTS.ADD_DOT:
+        case ACTIONS.ADD_DOT:
             console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
             const point = {
@@ -31,7 +43,7 @@ const dotsReducer = (state = null, action) => {
             stateCopy.dots.push(point);
             return stateCopy;
 
-        case DOTS.REMOVE_DOT:
+        case ACTIONS.REMOVE_DOT:
             console.log('REMOVE_DOT');
             stateCopy = {...state};
             stateCopy.dots.forEach((dot) => {
@@ -42,7 +54,7 @@ const dotsReducer = (state = null, action) => {
             });
             return stateCopy;
 
-        case DOTS.ADD_MULTIPLE_DOTS:
+        case ACTIONS.ADD_MULTIPLE_DOTS:
             console.log('ADD_MULTIPLE_DOTS', action.dotsPos, action.zoneId);
             stateCopy = {...state};
             action.dotsPos.forEach((dot) => {
@@ -51,7 +63,7 @@ const dotsReducer = (state = null, action) => {
             });
             return stateCopy;
 
-        case DOTS.REMOVE_MULTIPLE_DOTS:
+        case ACTIONS.REMOVE_MULTIPLE_DOTS:
             stateCopy = {...state};
             console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId, ' totalDot:', stateCopy.dots.length);
             if (action.dots.length > 0) {
@@ -68,7 +80,7 @@ const dotsReducer = (state = null, action) => {
             }
             return stateCopy;
 
-        case DOTS.REZONE_DOT:
+        case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
             console.log('REZONE_DOT', stateCopy);
             stateCopy.dots.forEach((dot) => {
@@ -77,6 +89,37 @@ const dotsReducer = (state = null, action) => {
                 }
             });
             return stateCopy;
+        case ACTIONS.SHOW_HIDE_PLACE_VALUE:
+            stateCopy = {...state};
+            stateCopy.machineState.placeValueSwitch = !stateCopy.machineState.placeValueSwitch;
+            return stateCopy;
+        case ACTIONS.OPERAND_CHANGED:
+            stateCopy = {...state};
+            if(action.operandPos == "A") {
+                stateCopy.machineState.operandA = action.value;
+            }else if(action.operandPos == "B") {
+                stateCopy.machineState.operandB = action.value;
+            }
+            return stateCopy;
+        case ACTIONS.ONE_STEP_STABILIZE:
+            stateCopy = {...state};
+            /*var dots = stateCopy.dots;
+            var base = stateCopy.machineState.base;
+            var stepIsDone = false;
+            var startIndex = 0;
+            dots.forEach(function(dot, index){
+                if(!stepIsDone && index >= startIndex ){
+                    if(dots.length <= index+1){
+                        dots.push([]);
+                    }
+                    if(dot.length >= base){
+                        dots[index+1] = _this.updateDotsArray(dots[index+1], dots[index+1].length + 1);
+                        dots[index] = _this.updateDotsArray(dots[index], dot.length - base);
+                        stepIsDone = true;
+                    }
+                }
+            });*/
+            return false;
         default:
             return state
     }
