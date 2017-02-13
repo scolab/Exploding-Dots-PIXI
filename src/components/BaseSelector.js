@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import {BG} from './images/rule_dropdown1x.png';
 
 export default class BaseSelector extends Component {
     static propTypes = {
@@ -13,7 +14,11 @@ export default class BaseSelector extends Component {
     render(){
         return (
             <div>
-                <button onClick={this.props.onClick} className="base">{this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}</button>
+                <img src={BG}/>
+                {/*<button onClick={this.props.onClick}>
+                    {this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}
+                    </button>*/}
+
             </div>
         );
     }

@@ -7,6 +7,3 @@ body {
 div{
     font-family: "museo-sans";
 }
-.baseIsOver{
-    animation: shake 2s linear infinite;
-}
