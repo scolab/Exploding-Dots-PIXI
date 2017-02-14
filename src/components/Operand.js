@@ -1,11 +1,12 @@
 import React, {Component, PropTypes} from 'react';
-import {MODE} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS} from '../Constants';
 
 export default class Operand extends Component {
 
     static propTypes = {
         value: PropTypes.any.isRequired,
-        mode: PropTypes.oneOf([MODE.DISPLAY, MODE.ADDITION, MODE.SUBTRACT, MODE.MULTIPLY, MODE.DIVIDE]),
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
+        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION]),
         onChange: PropTypes.func.isRequired,
         pos: PropTypes.string.isRequired,
     };
@@ -23,22 +24,42 @@ export default class Operand extends Component {
     }
 
     componentDidMount(){
-        if(this.props.mode == MODE.DISPLAY) {
-            this.inputText.disabled = true;
+        if(this.props.usage_mode == USAGE_MODE.FREEPLAY) {
+            if(this.inputText) {
+                this.inputText.disabled = true;
+            }
         }
     }
 
     render(){
-        return (
-            <div>
-                <form>
-                    <input type="text"
-                           onChange={this.onChange.bind(this)}
-                           value={this.props.value}
-                           ref={(inputText) => { this.inputText = inputText; }}/>
-                </form>
-            </div>
-        );
+        if(this.props.pos == OPERAND_POS.RIGHT && this.props.usage_mode == USAGE_MODE.FREEPLAY){
+            return <div></div>
+        }else if(this.props.pos == OPERAND_POS.LEFT && this.props.usage_mode == USAGE_MODE.FREEPLAY) {
+            return (
+                <div>
+                    <form>
+                        <input type="text"
+                               value={this.props.value}
+                               ref={(inputText) => {
+                                   this.inputText = inputText;
+                               }}/>
+                    </form>
+                </div>
+            );
+        }else{
+            return (
+                <div>
+                    <form>
+                        <input type="text"
+                               onChange={this.onChange.bind(this)}
+                               value={this.props.value}
+                               ref={(inputText) => {
+                                   this.inputText = inputText;
+                               }}/>
+                    </form>
+                </div>
+            );
+        }
     }
 }
 

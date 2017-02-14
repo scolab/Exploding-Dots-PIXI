@@ -1,9 +1,9 @@
 export const BASE = {
-    BASE : [2,3,4,8,10,12],
+    ALL_BASE : [[1,2],[1,4],[1,6],[1,10],[1,12], [1,'X']],
     BASE_X : 'X'
 };
 
-export const MODE = {
+export const OPERATOR_MODE = {
     DISPLAY : 'DISPLAY',
     ADDITION : 'ADDITION',
     SUBTRACT : 'SUBTRACT',
@@ -11,7 +11,17 @@ export const MODE = {
     DIVIDE : 'DIVIDE'
 };
 
+export const USAGE_MODE = {
+    FREEPLAY: 'FREEPLAY',
+    OPERATION: 'OPERATION'
+};
+
 export const SETTINGS = {
     GAME_WIDTH : 1024,
     GAME_HEIGHT : 377
+};
+
+export const OPERAND_POS = {
+    RIGHT: 'RIGHT',
+    LEFT: 'LEFT'
 };

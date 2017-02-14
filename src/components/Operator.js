@@ -1,10 +1,10 @@
 import React, {Component, PropTypes} from 'react';
-import {MODE} from '../Constants';
+import {OPERATOR_MODE} from '../Constants';
 
 export default class Operator extends Component {
 
     static propTypes = {
-        mode: React.PropTypes.oneOf([MODE.DISPLAY, MODE.ADDITION, MODE.SUBTRACT, MODE.MULTIPLY, MODE.DIVIDE]).isRequired,
+        operator_mode: React.PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
     };
 
     constructor(props) {
@@ -14,21 +14,21 @@ export default class Operator extends Component {
     render(){
         let display = '';
         let text = '';
-        switch (this.props.mode){
-            case MODE.DISPLAY:
+        switch (this.props.operator_mode){
+            case OPERATOR_MODE.DISPLAY:
                 //display = 'fa fa-arrows-h';
                 text = " is ";
                 break;
-            case MODE.ADDITION:
+            case OPERATOR_MODE.ADDITION:
                 display = 'fa fa-plus';
                 break;
-            case MODE.SUBTRACT:
+            case OPERATOR_MODE.SUBTRACT:
                 display = 'fa fa-minus';
                 break;
-            case MODE.MULTIPLY:
+            case OPERATOR_MODE.MULTIPLY:
                 display = 'fa fa-times';
                 break;
-            case MODE.DIVIDE:
+            case OPERATOR_MODE.DIVIDE:
                 display = 'fa fa-hand-spock-o';
                 break;
         }

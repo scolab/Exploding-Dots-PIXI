@@ -1,10 +1,10 @@
 import React, {Component, PropTypes} from 'react';
-import {MODE} from '../Constants';
+import {OPERATOR_MODE} from '../Constants';
 
 export default class Text extends Component {
 
     static propTypes = {
-        mode: PropTypes.oneOf([MODE.DISPLAY, MODE.ADDITION, MODE.SUBTRACT, MODE.MULTIPLY, MODE.DIVIDE]),
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
     };
 
     constructor(props) {
@@ -13,7 +13,7 @@ export default class Text extends Component {
 
     render(){
         let text = '';
-        if(this.props.mode === MODE.DISPLAY){
+        if(this.props.mode === OPERATOR_MODE.DISPLAY){
             text = "The code for"
         }
         return (

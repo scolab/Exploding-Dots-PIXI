@@ -49,8 +49,9 @@ export const showHidePlaceValue = () =>({
     type: ACTIONS.SHOW_HIDE_PLACE_VALUE
 });
 
-export const oneStepStabilize = () => ({
-    type: ACTIONS.ONE_STEP_STABILIZE
+export const activateMagicWand = (active) => ({
+    type: ACTIONS.ACTIVATE_MAGIC_WAND,
+    active
 });
 
 export const stabilize = () => ({

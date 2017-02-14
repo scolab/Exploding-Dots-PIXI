@@ -14,7 +14,7 @@ export default class MagicWand extends Component {
     render(){
         return (
             <div>
-                <button onClick={this.props.onClick} className="magicWandBtn"><i className="fa fa-magic"></i></button>
+                <button onClick={() => this.props.onClick(true)} className="magicWandBtn"><i className="fa fa-magic"></i></button>
             </div>
         );
     }

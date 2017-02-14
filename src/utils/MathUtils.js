@@ -9,6 +9,10 @@ export const makeUID = () =>{
     });
 };
 
+export const randomFromTo = (min, max) => {
+    return Math.floor(Math.random()*(max-min+1)+min);
+};
+
 export const isIntersecting = (r1, r2) => {
 
     return !(r2.x > (r1.x + r1.width) ||
