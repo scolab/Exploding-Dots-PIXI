@@ -407,9 +407,9 @@ class CanvasPIXI extends Component {
         }
 
         var colorMatrix =  [
-            1,0,0,-0.5,
-            0,1,0,-0.5,
-            0,0,1,-0.5,
+            1,0,0,-0.3,
+            0,1,0,-0.3,
+            0,0,1,-0.3,
             0,0,0,1
         ];
         var filter = new PIXI.filters.ColorMatrixFilter();
@@ -688,7 +688,7 @@ class CanvasPIXI extends Component {
 
 
     shouldComponentUpdate(nextProps){
-        //console.log('shouldComponentUpdate', this.props.base, nextProps.base);
+        console.log('shouldComponentUpdate', nextProps);
         this.checkBaseChange(nextProps);
         this.props = nextProps;
         this.removeDotsFromStateChange();
@@ -740,6 +740,7 @@ class CanvasPIXI extends Component {
                 let j = this.state.positiveDotsPerZone[i].length;
                 while(j--){
                     let isPresent = false;
+                    //this.props.positivePowerZoneDots
                     let k = this.props.dots.length;
                     while(k--){
                         if(this.props.dots[k].powerZone===i && this.props.dots[k].id === this.state.positiveDotsPerZone[i][j].id === true){

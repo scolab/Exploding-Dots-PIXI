@@ -14,10 +14,21 @@ export default class BaseSelector extends Component {
     render(){
         return (
             <div>
-                <button onClick={this.props.onClick}>
-                    <img src={BG}/>
+                <button style={{backgroundImage:`url(${BG})`,
+                                backgroundRepeat:`no-repeat`,
+                                backgroundColor:`Transparent`,
+                                border:`none`,
+                                cursor:`pointer`,
+                                overflow:`hidden`,
+                                width:140,
+                                height:55}} type='button' onClick={this.props.onClick}>
+                    <div style={{marginBottom:10,
+                                marginRight:10,
+                                fontFamily: 'museo-slab',
+                                fontSize: 24}}>
                     {this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}
-                    </button>
+                    </div>
+                </button>
             </div>
         );
     }
