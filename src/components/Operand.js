@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS} from '../Constants';
+import img from './images/input1x.png';
 
 export default class Operand extends Component {
 
@@ -36,13 +37,25 @@ export default class Operand extends Component {
             return <div></div>
         }else if(this.props.pos == OPERAND_POS.LEFT && this.props.usage_mode == USAGE_MODE.FREEPLAY) {
             return (
-                <div>
+                <div className="operationItem">
                     <form>
-                        <input type="text"
-                               value={this.props.value}
-                               ref={(inputText) => {
-                                   this.inputText = inputText;
-                               }}/>
+                        <input
+                            style={{backgroundImage:`url(${img})`,
+                                backgroundRepeat:`no-repeat`,
+                                backgroundColor:`Transparent`,
+                                border:`none`,
+                                overflow:`hidden`,
+                                width:252,
+                                height:45,
+                                fontFamily: 'museo-slab',
+                                fontSize: 24,
+                                textAlign: 'center'
+                            }}
+                            type="text"
+                            value={this.props.value}
+                            ref={(inputText) => {
+                                this.inputText = inputText;
+                            }}/>
                     </form>
                 </div>
             );
@@ -50,7 +63,16 @@ export default class Operand extends Component {
             return (
                 <div>
                     <form>
-                        <input type="text"
+                        <input
+                            style={{backgroundImage:`url(${img})`,
+                                backgroundRepeat:`no-repeat`,
+                                backgroundColor:`Transparent`,
+                                border:`none`,
+                                cursor:`pointer`,
+                                overflow:`hidden`,
+                                width:252,
+                                height:45}}
+                            type="text"
                                onChange={this.onChange.bind(this)}
                                value={this.props.value}
                                ref={(inputText) => {

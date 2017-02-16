@@ -33,7 +33,12 @@ export default class Operator extends Component {
                 break;
         }
         return (
-            <div>
+            <div
+                className="operationItem"
+                style={{
+                    fontFamily: 'museo-slab',
+                    fontSize: 24,
+                }}>
                 <i className={display}>{text}</i>
             </div>
         );

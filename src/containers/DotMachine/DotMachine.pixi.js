@@ -1,16 +1,18 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, login} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';
 import MagicWand from '../../components/MagicWand';
+import TopMenuItem from '../../components/TopMenuItem';
 import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
-import Text from '../../components/Text'
+import Text from '../../components/Text';
+import Login from '../../components/Login';
 import {OPERATOR_MODE, OPERAND_POS} from '../../Constants';
 
 const mapStateToProps = (store) => {
@@ -31,7 +33,8 @@ const mapDispatchToProps = (dispatch) =>{
         showHidePlaceValue: showHidePlaceValue,
         activateMagicWand: activateMagicWand,
         stabilize: stabilize,
-        operandChanged: operandChanged
+        operandChanged: operandChanged,
+        login: login
     }, dispatch);
 };
 
@@ -75,6 +78,7 @@ class DotsMachine extends Component {
                 magicWandVisible: PropTypes.bool.isRequired,
                 magicWandIsActive: PropTypes.bool.isRequired,
                 resetVisible: PropTypes.bool.isRequired,
+                loginVisible: PropTypes.bool.isRequired,
                 base: PropTypes.array.isRequired,
                 dots: PropTypes.array,
                 maxViewableDots: PropTypes.number.isRequired,
@@ -134,15 +138,19 @@ class DotsMachine extends Component {
         //console.log('render', this.props);
         return (
             <div>
-                <BaseSelector visible={this.props.dotsMachine.machineState.baseSelectorDisplay}
-                              base={this.props.dotsMachine.machineState.base}
-                              onClick={this.props.changeBase}/>
-                <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitch}
-                                  onClick={this.props.showHidePlaceValue}/>
-                <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
-                             onClick={this.props.resetMachine}/>
-                <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
-                           onClick={this.props.activateMagicWand}/>
+                <TopMenuItem>
+                    <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitch}
+                                      onClick={this.props.showHidePlaceValue}/>
+                    <Login visible={this.props.dotsMachine.machineState.loginVisible}
+                           onClick={this.props.login}/>
+                    <BaseSelector visible={this.props.dotsMachine.machineState.baseSelectorDisplay}
+                                  base={this.props.dotsMachine.machineState.base}
+                                  onClick={this.props.changeBase}/>
+                    <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
+                               onClick={this.props.activateMagicWand}/>
+                    <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
+                                 onClick={this.props.resetMachine}/>
+                </TopMenuItem>
                 <ActivityDescriptor>
                     <Text mode={this.props.dotsMachine.machineState.operator_mode} />
                     <Operand value={this.props.dotsMachine.machineState.operandA}

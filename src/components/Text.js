@@ -17,7 +17,11 @@ export default class Text extends Component {
             text = "The code for"
         }
         return (
-            <div>{text}</div>
+            <div className="operationItem"
+                style={{
+                    fontFamily: 'museo-slab',
+                    fontSize: 24,
+                }}>{text}</div>
         )
     }
 }

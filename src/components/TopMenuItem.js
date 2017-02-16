@@ -1,20 +1,16 @@
 import React, {Component, PropTypes} from 'react';
 
-export default class ActivityDescriptor extends Component {
+export default class TopMenuItem extends Component {
     static propTypes = {
         children: PropTypes.node,
     };
 
     render(){
         return (
-            <div style={{
-                clear:'right',
-                textAlign:'center'
-            }}>
-
-
+            <div>
                 {this.props.children}
             </div>
         );
     }
 }
+

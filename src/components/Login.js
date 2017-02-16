@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import img from './images/wand1x.png';
+import img from './images/login1x.png';
 
-export default class MagicWand extends Component {
+export default class Login extends Component {
 
     static propTypes = {
         onClick: React.PropTypes.func.isRequired,
@@ -21,13 +21,11 @@ export default class MagicWand extends Component {
                     border:`none`,
                     cursor:`pointer`,
                     overflow:`hidden`,
-                    width:46,
+                    width:76,
                     height:46}}
-                    type='button'
-                    onClick={() => this.props.onClick(true)}></button>
+                        type='button'
+                        onClick={() => this.props.onClick(true)}></button>
             </div>
         );
     }
 }
-
-

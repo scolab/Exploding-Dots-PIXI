@@ -2,8 +2,20 @@ body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    background-color: blueviolet;
+    background-color: cornsilk;
+
 }
-div{
+/*div{
     font-family: "museo-sans";
+}*/
+.topRightMenuItem{
+    float:right;
+    margin-left: 10px;
+    margin-top: 33px;
+}
+
+.operationItem{
+    margin-top: 50px;
+    margin-left: 10px;
+    display: inline-block;
 }

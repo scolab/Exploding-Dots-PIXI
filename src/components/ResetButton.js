@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import img from './images/refresh1x.png';
 
 export default class ResetButton extends Component {
 
@@ -13,8 +14,16 @@ export default class ResetButton extends Component {
 
     render(){
         return (
-            <div>
-                <button onClick={this.props.onClick} className="resetBtn"><i className="fa fa-refresh"></i></button>
+            <div className="topRightMenuItem">
+                <button style={{backgroundImage:`url(${img})`,
+                    backgroundRepeat:`no-repeat`,
+                    backgroundColor:`Transparent`,
+                    border:`none`,
+                    cursor:`pointer`,
+                    overflow:`hidden`,
+                    width:46,
+                    height:46}} type='button'
+                    onClick={this.props.onClick}></button>
             </div>
         );
     }

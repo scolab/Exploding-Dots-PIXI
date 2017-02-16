@@ -12,4 +12,6 @@ export const ACTIONS = {
     RESET : 'RESET',
 
     OPERAND_CHANGED: 'OPERAND_CHANGED',
+
+    LOGIN: 'LOGIN'
 };

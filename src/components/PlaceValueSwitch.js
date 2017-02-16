@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import img from './images/burger1x.png';
 
 export default class PlaceValueSwitch extends Component {
 
@@ -13,8 +14,17 @@ export default class PlaceValueSwitch extends Component {
 
     render(){
         return (
-            <div>
-                <button onClick={this.props.onClick} className="placeValue"><i className="fa fa-binoculars"></i></button>
+            <div className="topRightMenuItem" style={{marginRight:33}}>
+                <button
+                    style={{backgroundImage:`url(${img})`,
+                        backgroundRepeat:`no-repeat`,
+                        backgroundColor:`Transparent`,
+                        border:`none`,
+                        cursor:`pointer`,
+                        overflow:`hidden`,
+                        width:46,
+                        height:46}}
+                    onClick={this.props.onClick}></button>
             </div>
         );
     }

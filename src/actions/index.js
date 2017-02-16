@@ -64,3 +64,7 @@ export const operandChanged = (parentId, operandPos, value) => ({
         operandPos,
         value
 });
+
+export const login = () => {
+    type: ACTIONS.LOGIN
+};
