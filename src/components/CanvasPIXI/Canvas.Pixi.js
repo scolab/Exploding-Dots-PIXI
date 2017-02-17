@@ -429,10 +429,10 @@ class CanvasPIXI extends Component {
             0,0,0,1
         ];*/
         var colorMatrix =  [
-            1,0,0,-0.5,
-            0,1,0,-0.5,
-            0,0,1,-0.5,
-            0,0,0,0.5
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1
         ];
         var filter = new PIXI.filters.ColorMatrixFilter();
         //filter.matrix = colorMatrix;
@@ -583,8 +583,10 @@ class CanvasPIXI extends Component {
                     //console.log(currentBase, originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
                     if (diffZone < 0) {
                         dotsToRemoveCount = Math.pow(this.props.base[1], diffZone * -1);
+                    }else{
+                        dotsToRemoveCount = Math.pow(this.props.base[0], diffZone);
                     }
-                    //console.log('dotsToRemoveCount', dotsToRemoveCount);
+                    console.log('dotsToRemoveCount', dotsToRemoveCount);
                     //check if possible
                     let finalNbOfDots = -1;
                     if(dotSprite.dot.isPositive) {
@@ -603,7 +605,7 @@ class CanvasPIXI extends Component {
                     }
 
                     // rezone current dot and thus remove it from the amount to be moved
-                    this.addDraggedToNewZone(dotSprite, droppedOnPowerZone, data);
+                    this.addDraggedToNewZone(dotSprite, droppedOnPowerZone, data.getLocalPosition(droppedOnPowerZone));
                     dotsToRemoveCount--;
 
                     console.log('dotsToRemoveCount', dotsToRemoveCount);
@@ -611,10 +613,12 @@ class CanvasPIXI extends Component {
                     let dataLocalZone = data.getLocalPosition(droppedOnPowerZone);
                     this.tweenDotsToNewZone(originalZoneIndex, droppedOnPowerZone, dotsToRemoveCount, dataLocalZone);
 
-                     //Add the new dots
-                     let dotsPos = [];
-                     let newNbOfDots = Math.pow(this.props.base[1], diffZone);
-                     newNbOfDots--;
+                    //Add the new dots
+                    let dotsPos = [];
+                    let newNbOfDots = 0;
+                    newNbOfDots = Math.pow(this.props.base[1], diffZone);
+                    newNbOfDots -= this.props.base[0];
+                    console.log('newNbOfDots', newNbOfDots, diffZone);
                      for (let i = 0; i < newNbOfDots; i++) {
                          dotsPos.push({
                              x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
@@ -661,12 +665,11 @@ class CanvasPIXI extends Component {
         this.state.isInteractive = true;
     }
 
-    addDraggedToNewZone(dotSprite, newZone, data){
+    addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo){
         console.log('addDraggedToNewZone', newZone.powerZone);
-        let dataLocalZone = data.getLocalPosition(newZone);
         newZone.addChild(dotSprite);
-        dotSprite.position.x = dataLocalZone.x;
-        dotSprite.position.y = dataLocalZone.y;
+        dotSprite.position.x = positionToBeMovedTo.x;
+        dotSprite.position.y = positionToBeMovedTo.y;
         if(dotSprite.dot.isPositive) {
             this.state.localPositiveDotsPerZone[dotSprite.dot.powerZone].splice(this.state.localPositiveDotsPerZone[dotSprite.dot.powerZone].indexOf(dotSprite.dot), 1);
             this.state.localPositiveDotsPerZone[newZone.powerZone].push(dotSprite.dot);
@@ -684,6 +687,32 @@ class CanvasPIXI extends Component {
             var zone = this.state.positivePowerZone[originalZoneIndex];
         } else {
             var zone = this.state.negativePowerZone[originalZoneIndex];
+        }
+
+
+            //  For 2 > 3 base.
+          if(this.props.base[0] > 1){
+            dotsToRemove -= (this.props.base[0] - 1);
+            let dotsToRezone = this.props.base[0] - 1;
+            for(let i=0; i < dotsToRezone; i++) {
+                let dotSprite = zone.getChildAt(0);
+                dotSprite.origin = new Point();
+                dotSprite.origin.copy(dotSprite.position);
+                var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
+                let adjascentPosition = positionToBeMovedTo.clone();
+                adjascentPosition.x += POSITION_INFO.DOT_RAYON * 2;
+                adjascentPosition.y += POSITION_INFO.DOT_RAYON * 2;
+                var finalPosition = this.state.movingDotsContainer.toLocal(adjascentPosition, droppedOnPowerZone);
+                this.state.movingDotsContainer.addChild(dotSprite);
+                dotSprite.position.x = newPosition.x;
+                dotSprite.position.y = newPosition.y;
+                 TweenMax.to(dotSprite, 0.5, {
+                    x: finalPosition.x,
+                    y: finalPosition.y,
+                    onComplete: this.addDraggedToNewZone.bind(this),
+                    onCompleteParams: [dotSprite, droppedOnPowerZone, adjascentPosition]
+                });
+            }
         }
         let allRemovedDots = [];
         for(let i=0; i < dotsToRemove; i++){
