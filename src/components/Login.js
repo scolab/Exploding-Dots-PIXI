@@ -15,12 +15,7 @@ export default class Login extends Component {
     render(){
         return (
             <div className="topRightMenuItem">
-                <button style={{backgroundImage:`url(${img})`,
-                    backgroundRepeat:`no-repeat`,
-                    backgroundColor:`Transparent`,
-                    border:`none`,
-                    cursor:`pointer`,
-                    overflow:`hidden`,
+                <button className="imageButton" style={{backgroundImage:`url(${img})`,
                     width:76,
                     height:46}}
                         type='button'

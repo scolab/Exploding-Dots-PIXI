@@ -15,16 +15,11 @@ export default class MagicWand extends Component {
     render(){
         return (
             <div className="topRightMenuItem">
-                <button style={{backgroundImage:`url(${img})`,
-                    backgroundRepeat:`no-repeat`,
-                    backgroundColor:`Transparent`,
-                    border:`none`,
-                    cursor:`pointer`,
-                    overflow:`hidden`,
+                <button className="imageButton" style={{backgroundImage:`url(${img})`,
                     width:46,
                     height:46}}
-                    type='button'
-                    onClick={() => this.props.onClick(true)}></button>
+                        type='button'
+                        onClick={() => this.props.onClick(true)}></button>
             </div>
         );
     }

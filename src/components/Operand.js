@@ -63,13 +63,8 @@ export default class Operand extends Component {
             return (
                 <div>
                     <form>
-                        <input
-                            style={{backgroundImage:`url(${img})`,
-                                backgroundRepeat:`no-repeat`,
-                                backgroundColor:`Transparent`,
-                                border:`none`,
-                                cursor:`pointer`,
-                                overflow:`hidden`,
+                        <input className="imageButton"
+                               style={{backgroundImage:`url(${img})`,
                                 width:252,
                                 height:45}}
                             type="text"

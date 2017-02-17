@@ -14,16 +14,12 @@ export default class BaseSelector extends Component {
     render(){
         return (
             <div className="topRightMenuItem">
-                <button style={{backgroundImage:`url(${BG})`,
-                                backgroundRepeat:`no-repeat`,
-                                backgroundColor:`Transparent`,
-                                border:`none`,
-                                cursor:`pointer`,
-                                overflow:`hidden`,
+                <button className="imageButton" style={{backgroundImage:`url(${BG})`,
                                 width:132,
                                 height:46}}
                         type='button'
                         onClick={this.props.onClick}>
+
                     <div style={{
                                 textAlign:'center',
                                 textVAlign:'center',

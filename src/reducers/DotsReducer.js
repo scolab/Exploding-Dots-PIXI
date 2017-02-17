@@ -153,7 +153,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
-            console.log('REZONE_DOT', stateCopy, action, action.dot);
+            console.log('REZONE_DOT');
 
             if(action.dot.isPositive) {
                 let i = stateCopy.positivePowerZoneDots.length;

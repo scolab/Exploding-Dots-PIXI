@@ -25,3 +25,8 @@ export const OPERAND_POS = {
     RIGHT: 'RIGHT',
     LEFT: 'LEFT'
 };
+
+export const POSITION_INFO = {
+    DOT_RAYON: 12,
+    BOX_BOTTOM_GREY_ZONE: 10
+};
