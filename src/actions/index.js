@@ -41,8 +41,9 @@ export const changeBase = () =>({
     type: ACTIONS.BASE_CHANGED
 });
 
-export const resetMachine = () => ({
-    type: ACTIONS.RESET
+export const resetMachine = (machineState) => ({
+    type: ACTIONS.RESET,
+    machineState
 });
 
 export const showHidePlaceValue = () =>({

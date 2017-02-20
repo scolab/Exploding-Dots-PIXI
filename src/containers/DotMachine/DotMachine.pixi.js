@@ -149,7 +149,7 @@ class DotsMachine extends Component {
                     <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
                                onClick={this.props.activateMagicWand}/>
                     <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
-                                 onClick={this.props.resetMachine}/>
+                                 onClick={() => this.props.resetMachine()}/>
                 </TopMenuItem>
                 <ActivityDescriptor>
                     <Text mode={this.props.dotsMachine.machineState.operator_mode} />

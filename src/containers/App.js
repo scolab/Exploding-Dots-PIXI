@@ -8,23 +8,24 @@ import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import {BASE} from '../Constants'
+import { resetMachine } from '../actions/';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 class ExplodingDots extends Component {
 
     static PropTypes = {
-        base: PropTypes.array.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
-        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]).isRequired,
-        magicWandIsActive: PropTypes.bool.isRequired,
-        baseSelectorDisplay: PropTypes.bool.isRequired,
-        placeValueSwitch: PropTypes.bool.isRequired,
-        magicWandVisible: PropTypes.bool.isRequired,
-        resetVisible: PropTypes.bool.isRequired,
-        loginVisible: PropTypes.bool.isRequired,
-        zones: PropTypes.number.isRequired,
-        maxViewableDots: PropTypes.number.isRequired,
+        base: PropTypes.array, //.isRequired,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
+        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]), //.isRequired,
+        magicWandIsActive: PropTypes.bool, //.isRequired,
+        baseSelectorDisplay: PropTypes.bool, //.isRequired,
+        placeValueSwitch: PropTypes.bool, //.isRequired,
+        magicWandVisible: PropTypes.bool, //.isRequired,
+        resetVisible: PropTypes.bool, //.isRequired,
+        loginVisible: PropTypes.bool, //.isRequired,
+        zones: PropTypes.number, //.isRequired,
+        maxViewableDots: PropTypes.number, //.isRequired,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
     };
@@ -47,11 +48,16 @@ class ExplodingDots extends Component {
 
     constructor(props) {
         super(props);
+
+        // FIXME: find a way to use resetMachine
+        // Initialize the default machineState values
+        store.dispatch({
+            type: "RESET",
+            machineState: Object.assign({}, props)
+        })
     };
 
     render() {
-        console.log(store);
-        console.log(this.props);
         return (
             <Provider store={store}>
                 <div>

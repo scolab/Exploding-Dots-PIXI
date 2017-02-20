@@ -1,10 +1,10 @@
 import {makeUID} from '../utils/MathUtils'
 import {ACTIONS} from '../actions/StoreConstants'
-import {OPERATOR_MODE, USAGE_MODE} from '../Constants'
 import {BASE} from '../Constants'
 import _array from 'lodash/array';
-
 import { EventEmitter } from 'events';
+
+let initialMachineState = {};
 
 function setDotsCount(state){
     let dotsCount = 0;
@@ -27,34 +27,19 @@ function setDotsCount(state){
      this.state.negativeDotsCount = dotsCount;*/
 }
 
-function setInitialState(){
-    const initialState = {
-        base: BASE.ALL_BASE[0],
-        operator_mode: OPERATOR_MODE.DISPLAY,
-        usage_mode: USAGE_MODE.FREEPLAY,
-        magicWandIsActive: false,
-        baseSelectorDisplay: true,
-        placeValueSwitch: false,
-        magicWandVisible: true,
-        resetVisible: true,
-        loginVisible: true,
-        zones: 5,
-        maxViewableDots: 150,
-        operandA: '',
-        operandB: ''
-    };
+function setInitialState() {
     //let dots = [];
     let positivePowerZoneDots = [];
     let negativePowerZoneDots = [];
-    /*for (let i = 0; i < initialState.zones; i++) {
+    for (let i = 0; i < (initialMachineState.zones || 0); i++) {
         positivePowerZoneDots.push([]);
         negativePowerZoneDots.push([]);
-    }*/
+    }
     return {
         //dots: dots,
         positivePowerZoneDots: positivePowerZoneDots,
         negativePowerZoneDots: negativePowerZoneDots,
-        machineState: initialState
+        machineState: initialMachineState
     };
 }
 
@@ -205,6 +190,10 @@ const dotsReducer = (state = null, action) => {
             stateCopy.machineState.operandA = setDotsCount(stateCopy);
             return stateCopy;
         case ACTIONS.RESET:
+            if (action.machineState) {
+                initialMachineState = action.machineState;
+            }
+
             return setInitialState();
         default:
             return state
