@@ -193,7 +193,6 @@ const dotsReducer = (state = null, action) => {
             if (action.machineState) {
                 initialMachineState = action.machineState;
             }
-
             return setInitialState();
         default:
             return state

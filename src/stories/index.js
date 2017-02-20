@@ -1,11 +1,20 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import {storiesOf, action} from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
+import {BASE} from '../Constants'
 
 storiesOf('Button', module)
-  .add('Exploding Dots', () => (
-    <ExplodingDots />
-  ))
-  .add('some emojies as the text', () => (
-    <Button>😀 😎 👍 💯</Button>
-  ));
+    .add('Mecha Freeplay', () => (
+        <ExplodingDots base={BASE.ALL_BASE[0]}
+            magicWandIsActive={false}
+        />
+    ))
+    .add('Mecha Operation', () => (
+        <ExplodingDots />
+    ))
+    .add('Arythmos Operation', () => (
+        <ExplodingDots />
+    ))
+    .add('some emojies as the text', () => (
+        <Button>😀 😎 👍 💯</Button>
+    ));
