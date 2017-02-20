@@ -73,14 +73,12 @@ class DotsMachine extends Component {
                 isPositive: PropTypes.bool.isRequired,
             }))).isRequired,
             machineState: PropTypes.shape({
-                placeValueSwitch: PropTypes.bool.isRequired,
-                baseSelectorDisplay: PropTypes.bool.isRequired,
+                placeValueSwitchVisible: PropTypes.bool.isRequired,
+                baseSelectorVisible: PropTypes.bool.isRequired,
                 magicWandVisible: PropTypes.bool.isRequired,
                 magicWandIsActive: PropTypes.bool.isRequired,
                 resetVisible: PropTypes.bool.isRequired,
-                loginVisible: PropTypes.bool.isRequired,
                 base: PropTypes.array.isRequired,
-                dots: PropTypes.array,
                 maxViewableDots: PropTypes.number.isRequired,
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired
@@ -135,21 +133,26 @@ class DotsMachine extends Component {
     }
 
     render() {
-        //console.log('render', this.props);
+        //console.log('render', this.props.dotsMachine.machineState);
         return (
             <div>
                 <TopMenuItem>
-                    <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitch}
+                    {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
+                        <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitchVisible}
                                       onClick={this.props.showHidePlaceValue}/>
-                    <Login visible={this.props.dotsMachine.machineState.loginVisible}
-                           onClick={this.props.login}/>
-                    <BaseSelector visible={this.props.dotsMachine.machineState.baseSelectorDisplay}
-                                  base={this.props.dotsMachine.machineState.base}
+                    }
+                    {this.props.dotsMachine.machineState.baseSelectorVisible === true &&
+                        <BaseSelector base={this.props.dotsMachine.machineState.base}
                                   onClick={this.props.changeBase}/>
-                    <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
+                    }
+                    {this.props.dotsMachine.machineState.magicWandVisible === true &&
+                        <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
                                onClick={this.props.activateMagicWand}/>
-                    <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
+                    }
+                    {this.props.dotsMachine.machineState.resetVisible === true &&
+                        <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
                                  onClick={this.props.resetMachine}/>
+                    }
                 </TopMenuItem>
                 <ActivityDescriptor>
                     <Text mode={this.props.dotsMachine.machineState.operator_mode} />
@@ -182,7 +185,7 @@ class DotsMachine extends Component {
                             rezoneDot={this.rezoneDot.bind(this)}
                             addMultipleDots={this.addMultipleDots.bind(this)}
                             removeMultipleDots={this.removeMultipleDots.bind(this)}
-                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch}
+                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitchVisible}
                             maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
 
             </div>

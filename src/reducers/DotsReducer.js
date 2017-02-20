@@ -31,34 +31,24 @@ function setInitialState(){
     const initialState = {
         base: BASE.ALL_BASE[0],
         operator_mode: OPERATOR_MODE.DISPLAY,
-        usage_mode: USAGE_MODE.FREEPLAY,
-        magicWandIsActive: false,
-        baseSelectorDisplay: true,
-        placeValueSwitch: true,
+        usage_mode: USAGE_MODE.OPERATION,
+        magicWandIsActive: true,
+        baseSelectorVisible: true,
+        placeValueSwitchVisible: true,
         magicWandVisible: true,
         resetVisible: true,
-        loginVisible: true,
         zones: 5,
         maxViewableDots: 150,
         operandA: '',
         operandB: ''
     };
-    //let dots = [];
     let positivePowerZoneDots = [];
     let negativePowerZoneDots = [];
     for (let i = 0; i < initialState.zones; i++) {
         positivePowerZoneDots.push([]);
         negativePowerZoneDots.push([]);
     }
-    /*dots.forEach((dot) => {
-        if (dot.isPositive) {
-            positivePowerZoneDots[dot.powerZone].push(dot);
-        } else {
-            negativePowerZoneDots[dot.powerZone].push(dot);
-        }
-    });*/
     return {
-        //dots: dots,
         positivePowerZoneDots: positivePowerZoneDots,
         negativePowerZoneDots: negativePowerZoneDots,
         machineState: initialState
@@ -186,7 +176,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
             stateCopy = {...state};
-            stateCopy.machineState.placeValueSwitch = !stateCopy.machineState.placeValueSwitch;
+            stateCopy.machineState.placeValueSwitchVisible = !stateCopy.machineState.placeValueSwitchVisible;
             return stateCopy;
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};
@@ -202,7 +192,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
             stateCopy = {...state};
-            let index = _array.findIndex(BASE.ALL_BASE, state.machineState.base);
+            let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);
             if (index < BASE.ALL_BASE.length - 1) {
                 ++index;
             } else {
