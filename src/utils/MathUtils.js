@@ -31,6 +31,23 @@ export const convertBase = (value, from_base, to_base) => {
     return new_value || '0';
 };
 
+export const findQuadrant = (point, rect) =>{
+    let midHeight = rect.height >> 1;
+    let midWidth = rect.width >> 1;
+
+    if(point.x <= midWidth && point.y <= midHeight){
+        return 0;
+    }else if(point.x > midWidth && point.y <= midHeight){
+        return 1;
+    }else if(point.x > midWidth && point.y > midHeight){
+        return 2;
+    }else if(point.x <= midWidth && point.y > midHeight){
+        return 3;
+    }
+    return -1;
+
+};
+
 export const isIntersecting = (r1, r2) => {
 
     return !(r2.x > (r1.x + r1.width) ||
