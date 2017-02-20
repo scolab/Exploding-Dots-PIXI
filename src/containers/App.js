@@ -29,20 +29,20 @@ class ExplodingDots extends Component {
         operandB: PropTypes.string,
     };
 
-    static getDefaultProps = {
-             base: BASE.ALL_BASE[0],
-             operator_mode: OPERATOR_MODE.DISPLAY,
-             usage_mode: USAGE_MODE.FREEPLAY,
-             magicWandIsActive: false,
-             baseSelectorDisplay: true,
-             placeValueSwitch: false,
-             magicWandVisible: true,
-             resetVisible: true,
-             loginVisible: true,
-             zones: 5,
-             maxViewableDots: 150,
-             operandA: '',
-             operandB: ''
+    static defaultProps = {
+        base: BASE.ALL_BASE[0],
+        operator_mode: OPERATOR_MODE.DISPLAY,
+        usage_mode: USAGE_MODE.FREEPLAY,
+        magicWandIsActive: false,
+        baseSelectorDisplay: true,
+        placeValueSwitch: false,
+        magicWandVisible: true,
+        resetVisible: true,
+        loginVisible: true,
+        zones: 5,
+        maxViewableDots: 150,
+        operandA: '',
+        operandB: ''
     };
 
     constructor(props) {
