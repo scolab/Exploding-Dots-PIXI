@@ -34,7 +34,7 @@ function setInitialState(){
         usage_mode: USAGE_MODE.FREEPLAY,
         magicWandIsActive: false,
         baseSelectorDisplay: true,
-        placeValueSwitch: true,
+        placeValueSwitch: false,
         magicWandVisible: true,
         resetVisible: true,
         loginVisible: true,
@@ -46,17 +46,10 @@ function setInitialState(){
     //let dots = [];
     let positivePowerZoneDots = [];
     let negativePowerZoneDots = [];
-    for (let i = 0; i < initialState.zones; i++) {
+    /*for (let i = 0; i < initialState.zones; i++) {
         positivePowerZoneDots.push([]);
         negativePowerZoneDots.push([]);
-    }
-    /*dots.forEach((dot) => {
-        if (dot.isPositive) {
-            positivePowerZoneDots[dot.powerZone].push(dot);
-        } else {
-            negativePowerZoneDots[dot.powerZone].push(dot);
-        }
-    });*/
+    }*/
     return {
         //dots: dots,
         positivePowerZoneDots: positivePowerZoneDots,
