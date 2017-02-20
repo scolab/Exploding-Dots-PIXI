@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, login} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -12,6 +12,7 @@ import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
+import GoButton from '../../components/GoButton';
 import Login from '../../components/Login';
 import {OPERATOR_MODE, OPERAND_POS} from '../../Constants';
 
@@ -34,7 +35,7 @@ const mapDispatchToProps = (dispatch) =>{
         activateMagicWand: activateMagicWand,
         stabilize: stabilize,
         operandChanged: operandChanged,
-        login: login
+        startActivity: startActivity
     }, dispatch);
 };
 
@@ -167,7 +168,7 @@ class DotsMachine extends Component {
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              onChange={this.operandChange.bind(this)}
                              pos={OPERAND_POS.RIGHT}/>
-                    {/*<button>GO</button>*/}
+                    <GoButton onClick={this.props.startActivity}>GO</GoButton>
                 </ActivityDescriptor>
                 <CanvasPIXI
                             id="0"

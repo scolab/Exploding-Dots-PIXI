@@ -62,6 +62,9 @@ const dotsReducer = (state = null, action) => {
 
     var stateCopy;
     switch (action.type) {
+        case ACTIONS.START_ACTIVITY:
+            stateCopy = {...state};
+            return stateCopy;
         case ACTIONS.ADD_DOT:
             //console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
