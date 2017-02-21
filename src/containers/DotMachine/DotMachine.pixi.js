@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, login} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -12,7 +12,7 @@ import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
-import Login from '../../components/Login';
+import GoButton from '../../components/GoButton';
 import {OPERATOR_MODE, OPERAND_POS} from '../../Constants';
 
 const mapStateToProps = (store) => {
@@ -34,7 +34,7 @@ const mapDispatchToProps = (dispatch) =>{
         activateMagicWand: activateMagicWand,
         stabilize: stabilize,
         operandChanged: operandChanged,
-        login: login
+        startActivity: startActivity
     }, dispatch);
 };
 
@@ -73,14 +73,13 @@ class DotsMachine extends Component {
                 isPositive: PropTypes.bool.isRequired,
             }))).isRequired,
             machineState: PropTypes.shape({
-                placeValueSwitch: PropTypes.bool.isRequired,
-                baseSelectorDisplay: PropTypes.bool.isRequired,
+                placeValueSwitchVisible: PropTypes.bool.isRequired,
+                baseSelectorVisible: PropTypes.bool.isRequired,
                 magicWandVisible: PropTypes.bool.isRequired,
                 magicWandIsActive: PropTypes.bool.isRequired,
                 resetVisible: PropTypes.bool.isRequired,
                 loginVisible: PropTypes.bool.isRequired,
                 base: PropTypes.array.isRequired,
-                dots: PropTypes.array,
                 maxViewableDots: PropTypes.number.isRequired,
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired
@@ -139,17 +138,22 @@ class DotsMachine extends Component {
         return (
             <div>
                 <TopMenuItem>
-                    <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitch}
+                    {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
+                        <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitchVisible}
                                       onClick={this.props.showHidePlaceValue}/>
-                    <Login visible={this.props.dotsMachine.machineState.loginVisible}
-                           onClick={this.props.login}/>
-                    <BaseSelector visible={this.props.dotsMachine.machineState.baseSelectorDisplay}
-                                  base={this.props.dotsMachine.machineState.base}
+                    }
+                    {this.props.dotsMachine.machineState.baseSelectorVisible === true &&
+                        <BaseSelector base={this.props.dotsMachine.machineState.base}
                                   onClick={this.props.changeBase}/>
-                    <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
+                    }
+                    {this.props.dotsMachine.machineState.magicWandVisible === true &&
+                        <MagicWand visible={this.props.dotsMachine.machineState.magicWandVisible}
                                onClick={this.props.activateMagicWand}/>
-                    <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
-                                 onClick={() => this.props.resetMachine()}/>
+                    }
+                    {this.props.dotsMachine.machineState.resetVisible === true &&
+                        <ResetButton visible={this.props.dotsMachine.machineState.resetVisible}
+                                     onClick={() => this.props.resetMachine()}/>
+                    }
                 </TopMenuItem>
                 <ActivityDescriptor>
                     <Text mode={this.props.dotsMachine.machineState.operator_mode} />
@@ -164,7 +168,7 @@ class DotsMachine extends Component {
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              onChange={this.operandChange.bind(this)}
                              pos={OPERAND_POS.RIGHT}/>
-                    {/*<button>GO</button>*/}
+                    <GoButton onClick={this.props.startActivity}>GO</GoButton>
                 </ActivityDescriptor>
                 <CanvasPIXI
                             id="0"
@@ -182,7 +186,7 @@ class DotsMachine extends Component {
                             rezoneDot={this.rezoneDot.bind(this)}
                             addMultipleDots={this.addMultipleDots.bind(this)}
                             removeMultipleDots={this.removeMultipleDots.bind(this)}
-                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitch}
+                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitchVisible}
                             maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
 
             </div>

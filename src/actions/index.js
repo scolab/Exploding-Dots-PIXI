@@ -66,6 +66,6 @@ export const operandChanged = (parentId, operandPos, value) => ({
         value
 });
 
-export const login = () => {
-    type: ACTIONS.LOGIN
+export const startActivity = () => {
+    type: ACTIONS.START_ACTIVITY
 };

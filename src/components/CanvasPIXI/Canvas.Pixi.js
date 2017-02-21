@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {isPointInRectangle, randomFromTo, convertBase} from '../../utils/MathUtils'
+import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
 import {Point} from 'pixi.js';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO} from '../../Constants'
@@ -292,7 +292,7 @@ class CanvasPIXI extends Component {
             dotsContainer.hitArea = new PIXI.Rectangle(0, 0, this.boxWidth, this.boxHeight);
             dotsContainer.powerZone = this.props.numZone - position - 1;
             dotsContainer.isPositive = true;
-            if(this.props.usage_mode === USAGE_MODE.FREEPLAY) {
+            if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                 dotsContainer.buttonMode = true;
                 dotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -347,21 +347,6 @@ class CanvasPIXI extends Component {
                     this.state.positiveValueText[i].text = zoneDotCount;
                 }else{
                     this.state.positiveValueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
-                    /*if(zoneDotCount > (this.props.base[1] - 1)){
-
-                    }else{
-                        console.log(zoneDotCount);
-                        switch (zoneDotCount){
-                            case 10:
-                                this.state.positiveValueText[i].text = 'A';
-                                break;
-                            case 11:
-                                this.state.positiveValueText[i].text = 'B';
-                                break;
-                            default:
-                                this.state.positiveValueText[i].text = zoneDotCount;
-                        }
-                    }*/
                 }
             }else{
                 for(let j = i; j < this.props.numZone; ++j){
@@ -389,20 +374,6 @@ class CanvasPIXI extends Component {
                     this.state.negativeValueText[i].text = zoneDotCount;
                 }else{
                     this.state.negativeValueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
-                    /*if(zoneDotCount > (this.props.base[1] - 1)){
-                        //return zoneDotCount;
-                    }else{
-                        switch (zoneDotCount){
-                            case 10:
-                                this.state.negativeValueText[i].text = 'A';
-                                break;
-                            case 11:
-                                this.state.negativeValueText[i].text = 'B';
-                                break;
-                            default:
-                                this.state.negativeValueText[i].text = zoneDotCount;
-                        }
-                    }*/
                 }
             }else if(this.state.negativePresent){
                 for(let j = i; j < this.props.numZone; ++j){
@@ -421,21 +392,14 @@ class CanvasPIXI extends Component {
                 }
             }
         }
-
+        var filter = new PIXI.filters.ColorMatrixFilter();
         /*var colorMatrix =  [
             1,0,0,-0.3,
             0,1,0,-0.3,
             0,0,1,-0.3,
             0,0,0,1
-        ];*/
-        var colorMatrix =  [
-            1,0,0,0,
-            0,1,0,0,
-            0,0,1,0,
-            0,0,0,1
         ];
-        var filter = new PIXI.filters.ColorMatrixFilter();
-        //filter.matrix = colorMatrix;
+        filter.matrix = colorMatrix;*/
         filter.greyscale(0.3, true);
         for(let i = 0; i < this.props.numZone; ++i) {
             if(positiveZoneAreEmpty[i] === true && (this.state.negativePresent === false || negativeZoneAreEmpty[i] === true)){
@@ -572,7 +536,6 @@ class CanvasPIXI extends Component {
         //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
         if(droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
             // has not been dropped outside a zone
-            //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, originalZoneIndex);
             if (droppedOnPowerZoneIndex !== originalZoneIndex) {
                 // impossible to move between powerZone AND signed zone
                 // impossible to move between powerZone in base X
@@ -615,8 +578,7 @@ class CanvasPIXI extends Component {
 
                     //Add the new dots
                     let dotsPos = [];
-                    let newNbOfDots = 0;
-                    newNbOfDots = Math.pow(this.props.base[1], diffZone);
+                    let newNbOfDots = Math.pow(this.props.base[1], diffZone);
                     newNbOfDots -= this.props.base[0];
                     console.log('newNbOfDots', newNbOfDots, diffZone);
                      for (let i = 0; i < newNbOfDots; i++) {
@@ -688,10 +650,8 @@ class CanvasPIXI extends Component {
         } else {
             var zone = this.state.negativePowerZone[originalZoneIndex];
         }
-
-
-            //  For 2 > 3 base.
-          if(this.props.base[0] > 1){
+        //  For 2 > 3 base.
+        if(this.props.base[0] > 1){
             dotsToRemove -= (this.props.base[0] - 1);
             let dotsToRezone = this.props.base[0] - 1;
             for(let i=0; i < dotsToRezone; i++) {
@@ -699,18 +659,35 @@ class CanvasPIXI extends Component {
                 dotSprite.origin = new Point();
                 dotSprite.origin.copy(dotSprite.position);
                 var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
-                let adjascentPosition = positionToBeMovedTo.clone();
-                adjascentPosition.x += POSITION_INFO.DOT_RAYON * 2;
-                adjascentPosition.y += POSITION_INFO.DOT_RAYON * 2;
-                var finalPosition = this.state.movingDotsContainer.toLocal(adjascentPosition, droppedOnPowerZone);
+                let adjacentPosition = positionToBeMovedTo.clone();
+                let quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea);
+                switch(quadrant){
+                    case 0:
+                        adjacentPosition.x += POSITION_INFO.DOT_RAYON * 2;
+                        adjacentPosition.y += POSITION_INFO.DOT_RAYON * 2;
+                        break;
+                    case 1:
+                        adjacentPosition.x -= POSITION_INFO.DOT_RAYON * 2;
+                        adjacentPosition.y += POSITION_INFO.DOT_RAYON * 2;
+                        break;
+                    case 2:
+                        adjacentPosition.x -= POSITION_INFO.DOT_RAYON * 2;
+                        adjacentPosition.y -= POSITION_INFO.DOT_RAYON * 2;
+                        break;
+                    case 3:
+                        adjacentPosition.x += POSITION_INFO.DOT_RAYON * 2;
+                        adjacentPosition.y -= POSITION_INFO.DOT_RAYON * 2;
+                        break;
+                }
+                var finalPosition = this.state.movingDotsContainer.toLocal(adjacentPosition, droppedOnPowerZone);
                 this.state.movingDotsContainer.addChild(dotSprite);
                 dotSprite.position.x = newPosition.x;
                 dotSprite.position.y = newPosition.y;
-                 TweenMax.to(dotSprite, 0.5, {
+                TweenMax.to(dotSprite, 0.5, {
                     x: finalPosition.x,
                     y: finalPosition.y,
                     onComplete: this.addDraggedToNewZone.bind(this),
-                    onCompleteParams: [dotSprite, droppedOnPowerZone, adjascentPosition]
+                    onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition]
                 });
             }
         }
@@ -827,14 +804,6 @@ class CanvasPIXI extends Component {
                             break;
                         }
                     }
-
-                    /*let k = this.props.dots.length;
-                    while(k--){
-                        if(this.props.dots[k].powerZone===i && this.props.dots[k].id === this.state.localPositiveDotsPerZone[i][j].id === true){
-                            isPresent = true;
-                            break;
-                        }
-                    }*/
                     if(isPresent === false) {
                         this.removeCircleFromZone(this.state.localPositiveDotsPerZone[i][j]);
                         this.state.localPositiveDotsPerZone[i].splice(this.state.localPositiveDotsPerZone[i].indexOf(this.state.localPositiveDotsPerZone[i][j]), 1);

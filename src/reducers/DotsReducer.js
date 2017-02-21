@@ -36,7 +36,6 @@ function setInitialState() {
         negativePowerZoneDots.push([]);
     }
     return {
-        //dots: dots,
         positivePowerZoneDots: positivePowerZoneDots,
         negativePowerZoneDots: negativePowerZoneDots,
         machineState: initialMachineState
@@ -50,6 +49,9 @@ const dotsReducer = (state = null, action) => {
 
     var stateCopy;
     switch (action.type) {
+        case ACTIONS.START_ACTIVITY:
+            stateCopy = {...state};
+            return stateCopy;
         case ACTIONS.ADD_DOT:
             //console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
@@ -164,7 +166,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
             stateCopy = {...state};
-            stateCopy.machineState.placeValueSwitch = !stateCopy.machineState.placeValueSwitch;
+            stateCopy.machineState.placeValueSwitchVisible = !stateCopy.machineState.placeValueSwitchVisible;
             return stateCopy;
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};
@@ -180,7 +182,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
             stateCopy = {...state};
-            let index = _array.findIndex(BASE.ALL_BASE, state.machineState.base);
+            let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);
             if (index < BASE.ALL_BASE.length - 1) {
                 ++index;
             } else {
