@@ -222,29 +222,30 @@ class CanvasPIXI extends Component {
         bgBox.y = boxYPos;
         container.addChild(bgBox);
 
-        if (this.props.placeValueOn){
-            if(this.props.base[1] === 'x'){
-                var placeValueText = new PIXI.Text('X' + (this.state.numOfZone), {
-                    fontFamily: 'museo-slab',
-                    fontSize: 40,
-                    fill: 0xBCBCBC,
-                    align: 'center'
-                });
-            }else {
-                var placeValueText = new PIXI.Text(String(Math.pow(this.props.base[1], this.state.numOfZone)), {
-                    fontFamily: 'museo-slab',
-                    fontSize: 40,
-                    fill: 0xBCBCBC,
-                    align: 'center'
-                });
-            }
-            placeValueText.anchor.x = 0.5;
-            placeValueText.x = (position * (this.boxWidth + gutterWidth)) + (this.boxWidth / 2);
-            placeValueText.y = boxYPos + (this.boxHeight / 2) - 30;
-            container.addChild(placeValueText);
-            this.state.placeValueText.push(placeValueText);
-
+        if (this.props.base[1] === 'x') {
+            var placeValueText = new PIXI.Text('X' + (this.state.numOfZone), {
+                fontFamily: 'museo-slab',
+                fontSize: 40,
+                fill: 0xBCBCBC,
+                align: 'center'
+            });
+        } else {
+            var placeValueText = new PIXI.Text(String(Math.pow(this.props.base[1], this.state.numOfZone)), {
+                fontFamily: 'museo-slab',
+                fontSize: 40,
+                fill: 0xBCBCBC,
+                align: 'center'
+            });
         }
+        placeValueText.anchor.x = 0.5;
+        placeValueText.x = (position * (this.boxWidth + gutterWidth)) + (this.boxWidth / 2);
+        placeValueText.y = boxYPos + (this.boxHeight / 2) - 30;
+        container.addChild(placeValueText);
+        this.state.placeValueText.push(placeValueText);
+
+        this.state.placeValueText.forEach((text) => {
+            text.alpha = this.props.placeValueOn ? 1 : 0;
+        });
 
         if (this.state.negativePresent) {
             let separator = new PIXI.Sprite(textures['separator.png']);
@@ -292,7 +293,7 @@ class CanvasPIXI extends Component {
             dotsContainer.hitArea = new PIXI.Rectangle(0, 0, this.boxWidth, this.boxHeight);
             dotsContainer.powerZone = this.props.numZone - position - 1;
             dotsContainer.isPositive = true;
-            if(this.props.usage_mode === USAGE_MODE.OPERATION) {
+            if(this.props.usage_mode === USAGE_MODE.FREEPLAY) {
                 dotsContainer.buttonMode = true;
                 dotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -773,6 +774,7 @@ class CanvasPIXI extends Component {
     }
 
     checkMachineStateValue(){
+        //console.log('checkMachineStateValue', this.props.placeValueOn);
         this.state.placeValueText.forEach((text) =>{
             text.alpha = this.props.placeValueOn ? 1 : 0;
         });

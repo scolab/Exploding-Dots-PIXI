@@ -166,7 +166,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
             stateCopy = {...state};
-            stateCopy.machineState.placeValueSwitchVisible = !stateCopy.machineState.placeValueSwitchVisible;
+            stateCopy.machineState.placeValueOn = !stateCopy.machineState.placeValueOn;
             return stateCopy;
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};

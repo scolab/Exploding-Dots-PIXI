@@ -13,7 +13,7 @@ import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
 import GoButton from '../../components/GoButton';
-import {OPERATOR_MODE, OPERAND_POS} from '../../Constants';
+import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS} from '../../Constants';
 
 const mapStateToProps = (store) => {
     return {
@@ -82,7 +82,8 @@ class DotsMachine extends Component {
                 base: PropTypes.array.isRequired,
                 maxViewableDots: PropTypes.number.isRequired,
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
-                zones: PropTypes.number.isRequired
+                zones: PropTypes.number.isRequired,
+                placeValueOn: PropTypes.bool.isRequired,
             })
         })
     };
@@ -168,7 +169,10 @@ class DotsMachine extends Component {
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              onChange={this.operandChange.bind(this)}
                              pos={OPERAND_POS.RIGHT}/>
-                    <GoButton onClick={this.props.startActivity}>GO</GoButton>
+                    {this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
+                     this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
+                        <GoButton onClick={this.props.startActivity}>GO</GoButton>
+                    }
                 </ActivityDescriptor>
                 <CanvasPIXI
                             id="0"
@@ -186,7 +190,7 @@ class DotsMachine extends Component {
                             rezoneDot={this.rezoneDot.bind(this)}
                             addMultipleDots={this.addMultipleDots.bind(this)}
                             removeMultipleDots={this.removeMultipleDots.bind(this)}
-                            placeValueOn={this.props.dotsMachine.machineState.placeValueSwitchVisible}
+                            placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
                             maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
 
             </div>

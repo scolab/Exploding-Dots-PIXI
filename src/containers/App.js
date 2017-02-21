@@ -19,8 +19,8 @@ class ExplodingDots extends Component {
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]), //.isRequired,
         magicWandIsActive: PropTypes.bool, //.isRequired,
-        baseSelectorDisplay: PropTypes.bool, //.isRequired,
-        placeValueSwitch: PropTypes.bool, //.isRequired,
+        baseSelectorVisible: PropTypes.bool, //.isRequired,
+        placeValueSwitchVisible: PropTypes.bool, //.isRequired,
         magicWandVisible: PropTypes.bool, //.isRequired,
         resetVisible: PropTypes.bool, //.isRequired,
         loginVisible: PropTypes.bool, //.isRequired,
@@ -28,6 +28,7 @@ class ExplodingDots extends Component {
         maxViewableDots: PropTypes.number, //.isRequired,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
+        placeValueOn: PropTypes.bool //.isRequired
     };
 
     static defaultProps = {
@@ -35,15 +36,16 @@ class ExplodingDots extends Component {
         operator_mode: OPERATOR_MODE.DISPLAY,
         usage_mode: USAGE_MODE.FREEPLAY,
         magicWandIsActive: true,
-        baseSelectorDisplay: true,
-        placeValueSwitch: true,
+        baseSelectorVisible: true,
+        placeValueSwitchVisible: true,
         magicWandVisible: true,
         resetVisible: true,
         loginVisible: true,
         zones: 5,
         maxViewableDots: 150,
         operandA: '',
-        operandB: ''
+        operandB: '',
+        placeValueOn: true,
     };
 
     constructor(props) {

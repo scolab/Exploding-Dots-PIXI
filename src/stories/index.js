@@ -6,7 +6,7 @@ import {BASE} from '../Constants'
 storiesOf('Button', module)
     .add('Mecha Freeplay', () => (
         <ExplodingDots base={BASE.ALL_BASE[0]}
-            magicWandIsActive={false}
+            magicWandVisible={true}
         />
     ))
     .add('Mecha Operation', () => (
