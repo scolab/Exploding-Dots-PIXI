@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, activityStarted} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -34,7 +34,8 @@ const mapDispatchToProps = (dispatch) =>{
         activateMagicWand: activateMagicWand,
         stabilize: stabilize,
         operandChanged: operandChanged,
-        startActivity: startActivity
+        startActivity: startActivity,
+        activityStarted: activityStarted
     }, dispatch);
 };
 
@@ -84,12 +85,16 @@ class DotsMachine extends Component {
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired,
                 placeValueOn: PropTypes.bool.isRequired,
+                startActivity: PropTypes.bool.isRequired,
+                activityStarted: PropTypes.bool.isRequired,
+                operandA: PropTypes.string.isRequired,
+                operandB: PropTypes.string.isRequired,
             })
         })
     };
 
     constructor(props) {
-        //console.log('DotsMachine constructor props', props);
+        console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -125,13 +130,10 @@ class DotsMachine extends Component {
         this.props.addMultipleDots(id, zone, positions, isPositive);
     }
 
-    changeBase(){
-
-    }
-
     operandChange(e, pos){
-        if(e.target.value)
-        this.props.operandChanged(this.id, pos, e.target.value);
+        if(e.target.value) {
+            this.props.operandChanged(this.id, pos, e.target.value);
+        }
     }
 
     render() {
@@ -162,16 +164,20 @@ class DotsMachine extends Component {
                              onChange={this.operandChange.bind(this)}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
-                             pos={OPERAND_POS.LEFT}/>
+                             pos={OPERAND_POS.LEFT}
+                             activityStarted={this.props.dotsMachine.machineState.activityStarted}
+                    />
                     <Operator operator_mode={this.props.dotsMachine.machineState.operator_mode}/>
                     <Operand value={this.props.dotsMachine.machineState.operandB}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              onChange={this.operandChange.bind(this)}
-                             pos={OPERAND_POS.RIGHT}/>
+                             pos={OPERAND_POS.RIGHT}
+                             activityStarted={this.props.dotsMachine.machineState.activityStarted}
+                    />
                     {this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
                      this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
-                        <GoButton onClick={this.props.startActivity}>GO</GoButton>
+                        <GoButton onClick={this.props.startActivity} activityStarted={this.props.dotsMachine.machineState.activityStarted}>GO</GoButton>
                     }
                 </ActivityDescriptor>
                 <CanvasPIXI
@@ -191,7 +197,11 @@ class DotsMachine extends Component {
                             addMultipleDots={this.addMultipleDots.bind(this)}
                             removeMultipleDots={this.removeMultipleDots.bind(this)}
                             placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
-                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
+                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
+                            startActivity={this.props.dotsMachine.machineState.startActivity}
+                            activityStarted={this.props.activityStarted}
+                            operandA={this.props.dotsMachine.machineState.operandA}
+                />
 
             </div>
         );

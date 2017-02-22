@@ -17,6 +17,7 @@ class CanvasPIXI extends Component {
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
+        activityStarted: PropTypes.func.isRequired,
         positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.shape({
             x: PropTypes.number.isRequired,
             y: PropTypes.number.isRequired,
@@ -38,6 +39,8 @@ class CanvasPIXI extends Component {
         numZone: PropTypes.number.isRequired,
         maxViewableDots: PropTypes.number.isRequired,
         magicWandIsActive: PropTypes.bool.isRequired,
+        startActivity: PropTypes.bool.isRequired,
+        operandA: PropTypes.string.isRequired,
     };
 
     constructor(props){
@@ -582,17 +585,17 @@ class CanvasPIXI extends Component {
                     let newNbOfDots = Math.pow(this.props.base[1], diffZone);
                     newNbOfDots -= this.props.base[0];
                     console.log('newNbOfDots', newNbOfDots, diffZone);
-                     for (let i = 0; i < newNbOfDots; i++) {
-                         dotsPos.push({
-                             x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
-                             y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
-                         })
-                     }
-                     if (droppedOnPowerZone) {
+                    for (let i = 0; i < newNbOfDots; i++) {
+                        dotsPos.push({
+                            x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
+                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                        })
+                    }
+                    if (droppedOnPowerZone) {
                         this.props.addMultipleDots(this.state.id, droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive);
-                     }
+                    }
 
-                }else{
+                } else {
                     if (dotSprite.dot.isPositive) {
                         this.backIntoPlace(dotSprite, this.state.positivePowerZone[originalZoneIndex]);
                     } else {
@@ -790,6 +793,18 @@ class CanvasPIXI extends Component {
                 }
             }
             this.props.activateMagicWand(false);
+        }
+        if(this.props.startActivity){
+            //console.log('this.props.operandA', this.props.operandA);
+            let dotsPos = [];
+            for (let i = 0; i < Number(this.props.operandA); i++) {
+                dotsPos.push({
+                    x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
+                    y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                })
+            }
+            this.props.activityStarted(this.state.id, 0, dotsPos, true);
+            //this.props.addMultipleDots(this.state.id, 0, dotsPos, true);
         }
     }
 

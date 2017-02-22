@@ -28,7 +28,9 @@ class ExplodingDots extends Component {
         maxViewableDots: PropTypes.number, //.isRequired,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
-        placeValueOn: PropTypes.bool //.isRequired
+        placeValueOn: PropTypes.bool, //.isRequired
+        startActivity: PropTypes.bool,
+        activityStarted: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -46,6 +48,8 @@ class ExplodingDots extends Component {
         operandA: '',
         operandB: '',
         placeValueOn: true,
+        startActivity: false,
+        activityStarted: false,
     };
 
     constructor(props) {

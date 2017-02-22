@@ -10,6 +10,7 @@ export default class Operand extends Component {
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION]),
         onChange: PropTypes.func.isRequired,
         pos: PropTypes.string.isRequired,
+        activityStarted: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -33,11 +34,16 @@ export default class Operand extends Component {
     }
 
     render() {
-        if (this.props.pos === OPERAND_POS.LEFT && this.props.usage_mode === USAGE_MODE.FREEPLAY) {
+        //console.log(this.props.pos, this.props.value, '--');
+        if (this.props.pos === OPERAND_POS.LEFT &&
+            this.props.usage_mode === USAGE_MODE.FREEPLAY ||
+            this.props.activityStarted === true && this.props.pos === OPERAND_POS.LEFT
+        ) {
             return (
                 <div className="operationItem">
                     <form>
                         <input
+                            disabled
                             style={{
                                 backgroundImage: `url(${img})`,
                                 backgroundRepeat: `no-repeat`,
@@ -58,7 +64,9 @@ export default class Operand extends Component {
                     </form>
                 </div>
             );
-        } else if (this.props.pos === OPERAND_POS.LEFT && this.props.usage_mode === USAGE_MODE.OPERATION) {
+        } else if (this.props.pos === OPERAND_POS.LEFT &&
+                   this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
+                   this.props.usage_mode === USAGE_MODE.OPERATION) {
             {
                 return (
                     <div className="operationItem">
@@ -77,7 +85,7 @@ export default class Operand extends Component {
                                     textAlign: 'center'
                                 }}
                                 type="text"
-                                //onChange={this.onChange.bind(this)}
+                                onChange={this.onChange.bind(this)}
                                 value={this.props.value}
                                 ref={(inputText) => {
                                     this.inputText = inputText;

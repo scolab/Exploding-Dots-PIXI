@@ -14,7 +14,7 @@ export default class PlaceValueSwitch extends Component {
 
     render(){
         return (
-            <div className="topRightMenuItem" style={{marginRight:33}}>
+            <div className="topRightMenuItem">
                 <button className="imageButton"
                     style={{backgroundImage:`url(${img})`,
                         width:46,

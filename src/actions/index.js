@@ -66,6 +66,15 @@ export const operandChanged = (parentId, operandPos, value) => ({
         value
 });
 
-export const startActivity = () => {
+export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
-};
+});
+
+export const activityStarted = (parentId, zoneId, dotsPos, isPositive) => ({
+    type: ACTIONS.ACTIVITY_STARTED,
+        parentId,
+        zoneId,
+        dotsPos,
+        isPositive
+
+});

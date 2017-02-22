@@ -1,6 +1,6 @@
 import {makeUID} from '../utils/MathUtils'
 import {ACTIONS} from '../actions/StoreConstants'
-import {BASE} from '../Constants'
+import {BASE, OPERAND_POS} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
 
@@ -14,7 +14,7 @@ function setDotsCount(state){
         dotsCount += dot.length * Math.pow(state.machineState.base[1], col);
         col++;
     }
-    return dotsCount;
+    return dotsCount.toString();
 
     /*// negative
      dotsCount = 0;
@@ -51,6 +51,26 @@ const dotsReducer = (state = null, action) => {
     switch (action.type) {
         case ACTIONS.START_ACTIVITY:
             stateCopy = {...state};
+            stateCopy.machineState.startActivity = true;
+            return stateCopy;
+        case ACTIONS.ACTIVITY_STARTED:
+            stateCopy = {...state};
+            stateCopy.machineState.startActivity = false;
+            stateCopy.machineState.activityStarted = true;
+            action.dotsPos.forEach((newDot) => {
+                let dot = {
+                    x: newDot.x,
+                    y: newDot.y,
+                    powerZone: action.zoneId,
+                    id: makeUID(),
+                    isPositive: action.isPositive
+                };
+                if(dot.isPositive) {
+                    stateCopy.positivePowerZoneDots[action.zoneId].push(dot);
+                }else {
+                    stateCopy.negativePowerZoneDots[action.zoneId].push(dot);
+                }
+            });
             return stateCopy;
         case ACTIONS.ADD_DOT:
             //console.log('ADD_DOT', action.zoneId, action.isPositive);
@@ -108,7 +128,7 @@ const dotsReducer = (state = null, action) => {
                     stateCopy.negativePowerZoneDots[action.zoneId].push(dot);
                 }
             });
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
             return stateCopy;
 
         case ACTIONS.REMOVE_MULTIPLE_DOTS:
@@ -170,9 +190,9 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};
-            if (action.operandPos == "A") {
+            if (action.operandPos == OPERAND_POS.LEFT) {
                 stateCopy.machineState.operandA = action.value;
-            } else if (action.operandPos == "B") {
+            } else if (action.operandPos == OPERAND_POS.RIGHT) {
                 stateCopy.machineState.operandB = action.value;
             }
             return stateCopy;
