@@ -35,6 +35,7 @@ class CanvasPIXI extends Component {
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION]),
         placeValueOn: PropTypes.bool.isRequired,
+        cdnBaseUrl: PropTypes.string.isRequired,
         numZone: PropTypes.number.isRequired,
         maxViewableDots: PropTypes.number.isRequired,
         magicWandIsActive: PropTypes.bool.isRequired,
@@ -76,15 +77,15 @@ class CanvasPIXI extends Component {
         // to accomodate for pixel padding in TexturePacker
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
-        let loader = new PIXI.loaders.Loader();
+        let loader = new PIXI.loaders.Loader(props.cdnBaseUrl);
         if (window.devicePixelRatio >= 4) {
-            loader.add("machineAssets", "./images/machine@4x.json");
+            loader.add("machineAssets", "/images/machine@4x.json");
         } else if (window.devicePixelRatio >= 3) {
-            loader.add("machineAssets", "./images/machine@3x.json");
+            loader.add("machineAssets", "/images/machine@3x.json");
         } else if (window.devicePixelRatio >= 2) {
-            loader.add("machineAssets", "./images/machine@2x.json");
+            loader.add("machineAssets", "/images/machine@2x.json");
         } else {
-            loader.add("machineAssets", "./images/machine@1x.json");
+            loader.add("machineAssets", "/images/machine@1x.json");
         }
         loader.once('complete', this.onAssetsLoaded.bind(this));
         loader.once('error', this.onAssetsError.bind(this));
