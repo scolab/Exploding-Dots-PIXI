@@ -35,6 +35,7 @@ class ExplodingDots extends Component {
 
     static defaultProps = {
         base: BASE.ALL_BASE[0],
+        allBases: BASE.ALL_BASE,
         operator_mode: OPERATOR_MODE.DISPLAY,
         usage_mode: USAGE_MODE.FREEPLAY,
         magicWandIsActive: true,
@@ -54,7 +55,6 @@ class ExplodingDots extends Component {
 
     constructor(props) {
         super(props);
-
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
         store.dispatch({

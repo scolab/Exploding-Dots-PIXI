@@ -1,40 +1,38 @@
 import {ACTIONS} from './StoreConstants';
 
-export const addDot = (parentId, zoneId, position, isPositive) => ({
+export const addDot = (zoneId, position, isPositive) => ({
     type: ACTIONS.ADD_DOT,
-    parentId,
     zoneId,
     position,
     isPositive
 });
 
-export const removeDot = (parentId, zoneId, dotId) => ({
+export const removeDot = (zoneId, dotId) => ({
     type: ACTIONS.REMOVE_DOT,
-    parentId,
     zoneId,
     dotId
 });
 
-export const addMultipleDots = (parentId, zoneId, dotsPos, isPositive) => ({
+export const addMultipleDots = (zoneId, dotsPos, isPositive, updateValue) => ({
     type: ACTIONS.ADD_MULTIPLE_DOTS,
-    parentId,
     zoneId,
     dotsPos,
-    isPositive
+    isPositive,
+    updateValue
 });
 
-export const removeMultipleDots = (parentId, zoneId, dots) => ({
+export const removeMultipleDots = (zoneId, dots, updateValue) => ({
     type: ACTIONS.REMOVE_MULTIPLE_DOTS,
-    parentId,
     zoneId,
-    dots
+    dots,
+    updateValue
 });
 
-export const rezoneDot = (parentId, zoneId, dot) => ({
+export const rezoneDot = (zoneId, dot, updateValue) => ({
     type: ACTIONS.REZONE_DOT,
-        parentId,
-        zoneId,
-        dot
+    zoneId,
+    dot,
+    updateValue
 });
 
 export const changeBase = () =>({
@@ -59,9 +57,8 @@ export const stabilize = () => ({
     type: ACTIONS.STABILIZE
 });
 
-export const operandChanged = (parentId, operandPos, value) => ({
+export const operandChanged = (operandPos, value) => ({
     type: ACTIONS.OPERAND_CHANGED,
-        parentId,
         operandPos,
         value
 });
@@ -70,9 +67,8 @@ export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
 });
 
-export const activityStarted = (parentId, zoneId, dotsPos, isPositive) => ({
+export const activityStarted = (zoneId, dotsPos, isPositive) => ({
     type: ACTIONS.ACTIVITY_STARTED,
-        parentId,
         zoneId,
         dotsPos,
         isPositive

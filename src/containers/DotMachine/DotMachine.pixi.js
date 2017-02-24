@@ -110,32 +110,6 @@ class DotsMachine extends Component {
         this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));*/
     };
 
-    addDot(id, zone, position, isPositive) {
-        this.props.addDot(id, zone, position, isPositive);
-    }
-
-    removeDot(id, zone, position){
-        this.props.removeDot(id, zone, position);
-    }
-
-    removeMultipleDots(id, zone, amount){
-        this.props.removeMultipleDots(id, zone, amount);
-    }
-
-    rezoneDot(id, zone, position){
-        this.props.rezoneDot(id, zone, position);
-    }
-
-    addMultipleDots(id, zone, positions, isPositive){
-        this.props.addMultipleDots(id, zone, positions, isPositive);
-    }
-
-    operandChange(e, pos){
-        if(e.target.value) {
-            this.props.operandChanged(this.id, pos, e.target.value);
-        }
-    }
-
     render() {
         //console.log('render', this.props);
         return (
@@ -161,7 +135,7 @@ class DotsMachine extends Component {
                 <ActivityDescriptor>
                     <Text mode={this.props.dotsMachine.machineState.operator_mode} />
                     <Operand value={this.props.dotsMachine.machineState.operandA}
-                             onChange={this.operandChange.bind(this)}
+                             onChange={this.props.operandChanged}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              pos={OPERAND_POS.LEFT}
@@ -171,7 +145,7 @@ class DotsMachine extends Component {
                     <Operand value={this.props.dotsMachine.machineState.operandB}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
-                             onChange={this.operandChange.bind(this)}
+                             onChange={this.props.operandChanged}
                              pos={OPERAND_POS.RIGHT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
                     />
@@ -181,26 +155,25 @@ class DotsMachine extends Component {
                     }
                 </ActivityDescriptor>
                 <CanvasPIXI
-                            id="0"
-                            numZone={this.props.dotsMachine.machineState.zones}
-                            dots={this.props.dotsMachine.dots}
-                            positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
-                            negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
-                            base={this.props.dotsMachine.machineState.base}
-                            operator_mode={this.props.dotsMachine.machineState.operator_mode}
-                            usage_mode={this.props.dotsMachine.machineState.usage_mode}
-                            magicWandIsActive={this.props.dotsMachine.machineState.magicWandIsActive}
-                            activateMagicWand={this.props.activateMagicWand}
-                            addDot={this.addDot.bind(this)}
-                            removeDot={this.removeDot.bind(this)}
-                            rezoneDot={this.rezoneDot.bind(this)}
-                            addMultipleDots={this.addMultipleDots.bind(this)}
-                            removeMultipleDots={this.removeMultipleDots.bind(this)}
-                            placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
-                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
-                            startActivity={this.props.dotsMachine.machineState.startActivity}
-                            activityStarted={this.props.activityStarted}
-                            operandA={this.props.dotsMachine.machineState.operandA}
+                    numZone={this.props.dotsMachine.machineState.zones}
+                    dots={this.props.dotsMachine.dots}
+                    positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
+                    negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+                    base={this.props.dotsMachine.machineState.base}
+                    operator_mode={this.props.dotsMachine.machineState.operator_mode}
+                    usage_mode={this.props.dotsMachine.machineState.usage_mode}
+                    magicWandIsActive={this.props.dotsMachine.machineState.magicWandIsActive}
+                    activateMagicWand={this.props.activateMagicWand}
+                    addDot={this.props.addDot}
+                    removeDot={this.props.removeDot}
+                    rezoneDot={this.props.rezoneDot}
+                    addMultipleDots={this.props.addMultipleDots}
+                    removeMultipleDots={this.props.removeMultipleDots}
+                    placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
+                    maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
+                    startActivity={this.props.dotsMachine.machineState.startActivity}
+                    activityStarted={this.props.activityStarted}
+                    operandA={this.props.dotsMachine.machineState.operandA}
                 />
 
             </div>

@@ -9,9 +9,10 @@ storiesOf('Button', module)
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}
             usage_mode={USAGE_MODE.FREEPLAY}
-            base={BASE.MECHA[0]}
+            allBases={BASE.MECHA}
+            base={BASE.MECHA[2]}
             placeValueSwitchVisible={false}
-            placeValueOn={false}
+            placeValueOn={true}
             magicWandVisible={false}
         />
     ))
@@ -19,6 +20,7 @@ storiesOf('Button', module)
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}
             usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.MECHA}
             base={BASE.MECHA[0]}
             placeValueSwitchVisible={false}
             placeValueOn={false}

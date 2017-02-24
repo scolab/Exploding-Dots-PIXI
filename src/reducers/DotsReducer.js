@@ -11,9 +11,10 @@ function setDotsCount(state){
     let col = 0;
 
     for (let dot of state.positivePowerZoneDots) {
-        dotsCount += dot.length * Math.pow(state.machineState.base[1], col);
+        dotsCount += dot.length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
         col++;
     }
+
     return dotsCount.toString();
 
     /*// negative
@@ -112,7 +113,7 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
 
         case ACTIONS.ADD_MULTIPLE_DOTS:
-            console.log('ADD_MULTIPLE_DOTS', action.dotsPos, action.zoneId);
+            console.log('ADD_MULTIPLE_DOTS');
             stateCopy = {...state};
             action.dotsPos.forEach((newDot) => {
                 let dot = {
@@ -128,7 +129,9 @@ const dotsReducer = (state = null, action) => {
                     stateCopy.negativePowerZoneDots[action.zoneId].push(dot);
                 }
             });
-            stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
+            if(action.updateValue) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
+            }
             return stateCopy;
 
         case ACTIONS.REMOVE_MULTIPLE_DOTS:
@@ -149,7 +152,9 @@ const dotsReducer = (state = null, action) => {
                     }
                 }
             }
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            if(action.updateValue) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            }
             return stateCopy;
         case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
@@ -182,7 +187,9 @@ const dotsReducer = (state = null, action) => {
                     }
                 }
             }
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            if(action.updateValue) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            }
             return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
             stateCopy = {...state};
@@ -202,19 +209,23 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
             stateCopy = {...state};
-            let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);
-            if (index < BASE.ALL_BASE.length - 1) {
+            /*let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);*/
+            let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
+            if (index < state.machineState.allBases.length - 1) {
                 ++index;
             } else {
                 index = 0;
             }
-            stateCopy.machineState.base = BASE.ALL_BASE[index];
+            stateCopy.machineState.base = state.machineState.allBases[index];
             stateCopy.machineState.operandA = setDotsCount(stateCopy);
             return stateCopy;
         case ACTIONS.RESET:
             if (action.machineState) {
                 initialMachineState = action.machineState;
             }
+            initialMachineState.operandA = '';
+            initialMachineState.operandB = '';
+            initialMachineState.activityStarted = false;
             return setInitialState();
         default:
             return state
