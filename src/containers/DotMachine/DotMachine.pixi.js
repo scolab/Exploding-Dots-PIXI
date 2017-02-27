@@ -134,7 +134,9 @@ class DotsMachine extends Component {
                     }
                 </TopMenuItem>
                 <ActivityDescriptor>
-                    <Text mode={this.props.dotsMachine.machineState.operator_mode} />
+                    <Text operator_mode={this.props.dotsMachine.machineState.operator_mode}
+                          usage_mode={this.props.dotsMachine.machineState.usage_mode}
+                    />
                     <Operand value={this.props.dotsMachine.machineState.operandA}
                              onChange={this.props.operandChanged}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
@@ -142,7 +144,9 @@ class DotsMachine extends Component {
                              pos={OPERAND_POS.LEFT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
                     />
-                    <Operator operator_mode={this.props.dotsMachine.machineState.operator_mode}/>
+                    <Operator operator_mode={this.props.dotsMachine.machineState.operator_mode}
+                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
+                    />
                     <Operand value={this.props.dotsMachine.machineState.operandB}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}

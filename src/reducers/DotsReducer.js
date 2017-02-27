@@ -58,20 +58,21 @@ const dotsReducer = (state = null, action) => {
             stateCopy = {...state};
             stateCopy.machineState.startActivity = false;
             stateCopy.machineState.activityStarted = true;
-            action.dotsPos.forEach((newDot) => {
+            action.dotsInfo.forEach((newDot) => {
                 let dot = {
                     x: newDot.x,
                     y: newDot.y,
-                    powerZone: action.zoneId,
+                    powerZone: newDot.zoneId,
                     id: makeUID(),
-                    isPositive: action.isPositive
+                    isPositive: newDot.isPositive
                 };
                 if(dot.isPositive) {
-                    stateCopy.positivePowerZoneDots[action.zoneId].push(dot);
+                    stateCopy.positivePowerZoneDots[newDot.zoneId].push(dot);
                 }else {
-                    stateCopy.negativePowerZoneDots[action.zoneId].push(dot);
+                    stateCopy.negativePowerZoneDots[newDot.zoneId].push(dot);
                 }
             });
+            stateCopy.machineState.operandA = action.total.toString();
             return stateCopy;
         case ACTIONS.ADD_DOT:
             //console.log('ADD_DOT', action.zoneId, action.isPositive);

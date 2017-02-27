@@ -19,7 +19,13 @@ export default class Operand extends Component {
 
     onChange(e) {
         e.preventDefault();
-        var reg = new RegExp('^$|^[0-9a-bA-B]+$');
+        if(this.props.pos === OPERAND_POS.LEFT &&
+        this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
+        this.props.usage_mode === USAGE_MODE.OPERATION) {
+            var reg = new RegExp('^$|^[|0-9]+$');
+        }else{
+            var reg = new RegExp('^$|^[0-9]+$');
+        }
         if (reg.test(e.target.value)) {
             this.props.onChange(this.props.pos, e.target.value);
         }

@@ -587,7 +587,7 @@ class CanvasPIXI extends Component {
                     let dotsPos = [];
                     let newNbOfDots = Math.pow(this.props.base[1], diffZone);
                     newNbOfDots -= this.props.base[0];
-                    console.log('newNbOfDots', newNbOfDots, diffZone);
+                    //console.log('newNbOfDots', newNbOfDots, diffZone);
                     for (let i = 0; i < newNbOfDots; i++) {
                         dotsPos.push({
                             x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
@@ -798,16 +798,25 @@ class CanvasPIXI extends Component {
             }
             this.props.activateMagicWand(false);
         }
-        if(this.props.startActivity){
-            //console.log('this.props.operandA', this.props.operandA);
-            let dotsPos = [];
-            for (let i = 0; i < Number(this.props.operandA); i++) {
-                dotsPos.push({
-                    x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
-                    y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
-                })
+        if(this.props.startActivity) {
+            if (this.props.operator_mode == OPERATOR_MODE.DISPLAY && this.props.usage_mode == USAGE_MODE.OPERATION) {
+                let dotsPerZone = this.props.operandA.split('|');
+                dotsPerZone.reverse();
+                let dotsPos = [];
+                let total = 0; // calculate the total for | operator, then change the operand A
+                for (let i = 0; i < dotsPerZone.length; ++i) {
+                    total += dotsPerZone[i] * Math.pow(this.props.base[1], i);
+                    for (let j = 0; j < Number(dotsPerZone[i]); ++j) {
+                        dotsPos.push({
+                            x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
+                            y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
+                            zoneId: i,
+                            isPositive: true
+                        })
+                    }
+                }
+                this.props.activityStarted(dotsPos, total);
             }
-            this.props.activityStarted(0, dotsPos, true);
         }
     }
 

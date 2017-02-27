@@ -67,10 +67,8 @@ export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
 });
 
-export const activityStarted = (zoneId, dotsPos, isPositive) => ({
+export const activityStarted = (dotsInfo, total) => ({
     type: ACTIONS.ACTIVITY_STARTED,
-        zoneId,
-        dotsPos,
-        isPositive
-
+        dotsInfo,
+        total
 });
