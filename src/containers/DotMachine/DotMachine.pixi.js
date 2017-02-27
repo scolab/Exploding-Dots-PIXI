@@ -85,6 +85,7 @@ class DotsMachine extends Component {
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired,
                 placeValueOn: PropTypes.bool.isRequired,
+                cdnBaseUrl: PropTypes.string.isRequired,
                 startActivity: PropTypes.bool.isRequired,
                 activityStarted: PropTypes.bool.isRequired,
                 operandA: PropTypes.string.isRequired,
@@ -94,7 +95,7 @@ class DotsMachine extends Component {
     };
 
     constructor(props) {
-        console.log('DotsMachine constructor props', props);
+        //console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -170,6 +171,7 @@ class DotsMachine extends Component {
                     addMultipleDots={this.props.addMultipleDots}
                     removeMultipleDots={this.props.removeMultipleDots}
                     placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
+                    cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
                     startActivity={this.props.dotsMachine.machineState.startActivity}
                     activityStarted={this.props.activityStarted}

@@ -11,6 +11,7 @@ import {BASE} from '../Constants'
 import { resetMachine } from '../actions/';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const isDev = process.env.NODE_ENV === 'development';
 
 class ExplodingDots extends Component {
 
@@ -28,9 +29,10 @@ class ExplodingDots extends Component {
         maxViewableDots: PropTypes.number, //.isRequired,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
-        placeValueOn: PropTypes.bool, //.isRequired
         startActivity: PropTypes.bool,
         activityStarted: PropTypes.bool,
+        placeValueOn: PropTypes.bool,
+        cdnBaseUrl: PropTypes.string,
     };
 
     static defaultProps = {
@@ -51,6 +53,7 @@ class ExplodingDots extends Component {
         placeValueOn: true,
         startActivity: false,
         activityStarted: false,
+        cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots'
     };
 
     constructor(props) {

@@ -4,7 +4,7 @@ import ExplodingDots from '../containers/App';
 import {BASE} from '../Constants'
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 
-storiesOf('Button', module)
+storiesOf('Exploding Dots', module)
     .add('Mecha Freeplay', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}
@@ -29,7 +29,4 @@ storiesOf('Button', module)
     ))
     .add('Arythmos Operation', () => (
         <ExplodingDots />
-    ))
-    .add('some emojies as the text', () => (
-        <Button>😀 😎 👍 💯</Button>
     ));
