@@ -1,5 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
+import imgBg from './images/operator_dropdown1x.png';
+import arrow from './images/arrow_dropdown1x.png';
+
 
 export default class Operator extends Component {
 
@@ -21,30 +24,59 @@ export default class Operator extends Component {
                 }else{
                     text = "dots in the machine";
                 }
-                break;
+                return (
+                    <div
+                        className="operationItem"
+                        style={{
+                            fontFamily: 'museo-slab',
+                            fontSize: 24,
+                        }}>
+                        <i className={display}>{text}</i>
+                    </div>
+                );
             case OPERATOR_MODE.ADDITION:
                 display = 'fa fa-plus';
-                break;
+                return (
+                    <div
+                        className="operationItem"
+                        style={{
+                            fontFamily: 'museo-slab',
+                            fontSize: 24,
+                        }}>
+                        <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
+                            width:77,
+                            height:45}} type='button'>
+                            <i className={display}>{text}</i>
+                            <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
+                        </button>
+                    </div>
+                );
             case OPERATOR_MODE.SUBTRACT:
                 display = 'fa fa-minus';
                 break;
             case OPERATOR_MODE.MULTIPLY:
                 display = 'fa fa-times';
+                return (
+                    <div
+                        className="operationItem"
+                        style={{
+                            fontFamily: 'museo-slab',
+                            fontSize: 24,
+                        }}>
+                        <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
+                            width:77,
+                            height:45}} type='button'>
+                            <i className={display}>{text}</i>
+                            <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
+                        </button>
+                    </div>
+                );
                 break;
             case OPERATOR_MODE.DIVIDE:
                 display = 'fa fa-hand-spock-o';
                 break;
         }
-        return (
-            <div
-                className="operationItem"
-                style={{
-                    fontFamily: 'museo-slab',
-                    fontSize: 24,
-                }}>
-                <i className={display}>{text}</i>
-            </div>
-        );
+
     }
 
 }

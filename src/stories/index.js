@@ -27,6 +27,69 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={false}
         />
     ))
-    .add('Arythmos Operation', () => (
-        <ExplodingDots />
+    .add('Insighto Freeplay', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.FREEPLAY}
+            allBases={BASE.MECHA}
+            base={BASE.MECHA[5]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={false}
+        />
+    ))
+    .add('Insighto Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.MECHA}
+            base={BASE.MECHA[5]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={false}
+        />
+    ))
+    .add('Arythmos addition Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.ADDITION}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Arythmos addition EXERCISE', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.ADDITION}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Arythmos multiply Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.MULTIPLY}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Arythmos multiply EXERCISE', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.MULTIPLY}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
     ));

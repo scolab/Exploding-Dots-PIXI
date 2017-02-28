@@ -18,7 +18,7 @@ class ExplodingDots extends Component {
     static PropTypes = {
         base: PropTypes.array, //.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
-        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]), //.isRequired,
+        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY, USAGE_MODE.EXERCISE]), //.isRequired,
         magicWandIsActive: PropTypes.bool, //.isRequired,
         baseSelectorVisible: PropTypes.bool, //.isRequired,
         placeValueSwitchVisible: PropTypes.bool, //.isRequired,

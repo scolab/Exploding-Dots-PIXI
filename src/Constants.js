@@ -1,6 +1,7 @@
 export const BASE = {
     ALL_BASE : [[1,2],[2,3],[1,6],[1,10],[1,12], [1,'X']],
     MECHA : [[1,2],[1,3],[2,3],[1,4],[1,5],[1,10],[1,12]],
+    ARITHMOS: [[1,10]],
     BASE_X : 'X'
 };
 
@@ -14,7 +15,8 @@ export const OPERATOR_MODE = {
 
 export const USAGE_MODE = {
     FREEPLAY: 'FREEPLAY',
-    OPERATION: 'OPERATION'
+    OPERATION: 'OPERATION',
+    EXERCISE: 'EXERCISE'
 };
 
 export const SETTINGS = {

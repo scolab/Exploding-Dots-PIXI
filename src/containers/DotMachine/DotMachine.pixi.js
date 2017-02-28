@@ -154,8 +154,7 @@ class DotsMachine extends Component {
                              pos={OPERAND_POS.RIGHT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
                     />
-                    {this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
-                     this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
+                    {this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
                         <GoButton onClick={this.props.startActivity} activityStarted={this.props.dotsMachine.machineState.activityStarted}>GO</GoButton>
                     }
                 </ActivityDescriptor>
@@ -180,6 +179,7 @@ class DotsMachine extends Component {
                     startActivity={this.props.dotsMachine.machineState.startActivity}
                     activityStarted={this.props.activityStarted}
                     operandA={this.props.dotsMachine.machineState.operandA}
+                    operandB={this.props.dotsMachine.machineState.operandB}
                 />
 
             </div>

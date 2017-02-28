@@ -7,7 +7,7 @@ export default class Operand extends Component {
     static propTypes = {
         value: PropTypes.any.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
-        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION]),
+        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         onChange: PropTypes.func.isRequired,
         pos: PropTypes.string.isRequired,
         activityStarted: PropTypes.bool.isRequired,
@@ -20,8 +20,8 @@ export default class Operand extends Component {
     onChange(e) {
         e.preventDefault();
         if(this.props.pos === OPERAND_POS.LEFT &&
-        this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
-        this.props.usage_mode === USAGE_MODE.OPERATION) {
+            this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
+            this.props.usage_mode === USAGE_MODE.OPERATION) {
             var reg = new RegExp('^$|^[|0-9]+$');
         }else{
             var reg = new RegExp('^$|^[0-9]+$');
@@ -32,24 +32,35 @@ export default class Operand extends Component {
     }
 
     componentDidMount() {
-        if (this.props.usage_mode == USAGE_MODE.FREEPLAY) {
-            if (this.inputText) {
+        this.checkIfInputActive();
+    }
+
+    componentDidUpdate(){
+        this.checkIfInputActive();
+    }
+
+    checkIfInputActive(){
+        console.log(this.props.activityStarted);
+        if(this.inputText) {
+            if (this.props.usage_mode == USAGE_MODE.EXERCISE ||
+                this.props.activityStarted ||
+                this.props.operator_mode === OPERATOR_MODE.DISPLAY && this.props.usage_mode === USAGE_MODE.FREEPLAY) {
                 this.inputText.disabled = true;
+            }else if(this.props.usage_mode == USAGE_MODE.OPERATION &&
+                this.props.activityStarted === false){
+                this.inputText.disabled = false;
             }
         }
     }
 
+
     render() {
-        //console.log(this.props.pos, this.props.value, '--');
-        if (this.props.pos === OPERAND_POS.LEFT &&
-            this.props.usage_mode === USAGE_MODE.FREEPLAY ||
-            this.props.activityStarted === true && this.props.pos === OPERAND_POS.LEFT
-        ) {
+        //console.log(this.props);
+        if (this.props.pos === OPERAND_POS.LEFT) {
             return (
                 <div className="operationItem">
                     <form>
                         <input
-                            disabled
                             style={{
                                 backgroundImage: `url(${img})`,
                                 backgroundRepeat: `no-repeat`,
@@ -63,6 +74,7 @@ export default class Operand extends Component {
                                 textAlign: 'center'
                             }}
                             type="text"
+                            onChange={this.onChange.bind(this)}
                             value={this.props.value}
                             ref={(inputText) => {
                                 this.inputText = inputText;
@@ -70,10 +82,9 @@ export default class Operand extends Component {
                     </form>
                 </div>
             );
-        } else if (this.props.pos === OPERAND_POS.LEFT &&
-                   this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
-                   this.props.usage_mode === USAGE_MODE.OPERATION) {
-            {
+        } else if (this.props.pos === OPERAND_POS.RIGHT) {
+            let visible = this.props.operator_mode != OPERATOR_MODE.DISPLAY;
+            if (visible) {
                 return (
                     <div className="operationItem">
                         <form>
@@ -99,9 +110,9 @@ export default class Operand extends Component {
                         </form>
                     </div>
                 );
+            } else {
+                return null;
             }
-        } else if (this.props.pos === OPERAND_POS.RIGHT) {
-            return null;
         }
     }
 }

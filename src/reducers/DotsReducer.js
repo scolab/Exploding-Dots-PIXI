@@ -1,6 +1,6 @@
 import {makeUID} from '../utils/MathUtils'
 import {ACTIONS} from '../actions/StoreConstants'
-import {BASE, OPERAND_POS} from '../Constants'
+import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
 
@@ -72,7 +72,9 @@ const dotsReducer = (state = null, action) => {
                     stateCopy.negativePowerZoneDots[newDot.zoneId].push(dot);
                 }
             });
-            stateCopy.machineState.operandA = action.total.toString();
+            if(action.total != null) {
+                stateCopy.machineState.operandA = action.total.toString();
+            }
             return stateCopy;
         case ACTIONS.ADD_DOT:
             //console.log('ADD_DOT', action.zoneId, action.isPositive);
@@ -89,7 +91,9 @@ const dotsReducer = (state = null, action) => {
             } else {
                 stateCopy.negativePowerZoneDots[dot.powerZone].push(dot);
             }
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            }
             return stateCopy;
 
         case ACTIONS.REMOVE_DOT:
@@ -110,7 +114,9 @@ const dotsReducer = (state = null, action) => {
                     break;
                 }
             }
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            }
             return stateCopy;
 
         case ACTIONS.ADD_MULTIPLE_DOTS:
@@ -131,7 +137,9 @@ const dotsReducer = (state = null, action) => {
                 }
             });
             if(action.updateValue) {
-                stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
+                if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                    stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
+                }
             }
             return stateCopy;
 
@@ -154,7 +162,9 @@ const dotsReducer = (state = null, action) => {
                 }
             }
             if(action.updateValue) {
-                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+                if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                    stateCopy.machineState.operandA = setDotsCount(stateCopy);
+                }
             }
             return stateCopy;
         case ACTIONS.REZONE_DOT:
@@ -189,7 +199,9 @@ const dotsReducer = (state = null, action) => {
                 }
             }
             if(action.updateValue) {
-                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+                if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                    stateCopy.machineState.operandA = setDotsCount(stateCopy);
+                }
             }
             return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
@@ -218,7 +230,9 @@ const dotsReducer = (state = null, action) => {
                 index = 0;
             }
             stateCopy.machineState.base = state.machineState.allBases[index];
-            stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
+                stateCopy.machineState.operandA = setDotsCount(stateCopy);
+            }
             return stateCopy;
         case ACTIONS.RESET:
             if (action.machineState) {

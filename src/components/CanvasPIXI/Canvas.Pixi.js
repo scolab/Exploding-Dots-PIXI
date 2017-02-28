@@ -34,7 +34,7 @@ class CanvasPIXI extends Component {
         }))).isRequired,
         base: PropTypes.array.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
-        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION]),
+        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         placeValueOn: PropTypes.bool.isRequired,
         cdnBaseUrl: PropTypes.string.isRequired,
         numZone: PropTypes.number.isRequired,
@@ -42,6 +42,7 @@ class CanvasPIXI extends Component {
         magicWandIsActive: PropTypes.bool.isRequired,
         startActivity: PropTypes.bool.isRequired,
         operandA: PropTypes.string.isRequired,
+        operandB: PropTypes.string.isRequired,
     };
 
     constructor(props){
@@ -618,8 +619,15 @@ class CanvasPIXI extends Component {
                 }
             }
         }else{
-            //console.log('this.props.removeDot 2');
-            this.props.removeDot(originalZoneIndex, dotSprite.dot.id);
+            if(this.props.usage_mode == USAGE_MODE.FREEPLAY) {
+                this.props.removeDot(originalZoneIndex, dotSprite.dot.id);
+            }else{
+                if (dotSprite.dot.isPositive) {
+                    this.backIntoPlace(dotSprite, this.state.positivePowerZone[originalZoneIndex]);
+                } else {
+                    this.backIntoPlace(dotSprite, this.state.negativePowerZone[originalZoneIndex]);
+                }
+            }
         }
     }
 
@@ -816,6 +824,41 @@ class CanvasPIXI extends Component {
                     }
                 }
                 this.props.activityStarted(dotsPos, total);
+            }else if(this.props.usage_mode == USAGE_MODE.OPERATION) {
+                let dotsPos = [];
+                let totalDot;
+                switch (this.props.operator_mode) {
+                    case OPERATOR_MODE.ADDITION:
+                        totalDot = Number(this.props.operandA) + Number(this.props.operandB);
+                        for (let i = 0; i < totalDot; ++i) {
+                            dotsPos.push({
+                                x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
+                                y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
+                                zoneId: 0,
+                                isPositive: true
+                            })
+                        }
+                        this.props.activityStarted(dotsPos);
+                        break;
+                    case OPERATOR_MODE.MULTIPLY:
+                        totalDot = Number(this.props.operandA) * Number(this.props.operandB);
+                        for (let i = 0; i < totalDot; ++i) {
+                            dotsPos.push({
+                                x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
+                                y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
+                                zoneId: 0,
+                                isPositive: true
+                            })
+                        }
+                        this.props.activityStarted(dotsPos);
+                        break;
+                    case OPERATOR_MODE.SUBTRACT:
+
+                        break;
+                    case OPERATOR_MODE.DIVIDE:
+
+                        break;
+                }
             }
         }
     }
