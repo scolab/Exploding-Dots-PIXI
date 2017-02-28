@@ -7,7 +7,7 @@ export default class TopMenuItem extends Component {
 
     render(){
         return (
-            <div>
+            <div style={{marginRight:33}}>
                 {this.props.children}
             </div>
         );

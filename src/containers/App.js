@@ -16,25 +16,28 @@ const isDev = process.env.NODE_ENV === 'development';
 class ExplodingDots extends Component {
 
     static PropTypes = {
-        base: PropTypes.array,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
-        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]),
-        magicWandIsActive: PropTypes.bool,
-        baseSelectorVisible: PropTypes.bool,
-        placeValueSwitchVisible: PropTypes.bool,
-        magicWandVisible: PropTypes.bool,
-        resetVisible: PropTypes.bool,
-        loginVisible: PropTypes.bool,
-        zones: PropTypes.number,
-        maxViewableDots: PropTypes.number,
+        base: PropTypes.array, //.isRequired,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
+        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]), //.isRequired,
+        magicWandIsActive: PropTypes.bool, //.isRequired,
+        baseSelectorVisible: PropTypes.bool, //.isRequired,
+        placeValueSwitchVisible: PropTypes.bool, //.isRequired,
+        magicWandVisible: PropTypes.bool, //.isRequired,
+        resetVisible: PropTypes.bool, //.isRequired,
+        loginVisible: PropTypes.bool, //.isRequired,
+        zones: PropTypes.number, //.isRequired,
+        maxViewableDots: PropTypes.number, //.isRequired,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
+        startActivity: PropTypes.bool,
+        activityStarted: PropTypes.bool,
         placeValueOn: PropTypes.bool,
         cdnBaseUrl: PropTypes.string,
     };
 
     static defaultProps = {
         base: BASE.ALL_BASE[0],
+        allBases: BASE.ALL_BASE,
         operator_mode: OPERATOR_MODE.DISPLAY,
         usage_mode: USAGE_MODE.FREEPLAY,
         magicWandIsActive: true,
@@ -48,12 +51,13 @@ class ExplodingDots extends Component {
         operandA: '',
         operandB: '',
         placeValueOn: true,
+        startActivity: false,
+        activityStarted: false,
         cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots'
     };
 
     constructor(props) {
         super(props);
-
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
         store.dispatch({

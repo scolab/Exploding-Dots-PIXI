@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {OPERATOR_MODE} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 
 export default class Operator extends Component {
 
@@ -16,8 +16,11 @@ export default class Operator extends Component {
         let text = '';
         switch (this.props.operator_mode){
             case OPERATOR_MODE.DISPLAY:
-                //display = 'fa fa-arrows-h';
-                text = " is ";
+                if(this.props.usage_mode === USAGE_MODE.FREEPLAY) {
+                    text = " is ";
+                }else{
+                    text = "dots in the machine";
+                }
                 break;
             case OPERATOR_MODE.ADDITION:
                 display = 'fa fa-plus';
