@@ -11,24 +11,26 @@ import {BASE} from '../Constants'
 import { resetMachine } from '../actions/';
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const isDev = process.env.NODE_ENV === 'development';
 
 class ExplodingDots extends Component {
 
     static PropTypes = {
-        base: PropTypes.array, //.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
-        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]), //.isRequired,
-        magicWandIsActive: PropTypes.bool, //.isRequired,
-        baseSelectorVisible: PropTypes.bool, //.isRequired,
-        placeValueSwitchVisible: PropTypes.bool, //.isRequired,
-        magicWandVisible: PropTypes.bool, //.isRequired,
-        resetVisible: PropTypes.bool, //.isRequired,
-        loginVisible: PropTypes.bool, //.isRequired,
-        zones: PropTypes.number, //.isRequired,
-        maxViewableDots: PropTypes.number, //.isRequired,
+        base: PropTypes.array,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
+        usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY]),
+        magicWandIsActive: PropTypes.bool,
+        baseSelectorVisible: PropTypes.bool,
+        placeValueSwitchVisible: PropTypes.bool,
+        magicWandVisible: PropTypes.bool,
+        resetVisible: PropTypes.bool,
+        loginVisible: PropTypes.bool,
+        zones: PropTypes.number,
+        maxViewableDots: PropTypes.number,
         operandA: PropTypes.string,
         operandB: PropTypes.string,
-        placeValueOn: PropTypes.bool //.isRequired
+        placeValueOn: PropTypes.bool,
+        cdnBaseUrl: PropTypes.string,
     };
 
     static defaultProps = {
@@ -46,6 +48,7 @@ class ExplodingDots extends Component {
         operandA: '',
         operandB: '',
         placeValueOn: true,
+        cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots'
     };
 
     constructor(props) {

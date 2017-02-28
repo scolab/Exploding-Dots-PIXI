@@ -84,6 +84,7 @@ class DotsMachine extends Component {
                 operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired,
                 placeValueOn: PropTypes.bool.isRequired,
+                cdnBaseUrl: PropTypes.string.isRequired,
             })
         })
     };
@@ -191,7 +192,9 @@ class DotsMachine extends Component {
                             addMultipleDots={this.addMultipleDots.bind(this)}
                             removeMultipleDots={this.removeMultipleDots.bind(this)}
                             placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
-                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}/>
+                            cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
+                            maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
+                />
 
             </div>
         );
