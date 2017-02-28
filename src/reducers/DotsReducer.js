@@ -54,7 +54,7 @@ const dotsReducer = (state = null, action) => {
             stateCopy = {...state};
             stateCopy.machineState.startActivity = true;
             return stateCopy;
-        case ACTIONS.ACTIVITY_STARTED:
+        case ACTIONS.START_ACTIVITY_DONE:
             stateCopy = {...state};
             stateCopy.machineState.startActivity = false;
             stateCopy.machineState.activityStarted = true;

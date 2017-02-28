@@ -67,8 +67,8 @@ export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
 });
 
-export const activityStarted = (dotsInfo, total) => ({
-    type: ACTIONS.ACTIVITY_STARTED,
+export const startActivityDone = (dotsInfo, total) => ({
+    type: ACTIONS.START_ACTIVITY_DONE,
         dotsInfo,
         total
 });

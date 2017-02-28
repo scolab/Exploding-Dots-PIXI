@@ -40,7 +40,6 @@ export default class Operand extends Component {
     }
 
     checkIfInputActive(){
-        console.log(this.props.activityStarted);
         if(this.inputText) {
             if (this.props.usage_mode == USAGE_MODE.EXERCISE ||
                 this.props.activityStarted ||

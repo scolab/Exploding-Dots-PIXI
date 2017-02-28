@@ -101,7 +101,7 @@ class CanvasPIXI extends Component {
         var options = {
             view: this.canvas,
             transparent: true,
-            antialias: false,
+            antialias: true,
             preserveDrawingBuffer: false,
             resolution: window.devicePixelRatio,
             autoResize: true
@@ -220,19 +220,21 @@ class CanvasPIXI extends Component {
                 align: 'center'
             });
         } else {
-            var placeValueText = new PIXI.Text(String(Math.pow(this.props.base[1], this.state.numOfZone)), {
+            let text;
+            if(this.props.base[0] === 1 || this.state.numOfZone === 0) {
+                text = String(Math.pow(this.props.base[1], this.state.numOfZone));
+            }else{
+                text = '(' + String(Math.pow(this.props.base[1], this.state.numOfZone) + '/' + Math.pow(this.props.base[0], this.state.numOfZone)) + ')';
+            }
+            var placeValueText = new PIXI.Text(text, {
                 fontFamily: 'museo-slab',
                 fontSize: 40,
                 fill: 0xBCBCBC,
                 align: 'center'
             });
-            if(this.props.base[0] === 1 || this.state.numOfZone === 0) {
-                placeValueText.text = String(Math.pow(this.props.base[1], this.state.numOfZone));
-            }else{
-                placeValueText.text = String(Math.pow(this.props.base[1], this.state.numOfZone) + '/' + Math.pow(this.props.base[0], this.state.numOfZone));
-            }
-        }
 
+        }
+        //placeValueText.scale.x = placeValueText.scale.y = 0.5;
         placeValueText.anchor.x = 0.5;
         placeValueText.x = (position * (this.boxWidth + gutterWidth)) + (this.boxWidth / 2);
         placeValueText.y = boxYPos + (this.boxHeight / 2) - 30;

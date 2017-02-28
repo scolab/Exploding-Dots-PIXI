@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, activityStarted} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -35,7 +35,7 @@ const mapDispatchToProps = (dispatch) =>{
         stabilize: stabilize,
         operandChanged: operandChanged,
         startActivity: startActivity,
-        activityStarted: activityStarted
+        startActivityDone: startActivityDone
     }, dispatch);
 };
 
@@ -95,7 +95,7 @@ class DotsMachine extends Component {
     };
 
     constructor(props) {
-        //console.log('DotsMachine constructor props', props);
+        console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -177,7 +177,7 @@ class DotsMachine extends Component {
                     cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
                     startActivity={this.props.dotsMachine.machineState.startActivity}
-                    activityStarted={this.props.activityStarted}
+                    activityStarted={this.props.startActivityDone}
                     operandA={this.props.dotsMachine.machineState.operandA}
                     operandB={this.props.dotsMachine.machineState.operandB}
                 />
