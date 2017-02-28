@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import imgBg from './images/operator_dropdown1x.png';
 import arrow from './images/arrow_dropdown1x.png';
-
+import Dropdown from 'react-toolbox/lib/dropdown';
 
 export default class Operator extends Component {
 
@@ -12,6 +12,10 @@ export default class Operator extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    handleOperandChange(){
+
     }
 
     render(){
@@ -36,8 +40,12 @@ export default class Operator extends Component {
                 );
             case OPERATOR_MODE.ADDITION:
                 display = 'fa fa-plus';
+                let choices = [
+                    {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
+                    {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
+                ];
                 return (
-                    <div
+                   /* <div
                         className="operationItem"
                         style={{
                             fontFamily: 'museo-slab',
@@ -49,6 +57,14 @@ export default class Operator extends Component {
                             <i className={display}>{text}</i>
                             <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
                         </button>
+                    </div>*/
+                    <div className="operationItem">
+                        <Dropdown
+                            auto={false}
+                            source={choices}
+                            onChange={this.handleOperandChange}
+                            value={OPERATOR_MODE.ADDITION}
+                        />
                     </div>
                 );
             case OPERATOR_MODE.SUBTRACT:
