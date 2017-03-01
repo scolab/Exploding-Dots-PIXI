@@ -1,0 +1,20 @@
+machine:
+  node:
+    version: 6.9.1
+
+test:
+  override:
+    - "true"
+
+deployment:
+  master:
+    branch: master
+    commands:
+      - npm run publish-storybook
+
+general:
+  branches:
+    only:
+      - master
+    ignore:
+      - gh-pages
