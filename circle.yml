@@ -16,3 +16,5 @@ general:
   branches:
     only:
       - master
+    ignore:
+      - gh-pages
