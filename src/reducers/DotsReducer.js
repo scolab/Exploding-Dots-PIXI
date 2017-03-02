@@ -64,7 +64,8 @@ const dotsReducer = (state = null, action) => {
                     y: newDot.y,
                     powerZone: newDot.zoneId,
                     id: makeUID(),
-                    isPositive: newDot.isPositive
+                    isPositive: newDot.isPositive,
+                    color: newDot.color
                 };
                 if(dot.isPositive) {
                     stateCopy.positivePowerZoneDots[newDot.zoneId].push(dot);
@@ -72,8 +73,11 @@ const dotsReducer = (state = null, action) => {
                     stateCopy.negativePowerZoneDots[newDot.zoneId].push(dot);
                 }
             });
-            if(action.total != null) {
-                stateCopy.machineState.operandA = action.total.toString();
+            if(action.totalA != null) {
+                stateCopy.machineState.operandA = action.totalA.toString();
+            }
+            if(action.totalB != null) {
+                stateCopy.machineState.operandB = action.totalB.toString();
             }
             return stateCopy;
         case ACTIONS.ADD_DOT:

@@ -19,10 +19,13 @@ export default class Operand extends Component {
 
     onChange(e) {
         e.preventDefault();
-        if(this.props.pos === OPERAND_POS.LEFT &&
-            this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
-            this.props.usage_mode === USAGE_MODE.OPERATION) {
-            var reg = new RegExp('^$|^[|0-9]+$');
+        if(this.props.usage_mode === USAGE_MODE.OPERATION) {
+            if(this.props.operator_mode === OPERATOR_MODE.MULTIPLY && this.props.pos === OPERAND_POS.RIGHT){
+                // no | in right operand in multiply
+                var reg = new RegExp('^$|^[0-9]+$');
+            }else {
+                var reg = new RegExp('^$|^[|0-9]+$');
+            }
         }else{
             var reg = new RegExp('^$|^[0-9]+$');
         }
