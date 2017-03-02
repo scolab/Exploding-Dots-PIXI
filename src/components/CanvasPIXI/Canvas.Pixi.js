@@ -408,8 +408,8 @@ class CanvasPIXI extends Component {
     }
 
     createDot(e){
-        let hitArea = e.data.target.hitArea;
-        let clickPos = e.data.getLocalPosition(e.data.target);
+        let hitArea = e.target.hitArea;
+        let clickPos = e.data.getLocalPosition(e.target);
         let clickModifiedPos = [];
         if(clickPos.x < POSITION_INFO.DOT_RAYON){
             clickModifiedPos.push(POSITION_INFO.DOT_RAYON);
@@ -428,7 +428,7 @@ class CanvasPIXI extends Component {
         }
 
         if(this.state.isInteractive) {
-            this.props.addDot(e.data.target.powerZone, clickModifiedPos, e.data.target.isPositive);
+            this.props.addDot(e.target.powerZone, clickModifiedPos, e.target.isPositive);
         }
     }
 
