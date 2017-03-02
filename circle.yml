@@ -11,6 +11,10 @@ deployment:
     branch: master
     commands:
       - npm run publish-storybook
+  hotfix:
+    branch: /hotfix\/.*/
+    commands:
+      - npm run publish-storybook
 
 general:
   branches:
