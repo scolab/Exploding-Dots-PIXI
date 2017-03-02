@@ -344,7 +344,7 @@ class CanvasPIXI extends Component {
                 }else{
                     this.state.positiveValueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
                 }
-            }else{
+            } else {
                 for(let j = i; j < this.props.numZone; ++j){
                     if (this.state.localPositiveDotsPerZone[j].length !== 0) {
                         this.state.positiveValueText[i].text = '0';
