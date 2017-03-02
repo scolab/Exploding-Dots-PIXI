@@ -2,7 +2,8 @@ import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import imgBg from './images/operator_dropdown1x.png';
 import arrow from './images/arrow_dropdown1x.png';
-import {Dropdown} from 'react-toolbox/lib/dropdown';
+import DropDownMenu from 'material-ui/DropDownMenu'; // http://www.material-ui.com/
+import MenuItem from 'material-ui/MenuItem'; // http://www.material-ui.com/
 
 export default class Operator extends Component {
 
@@ -14,8 +15,9 @@ export default class Operator extends Component {
         super(props);
     }
 
-    handleOperandChange(){
-
+    handleOperandChange(event, index, value){
+        //TODO : Handle the value.
+        console.log(value);
     }
 
     render(){
@@ -56,11 +58,6 @@ export default class Operator extends Component {
                         </div>
                     )
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
-                    let choices = [
-                        {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
-                        {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
-                    ];
-
                     return (
                         /* <div
                          className="operationItem"
@@ -77,12 +74,10 @@ export default class Operator extends Component {
                          </div>*/
 
                         <div className="operationItem">
-                            <Dropdown
-                                auto={false}
-                                source={choices}
-                                onChange={this.handleOperandChange}
-                                value={OPERATOR_MODE.ADDITION}
-                            />
+                            <DropDownMenu value={OPERATOR_MODE.ADDITION} onChange={this.handleOperandChange}>
+                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="ADDITION" />
+                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="MULTIPLY" />
+                            </DropDownMenu>
                         </div>
                     );
                 }
@@ -121,18 +116,12 @@ export default class Operator extends Component {
                         </div>
                     );
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
-                    let choices = [
-                        {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
-                        {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
-                    ];
                     return (
                         <div className="operationItem">
-                            <Dropdown
-                                auto={false}
-                                source={choices}
-                                onChange={this.handleOperandChange}
-                                value={OPERATOR_MODE.MULTIPLY}
-                            />
+                            <DropDownMenu value={OPERATOR_MODE.MULTIPLY} onChange={this.handleOperandChange}>
+                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="ADDITION" />
+                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="MULTIPLY" />
+                            </DropDownMenu>
                         </div>
                     )
                 }

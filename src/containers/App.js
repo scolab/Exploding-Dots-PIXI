@@ -10,6 +10,13 @@ import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import {BASE} from '../Constants'
 import { resetMachine } from '../actions/';
 
+// http://www.material-ui.com/
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import injectTapEventPlugin from 'react-tap-event-plugin';
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin();
+
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -69,9 +76,11 @@ class ExplodingDots extends Component {
     render() {
         return (
             <Provider store={store}>
-                <div>
-                    <DotsMachine id="0"/>
-                </div>
+                <MuiThemeProvider>
+                    <div>
+                        <DotsMachine id="0"/>
+                    </div>
+                </MuiThemeProvider>
             </Provider>
         );
     }
