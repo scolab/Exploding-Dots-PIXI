@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import imgBg from './images/operator_dropdown1x.png';
 import arrow from './images/arrow_dropdown1x.png';
-import Dropdown from 'react-toolbox/lib/dropdown';
+import {Dropdown} from 'react-toolbox/lib/dropdown';
 
 export default class Operator extends Component {
 
@@ -40,53 +40,102 @@ export default class Operator extends Component {
                 );
             case OPERATOR_MODE.ADDITION:
                 display = 'fa fa-plus';
-                let choices = [
-                    {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
-                    {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
-                ];
-                return (
-                   /* <div
-                        className="operationItem"
-                        style={{
-                            fontFamily: 'museo-slab',
-                            fontSize: 24,
-                        }}>
-                        <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
-                            width:77,
-                            height:45}} type='button'>
-                            <i className={display}>{text}</i>
-                            <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
-                        </button>
-                    </div>*/
-                    <div className="operationItem">
-                        <Dropdown
-                            auto={false}
-                            source={choices}
-                            onChange={this.handleOperandChange}
-                            value={OPERATOR_MODE.ADDITION}
-                        />
-                    </div>
-                );
+                if(this.props.usage_mode === USAGE_MODE.EXERCISE){
+                    return (
+                         <div className="operationItem"
+                            style={{
+                                fontFamily: 'museo-slab',
+                                    fontSize: 24,
+                                    backgroundImage: `url(${imgBg})`,
+                                    backgroundRepeat: `no-repeat`,
+                                    backgroundColor: `Transparent`,
+                                    border: `none`,
+                                    width: 77,
+                                    height: 45}}>
+                            <i className={display} style={{marginTop: 11}}>{text}</i>
+                        </div>
+                    )
+                }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
+                    let choices = [
+                        {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
+                        {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
+                    ];
+
+                    return (
+                        /* <div
+                         className="operationItem"
+                         style={{
+                         fontFamily: 'museo-slab',
+                         fontSize: 24,
+                         }}>
+                         <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
+                         width:77,
+                         height:45}} type='button'>
+                         <i className={display}>{text}</i>
+                         <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
+                         </button>
+                         </div>*/
+
+                        <div className="operationItem">
+                            <Dropdown
+                                auto={false}
+                                source={choices}
+                                onChange={this.handleOperandChange}
+                                value={OPERATOR_MODE.ADDITION}
+                            />
+                        </div>
+                    );
+                }
             case OPERATOR_MODE.SUBTRACT:
                 display = 'fa fa-minus';
+                return (
+                    <div className="operationItem"
+                         style={{
+                             fontFamily: 'museo-slab',
+                             fontSize: 24,
+                             backgroundImage: `url(${imgBg})`,
+                             backgroundRepeat: `no-repeat`,
+                             backgroundColor: `Transparent`,
+                             border: `none`,
+                             width: 77,
+                             height: 45}}>
+                        <i className={display} style={{marginTop: 11}}>{text}</i>
+                    </div>
+                );
                 break;
             case OPERATOR_MODE.MULTIPLY:
                 display = 'fa fa-times';
-                return (
-                    <div
-                        className="operationItem"
-                        style={{
-                            fontFamily: 'museo-slab',
-                            fontSize: 24,
-                        }}>
-                        <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
-                            width:77,
-                            height:45}} type='button'>
-                            <i className={display}>{text}</i>
-                            <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
-                        </button>
-                    </div>
-                );
+                if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
+                    return (
+                        <div className="operationItem"
+                             style={{
+                                 fontFamily: 'museo-slab',
+                                 fontSize: 24,
+                                 backgroundImage: `url(${imgBg})`,
+                                 backgroundRepeat: `no-repeat`,
+                                 backgroundColor: `Transparent`,
+                                 border: `none`,
+                                 width: 77,
+                                 height: 45}}>
+                            <i className={display} style={{marginTop: 10}}>{text}</i>
+                        </div>
+                    );
+                }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
+                    let choices = [
+                        {value: OPERATOR_MODE.ADDITION, label: 'fa fa-plus'},
+                        {value: OPERATOR_MODE.MULTIPLY, label: 'fa fa-times'},
+                    ];
+                    return (
+                        <div className="operationItem">
+                            <Dropdown
+                                auto={false}
+                                source={choices}
+                                onChange={this.handleOperandChange}
+                                value={OPERATOR_MODE.MULTIPLY}
+                            />
+                        </div>
+                    )
+                }
                 break;
             case OPERATOR_MODE.DIVIDE:
                 display = 'fa fa-hand-spock-o';

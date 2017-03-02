@@ -52,7 +52,6 @@ export default class Operand extends Component {
         }
     }
 
-
     render() {
         //console.log(this.props);
         if (this.props.pos === OPERAND_POS.LEFT) {

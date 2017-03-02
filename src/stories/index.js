@@ -92,4 +92,26 @@ storiesOf('Exploding Dots', module)
             placeValueOn={true}
             magicWandVisible={true}
         />
+    ))
+    .add('Antidotia Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Antidotia EXERCISE', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
     ));

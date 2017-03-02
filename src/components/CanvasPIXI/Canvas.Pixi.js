@@ -96,7 +96,7 @@ class CanvasPIXI extends Component {
     }
 
     componentDidMount(){
-        //console.log('componentDidMount', this.state);
+        //console.log('componentDidMount', this.state, this.props);
 
         var options = {
             view: this.canvas,
@@ -855,7 +855,16 @@ class CanvasPIXI extends Component {
                         this.props.activityStarted(dotsPos);
                         break;
                     case OPERATOR_MODE.SUBTRACT:
-
+                        totalDot = Number(this.props.operandA) - Number(this.props.operandB);
+                        for (let i = 0; i < totalDot; ++i) {
+                            dotsPos.push({
+                                x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
+                                y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
+                                zoneId: 0,
+                                isPositive: true
+                            })
+                        }
+                        this.props.activityStarted(dotsPos);
                         break;
                     case OPERATOR_MODE.DIVIDE:
 
@@ -992,7 +1001,7 @@ class CanvasPIXI extends Component {
 
     checkBase() {
         //Annihilations
-        if(this.state.negativePresent && this.state.base[1] != BASE.BASE_X){
+        if(this.state.negativePresent && this.props.base[1] != BASE.BASE_X){
             for(let i = 0; i < this.state.localPositiveDotsPerZone.length; i++){
                 if(this.state.localPositiveDotsPerZone[i].length > 0 && this.state.localNegativeDotsPerZone.length > 0) {
                     let tween = TweenMax.fromTo(this.state.positivePowerZone[i], 0.3, {y:this.state.positivePowerZone[i].y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
