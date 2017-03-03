@@ -33,3 +33,7 @@ export const POSITION_INFO = {
     DOT_RAYON: 12,
     BOX_BOTTOM_GREY_ZONE: 10
 };
+
+export const ERROR_MESSAGE = {
+    INVALID_ENTRY : 'Invalid entry in the operand'
+};

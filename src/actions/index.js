@@ -63,6 +63,11 @@ export const operandChanged = (operandPos, value) => ({
         value
 });
 
+export const operatorChanged = (value) => ({
+    type: ACTIONS.OPERATOR_CHANGED,
+        value
+});
+
 export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
 });
@@ -72,4 +77,18 @@ export const startActivityDone = (dotsInfo, totalA, totalB) => ({
         dotsInfo,
         totalA,
         totalB
+});
+
+export const error = (errorMessage) => ({
+    type: ACTIONS.ERROR,
+    errorMessage
+});
+
+export const userMessage = (userMessage) => ({
+   type: ACTIONS.USER_MESSAGE,
+    userMessage
+});
+
+export const resetUserMessage = () => ({
+    type: ACTIONS.RESET_USER_MESSAGE
 });

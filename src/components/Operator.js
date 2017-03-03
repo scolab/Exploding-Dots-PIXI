@@ -9,6 +9,9 @@ export default class Operator extends Component {
 
     static propTypes = {
         operator_mode: React.PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+        usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
+        onChange: PropTypes.func.isRequired,
+        activityStarted: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -16,12 +19,12 @@ export default class Operator extends Component {
     }
 
     handleOperandChange(event, index, value){
-        //TODO : Handle the value.
-        console.log(value);
+        this.props.onChange(value);
     }
 
     render(){
-        let display = '';
+        let mainDisplay = '';
+        let secondDisplay = '';
         let text = '';
         switch (this.props.operator_mode){
             case OPERATOR_MODE.DISPLAY:
@@ -37,11 +40,12 @@ export default class Operator extends Component {
                             fontFamily: 'museo-slab',
                             fontSize: 24,
                         }}>
-                        <i className={display}>{text}</i>
+                        <i className={mainDisplay}>{text}</i>
                     </div>
                 );
             case OPERATOR_MODE.ADDITION:
-                display = 'fa fa-plus';
+                mainDisplay = 'fa fa-plus';
+                secondDisplay = 'fa fa-times';
                 if(this.props.usage_mode === USAGE_MODE.EXERCISE){
                     return (
                          <div className="operationItem"
@@ -54,7 +58,7 @@ export default class Operator extends Component {
                                     border: `none`,
                                     width: 77,
                                     height: 45}}>
-                            <i className={display} style={{marginTop: 11}}>{text}</i>
+                            <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
                         </div>
                     )
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
@@ -68,21 +72,30 @@ export default class Operator extends Component {
                          <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
                          width:77,
                          height:45}} type='button'>
-                         <i className={display}>{text}</i>
+                         <i className={mainDisplay}>{text}</i>
                          <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
                          </button>
                          </div>*/
 
-                        <div className="operationItem">
-                            <DropDownMenu value={OPERATOR_MODE.ADDITION} onChange={this.handleOperandChange}>
-                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="ADDITION" />
-                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="MULTIPLY" />
+                        <div className="operationItem"
+                             style={{
+                                 backgroundImage:`url(${imgBg})`,
+                                 backgroundRepeat: `no-repeat`,
+                                 backgroundColor: `Transparent`,
+                                 border: `none`,
+                                 width:77,
+                                 height:45,
+                                 overflow:'hidden'
+                                 }}>
+                            <DropDownMenu value={OPERATOR_MODE.ADDITION} onChange={this.handleOperandChange.bind(this)} disabled={this.props.activityStarted}>
+                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='+' />
+                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='*' />
                             </DropDownMenu>
                         </div>
                     );
                 }
             case OPERATOR_MODE.SUBTRACT:
-                display = 'fa fa-minus';
+                mainDisplay = 'fa fa-minus';
                 return (
                     <div className="operationItem"
                          style={{
@@ -94,12 +107,12 @@ export default class Operator extends Component {
                              border: `none`,
                              width: 77,
                              height: 45}}>
-                        <i className={display} style={{marginTop: 11}}>{text}</i>
+                        <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
                     </div>
                 );
                 break;
             case OPERATOR_MODE.MULTIPLY:
-                display = 'fa fa-times';
+                mainDisplay = 'fa fa-times';
                 if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
                     return (
                         <div className="operationItem"
@@ -112,22 +125,24 @@ export default class Operator extends Component {
                                  border: `none`,
                                  width: 77,
                                  height: 45}}>
-                            <i className={display} style={{marginTop: 10}}>{text}</i>
+                            <i className={mainDisplay} style={{marginTop: 10}}>{text}</i>
                         </div>
                     );
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                     return (
                         <div className="operationItem">
-                            <DropDownMenu value={OPERATOR_MODE.MULTIPLY} onChange={this.handleOperandChange}>
-                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="ADDITION" />
-                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="MULTIPLY" />
+                            <DropDownMenu value={OPERATOR_MODE.MULTIPLY}
+                                          onChange={this.handleOperandChange.bind(this)}
+                                          disabled={this.props.activityStarted}>
+                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="+" />
+                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="*" />
                             </DropDownMenu>
                         </div>
                     )
                 }
                 break;
             case OPERATOR_MODE.DIVIDE:
-                display = 'fa fa-hand-spock-o';
+                mainDisplay = 'fa fa-hand-spock-o';
                 break;
         }
 

@@ -1,0 +1,46 @@
+import React, {Component, PropTypes} from 'react';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+
+export default class ErrorDisplay extends Component {
+
+    static propTypes = {
+        errorMessage: PropTypes.string,
+        onClose: PropTypes.func.isRequired,
+    };
+
+    constructor(props) {
+        super(props);
+    }
+
+    handleClose(){
+        this.props.onClose();
+    };
+
+    render() {
+        console.log('ErrorDisplay', this.props.errorMessage);
+        if (this.props.errorMessage === '') {
+            return null;
+        }else{
+            const actions = [
+                <FlatButton
+                    label="OK"
+                    primary={true}
+                    onTouchTap={this.handleClose.bind(this)}
+                />,
+            ];
+            return (
+                <div>
+                    <Dialog
+                        actions={actions}
+                        modal={false}
+                        open={true}
+                        onRequestClose={this.handleClose.bind(this)}
+                    >
+                        {this.props.errorMessage}
+                    </Dialog>
+                </div>
+            )
+        }
+    }
+}
