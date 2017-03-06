@@ -34,6 +34,10 @@ export default class Operand extends Component {
         }
     }
 
+    onSubmit(e) {
+        e.preventDefault();
+    }
+
     componentDidMount() {
         this.checkIfInputActive();
     }
@@ -60,7 +64,7 @@ export default class Operand extends Component {
         if (this.props.pos === OPERAND_POS.LEFT) {
             return (
                 <div className="operationItem">
-                    <form>
+                    <form onSubmit={this.onSubmit.bind(this)}>
                         <input
                             style={{
                                 backgroundImage: `url(${img})`,
@@ -88,7 +92,7 @@ export default class Operand extends Component {
             if (visible) {
                 return (
                     <div className="operationItem">
-                        <form>
+                        <form onSubmit={this.onSubmit.bind(this)}>
                             <input
                                 style={{
                                     backgroundImage: `url(${img})`,
