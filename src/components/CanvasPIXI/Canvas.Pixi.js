@@ -439,7 +439,7 @@ class CanvasPIXI extends Component {
     }
 
     addDotToZone(dot){
-        //console.log('addDotToZone', new Date().getTime());
+        //console.log('addDotToZone', dot);
         let dotSprite;
         if(dot.isPositive) {
             if(this.state.positivePowerZone[dot.powerZone].children.length < this.state.maxDotsByZone) {
@@ -556,7 +556,7 @@ class CanvasPIXI extends Component {
             if (droppedOnPowerZoneIndex !== originalZoneIndex) {
                 // impossible to move between powerZone AND signed zone
                 // impossible to move between powerZone in base X
-                if(droppedOnPowerZone.isPositive === dotSprite.dot.isPositive && this.props.base[1] != 'x') {
+                if(droppedOnPowerZone.isPositive === dotSprite.dot.isPositive && this.props.base[1] != BASE.BASE_X) {
 
                     let diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
                     let dotsToRemoveCount = 1;
@@ -622,14 +622,43 @@ class CanvasPIXI extends Component {
                 }
             }else{
                 if(dotSprite.dot.isPositive === droppedOnPowerZone.isPositive) {
-                    // just mode the dots into the zone
+                    // just move the dots into the zone
                     droppedOnPowerZone.addChild(dotSprite);
                     let newPosition = data.getLocalPosition(droppedOnPowerZone);
                     dotSprite.position.x = newPosition.x;
                     dotSprite.position.y = newPosition.y;
                 }else{
                     // check it possible dot / anti dot destruction
-                    console.log('drop in opposite sign zone');
+                    if(dotSprite.dot.isPositive) {
+                        // Positive dot drag into negative zoe
+                        if(this.state.localNegativeDotsPerZone.length > 0){
+                            let allRemovedDots = [];
+                            let negativeSprite = this.state.negativePowerZone[originalZoneIndex].getChildAt(0);
+                            allRemovedDots.push(negativeSprite.dot);
+                            this.removeDotSpriteListeners(negativeSprite);
+
+                            allRemovedDots.push(dotSprite.dot);
+                            this.removeDotSpriteListeners(dotSprite);
+                            this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+                        }else{
+                            this.backIntoPlace(dotSprite, this.state.positivePowerZone[originalZoneIndex]);
+                        }
+                    }else{
+                        // Negative dot drag into positive zoe
+                        if(this.state.localPositiveDotsPerZone.length > 0){
+                            let allRemovedDots = [];
+                            let positiveSprite = this.state.positivePowerZone[originalZoneIndex].getChildAt(0);
+                            allRemovedDots.push(positiveSprite.dot);
+                            this.removeDotSpriteListeners(positiveSprite);
+
+                            allRemovedDots.push(dotSprite.dot);
+                            this.removeDotSpriteListeners(dotSprite);
+
+                            this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+                        }else{
+                            this.backIntoPlace(dotSprite, this.state.negativePowerZone[originalZoneIndex]);
+                        }
+                    }
                 }
             }
         }else{
@@ -724,10 +753,7 @@ class CanvasPIXI extends Component {
         for(let i=0; i < dotsToRemove; i++){
             let dotSprite = zone.getChildAt(0);
             allRemovedDots.push(dotSprite.dot);
-            dotSprite.off('pointerdown', this.onDragStart);
-            dotSprite.off('pointerup', this.onDragEnd);
-            dotSprite.off('pointerupoutside', this.onDragEnd);
-            dotSprite.off('mousemove', this.onDragMove);
+            this.removeDotSpriteListeners(dotSprite);
             dotSprite.origin = new Point();
             dotSprite.origin.copy(dotSprite.position);
             var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
@@ -767,7 +793,13 @@ class CanvasPIXI extends Component {
         this.state.renderer.render(this.state.stage);
         //requestAnimationFrame(this.animationCallback.bind(this));
         //this.state.stats.end();
+    }
 
+    removeDotSpriteListeners(sprite){
+        sprite.off('pointerdown', this.onDragStart);
+        sprite.off('pointerup', this.onDragEnd);
+        sprite.off('pointerupoutside', this.onDragEnd);
+        sprite.off('mousemove', this.onDragMove);
     }
 
     shouldComponentUpdate(nextProps){
@@ -1034,7 +1066,7 @@ class CanvasPIXI extends Component {
                                         x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
                                         y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
                                         zoneId: i,
-                                        isPositive: true,
+                                        isPositive: false,
                                         color: 'blue'
                                     })
                                 }
@@ -1071,59 +1103,38 @@ class CanvasPIXI extends Component {
     }
 
     removeDotsFromStateChange(){
-        for(let i = 0; i < this.state.localPositiveDotsPerZone.length; i++){
-            if(this.state.localPositiveDotsPerZone[i].length > 0) {
-                let j = this.state.localPositiveDotsPerZone[i].length;
+        this.removeDotsIfNeeded(this.state.localPositiveDotsPerZone, this.props.positivePowerZoneDots, this.state.positivePowerZoneDotNotDisplayed);
+        this.removeDotsIfNeeded(this.state.localNegativeDotsPerZone, this.props.negativePowerZoneDots, this.state.negativePowerZoneDotNotDisplayed);
+        this.checkIfNotDisplayedSpriteCanBe();
+    }
+
+    removeDotsIfNeeded(localArray, storeArray, localNotDisplayedArray){
+        for(let i = 0; i < localArray.length; i++){
+            if(localArray[i].length > 0) {
+                let j = localArray[i].length;
                 while(j--){
                     let isPresent = false;
-                    let k = this.props.positivePowerZoneDots[i].length;
+                    let k = storeArray[i].length;
                     while(k--){
-                        if(this.props.positivePowerZoneDots[i][k].id === this.state.localPositiveDotsPerZone[i][j].id === true){
+                        if(storeArray[i][k].id === localArray[i][j].id === true){
                             isPresent = true;
                             break;
                         }
                     }
-                    k = this.state.positivePowerZoneDotNotDisplayed[i].length;
+                    k = localNotDisplayedArray[i].length;
                     while(k--){
-                        if(this.state.positivePowerZoneDotNotDisplayed[i][k].id === this.state.localPositiveDotsPerZone[i][j].id === true){
-                            this.state.positivePowerZoneDotNotDisplayed[i].splice(k, 1);
+                        if(localNotDisplayedArray[i][k].id === localArray[i][j].id === true){
+                            localNotDisplayedArray[i].splice(k, 1);
                             break;
                         }
                     }
                     if(isPresent === false) {
-                        this.removeCircleFromZone(this.state.localPositiveDotsPerZone[i][j]);
-                        this.state.localPositiveDotsPerZone[i].splice(this.state.localPositiveDotsPerZone[i].indexOf(this.state.localPositiveDotsPerZone[i][j]), 1);
+                        this.removeCircleFromZone(localArray[i][j]);
+                        localArray[i].splice(localArray[i].indexOf(localArray[i][j]), 1);
                     }
                 }
             }
         }
-        for(let i = 0; i < this.state.negativePowerZone.length; i++){
-            if(this.state.negativePowerZone[i].length > 0) {
-                let j = this.state.negativePowerZone[i].length;
-                while(j--){
-                    let isPresent = false;
-                    let k = this.props.negativePowerZoneDots[i].length;
-                    while(k--){
-                        if(this.props.negativePowerZoneDots[i][k].id === this.state.localNegativeDotsPerZone[i][j].id === true){
-                            isPresent = true;
-                            break;
-                        }
-                    }
-                    k = this.state.negativePowerZoneDotNotDisplayed[i].length;
-                    while(k--){
-                        if(this.state.negativePowerZoneDotNotDisplayed[i][k].id === this.state.localNegativeDotsPerZone[i][j].id === true){
-                            this.state.negativePowerZoneDotNotDisplayed[i].splice(k, 1);
-                            break;
-                        }
-                    }
-                     if(isPresent === false) {
-                        this.removeCircleFromZone(this.state.negativePowerZone[i][j]);
-                        this.state.negativePowerZone[i].splice(this.state.negativePowerZone[i].indexOf(this.state.negativePowerZone[i][j]), 1);
-                    }
-                }
-            }
-        }
-        this.checkIfNotDisplayedSpriteCanBe();
     }
 
     checkIfNotDisplayedSpriteCanBe(){
@@ -1161,10 +1172,7 @@ class CanvasPIXI extends Component {
     removeCircleFromZone(dot){
         if(dot.sprite) {
             let dotSprite = dot.sprite;
-            dotSprite.off('pointerdown', this.onDragStart);
-            dotSprite.off('pointerup', this.onDragEnd);
-            dotSprite.off('pointerupoutside', this.onDragEnd);
-            dotSprite.off('mousemove', this.onDragMove);
+            this.removeDotSpriteListeners(dotSprite);
             dotSprite.parent.removeChild(dotSprite);
             dot.sprite.destroy();
         }

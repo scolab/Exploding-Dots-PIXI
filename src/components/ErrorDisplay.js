@@ -18,7 +18,6 @@ export default class ErrorDisplay extends Component {
     };
 
     render() {
-        console.log('ErrorDisplay', this.props.errorMessage);
         if (this.props.errorMessage === '') {
             return null;
         }else{

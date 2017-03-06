@@ -25,6 +25,9 @@ export default class Operand extends Component {
                 var reg = new RegExp('^$|^[0-9]+$');
             }else if(this.props.operator_mode === OPERATOR_MODE.SUBTRACT) {
                 var reg = new RegExp('^$|^[\-|0-9]+$');
+                //var reg = new RegExp('(^$)|(^\-{0,1}?[0-9]*)');
+                //var reg = new RegExp('(^$)|(^\-{1})');
+                //var reg = new RegExp('(-?[\d]+)(\|-?[\d]+)*');
             }else{
                 var reg = new RegExp('^$|^[|0-9]+$');
             }

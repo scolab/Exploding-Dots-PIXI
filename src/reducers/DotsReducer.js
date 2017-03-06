@@ -231,7 +231,6 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
             stateCopy = {...state};
-            /*let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);*/
             let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
             if (index < state.machineState.allBases.length - 1) {
                 ++index;
