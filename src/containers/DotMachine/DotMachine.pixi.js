@@ -1,7 +1,9 @@
 import React, {Component, PropTypes} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine, showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone} from '../../actions/'
+import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine,
+    showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone,
+    operatorChanged, error, userMessage, resetUserMessage} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -13,6 +15,8 @@ import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
 import GoButton from '../../components/GoButton';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import MessageDisplay from '../../components/MessageDisplay';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS} from '../../Constants';
 
 const mapStateToProps = (store) => {
@@ -34,8 +38,12 @@ const mapDispatchToProps = (dispatch) =>{
         activateMagicWand: activateMagicWand,
         stabilize: stabilize,
         operandChanged: operandChanged,
+        operatorChanged: operatorChanged,
         startActivity: startActivity,
-        startActivityDone: startActivityDone
+        startActivityDone: startActivityDone,
+        error: error,
+        userMessage: userMessage,
+        resetUserMessage: resetUserMessage,
     }, dispatch);
 };
 
@@ -90,6 +98,8 @@ class DotsMachine extends Component {
                 activityStarted: PropTypes.bool.isRequired,
                 operandA: PropTypes.string.isRequired,
                 operandB: PropTypes.string.isRequired,
+                errorMessage: PropTypes.string.isRequired,
+                userMessage: PropTypes.string.isRequired,
             })
         })
     };
@@ -115,6 +125,10 @@ class DotsMachine extends Component {
         //console.log('render', this.props);
         return (
             <div>
+                <ErrorDisplay errorMessage={this.props.dotsMachine.machineState.errorMessage}
+                                onClose={this.props.resetMachine}/>
+                <MessageDisplay userMessage={this.props.dotsMachine.machineState.userMessage}
+                              onClose={this.props.resetUserMessage}/>
                 <TopMenuItem>
                     {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
                         <PlaceValueSwitch visible={this.props.dotsMachine.machineState.placeValueSwitchVisible}
@@ -146,6 +160,8 @@ class DotsMachine extends Component {
                     />
                     <Operator operator_mode={this.props.dotsMachine.machineState.operator_mode}
                               usage_mode={this.props.dotsMachine.machineState.usage_mode}
+                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+                              onChange={this.props.operatorChanged}
                     />
                     <Operand value={this.props.dotsMachine.machineState.operandB}
                              operator_mode={this.props.dotsMachine.machineState.operator_mode}
@@ -180,6 +196,8 @@ class DotsMachine extends Component {
                     activityStarted={this.props.startActivityDone}
                     operandA={this.props.dotsMachine.machineState.operandA}
                     operandB={this.props.dotsMachine.machineState.operandB}
+                    error={this.props.error}
+                    userMessage={this.props.userMessage}
                 />
 
             </div>

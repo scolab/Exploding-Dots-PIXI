@@ -1,6 +1,6 @@
 export const BASE = {
-    ALL_BASE : [[1,2],[2,3],[1,6],[1,10],[1,12], [1,'X']],
-    MECHA : [[1,2],[1,3],[2,3],[1,4],[1,5],[1,10],[1,12]],
+    ALL_BASE : [[1,2],[1,3],[1,4],[1,5],[1,10],[1,12],[2,3],[1,'X']],
+    MECHA : [[1,2],[1,3],[1,4],[1,5],[1,10],[1,12],[2,3]],
     ARITHMOS: [[1,10]],
     BASE_X : 'X'
 };
@@ -32,4 +32,8 @@ export const OPERAND_POS = {
 export const POSITION_INFO = {
     DOT_RAYON: 12,
     BOX_BOTTOM_GREY_ZONE: 10
+};
+
+export const ERROR_MESSAGE = {
+    INVALID_ENTRY : 'Invalid entry in the operand'
 };

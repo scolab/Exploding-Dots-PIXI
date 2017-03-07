@@ -220,13 +220,17 @@ const dotsReducer = (state = null, action) => {
                 stateCopy.machineState.operandB = action.value;
             }
             return stateCopy;
+        case ACTIONS.OPERATOR_CHANGED:
+            stateCopy = {...state};
+            console.log(ACTIONS.OPERATOR_CHANGED, action.value);
+            stateCopy.machineState.operator_mode = action.value;
+            return stateCopy;
         case ACTIONS.ACTIVATE_MAGIC_WAND:
             stateCopy = {...state};
             stateCopy.machineState.magicWandIsActive = action.active;
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
             stateCopy = {...state};
-            /*let index = _array.indexOf(BASE.ALL_BASE, state.machineState.base);*/
             let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
             if (index < state.machineState.allBases.length - 1) {
                 ++index;
@@ -245,7 +249,25 @@ const dotsReducer = (state = null, action) => {
             initialMachineState.operandA = '';
             initialMachineState.operandB = '';
             initialMachineState.activityStarted = false;
+            initialMachineState.errorMessage = '';
             return setInitialState();
+        case ACTIONS.ERROR:
+            stateCopy = {...state};
+            stateCopy.machineState.errorMessage = action.errorMessage;
+            stateCopy.machineState.startActivity = false;
+            stateCopy.machineState.activityStarted = true;
+            return stateCopy;
+            break;
+        case ACTIONS.USER_MESSAGE:
+            stateCopy = {...state};
+            stateCopy.machineState.userMessage = action.userMessage;
+            return stateCopy;
+            break;
+        case ACTIONS.RESET_USER_MESSAGE:
+            stateCopy = {...state};
+            stateCopy.machineState.userMessage = '';
+            return stateCopy;
+            break;
         default:
             return state
     }

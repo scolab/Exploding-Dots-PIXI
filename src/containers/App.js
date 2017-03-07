@@ -12,6 +12,8 @@ import { resetMachine } from '../actions/';
 
 // http://www.material-ui.com/
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -40,6 +42,8 @@ class ExplodingDots extends Component {
         activityStarted: PropTypes.bool,
         placeValueOn: PropTypes.bool,
         cdnBaseUrl: PropTypes.string,
+        errorMessage: PropTypes.string,
+        userMessage: PropTypes.string,
     };
 
     static defaultProps = {
@@ -60,7 +64,9 @@ class ExplodingDots extends Component {
         placeValueOn: true,
         startActivity: false,
         activityStarted: false,
-        cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots'
+        cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots',
+        errorMessage: '',
+        userMessage: '',
     };
 
     constructor(props) {
@@ -76,7 +82,7 @@ class ExplodingDots extends Component {
     render() {
         return (
             <Provider store={store}>
-                <MuiThemeProvider>
+                <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
                     <div>
                         <DotsMachine id="0"/>
                     </div>

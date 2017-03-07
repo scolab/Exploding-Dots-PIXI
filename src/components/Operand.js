@@ -23,7 +23,19 @@ export default class Operand extends Component {
             if(this.props.operator_mode === OPERATOR_MODE.MULTIPLY && this.props.pos === OPERAND_POS.RIGHT){
                 // no | in right operand in multiply
                 var reg = new RegExp('^$|^[0-9]+$');
-            }else {
+            }else if(this.props.operator_mode === OPERATOR_MODE.SUBTRACT) {
+                /*
+                Allow the string to be:
+                 - empty
+                 - a single minus (-) sign. Needed to start writing a first negative number
+                 - Digits, between 1 and 5
+                 - minus (-) sign followed by digits
+                 - Pipe (|) followed by a minus sign or digits
+                 - A maximum of 5 of those pattern
+                */
+                var reg = new RegExp(/^$|^-$|^(-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
+
+            }else{
                 var reg = new RegExp('^$|^[|0-9]+$');
             }
         }else{
