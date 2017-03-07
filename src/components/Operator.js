@@ -40,7 +40,7 @@ export default class Operator extends Component {
                             fontFamily: 'museo-slab',
                             fontSize: 24,
                         }}>
-                        <i className={mainDisplay}>{text}</i>
+                        {text}
                     </div>
                 );
             case OPERATOR_MODE.ADDITION:
