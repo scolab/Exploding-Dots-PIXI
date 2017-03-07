@@ -434,7 +434,6 @@ class CanvasPIXI extends Component {
 
         if(this.state.isInteractive) {
             this.props.addDot(e.target.powerZone, clickModifiedPos, e.target.isPositive);
-
         }
     }
 
@@ -508,6 +507,7 @@ class CanvasPIXI extends Component {
     }
 
     onDragMove(e){
+        console.log('onDragMove');
         if(this.world.state.isInteractive) {
             if (this.dragging) {
                 var newPosition = this.data.getLocalPosition(this.parent);
@@ -518,6 +518,7 @@ class CanvasPIXI extends Component {
     }
 
     onDragEnd(e){
+        console.log('onDragEnd');
         if(this.world.state.isInteractive) {
             this.dragging = false;
             this.data = null;
@@ -527,7 +528,7 @@ class CanvasPIXI extends Component {
     }
 
     verifyDroppedOnZone(dotSprite, data){
-        //console.log('verifyDroppedOnZone', this.state.localNegativeDotsPerZone);
+        console.log('verifyDroppedOnZone');
         let originalZoneIndex = dotSprite.dot.powerZone;
         let droppedOnPowerZone = null;
         let droppedOnPowerZoneIndex = -1;
@@ -602,7 +603,7 @@ class CanvasPIXI extends Component {
                     let dotsPos = [];
                     let newNbOfDots = Math.pow(this.props.base[1], diffZone);
                     newNbOfDots -= this.props.base[0];
-                    //console.log('newNbOfDots', newNbOfDots, diffZone);
+                    console.log('newNbOfDots', newNbOfDots, diffZone);
                     for (let i = 0; i < newNbOfDots; i++) {
                         dotsPos.push({
                             x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
@@ -686,7 +687,7 @@ class CanvasPIXI extends Component {
     }
 
     addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo, updateValue){
-        //console.log('addDraggedToNewZone', newZone.powerZone);
+        console.log('addDraggedToNewZone', newZone.powerZone);
         newZone.addChild(dotSprite);
         dotSprite.position.x = positionToBeMovedTo.x;
         dotSprite.position.y = positionToBeMovedTo.y;
@@ -995,32 +996,24 @@ class CanvasPIXI extends Component {
                             let rightIsPositive = false;
                             let minusPos = this.props.operandA.indexOf('-');
                             if(minusPos !== -1){
-                                if(minusPos != 0){
-                                    // minus (-) sign in position other than first, error
+                                // leading minus in left operand
+                                leftIsPositive = false;
+                                operandA = operandA.substr(1);
+                                if(operandA.length === 0){
                                     invalidEntry = true;
-                                }else{
-                                    // leading minus in left operand
-                                    leftIsPositive = false;
-                                    operandA = operandA.substr(1);
                                 }
                             }
                             minusPos = this.props.operandB.indexOf('-');
                             if(minusPos !== -1){
-                                if(minusPos != 0){
-                                    // minus (-) sign in position other than first, error
+                                // leading minus in right operand
+                                rightIsPositive = true;
+                                operandB = operandB.substr(1);
+                                if(operandB.length === 0){
                                     invalidEntry = true;
-                                }else{
-                                    // leading minus in right operand
-                                    rightIsPositive = true;
-                                    operandA = operandB.substr(1);
                                 }
                             }
-                            if(operandA.indexOf('-') !== -1 || operandB.indexOf('-') !== - 1){
-                                // More than one minus (-) sign, error
-                                invalidEntry = true;
-                            }
                             if(invalidEntry === false) {
-                                for (let i = 0; i < Number(this.props.operandA); ++i) {
+                                for (let i = 0; i < Number(operandA); ++i) {
                                     dotsPos.push({
                                         x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
                                         y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
@@ -1029,7 +1022,7 @@ class CanvasPIXI extends Component {
                                         color: 'red'
                                     })
                                 }
-                                for (let i = 0; i < Number(this.props.operandB); ++i) {
+                                for (let i = 0; i < Number(operandB); ++i) {
                                     dotsPos.push({
                                         x: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.width - POSITION_INFO.DOT_RAYON),
                                         y: randomFromTo(POSITION_INFO.DOT_RAYON, this.state.positivePowerZone[0].hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE),
@@ -1050,6 +1043,12 @@ class CanvasPIXI extends Component {
                                 dotsPerZoneA.push(0);
                             }
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                                if(dotsPerZoneA[i] == ''){
+                                    dotsPerZoneA[i] = '0';
+                                }
+                                if(dotsPerZoneB[i] == ''){
+                                    dotsPerZoneB[i] = '0';
+                                }
                                 let j = 0;
                                 for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
                                     dotsPos.push({
@@ -1231,11 +1230,22 @@ class CanvasPIXI extends Component {
             }
         }
         //Overcrowding
+        let dotOverload = false;
         for(let i = 0; i < this.state.localPositiveDotsPerZone.length; i++){
             if(this.state.localPositiveDotsPerZone[i].length > this.props.base[1]-1) {
-                let tween = TweenMax.fromTo(this.state.positivePowerZone[i], 0.3, {x:this.state.positivePowerZone[i].x - 1}, {x:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
+                let tween = TweenMax.fromTo(this.state.positivePowerZone[i], 0.3,
+                    {x:this.state.positivePowerZone[i].x - 1},
+                    {x:"+=1",
+                        ease:RoughEase.ease.config({
+                            strength:8,
+                            points:20,
+                            template:Linear.easeNone,
+                            randomize:false
+                        }),
+                        clearProps:"x"});
                 tween.repeat(-1).yoyo(true).play();
                 this.state.positiveValueText[i].style.fill = 0xff0000;
+                dotOverload = true;
             }else{
                 TweenMax.killTweensOf(this.state.positivePowerZone[i]);
                 this.state.positiveValueText[i].style.fill = 0x444444;
@@ -1244,7 +1254,8 @@ class CanvasPIXI extends Component {
         if (this.state.negativePresent) {
             for (let i = 0; i < this.state.localNegativeDotsPerZone.length; i++) {
                 if (this.state.localNegativeDotsPerZone[i].length > this.props.base[1] - 1) {
-                    let tween = TweenMax.fromTo(this.state.negativePowerZone[i], 0.3, {x: this.state.negativePowerZone[i].x - 1}, {
+                    let tween = TweenMax.fromTo(this.state.negativePowerZone[i], 0.3,
+                        {x: this.state.negativePowerZone[i].x - 1}, {
                         x: "+=1",
                         ease: RoughEase.ease.config({
                             strength: 8,
@@ -1256,9 +1267,30 @@ class CanvasPIXI extends Component {
                     });
                     tween.repeat(-1).yoyo(true).play();
                     this.state.negativeValueText[i].fill = 0xff0000;
+                    dotOverload = true;
                 } else {
                     TweenMax.killTweensOf(this.state.negativePowerZone[i]);
                     this.state.negativeValueText[i].style.fill = 0xDDDDDD;
+                }
+            }
+        }
+        if (this.state.negativePresent && dotOverload === false){
+            for (let i = 0; i < this.props.numZone; i++) {
+                if(this.state.localPositiveDotsPerZone[i].length > 0 && this.state.localNegativeDotsPerZone[i].length > 0) {
+                    let tween = TweenMax.fromTo(this.state.allZones[i], 0.3,
+                        {x: this.state.allZones[i].x - 1}, {
+                            x: "+=1",
+                            ease: RoughEase.ease.config({
+                                strength: 8,
+                                points: 20,
+                                template: Linear.easeNone,
+                                randomize: false
+                            }),
+                            clearProps: "x"
+                        });
+                    tween.repeat(-1).yoyo(true).play();
+                }else{
+                    TweenMax.killTweensOf(this.state.allZones[i]);
                 }
             }
         }
