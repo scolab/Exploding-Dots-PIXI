@@ -3,6 +3,9 @@ import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../..
 import { TweenMax, RoughEase, Linear} from "gsap";
 import {Point} from 'pixi.js';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE} from '../../Constants'
+import {ParticleEmitter} from './ParticleEmitter';
+import dragJSON from './dot_drag.json';
+import explodeJSON from './dot_explod.json';
 
 class CanvasPIXI extends Component {
 
@@ -71,6 +74,7 @@ class CanvasPIXI extends Component {
         this.state.isInteractive = true;
         this.state.negativePresent = (props.operator_mode == OPERATOR_MODE.SUBTRACT || props.operator_mode == OPERATOR_MODE.DIVIDE || props.base[1] === BASE.BASE_X);
         this.state.maxDotsByZone = this.state.negativePresent ? 75 : 150;
+        this.state.explodeEmitter = [];
 
         for(let i = 0; i < this.props.numZone; i++){
             this.state.localPositiveDotsPerZone.push([]);
@@ -98,7 +102,7 @@ class CanvasPIXI extends Component {
     }
 
     componentDidMount(){
-        //console.log('componentDidMount', this.state, this.props);
+        console.log('componentDidMount', this.state, this.props);
 
         var options = {
             view: this.canvas,
@@ -124,7 +128,6 @@ class CanvasPIXI extends Component {
         this.state.stage.addChild(this.state.movingDotsContainer);
 
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
-
         requestAnimationFrame(this.animationCallback.bind(this));
         window.addEventListener('resize', this.resize.bind(this));
     }
@@ -149,6 +152,7 @@ class CanvasPIXI extends Component {
                 });
             });
             this.setZoneTextAndAlphaStatus();
+            this.state.dragParticleEmitter = new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], dragJSON);
         }
     }
 
@@ -504,6 +508,9 @@ class CanvasPIXI extends Component {
             this.originInMovingContainer.y += this.origin.y - originDiff.y;
             this.position.x = newPosition.x;
             this.position.y = newPosition.y;
+            this.particleEmitter = this.world.state.dragParticleEmitter;
+            this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+            this.particleEmitter.start();
         }
     }
 
@@ -513,6 +520,7 @@ class CanvasPIXI extends Component {
                 var newPosition = this.data.getLocalPosition(this.parent);
                 this.position.x = newPosition.x;
                 this.position.y = newPosition.y;
+                this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
             }
         }
     }
@@ -523,6 +531,7 @@ class CanvasPIXI extends Component {
             this.dragging = false;
             this.data = null;
             this.world.verifyDroppedOnZone(this, e.data);
+            this.particleEmitter.stop();
         }
         e.stopPropagation();
     }
@@ -1103,6 +1112,7 @@ class CanvasPIXI extends Component {
     }
 
     removeDotsFromStateChange(){
+        console.log('removeDotsFromStateChange');
         this.removeDotsIfNeeded(this.state.localPositiveDotsPerZone, this.props.positivePowerZoneDots, this.state.positivePowerZoneDotNotDisplayed);
         this.removeDotsIfNeeded(this.state.localNegativeDotsPerZone, this.props.negativePowerZoneDots, this.state.negativePowerZoneDotNotDisplayed);
         this.checkIfNotDisplayedSpriteCanBe();
@@ -1190,6 +1200,7 @@ class CanvasPIXI extends Component {
             let dotSprite = dot.sprite;
             this.removeDotSpriteListeners(dotSprite);
             dotSprite.parent.removeChild(dotSprite);
+            dot.sprite.particleEmitter.destroy();
             dot.sprite.destroy();
         }
     }

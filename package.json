@@ -51,6 +51,7 @@
     "lodash": "^4.17.4",
     "material-ui": "^0.17.0",
     "pixi-filters": "^1.0.6",
+    "pixi-particles": "^2.1.4",
     "pixi.js": "^4.3.5",
     "react-redux": "^5.0.1",
     "react-tap-event-plugin": "^2.0.1",
