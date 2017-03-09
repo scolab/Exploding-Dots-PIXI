@@ -9,8 +9,8 @@
 		"minimumScaleMultiplier": 1
 	},
 	"color": {
-		"start": "#000000",
-		"end": "#000000"
+		"start": "#ff0000",
+		"end": "#ff000"
 	},
 	"speed": {
 		"start": 5,
@@ -32,13 +32,13 @@
 		"max": 0
 	},
 	"lifetime": {
-		"min": 0.5,
-		"max": 0.5
+		"min": 0.05,
+		"max": 0.05
 	},
 	"blendMode": "normal",
-	"frequency": 0.01,
+	"frequency": 0.001,
 	"emitterLifetime": -1,
-	"maxParticles": 500,
+	"maxParticles": 250,
 	"pos": {
 		"x": 0,
 		"y": 0

@@ -757,6 +757,7 @@ class CanvasPIXI extends Component {
                     onComplete: this.addDraggedToNewZone.bind(this),
                     onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true]
                 });
+                this.checkIfNotDisplayedSpriteCanBe();
             }
         }
         let allRemovedDots = [];
@@ -776,10 +777,32 @@ class CanvasPIXI extends Component {
             }else{
                 this.state.localNegativeDotsPerZone[dotSprite.dot.powerZone].splice(this.state.localNegativeDotsPerZone[dotSprite.dot.powerZone].indexOf(dotSprite.dot), 1);
             }
-            TweenMax.to(dotSprite, 0.5, {x:finalPosition.x, y:finalPosition.y, onComplete: this.tweenDotsToNewZoneDone.bind(this), onCompleteParams:[dotSprite]});
-            this.checkIfNotDisplayedSpriteCanBe();
+            let explosionEmitter = this.getExplosionEmitter();
+            explosionEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+            explosionEmitter.start();
+            TweenMax.delayedCall(0.2, this.stopExplosionEmitter, [explosionEmitter], this);
+            TweenMax.to(dotSprite, 0.5, {
+                x:finalPosition.x,
+                y:finalPosition.y,
+                onComplete: this.tweenDotsToNewZoneDone.bind(this),
+                onCompleteParams:[dotSprite]
+            });
         }
+        this.checkIfNotDisplayedSpriteCanBe();
         this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
+    }
+
+    getExplosionEmitter(){
+        if(this.state.explodeEmitter.length > 0){
+            return this.state.explodeEmitter.pop();
+        }else{
+            return new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], explodeJSON);
+        }
+    }
+
+    stopExplosionEmitter(explosionEmitter){
+        explosionEmitter.stop();
+        this.state.explodeEmitter.push(explosionEmitter);
     }
 
     tweenDotsToNewZoneDone(dotSprite){
@@ -1200,7 +1223,9 @@ class CanvasPIXI extends Component {
             let dotSprite = dot.sprite;
             this.removeDotSpriteListeners(dotSprite);
             dotSprite.parent.removeChild(dotSprite);
-            dot.sprite.particleEmitter.destroy();
+            if(dot.sprite.particleEmitter) {
+                dot.sprite.particleEmitter.destroy();
+            }
             dot.sprite.destroy();
         }
     }
