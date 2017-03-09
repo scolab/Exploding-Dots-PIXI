@@ -149,10 +149,11 @@ const dotsReducer = (state = null, action) => {
 
         case ACTIONS.REMOVE_MULTIPLE_DOTS:
             stateCopy = {...state};
-            console.log('REMOVE_MULTIPLE_DOTS amount:', action.dotsAmount, ' zone:', action.zoneId);
-            if (action.dotsAmount > 0) {
-                while (action.dotsAmount--) {
-                    let dot = action.dots[action.dotsAmount];
+            console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId);
+            if (action.dots.length > 0) {
+                let i = action.dots.length;
+                while (i--) {
+                    let dot = action.dots[i];
                     if(dot.isPositive) {
                         if (stateCopy.positivePowerZoneDots[action.zoneId].indexOf(dot) != -1) {
                             stateCopy.positivePowerZoneDots[action.zoneId].splice(stateCopy.positivePowerZoneDots[action.zoneId].indexOf(dot), 1);

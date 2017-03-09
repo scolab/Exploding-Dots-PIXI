@@ -21,10 +21,10 @@ export const addMultipleDots = (zoneId, dotsPos, isPositive, updateValue) => ({
     updateValue
 });
 
-export const removeMultipleDots = (zoneId, dotsAmount, updateValue) => ({
+export const removeMultipleDots = (zoneId, dots, updateValue) => ({
     type: ACTIONS.REMOVE_MULTIPLE_DOTS,
     zoneId,
-    dotsAmount,
+    dots,
     updateValue
 });
 
