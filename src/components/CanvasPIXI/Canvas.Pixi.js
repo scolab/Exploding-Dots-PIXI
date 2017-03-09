@@ -488,7 +488,7 @@ class CanvasPIXI extends Component {
         dotSprite.on('pointerdown', this.onDragStart);
         dotSprite.on('pointerup', this.onDragEnd);
         dotSprite.on('pointerupoutside', this.onDragEnd);
-        dotSprite.on('mousemove', this.onDragMove);
+        dotSprite.on('pointermove', this.onDragMove);
         dotSprite.alpha = 0;
         TweenMax.to(dotSprite, 1, {alpha: 1});
     }
@@ -832,7 +832,7 @@ class CanvasPIXI extends Component {
         sprite.off('pointerdown', this.onDragStart);
         sprite.off('pointerup', this.onDragEnd);
         sprite.off('pointerupoutside', this.onDragEnd);
-        sprite.off('mousemove', this.onDragMove);
+        sprite.off('pointermove', this.onDragMove);
     }
 
     shouldComponentUpdate(nextProps){
