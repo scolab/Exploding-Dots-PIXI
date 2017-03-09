@@ -43,6 +43,7 @@ export class ParticleEmitter{
     }
 
     destroy(){
+        console.log('destroy');
         this.emitter.emit = false;
         this.emitter.destroy();
         this.emitter = null;

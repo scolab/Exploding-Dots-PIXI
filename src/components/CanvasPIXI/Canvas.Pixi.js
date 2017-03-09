@@ -494,7 +494,7 @@ class CanvasPIXI extends Component {
     }
 
     onDragStart(e, canvas){
-        //console.log('onDragStart', this.dot.id);
+        //console.log('onDragStart', this.dot.id, this.world.state.isInteractive);
         if(this.world.state.isInteractive) {
             let oldParent = this.parent;
             this.origin = new Point(this.x, this.y);
@@ -526,7 +526,6 @@ class CanvasPIXI extends Component {
     }
 
     onDragEnd(e){
-        //console.log('onDragEnd', e, this.dot.id, this.dot.powerZone);
         if(this.world.state.isInteractive && this.dragging) {
             this.dragging = false;
             this.data = null;
@@ -696,7 +695,7 @@ class CanvasPIXI extends Component {
     }
 
     addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo, updateValue){
-        console.log('addDraggedToNewZone', newZone.powerZone);
+        //console.log('addDraggedToNewZone', newZone.powerZone);
         newZone.addChild(dotSprite);
         dotSprite.position.x = positionToBeMovedTo.x;
         dotSprite.position.y = positionToBeMovedTo.y;
@@ -757,8 +756,8 @@ class CanvasPIXI extends Component {
                     onComplete: this.addDraggedToNewZone.bind(this),
                     onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true]
                 });
-                this.checkIfNotDisplayedSpriteCanBe();
             }
+            this.checkIfNotDisplayedSpriteCanBe();
         }
         let allRemovedDots = [];
         for(let i=0; i < dotsToRemove; i++){
@@ -1135,20 +1134,21 @@ class CanvasPIXI extends Component {
     }
 
     removeDotsFromStateChange(){
-        console.log('removeDotsFromStateChange');
-        this.removeDotsIfNeeded(this.state.localPositiveDotsPerZone, this.props.positivePowerZoneDots, this.state.positivePowerZoneDotNotDisplayed);
-        this.removeDotsIfNeeded(this.state.localNegativeDotsPerZone, this.props.negativePowerZoneDots, this.state.negativePowerZoneDotNotDisplayed);
+        //console.log('removeDotsFromStateChange');
+        this.removeDotsIfNeeded(this.state.localPositiveDotsPerZone, this.props.positivePowerZoneDots);
+        this.removeDotsIfNeeded(this.state.positivePowerZoneDotNotDisplayed, this.props.positivePowerZoneDots);
+        this.removeDotsIfNeeded(this.state.localNegativeDotsPerZone, this.props.negativePowerZoneDots);
+        this.removeDotsIfNeeded(this.state.negativePowerZoneDotNotDisplayed, this.props.negativePowerZoneDots);
         this.checkIfNotDisplayedSpriteCanBe();
     }
 
-    removeDotsIfNeeded(localArray, storeArray, localNotDisplayedArray){
+    removeDotsIfNeeded(localArray, storeArray){
         //console.log('removeDotsIfNeeded', localArray, storeArray, localNotDisplayedArray);
         for(let i = 0; i < localArray.length; i++){
             if(localArray[i].length > 0) {
                 let j = localArray[i].length;
                 while(j--){
                     let isPresent = false;
-                    let isNotDisplayedPresent = false;
                     let k = storeArray[i].length;
                     while(k--){
                         if(storeArray[i][k].id === localArray[i][j].id === true){
@@ -1156,34 +1156,13 @@ class CanvasPIXI extends Component {
                             break;
                         }
                     }
-                    if(isPresent === false) {
+                    if(isPresent === false && localArray[i][j] != undefined) {
                         this.removeCircleFromZone(localArray[i][j]);
                         localArray[i].splice(localArray[i].indexOf(localArray[i][j]), 1);
                     }
                 }
             }
         }
-
-        for(let i = 0; i < localNotDisplayedArray.length; i++){
-            if(localNotDisplayedArray[i].length > 0) {
-                let j = localNotDisplayedArray[i].length;
-                while(j--){
-                    let isPresent = false;
-                    let k = storeArray[i].length;
-                    while(k--){
-                        if(storeArray[i][k].id === localNotDisplayedArray[i][j].id === true){
-                            isPresent = true;
-                            break;
-                        }
-                    }
-                    if(isPresent === false) {
-                        this.removeCircleFromZone(localArray[i][j]);
-                        localNotDisplayedArray[i].splice(localNotDisplayedArray[i].indexOf(localArray[i][j]), 1);
-                    }
-                }
-            }
-        }
-
     }
 
     checkIfNotDisplayedSpriteCanBe(){
@@ -1224,7 +1203,7 @@ class CanvasPIXI extends Component {
             this.removeDotSpriteListeners(dotSprite);
             dotSprite.parent.removeChild(dotSprite);
             if(dot.sprite.particleEmitter) {
-                dot.sprite.particleEmitter.destroy();
+                dot.sprite.particleEmitter.stop();
             }
             dot.sprite.destroy();
         }
