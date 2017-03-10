@@ -8,7 +8,7 @@ export class ObjPool {
         if(this.pool.length > 0) {
             return this.pool.pop();
         }else{
-
+            return {};
         }
     };
 

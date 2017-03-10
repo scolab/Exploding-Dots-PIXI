@@ -1,16 +1,48 @@
+
+
 export class SpritePool {
 
-    constructor(objConstructor, params) {
+    constructor(texturePosOne, texturePosTwo, textureNegOne, textureNegTwo) {
+        this.texturePosOne = texturePosOne;
+        this.texturePosTwo = texturePosTwo;
+        this.textureNegOne = textureNegOne;
+        this.textureNegTwo = textureNegTwo;
         this.pool = [];
-        this.objConstructor = objConstructor;
-        this.params = params;
     }
 
-    get(){
+    get(color, positive){
         if(this.pool.length > 0) {
-            return this.pool.pop();
+            let sprite = this.pool.pop();
+            if(color == 'one'){
+                if(positive){
+                    sprite.texture = this.texturePosOne;
+                }else{
+                    sprite.texture = this.textureNegOne;
+                }
+            }else{
+                if(positive){
+                    sprite.texture = this.texturePosTwo;
+                }else{
+                    sprite.texture = this.textureNegTwo;
+                }
+            }
+            return sprite;
         }else{
-            return null;
+            let sprite;
+            if(color == 'one'){
+                if(positive){
+                    sprite = new PIXI.Sprite(this.texturePosOne);
+                }else{
+                    sprite = new PIXI.Sprite(this.textureNegOne);
+                }
+            }else{
+                if(positive){
+                    sprite = new PIXI.Sprite(this.texturePosTwo);
+                }else{
+                    sprite = new PIXI.Sprite(this.textureNegTwo);
+                }
+            }
+            return sprite;
         }
     };
 
