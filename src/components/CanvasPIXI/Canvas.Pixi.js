@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
 import {Point} from 'pixi.js';
-import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE} from '../../Constants'
+import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO} from '../../Constants'
 import {ParticleEmitter} from './ParticleEmitter';
 import {SpritePool} from '../../utils/SpritePool';
 import {ObjPool} from '../../utils/ObjPool';
@@ -86,7 +86,6 @@ class CanvasPIXI extends Component {
         this.proximityManagerPositive = [];
         this.proximityManagerNegative = [];
 
-
         for(let i = 0; i < this.props.numZone; i++){
             this.state.localPositiveDotsPerZone.push([]);
             this.state.localNegativeDotsPerZone.push([]);
@@ -96,20 +95,6 @@ class CanvasPIXI extends Component {
 
         // to accomodate for pixel padding in TexturePacker
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-
-        let loader = new PIXI.loaders.Loader(props.cdnBaseUrl);
-        if (window.devicePixelRatio >= 4) {
-            loader.add("machineAssets", "/images/machine@4x.json");
-        } else if (window.devicePixelRatio >= 3) {
-            loader.add("machineAssets", "/images/machine@3x.json");
-        } else if (window.devicePixelRatio >= 2) {
-            loader.add("machineAssets", "/images/machine@2x.json");
-        } else {
-            loader.add("machineAssets", "/images/machine@1x.json");
-        }
-        loader.once('complete', this.onAssetsLoaded.bind(this));
-        loader.once('error', this.onAssetsError.bind(this));
-        loader.load();
     }
 
     componentDidMount(){
@@ -132,15 +117,25 @@ class CanvasPIXI extends Component {
         this.state.stage.addChild(this.state.container);
 
         this.state.movingDotsContainer = new PIXI.Container();
-        this.state.movingDotsContainer.x = 100;
-        this.state.movingDotsContainer.y = 100;
-        this.state.movingDotsContainer.height = SETTINGS.GAME_HEIGHT - 200;
-        this.state.movingDotsContainer.width = SETTINGS.GAME_WIDTH - 200;
         this.state.stage.addChild(this.state.movingDotsContainer);
 
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
         requestAnimationFrame(this.animationCallback.bind(this));
         window.addEventListener('resize', this.resize.bind(this));
+
+        let loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
+        if (window.devicePixelRatio >= 1.50) {
+            loader.add("machineAssets", "/images/machine@4x.json");
+        } else if (window.devicePixelRatio >= 1.25) {
+            loader.add("machineAssets", "/images/machine@3x.json");
+        } else if (window.devicePixelRatio >= 1) {
+            loader.add("machineAssets", "/images/machine@2x.json");
+        } else {
+            loader.add("machineAssets", "/images/machine@1x.json");
+        }
+        loader.once('complete', this.onAssetsLoaded.bind(this));
+        loader.once('error', this.onAssetsError.bind(this));
+        loader.load();
     }
 
     onAssetsError(loader){
@@ -184,9 +179,6 @@ class CanvasPIXI extends Component {
         let textures = this.state.textures;
         let boxYPos = 70;
         let gutterWidth = 23;
-        /*let boxWidth = 160;
-        let boxHeight = 242;
-        let halfBoxHeight = 115;*/
         let leftGutter = 66;
         let dotsCounter = new PIXI.Sprite(textures["dot_value.png"]);
         dotsCounter.anchor.x = 0.5;
@@ -255,7 +247,6 @@ class CanvasPIXI extends Component {
             });
 
         }
-        //placeValueText.scale.x = placeValueText.scale.y = 0.5;
         placeValueText.anchor.x = 0.5;
         placeValueText.x = (position * (this.boxWidth + gutterWidth)) + (this.boxWidth / 2);
         placeValueText.y = boxYPos + (this.boxHeight / 2) - 30;
@@ -356,65 +347,8 @@ class CanvasPIXI extends Component {
 
     setZoneTextAndAlphaStatus(){
         // Don't display leading zeroes
-        //console.log('setZoneTextAndAlphaStatus', this.state.localPositiveDotsPerZone.length);
-        let positiveZoneAreEmpty = [];
-        let negativeZoneAreEmpty = [];
-        for(let i = 0; i < this.props.numZone; ++i) {
-            positiveZoneAreEmpty.push(false);
-            negativeZoneAreEmpty.push(false);
-        }
-        for(let i = 0; i < this.state.localPositiveDotsPerZone.length; i++){
-            let zoneDotCount = this.state.localPositiveDotsPerZone[i].length;
-            if(zoneDotCount !== 0){
-                if(this.props.base[1] !== 12) {
-                    this.state.positiveValueText[i].text = zoneDotCount;
-                }else{
-                    this.state.positiveValueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
-                }
-            }else{
-                for(let j = i; j < this.props.numZone; ++j){
-                    if (this.state.localPositiveDotsPerZone[j].length !== 0) {
-                        this.state.positiveValueText[i].text = '0';
-                        positiveZoneAreEmpty[i] = false;
-                        break;
-                    }else{
-                        if(i != 0) {
-                            this.state.positiveValueText[i].text = '';
-                            positiveZoneAreEmpty[i] = true;
-                        }else{
-                            this.state.positiveValueText[i].text = '0';
-                        }
-                    }
-                }
-
-            }
-        }
-
-        for(let i = 0; i < this.state.localNegativeDotsPerZone.length; i++){
-            let zoneDotCount = this.state.localNegativeDotsPerZone[i].length;
-            if(zoneDotCount !== 0){
-                if(this.props.base[1] !== 12) {
-                    this.state.negativeValueText[i].text = zoneDotCount;
-                }else{
-                    this.state.negativeValueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
-                }
-            }else if(this.state.negativePresent){
-                for(let j = i; j < this.props.numZone; ++j){
-                    if (this.state.localNegativeDotsPerZone[j].length !== 0) {
-                        this.state.negativeValueText[i].text = '0';
-                        negativeZoneAreEmpty[i] = false;
-                        break;
-                    }else{
-                        if(i != 0) {
-                            this.state.negativeValueText[i].text = '';
-                            negativeZoneAreEmpty[i] = true;
-                        }else{
-                            this.state.negativeValueText[i].text = '0';
-                        }
-                    }
-                }
-            }
-        }
+        let positiveZoneAreEmpty = this.getZoneTextAndAlphaStatus(this.state.localPositiveDotsPerZone, this.state.positiveValueText);
+        let negativeZoneAreEmpty = this.getZoneTextAndAlphaStatus(this.state.localNegativeDotsPerZone, this.state.negativeValueText, false);
         var filter = new PIXI.filters.ColorMatrixFilter();
         filter.greyscale(0.3, true);
         for(let i = 0; i < this.props.numZone; ++i) {
@@ -425,6 +359,40 @@ class CanvasPIXI extends Component {
 
             }
         }
+    }
+
+     getZoneTextAndAlphaStatus(dotsPerZone, valueText, isPositive = true){
+        let zoneAreEmpty = [];
+        for(let i = 0; i < this.props.numZone; ++i) {
+            zoneAreEmpty.push(false);
+        }
+        for(let i = 0; i < dotsPerZone.length; i++){
+            let zoneDotCount = dotsPerZone[i].length;
+            if(zoneDotCount !== 0){
+                if(this.props.base[1] !== 12) {
+                    valueText[i].text = zoneDotCount;
+                }else{
+                    valueText[i].text = convertBase(zoneDotCount.toString(), 10, 12);
+                }
+            }else if(isPositive || this.state.negativePresent){
+                for(let j = i; j < this.props.numZone; ++j){
+                    if (dotsPerZone[j].length !== 0) {
+                        valueText[i].text = '0';
+                        zoneAreEmpty[i] = false;
+                        break;
+                    }else{
+                        if(i != 0) {
+                            valueText[i].text = '';
+                            zoneAreEmpty[i] = true;
+                        }else{
+                            valueText[i].text = '0';
+                        }
+                    }
+                }
+
+            }
+        }
+        return zoneAreEmpty;
     }
 
     createDot(e){
@@ -454,34 +422,26 @@ class CanvasPIXI extends Component {
 
     addDotToZone(dot){
         //console.log('addDotToZone', dot);
-        let dotSprite;
         if(dot.isPositive) {
-            if(this.state.positivePowerZone[dot.powerZone].children.length < this.state.maxDotsByZone) {
-                if(dot.color !== 'two'){
-                    dotSprite = this.spritePool.get('one', true);
-                }else{
-                    dotSprite = this.spritePool.get('two', true);
-                }
-                this.state.positivePowerZone[dot.powerZone].addChild(dotSprite);
-            }else{
-                this.state.positivePowerZoneDotNotDisplayed[dot.powerZone].push(dot);
-            }
-            this.state.localPositiveDotsPerZone[dot.powerZone].push(dot);
+            this.doAddDotToZone(dot, true, this.state.positivePowerZone, this.state.positivePowerZoneDotNotDisplayed, this.state.localPositiveDotsPerZone);
         }else{
-            if(this.state.negativePowerZone[dot.powerZone].children.length < this.state.maxDotsByZone) {
-                if(dot.color !== 'two'){
-                    dotSprite = this.spritePool.get('one', false);
-                    //dotSprite = new PIXI.Sprite(this.state.textures["red_antidot.png"]);
-                }else{
-                    dotSprite = this.spritePool.get('two', false);
-                    //dotSprite = new PIXI.Sprite(this.state.textures["blue_antidot.png"]);
-                }
-                this.state.negativePowerZone[dot.powerZone].addChild(dotSprite);
-            }else{
-                this.state.negativePowerZoneDotNotDisplayed[dot.powerZone].push(dot);
-            }
-            this.state.localNegativeDotsPerZone[dot.powerZone].push(dot);
+            this.doAddDotToZone(dot, false, this.state.negativePowerZone, this.state.negativePowerZoneDotNotDisplayed, this.state.localNegativeDotsPerZone);
         }
+    }
+
+    doAddDotToZone(dot, isPositive, powerZone, powerZoneNotDisplayed, dotsPerZone){
+        let dotSprite;
+        if(powerZone[dot.powerZone].children.length < this.state.maxDotsByZone) {
+            if(dot.color !== 'two'){
+                dotSprite = this.spritePool.get('one', isPositive);
+            }else{
+                dotSprite = this.spritePool.get('two', isPositive);
+            }
+            powerZone[dot.powerZone].addChild(dotSprite);
+        }else{
+            powerZoneNotDisplayed[dot.powerZone].push(dot);
+        }
+        dotsPerZone[dot.powerZone].push(dot);
         if(dotSprite) {
             this.addDotSpriteProperty(dot, dotSprite);
         }
@@ -560,7 +520,6 @@ class CanvasPIXI extends Component {
 
         this.state.positivePowerZone.forEach(zone =>{
             let dataLocalZone = data.getLocalPosition(zone);
-            //console.log(dataLocalZone, zone.hitArea.y, zone.hitArea.height, dataLocalZone.y < zone.hitArea.y + zone.hitArea.height);
             if(isPointInRectangle(dataLocalZone, zone.hitArea)){
                 droppedOnPowerZone = zone;
                 droppedOnPowerZoneIndex = zone.powerZone;
@@ -568,7 +527,6 @@ class CanvasPIXI extends Component {
         });
         this.state.negativePowerZone.forEach(zone =>{
             let dataLocalZone = data.getLocalPosition(zone);
-            //console.log(dataLocalZone, zone.hitArea.y, zone.hitArea.height);
             if(isPointInRectangle(dataLocalZone, zone.hitArea)){
                 droppedOnPowerZone = zone;
                 droppedOnPowerZoneIndex = zone.powerZone;
@@ -862,7 +820,7 @@ class CanvasPIXI extends Component {
         if(sprite.dot.isPositive) {
             this.proximityManagerPositive[sprite.dot.powerZone].removeItem(sprite);
         }else {
-            this.proximityManagerNegative[dot.powerZone].removeItem(sprite);
+            this.proximityManagerNegative[sprite.dot.powerZone].removeItem(sprite);
         }
     }
 

@@ -67,7 +67,7 @@ export class ProximityManager {
     update() {
         // clear grid:
         this.lengths.length = 0;
-        this.lengths.length = length;
+        this.lengths.length = this.length;
         for (var i = 0; i < this.length; ++i) {
             this.grid[i].length = 0;
         }
