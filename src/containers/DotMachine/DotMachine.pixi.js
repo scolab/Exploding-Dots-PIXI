@@ -175,7 +175,7 @@ class DotsMachine extends Component {
                     }
                 </ActivityDescriptor>
                 <CanvasPIXI
-                    numZone={this.props.dotsMachine.machineState.zones}
+                    totalZoneCount={this.props.dotsMachine.machineState.zones}
                     dots={this.props.dotsMachine.dots}
                     positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
                     negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}

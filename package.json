@@ -46,13 +46,14 @@
   },
   "dependencies": {
     "babel-runtime": "^6.11.6",
+    "eventemitter3": "^2.0.2",
     "express": "^4.14.1",
     "gsap": "^1.19.1",
     "lodash": "^4.17.4",
     "material-ui": "^0.17.0",
     "pixi-filters": "^1.0.6",
-    "pixi.js": "4.3.5",
     "pixi-particles": "^2.1.4",
+    "pixi.js": "4.3.5",
     "react-redux": "^5.0.1",
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0"

@@ -34,6 +34,12 @@ export const POSITION_INFO = {
     BOX_BOTTOM_GREY_ZONE: 10
 };
 
+export const BOX_INFO = {
+    BOX_WIDTH: 160,
+    BOX_HEIGHT: 242,
+    HALF_BOX_HEIGHT: 115
+};
+
 export const ERROR_MESSAGE = {
     INVALID_ENTRY : 'Invalid entry in the operand'
 };
