@@ -1,16 +1,13 @@
-import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO} from '../../Constants'
+import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO} from '../../Constants'
 import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
 
 export class PowerZone extends PIXI.Container{
 
-    static divisionValueText = [];
-    static divisionNegativeValueText = [];
-
+    static CREATE_DOT = 'CREATE_DOT';
 
     constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, zoneCreated) {
         super();
-        //let container = new PIXI.Container();
         this.eventEmitter = new EventEmitter();
         this.dotsContainer = null;
         this.dotsContainerNegative = null;
@@ -53,7 +50,6 @@ export class PowerZone extends PIXI.Container{
             this.negativeDotsCounterText.y = BOX_INFO.BOX_HEIGHT + 70;
             this.negativeDotsCounterText.text = '1';
             this.addChild(this.negativeDotsCounterText);
-            //PowerZone.negativeValueText.push(this.negativeDotsCounterText);
         }
 
         let bgBox = new PIXI.Sprite(textures["box.png"]);
@@ -82,7 +78,6 @@ export class PowerZone extends PIXI.Container{
                 fill: 0xBCBCBC,
                 align: 'center'
             });
-            console.log('setValueText0', zoneCreated);
         }
         this.placeValueText.anchor.x = 0.5;
         this.placeValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + (BOX_INFO.BOX_WIDTH / 2);
@@ -98,54 +93,47 @@ export class PowerZone extends PIXI.Container{
             this.dotsContainer = new PIXI.Container();
             this.dotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
             this.dotsContainer.y = boxYPos;
-            //CanvasPIXI.state.positivePowerZone.push(dotsContainerPositive);
             this.addChild(this.dotsContainer);
             this.dotsContainer.interactive = true;
 
-            this.dotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
+            this.dotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
             this.positiveProximityManager = new ProximityManager(100, this.dotsContainer.hitArea);
             this.dotsContainer.powerZone = totalZoneCount - position - 1;
             this.dotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
                 this.dotsContainer.buttonMode = true;
-                //dotsContainer.on('pointerup', CanvasPIXI.createDot.bind(CanvasPIXI));
-                this.dotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
+                this.dotsContainer.on('pointerup', this.createDot.bind(this));
             }
 
             this.dotsContainerNegative = new PIXI.Container();
             this.dotsContainerNegative.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
-            this.dotsContainerNegative.y = boxYPos + BOX_INFO.BOX_HEIGHT;
-            //CanvasPIXI.state.negativePowerZone.push(dotsContainerNegative);
+            this.dotsContainerNegative.y = boxYPos + BOX_INFO.HALF_BOX_HEIGHT;
             this.addChild(this.dotsContainerNegative);
             this.dotsContainerNegative.interactive = true;
 
-            this.dotsContainerNegative.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
+            this.dotsContainerNegative.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
             this.negativeProximityManager = new ProximityManager(100, this.dotsContainerNegative.hitArea);
             this.dotsContainerNegative.powerZone = totalZoneCount - position - 1;
             this.dotsContainerNegative.isPositive = false;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
                 this.dotsContainerNegative.buttonMode = true;
-                //dotsContainerNegative.on('pointerup', CanvasPIXI.createDot.bind(CanvasPIXI));
-                this.dotsContainerNegative.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
+                this.dotsContainerNegative.on('pointerup', this.createDot.bind(this));
             }
         } else {
             this.dotsContainer = new PIXI.Container();
             this.dotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
             this.dotsContainer.y = boxYPos;
-            //CanvasPIXI.state.positivePowerZone.push(dotsContainer);
             this.addChild(this.dotsContainer);
             this.dotsContainer.interactive = true;
 
             this.dotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
             this.positiveProximityManager = new ProximityManager(100, this.dotsContainer.hitArea);
-            //PowerZone.proximityManagerPositive.push(new ProximityManager(100, this.dotsContainer.hitArea));
             this.dotsContainer.powerZone = totalZoneCount - position - 1;
             this.dotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
                 this.dotsContainer.buttonMode = true;
-                //eventEmitter.on('another-event', emitted, context);
-                //dotsContainer.on('pointerup', CanvasPIXI.createDot.bind(CanvasPIXI));
-                this.dotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
+                //this.dotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
+                this.dotsContainer.on('pointerup', this.createDot.bind(this));
             }
         }
 
@@ -165,7 +153,6 @@ export class PowerZone extends PIXI.Container{
             this.dividerValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - (dividerCounter.width / 2);
             this.dividerValueText.y = boxYPos + 3;
             this.addChild(this.dividerValueText);
-            //PowerZone.divisionValueText.push(dividerValueText);
 
             if (operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
                 let negativeDividerCounter = new PIXI.Sprite(textures["antidot_div_value.png"]);
@@ -183,14 +170,36 @@ export class PowerZone extends PIXI.Container{
                 this.dividerNegativeValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + 15;
                 this.dividerNegativeValueText.y = negativeDividerCounter.y + 15;
                 this.addChild(this.dividerNegativeValueText);
-                //PowerZone.divisionNegativeValueText.push(dividerNegativeValueText);
             }
         }
         this.x += leftGutter;
     }
 
+    createDot(e){
+        //console.log('createDot', e);
+        let hitArea = e.target.hitArea;
+        let clickPos = e.data.getLocalPosition(e.target);
+        let clickModifiedPos = [];
+        if(clickPos.x < POSITION_INFO.DOT_RAYON){
+            clickModifiedPos.push(POSITION_INFO.DOT_RAYON);
+        }else if(clickPos.x > hitArea.width - POSITION_INFO.DOT_RAYON){
+            clickModifiedPos.push(hitArea.width - POSITION_INFO.DOT_RAYON);
+        }else{
+            clickModifiedPos.push(clickPos.x);
+        }
+
+        if(clickPos.y < POSITION_INFO.DOT_RAYON){
+            clickModifiedPos.push(POSITION_INFO.DOT_RAYON);
+        }else if(clickPos.y > hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE){
+            clickModifiedPos.push(hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE);
+        }else{
+            clickModifiedPos.push(clickPos.y);
+        }
+        this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target.powerZone, clickModifiedPos, e.target.isPositive);
+    }
+
     setValueText(text){
-        console.log('setValueText', text);
+        //console.log('setValueText', text);
         this.placeValueText.text = text;
     }
 
