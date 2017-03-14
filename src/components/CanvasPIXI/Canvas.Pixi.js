@@ -61,11 +61,10 @@ class CanvasPIXI extends Component {
         this.state.allZones = [];
         this.state.localPositiveDotsPerZone = [];// All the positive dots in the machine
         this.state.localNegativeDotsPerZone = [];// All the negative dots in the machine
-        this.state.positivePowerZone = []; // Positive PowerZone and their sprites
+        this.state.positivePowerZone = []; // Positive PowerZone Container
         this.state.positivePowerZoneDotNotDisplayed = []; // Dots that should be in a positive powerZone but no more place...
-        this.state.negativePowerZone = []; // Negative PowerZone and their sprites
+        this.state.negativePowerZone = []; // Negative PowerZone Container
         this.state.negativePowerZoneDotNotDisplayed = []; // Dots that should be in a negative powerZone but no more place...
-        //this.state.numOfZone = 0;
         this.state.isInteractive = true;
         this.state.negativePresent = (props.operator_mode == OPERATOR_MODE.SUBTRACT || props.operator_mode == OPERATOR_MODE.DIVIDE || props.base[1] === BASE.BASE_X);
         this.state.maxDotsByZone = this.state.negativePresent ? 75 : 150;
