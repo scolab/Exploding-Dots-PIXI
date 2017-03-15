@@ -8,11 +8,10 @@ export class PowerZoneManager{
         this.negativeValueText = [];
         this.divisionValueText = [];
         this.divisionNegativeValueText = [];
-        this.proximityManagerPositive = [];
-        this.proximityManagerNegative = [];
+        this.powerZones = [];
     }
 
-    createZone(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount){
+    createZone(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, dotPool){
         let powerZone = new PowerZone(position,
             textures,
             base,
@@ -20,17 +19,20 @@ export class PowerZoneManager{
             usage_mode,
             operator_mode,
             totalZoneCount,
+            spritePool,
+            dotPool,
             this.zoneCreated
         );
+        //this.powerZones.push(powerZone);
         this.positiveValueText.push(powerZone.dotsCounterText);
-        this.proximityManagerPositive.push(powerZone.positiveProximityManager);
+        //this.proximityManagerPositive.push(powerZone.positiveProximityManager);
         if (operator_mode === OPERATOR_MODE.DIVIDE) {
             this.divisionValueText.push(powerZone.dividerValueText);
         }
 
         if(negativePresent) {
             this.negativeValueText.push(powerZone.negativeDotsCounterText);
-            this.proximityManagerNegative.push(powerZone.negativeProximityManager);
+            //this.proximityManagerNegative.push(powerZone.negativeProximityManager);
             if (operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
                 this.divisionNegativeValueText.push(powerZone.dividerNegativeValueText);
             }

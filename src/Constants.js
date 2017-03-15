@@ -40,6 +40,11 @@ export const BOX_INFO = {
     HALF_BOX_HEIGHT: 115
 };
 
+export const MAX_DOT = {
+    ONLY_POSITIVE: 150,
+    MIX: 75
+};
+
 export const ERROR_MESSAGE = {
     INVALID_ENTRY : 'Invalid entry in the operand'
 };

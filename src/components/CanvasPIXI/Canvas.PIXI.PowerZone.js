@@ -1,16 +1,43 @@
-import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO} from '../../Constants'
+import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT} from '../../Constants'
 import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
+import {convertBase} from '../../utils/MathUtils'
+import { TweenMax, RoughEase, Linear} from "gsap";
 
 export class PowerZone extends PIXI.Container{
 
     static CREATE_DOT = 'CREATE_DOT';
 
-    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, zoneCreated) {
+    positiveDots = [];
+    negativeDots = [];
+    positiveDotsContainer = null;
+    negativeDotsContainer = null;
+    positiveProximityManager = null;
+    negativeProximityManager = null;
+    positiveDotNotDisplayed = [];
+    negativeDotNotDisplayed = [];
+    zonePosition = 0;
+    negativePresent = false;
+    base = [];
+    totalZoneCount = 0;
+    greyFilter = new PIXI.filters.ColorMatrixFilter();
+    maxDotsByZone = 0;
+    dotsCounterText = null;
+    negativeDotsCounterText = null;
+    spritePool = null;
+    dotPool = null;
+
+    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, dotPool, zoneCreated) {
         super();
+        this.zonePosition = totalZoneCount - position - 1;
+        this.negativePresent = negativePresent;
+        this.base = base;
+        this.totalZoneCount = totalZoneCount;
+        this.spritePool = spritePool;
+        this.dotPool = dotPool;
+        this.greyFilter.greyscale(0.3, true);
+        this.maxDotsByZone = negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
         this.eventEmitter = new EventEmitter();
-        this.dotsContainer = null;
-        this.dotsContainerNegative = null;
         let boxYPos = 70;
         let gutterWidth = 23;
         let leftGutter = 66;
@@ -90,50 +117,50 @@ export class PowerZone extends PIXI.Container{
             separator.y = boxYPos + (BOX_INFO.BOX_HEIGHT / 2) - 5;
             this.addChild(separator);
 
-            this.dotsContainer = new PIXI.Container();
-            this.dotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
-            this.dotsContainer.y = boxYPos;
-            this.addChild(this.dotsContainer);
-            this.dotsContainer.interactive = true;
+            this.positiveDotsContainer = new PIXI.Container();
+            this.positiveDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
+            this.positiveDotsContainer.y = boxYPos;
+            this.addChild(this.positiveDotsContainer);
+            this.positiveDotsContainer.interactive = true;
 
-            this.dotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
-            this.positiveProximityManager = new ProximityManager(100, this.dotsContainer.hitArea);
-            this.dotsContainer.powerZone = totalZoneCount - position - 1;
-            this.dotsContainer.isPositive = true;
+            this.positiveDotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
+            this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
+            this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
+            this.positiveDotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
-                this.dotsContainer.buttonMode = true;
-                this.dotsContainer.on('pointerup', this.createDot.bind(this));
+                this.positiveDotsContainer.buttonMode = true;
+                this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
 
-            this.dotsContainerNegative = new PIXI.Container();
-            this.dotsContainerNegative.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
-            this.dotsContainerNegative.y = boxYPos + BOX_INFO.HALF_BOX_HEIGHT;
-            this.addChild(this.dotsContainerNegative);
-            this.dotsContainerNegative.interactive = true;
+            this.negativeDotsContainer = new PIXI.Container();
+            this.negativeDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
+            this.negativeDotsContainer.y = boxYPos + BOX_INFO.HALF_BOX_HEIGHT;
+            this.addChild(this.negativeDotsContainer);
+            this.negativeDotsContainer.interactive = true;
 
-            this.dotsContainerNegative.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
-            this.negativeProximityManager = new ProximityManager(100, this.dotsContainerNegative.hitArea);
-            this.dotsContainerNegative.powerZone = totalZoneCount - position - 1;
-            this.dotsContainerNegative.isPositive = false;
+            this.negativeDotsContainer.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
+            this.negativeProximityManager = new ProximityManager(100, this.negativeDotsContainer.hitArea);
+            this.negativeDotsContainer.powerZone = totalZoneCount - position - 1;
+            this.negativeDotsContainer.isPositive = false;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
-                this.dotsContainerNegative.buttonMode = true;
-                this.dotsContainerNegative.on('pointerup', this.createDot.bind(this));
+                this.negativeDotsContainer.buttonMode = true;
+                this.negativeDotsContainer.on('pointerup', this.createDot.bind(this));
             }
         } else {
-            this.dotsContainer = new PIXI.Container();
-            this.dotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
-            this.dotsContainer.y = boxYPos;
-            this.addChild(this.dotsContainer);
-            this.dotsContainer.interactive = true;
+            this.positiveDotsContainer = new PIXI.Container();
+            this.positiveDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
+            this.positiveDotsContainer.y = boxYPos;
+            this.addChild(this.positiveDotsContainer);
+            this.positiveDotsContainer.interactive = true;
 
-            this.dotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
-            this.positiveProximityManager = new ProximityManager(100, this.dotsContainer.hitArea);
-            this.dotsContainer.powerZone = totalZoneCount - position - 1;
-            this.dotsContainer.isPositive = true;
+            this.positiveDotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
+            this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
+            this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
+            this.positiveDotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY) {
-                this.dotsContainer.buttonMode = true;
-                //this.dotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
-                this.dotsContainer.on('pointerup', this.createDot.bind(this));
+                this.positiveDotsContainer.buttonMode = true;
+                //this.positiveDotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
+                this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
         }
 
@@ -198,8 +225,278 @@ export class PowerZone extends PIXI.Container{
         this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target.powerZone, clickModifiedPos, e.target.isPositive);
     }
 
+    checkTextAndAlpha(){
+        let positiveZoneIsEmpty = this.getZoneTextAndAlphaStatus(this.positiveDots, this.dotsCounterText);
+        let negativeZoneIsEmpty = this.getZoneTextAndAlphaStatus(this.negativeDots, this.negativeDotsCounterText, false);
+        if(positiveZoneIsEmpty === true && (this.negativePresent === false || negativeZoneIsEmpty === true)){
+            this.filters = [this.greyFilter];
+        }else{
+            this.filters = null;
+        }
+
+    }
+
+    getZoneTextAndAlphaStatus(dots, valueText, isPositive = true){
+        let zoneAreEmpty = false;
+        if(dots.length !== 0){
+            if(this.base[1] !== 12) {
+                valueText.text = dots.length;
+            }else{
+                valueText.text = convertBase(dots.length.toString(), 10, 12);
+            }
+        }else if(isPositive || this.negativePresent){
+            if (dots.length !== 0) {
+                valueText.text = '0';
+            }else{
+                if(this.zonePosition != 0) {
+                    valueText.text = '';
+                    zoneAreEmpty = true;
+                }else{
+                    valueText.text = '0';
+                }
+            }
+        }
+        return zoneAreEmpty;
+    }
+
+    addDot(dot){
+        console.log('addDot');
+        let dotSprite;
+        if(dot.isPositive) {
+            dotSprite = this.doAddDot(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
+            this.positiveDots.push(dot);
+            if(dotSprite) {
+                this.positiveProximityManager.addItem(dotSprite);
+                dot.sprite = dotSprite;
+                dotSprite.dot = dot;
+            }
+        }else{
+            dotSprite = this.doAddDot(dot, this.negativeDotsContainer, this.negativeDotNotDisplayed);
+            this.negativeDots.push(dot);
+            if(dotSprite) {
+                this.negativeProximityManager.addItem(dotSprite);
+                dot.sprite = dotSprite;
+                dotSprite.dot = dot;
+            }
+        }
+        return dotSprite;
+    }
+
+    doAddDot(dot, container, notDisplayed){
+        let dotSprite;
+        if(container.children.length < this.maxDotsByZone) {
+            if(dot.color !== 'two'){
+                dotSprite = this.spritePool.get('one', dot.isPositive);
+            }else{
+                dotSprite = this.spritePool.get('two', dot.isPositive);
+            }
+            container.addChild(dotSprite);
+        }else{
+            notDisplayed.push(dot);
+        }
+        return dotSprite;
+    }
+
+    removeFromProximityManager(sprite){
+        if(sprite.dot.isPositive) {
+            this.positiveProximityManager.removeItem(sprite);
+        }else{
+            this.negativeProximityManager.removeItem(sprite);
+        }
+    }
+
+    getANotDisplayedDot(isPositive){
+        if(isPositive) {
+            return this.positiveDotNotDisplayed.pop();
+        }else{
+            return this.negativeDotNotDisplayed.pop();
+        }
+    }
+
+    removeDotFromArray(dot, isPositive){
+        if(isPositive){
+            this.positiveDots.splice(this.positiveDots.indexOf(dot), 1);
+        }else{
+            this.negativeDots.splice(this.negativeDots.indexOf(dot), 1);
+        }
+        this.dotPool.dispose(dot);
+    }
+
+    addDotToArray(dot, isPositive){
+        if(isPositive){
+            this.positiveDots.push(dot);
+        }else{
+            this.negativeDots.push(dot);
+        }
+    }
+
+    removeDotsIfNeeded(storeArray){
+        let removedDots = [];
+        removedDots.concat(this.removeDotsFromArray(this.positiveDots, storeArray));
+        removedDots.concat(this.removeDotsFromArray(this.positiveDotNotDisplayed, storeArray));
+        removedDots.concat(this.removeDotsFromArray(this.negativeDots, storeArray));
+        removedDots.concat(this.removeDotsFromArray(this.negativeDotNotDisplayed, storeArray));
+        return removedDots;
+    }
+
+    removeDotsFromArray(localArray, storeArray){
+        let removedDots = [];
+        let j = localArray.length;
+        while(j--){
+            let isPresent = false;
+            let k = storeArray.length;
+            while(k--){
+                if(storeArray[k].id === localArray[j].id === true){
+                    isPresent = true;
+                    break;
+                }
+            }
+            if(isPresent === false && localArray[j] != undefined) {
+                let dot = localArray.splice(localArray.indexOf(localArray[j]), 1);
+                this.dotPool.dispose(dot);
+                if(dot.sprite) {
+                    let dotSprite = dot.sprite;
+                    dotSprite.parent.removeChild(dotSprite);
+                    this.spritePool.dispose(dotSprite);
+                    if (dotSprite.particleEmitter) {
+                        dotSprite.particleEmitter.stop();
+                    }
+                }
+                dot.sprite = null;
+                removedDots.push(dot);
+            }
+        }
+        return removedDots;
+    }
+
+    checkIfNotDisplayedSpriteCanBe(){
+        let addedDots = [];
+        addedDots.concat(this.displayHiddenDots(this.positiveDotNotDisplayed, this.positiveDotsContainer));
+        addedDots.concat(this.displayHiddenDots(this.negativeDotNotDisplayed, this.negativeDotsContainer));
+        return addedDots;
+    }
+
+    displayHiddenDots(notShowedArray, container){
+        let addedDots = [];
+        while(notShowedArray.length > 0 && container.children.length < this.maxDotsByZone){
+            let dot = notShowedArray.pop();
+            let dotSprite;
+            if(dot.color !== 'two'){
+                dotSprite = this.spritePool.get('one', true);
+            }else{
+                dotSprite = this.spritePool.get('two', true);
+            }
+            dot.sprite = dotSprite;
+            dotSprite.dot = dot;
+            addedDots.push(dot);
+            container.addChild(dotSprite);
+        }
+        return addedDots;
+    }
+
+    addDotsFromStateChange(storePositiveDotsArray, storeNegaitiveDotsArray) {
+        console.log('addDotsFromStateChange', this.zonePosition, storePositiveDotsArray);
+        let addedDots = [];
+        addedDots.concat(this.doAddDotsFromStateChange(storePositiveDotsArray, this.positiveDots));
+        addedDots.concat(this.doAddDotsFromStateChange(storeNegaitiveDotsArray, this.negativeDots));
+    }
+
+    doAddDotsFromStateChange(storeArray, localArray){
+        let addedDots = [];
+        storeArray.forEach((dot) => {
+            var identicalDot = false;
+            for (let i = 0; i < localArray.length; i++) {
+                if (localArray[i].id === dot.id) {
+                    identicalDot = true;
+                    break;
+                }
+            }
+            if (identicalDot === false) {
+                addedDots.push(dot);
+                this.addDot(dot);
+            }
+        });
+        return addedDots;
+    }
+
+    checkPositiveNegativePresence(){
+        if(this.negativePresent && this.base[1] != BASE.BASE_X){
+            if(this.positiveDots.length > 0 && this.negativeDots.length > 0) {
+                let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3, {y:this.positiveDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
+                tween.repeat(-1).yoyo(true).play();
+                let tween2 = TweenMax.fromTo(this.negativeDotsContainer, 0.3, {y:this.negativeDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
+                tween2.repeat(-1).yoyo(true).play();
+            }else{
+                TweenMax.killTweensOf(this.positiveDotsContainer);
+                TweenMax.killTweensOf(this.negativeDotsContainer);
+            }
+        }
+    }
+
+    checkOvercrowding(){
+        let dotOverload = false;
+        if(this.positiveDots.length > this.base[1]-1) {
+            let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3,
+                {x:this.positiveDotsContainer.x - 1},
+                {x:"+=1",
+                    ease:RoughEase.ease.config({
+                        strength:8,
+                        points:20,
+                        template:Linear.easeNone,
+                        randomize:false
+                    }),
+                    clearProps:"x"});
+            tween.repeat(-1).yoyo(true).play();
+            this.dotsCounterText.style.fill = 0xff0000;
+            dotOverload = true;
+        }else{
+            TweenMax.killTweensOf(this.positiveDotsContainer);
+            this.dotsCounterText.style.fill = 0x444444;
+        }
+
+        if (this.negativePresent) {
+            if (this.negativeDots.length > this.base[1] - 1) {
+                let tween = TweenMax.fromTo(this.negativeDotsContainer, 0.3,
+                    {x: this.negativeDotsContainer.x - 1}, {
+                        x: "+=1",
+                        ease: RoughEase.ease.config({
+                            strength: 8,
+                            points: 20,
+                            template: Linear.easeNone,
+                            randomize: false
+                        }),
+                        clearProps: "x"
+                    });
+                tween.repeat(-1).yoyo(true).play();
+                this.negativeDotsCounterText.fill = 0xff0000;
+                dotOverload = true;
+            } else {
+                TweenMax.killTweensOf(this.negativeDotsContainer);
+                this.negativeDotsCounterText.style.fill = 0xDDDDDD;
+            }
+        }
+        /*if (this.state.negativePresent && dotOverload === false){
+            if(this.positiveDots.length > 0 && this.negativeDots.length > 0) {
+                let tween = TweenMax.fromTo(this.state.allZones[i], 0.3,
+                    {x: this.state.allZones[i].x - 1}, {
+                        x: "+=1",
+                        ease: RoughEase.ease.config({
+                            strength: 8,
+                            points: 20,
+                            template: Linear.easeNone,
+                            randomize: false
+                        }),
+                        clearProps: "x"
+                    });
+                tween.repeat(-1).yoyo(true).play();
+            }else{
+                TweenMax.killTweensOf(this.state.allZones[i]);
+            }
+        }*/
+    }
+
     setValueText(text){
-        //console.log('setValueText', text);
+        console.log('setValueText', text);
         this.placeValueText.text = text;
     }
 
