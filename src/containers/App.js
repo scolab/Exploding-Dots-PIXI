@@ -51,7 +51,7 @@ class ExplodingDots extends Component {
         allBases: BASE.ALL_BASE,
         operator_mode: OPERATOR_MODE.DISPLAY,
         usage_mode: USAGE_MODE.FREEPLAY,
-        magicWandIsActive: true,
+        magicWandIsActive: false,
         baseSelectorVisible: true,
         placeValueSwitchVisible: true,
         magicWandVisible: true,

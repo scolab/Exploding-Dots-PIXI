@@ -51,10 +51,12 @@ const dotsReducer = (state = null, action) => {
     var stateCopy;
     switch (action.type) {
         case ACTIONS.START_ACTIVITY:
+            console.log(ACTIONS.START_ACTIVITY);
             stateCopy = {...state};
             stateCopy.machineState.startActivity = true;
             return stateCopy;
         case ACTIONS.START_ACTIVITY_DONE:
+            console.log(ACTIONS.START_ACTIVITY_DONE);
             stateCopy = {...state};
             stateCopy.machineState.startActivity = false;
             stateCopy.machineState.activityStarted = true;
@@ -81,7 +83,7 @@ const dotsReducer = (state = null, action) => {
             }
             return stateCopy;
         case ACTIONS.ADD_DOT:
-            //console.log('ADD_DOT', action.zoneId, action.isPositive);
+            console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
             const dot = {
                 x: action.position[0],
@@ -221,15 +223,18 @@ const dotsReducer = (state = null, action) => {
             }
             return stateCopy;
         case ACTIONS.OPERATOR_CHANGED:
+            console.log(ACTIONS.OPERATOR_CHANGED);
             stateCopy = {...state};
             console.log(ACTIONS.OPERATOR_CHANGED, action.value);
             stateCopy.machineState.operator_mode = action.value;
             return stateCopy;
         case ACTIONS.ACTIVATE_MAGIC_WAND:
+            console.log(ACTIONS.ACTIVATE_MAGIC_WAND);
             stateCopy = {...state};
             stateCopy.machineState.magicWandIsActive = action.active;
             return stateCopy;
         case ACTIONS.BASE_CHANGED:
+            console.log(ACTIONS.BASE_CHANGED);
             stateCopy = {...state};
             let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
             if (index < state.machineState.allBases.length - 1) {
@@ -243,6 +248,7 @@ const dotsReducer = (state = null, action) => {
             }
             return stateCopy;
         case ACTIONS.RESET:
+            console.log(ACTIONS.RESET);
             if (action.machineState) {
                 initialMachineState = action.machineState;
             }
@@ -252,6 +258,7 @@ const dotsReducer = (state = null, action) => {
             initialMachineState.errorMessage = '';
             return setInitialState();
         case ACTIONS.ERROR:
+            console.log(ACTIONS.ERROR);
             stateCopy = {...state};
             stateCopy.machineState.errorMessage = action.errorMessage;
             stateCopy.machineState.startActivity = false;
@@ -259,16 +266,19 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
             break;
         case ACTIONS.USER_MESSAGE:
+            console.log(ACTIONS.USER_MESSAGE);
             stateCopy = {...state};
             stateCopy.machineState.userMessage = action.userMessage;
             return stateCopy;
             break;
         case ACTIONS.RESET_USER_MESSAGE:
+            console.log(ACTIONS.RESET_USER_MESSAGE);
             stateCopy = {...state};
             stateCopy.machineState.userMessage = '';
             return stateCopy;
             break;
         default:
+            console.log('DEFAULT');
             return state
     }
 };

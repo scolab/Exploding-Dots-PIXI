@@ -7,9 +7,9 @@ export class ProximityManager {
         this.addItemsImmediately = false;
         this._items = [];
         this.grid = [];
-        this.deadItems = [];
+        this.deadItems = {};
         this.checkDead = false;
-        this.liveItems = [];
+        this.liveItems = {};
         this.w = 0;
         this.h = 0;
         this.offX = 0;
@@ -66,8 +66,11 @@ export class ProximityManager {
      **/
     update() {
         // clear grid:
-        this.lengths.length = 0;
-        this.lengths.length = this.length;
+        this.lengths = [];
+        for(let i = 0; i < this.length; i++){
+            this.lengths.push(0);
+        }
+        //this.lengths.length = this.length;
         for (var i = 0; i < this.length; ++i) {
             this.grid[i].length = 0;
         }
