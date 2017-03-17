@@ -3,19 +3,20 @@ import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
 import {convertBase} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
+import {ObjPool} from '../../utils/ObjPool';
 
 export class PowerZone extends PIXI.Container{
 
     static CREATE_DOT = 'CREATE_DOT';
 
-    positiveDots = [];
-    negativeDots = [];
+    positiveDots = {};
+    negativeDots = {};
     positiveDotsContainer = null;
     negativeDotsContainer = null;
     positiveProximityManager = null;
     negativeProximityManager = null;
-    positiveDotNotDisplayed = [];
-    negativeDotNotDisplayed = [];
+    positiveDotNotDisplayed = {};
+    negativeDotNotDisplayed = {};
     zonePosition = 0;
     negativePresent = false;
     base = [];
@@ -25,16 +26,15 @@ export class PowerZone extends PIXI.Container{
     dotsCounterText = null;
     negativeDotsCounterText = null;
     spritePool = null;
-    dotPool = null;
+    dotPool = ObjPool.getInstance();
 
-    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, dotPool, zoneCreated) {
+    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, zoneCreated) {
         super();
         this.zonePosition = totalZoneCount - position - 1;
         this.negativePresent = negativePresent;
         this.base = base;
         this.totalZoneCount = totalZoneCount;
         this.spritePool = spritePool;
-        this.dotPool = dotPool;
         this.greyFilter.greyscale(0.3, true);
         this.maxDotsByZone = negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
         this.eventEmitter = new EventEmitter();
@@ -46,7 +46,6 @@ export class PowerZone extends PIXI.Container{
         dotsCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + (BOX_INFO.BOX_WIDTH / 2) + 3;
         dotsCounter.y = 0;
         this.addChild(dotsCounter);
-
         this.dotsCounterText = new PIXI.Text(position, {
             fontFamily: 'museo-slab',
             fontSize: 22,
@@ -253,11 +252,11 @@ export class PowerZone extends PIXI.Container{
 
     getZoneTextAndAlphaStatus(dots, valueText, populate) {
         var zoneAreEmpty = false;
-        if (dots.length !== 0) {
+        if (Object.keys(dots).length !== 0) {
             if (this.base[1] !== 12) {
-                valueText.text = dots.length;
+                valueText.text = Object.keys(dots).length;
             } else {
-                valueText.text = convertBase(dots.length.toString(), 10, 12);
+                valueText.text = convertBase(Object.keys(dots).length.toString(), 10, 12);
             }
         } else {
             if (populate || this.zonePosition === 0) {
@@ -275,8 +274,6 @@ export class PowerZone extends PIXI.Container{
         let dotSprite;
         if(dot.isPositive) {
             dotSprite = this.doAddDot(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
-            //this.addDotToArray(dot);
-            //this.positiveDots.push(dot);
             if(dotSprite) {
                 this.positiveProximityManager.addItem(dotSprite);
                 dot.sprite = dotSprite;
@@ -284,7 +281,6 @@ export class PowerZone extends PIXI.Container{
             }
         }else{
             dotSprite = this.doAddDot(dot, this.negativeDotsContainer, this.negativeDotNotDisplayed);
-            //this.negativeDots.push(dot);
             if(dotSprite) {
                 this.negativeProximityManager.addItem(dotSprite);
                 dot.sprite = dotSprite;
@@ -299,13 +295,13 @@ export class PowerZone extends PIXI.Container{
         let dotSprite;
         if(container.children.length < this.maxDotsByZone) {
             if(dot.color !== 'two'){
-                dotSprite = this.spritePool.get('one', dot.isPositive);
+                dotSprite = this.spritePool.getOne('one', dot.isPositive);
             }else{
-                dotSprite = this.spritePool.get('two', dot.isPositive);
+                dotSprite = this.spritePool.getOne('two', dot.isPositive);
             }
             container.addChild(dotSprite);
         }else{
-            notDisplayed.push(dot);
+            notDisplayed[dot.id] = dot;
         }
         return dotSprite;
     }
@@ -322,57 +318,60 @@ export class PowerZone extends PIXI.Container{
     getANotDisplayedDot(isPositive){
         //console.log('getANotDisplayedDot', this.zonePosition);
         if(isPositive) {
-            return this.positiveDotNotDisplayed.pop();
+            let dot = this.positiveDotNotDisplayed[Object.keys(this.positiveDotNotDisplayed)[0]];
+            delete this.positiveDotNotDisplayed[dot.id];
+            return dot;
         }else{
-            return this.negativeDotNotDisplayed.pop();
+            let dot = this.negativeDotNotDisplayed[Object.keys(this.negativeDotNotDisplayed)[0]];
+            delete this.negativeDotNotDisplayed[dot.id];
+            return dot;
         }
     }
 
     removeDotFromArray(dot){
         if(dot.isPositive){
-            this.positiveDots.splice(this.positiveDots.indexOf(dot), 1);
+            delete this.positiveDots[dot.id];
         }else{
-            this.negativeDots.splice(this.negativeDots.indexOf(dot), 1);
+            delete this.negativeDots[dot.id];
         }
-        //console.log('removeDotFromArray', this.zonePosition, this.positiveDots.length);
         this.dotPool.dispose(dot);
     }
 
     addDotToArray(dot){
         if(dot.isPositive){
-            this.positiveDots.push(dot);
+            this.positiveDots[dot.id] = dot;
         }else{
-            this.negativeDots.push(dot);
+            this.negativeDots[dot.id] = dot;
         }
-        //console.log('addDotToArray', this.zonePosition, this.positiveDots.length);
+        //console.log('addDotToArray', this.zonePosition, this.positiveDots, this.negativeDots);
     }
 
-    removeDotsIfNeeded(storeArray){
+    removeDotsIfNeeded(storeHash, isPositive){
         let removedDots = [];
-        removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDots, storeArray));
-        removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDotNotDisplayed, storeArray));
-        removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDots, storeArray));
-        removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDotNotDisplayed, storeArray));
-        //console.log('removeDotsIfNeeded', this.zonePosition, removedDots);
+        if(isPositive) {
+            if (Object.keys(this.positiveDots).length + Object.keys(this.positiveDotNotDisplayed).length > Object.keys(storeHash).length) {
+                removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDots, storeHash));
+                removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDotNotDisplayed, storeHash));
+                //console.log('removeDotsIfNeeded positive', this.zonePosition, removedDots);
+
+            }
+        }else{
+            if (Object.keys(this.negativeDots).length + Object.keys(this.negativeDotNotDisplayed).length > Object.keys(storeHash).length) {
+                removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDots, storeHash));
+                removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDotNotDisplayed, storeHash));
+                //console.log('removeDotsIfNeeded negative', this.zonePosition, removedDots);
+            }
+        }
         return removedDots;
     }
 
-    removeDotsFromArray(localArray, storeArray){
-        //console.log('removeDotsFromArray');
+    removeDotsFromArray(localHash, storeHash){
+        //console.log('removeDotsFromArray', storeHash);
         let removedDots = [];
-        let j = localArray.length;
-        while(j--){
-            let isPresent = false;
-            let k = storeArray.length;
-            while(k--){
-                if(storeArray[k].id === localArray[j].id === true){
-                    isPresent = true;
-                    break;
-                }
-            }
-            if(isPresent === false && localArray[j] != undefined) {
-                let dot = localArray.splice(localArray.indexOf(localArray[j]), 1)[0];
-                //dot = dot[0];
+        Object.keys(localHash).forEach(key => {
+            if(storeHash.hasOwnProperty(key) === false){
+                let dot = localHash[key];
+                delete localHash[key];
                 this.dotPool.dispose(dot);
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
@@ -385,7 +384,7 @@ export class PowerZone extends PIXI.Container{
                 dot.sprite = null;
                 removedDots.push(dot);
             }
-        }
+        });
         return removedDots;
     }
 
@@ -399,13 +398,15 @@ export class PowerZone extends PIXI.Container{
 
     displayHiddenDots(notShowedArray, container){
         let addedDots = [];
-        while(notShowedArray.length > 0 && container.children.length < this.maxDotsByZone){
-            let dot = notShowedArray.pop();
+        while(Object.keys(notShowedArray).length > 0 && container.children.length < this.maxDotsByZone){
+            //let dot = notShowedArray.pop();
+            let dot = notShowedArray[Object.keys(notShowedArray)[0]];
+            delete notShowedArray[dot.id];
             let dotSprite;
             if(dot.color !== 'two'){
-                dotSprite = this.spritePool.get('one', true);
+                dotSprite = this.spritePool.getOne('one', true);
             }else{
-                dotSprite = this.spritePool.get('two', true);
+                dotSprite = this.spritePool.getOne('two', true);
             }
             dot.sprite = dotSprite;
             dotSprite.dot = dot;
@@ -415,27 +416,20 @@ export class PowerZone extends PIXI.Container{
         return addedDots;
     }
 
-    addDotsFromStateChange(storePositiveDotsArray, storeNegaitiveDotsArray) {
+    addDotsFromStateChange(storePositiveDotsHash, storeNegativeDotsHash) {
         let addedDots = [];
-        addedDots = addedDots.concat(this.doAddDotsFromStateChange(storePositiveDotsArray, this.positiveDots));
-        addedDots = addedDots.concat(this.doAddDotsFromStateChange(storeNegaitiveDotsArray, this.negativeDots));
-        //console.log('addDotsFromStateChange', this.zonePosition, addedDots);
+        addedDots = addedDots.concat(this.doAddDotsFromStateChange(storePositiveDotsHash, this.positiveDots));
+        addedDots = addedDots.concat(this.doAddDotsFromStateChange(storeNegativeDotsHash, this.negativeDots));
+        //console.log('addDotsFromStateChange', this.zonePosition, addedDots.length, Object.keys(storePositiveDotsHash).length, this.positiveDotsContainer.children.length);
         return addedDots;
     }
 
-    doAddDotsFromStateChange(storeArray, localArray){
+    doAddDotsFromStateChange(storeHash, localHash){
         let addedDots = [];
-        storeArray.forEach((dot) => {
-            var identicalDot = false;
-            for (let i = 0; i < localArray.length; i++) {
-                if (localArray[i].id === dot.id) {
-                    identicalDot = true;
-                    break;
-                }
-            }
-            if (identicalDot === false) {
-                addedDots.push(dot);
-                this.addDot(dot);
+        Object.keys(storeHash).forEach(key => {
+            if (localHash.hasOwnProperty(key) == false) {
+                addedDots.push(storeHash[key]);
+                this.addDot(storeHash[key]);
             }
         });
         return addedDots;
@@ -443,7 +437,7 @@ export class PowerZone extends PIXI.Container{
 
     checkPositiveNegativePresence(){
         if(this.negativePresent && this.base[1] != BASE.BASE_X){
-            if(this.positiveDots.length > 0 && this.negativeDots.length > 0) {
+            if(Object.keys(this.positiveDots).length > 0 && Object.keys(this.negativeDots).length > 0) {
                 let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3, {y:this.positiveDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
                 tween.repeat(-1).yoyo(true).play();
                 let tween2 = TweenMax.fromTo(this.negativeDotsContainer, 0.3, {y:this.negativeDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
@@ -457,7 +451,7 @@ export class PowerZone extends PIXI.Container{
 
     checkOvercrowding(){
         let dotOverload = false;
-        if(this.positiveDots.length > this.base[1]-1) {
+        if(Object.keys(this.positiveDots).length > this.base[1]-1) {
             let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3,
                 {x:this.positiveDotsContainer.x - 1},
                 {x:"+=1",
@@ -477,7 +471,7 @@ export class PowerZone extends PIXI.Container{
         }
 
         if (this.negativePresent) {
-            if (this.negativeDots.length > this.base[1] - 1) {
+            if (Object.keys(this.negativeDots).length > this.base[1] - 1) {
                 let tween = TweenMax.fromTo(this.negativeDotsContainer, 0.3,
                     {x: this.negativeDotsContainer.x - 1}, {
                         x: "+=1",
@@ -498,7 +492,7 @@ export class PowerZone extends PIXI.Container{
             }
         }
         if (this.negativePresent && dotOverload === false){
-            if(this.positiveDots.length > 0 && this.negativeDots.length > 0) {
+            if(Object.keys(this.positiveDots).length > 0 && Object.keys(this.negativeDots).length > 0) {
                 let tween = TweenMax.fromTo(this, 0.3,
                     {x: this.x - 1}, {
                         x: "+=1",

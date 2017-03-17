@@ -67,14 +67,14 @@ class DotsMachine extends Component {
                 id: PropTypes.string.isRequired,
                 isPositive: PropTypes.bool.isRequired,
             })),
-            positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.shape({
+            positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
                 x: PropTypes.number.isRequired,
                 y: PropTypes.number.isRequired,
                 powerZone: PropTypes.number.isRequired,
                 id: PropTypes.string.isRequired,
                 isPositive: PropTypes.bool.isRequired,
             }))).isRequired,
-            negativePowerZoneDots: PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.shape({
+            negativePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
                 x: PropTypes.number.isRequired,
                 y: PropTypes.number.isRequired,
                 powerZone: PropTypes.number.isRequired,

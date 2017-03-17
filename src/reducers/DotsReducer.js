@@ -3,18 +3,20 @@ import {ACTIONS} from '../actions/StoreConstants'
 import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
+import {ObjPool} from '../utils/ObjPool';
 
 let initialMachineState = {};
+let dotPool = ObjPool.getInstance();
 
 function setDotsCount(state){
     let dotsCount = 0;
     let col = 0;
 
-    for (let dot of state.positivePowerZoneDots) {
-        dotsCount += dot.length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
+    for (let zone of state.positivePowerZoneDots) {
+        //console.log(Object.keys(zone).length);
+        dotsCount += Object.keys(zone).length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
         col++;
     }
-
     return dotsCount.toString();
 
     /*// negative
@@ -33,8 +35,8 @@ function setInitialState() {
     let positivePowerZoneDots = [];
     let negativePowerZoneDots = [];
     for (let i = 0; i < (initialMachineState.zones || 0); i++) {
-        positivePowerZoneDots.push([]);
-        negativePowerZoneDots.push([]);
+        positivePowerZoneDots.push({});
+        negativePowerZoneDots.push({});
     }
     return {
         positivePowerZoneDots: positivePowerZoneDots,
@@ -61,18 +63,26 @@ const dotsReducer = (state = null, action) => {
             stateCopy.machineState.startActivity = false;
             stateCopy.machineState.activityStarted = true;
             action.dotsInfo.forEach((newDot) => {
-                let dot = {
+                let dot = dotPool.getOne();
+                dot.x = newDot.x;
+                dot.y = newDot.y;
+                dot.powerZone = newDot.zoneId;
+                dot.id = makeUID();
+                dot.isPositive = newDot.isPositive;
+                dot.color = newDot.color;
+
+                /*let dot = {
                     x: newDot.x,
                     y: newDot.y,
                     powerZone: newDot.zoneId,
                     id: makeUID(),
                     isPositive: newDot.isPositive,
                     color: newDot.color
-                };
+                };*/
                 if(dot.isPositive) {
-                    stateCopy.positivePowerZoneDots[newDot.zoneId].push(dot);
+                    stateCopy.positivePowerZoneDots[newDot.zoneId][dot.id] = dot;//push(dot);
                 }else {
-                    stateCopy.negativePowerZoneDots[newDot.zoneId].push(dot);
+                    stateCopy.negativePowerZoneDots[newDot.zoneId][dot.id] = dot;//.push(dot);
                 }
             });
             if(action.totalA != null) {
@@ -85,17 +95,23 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.ADD_DOT:
             console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
-            const dot = {
+            let dot = dotPool.getOne();
+            dot.x = action.position[0];
+            dot.y = action.position[1];
+            dot.powerZone = action.zoneId;
+            dot.id = makeUID();
+            dot.isPositive = action.isPositive;
+            /*let dot = {
                 x: action.position[0],
                 y: action.position[1],
                 powerZone: action.zoneId,
                 id: makeUID(),
                 isPositive: action.isPositive
-            };
+            };*/
             if (dot.isPositive) {
-                stateCopy.positivePowerZoneDots[dot.powerZone].push(dot);
+                stateCopy.positivePowerZoneDots[dot.powerZone][dot.id] = dot;//.push(dot);
             } else {
-                stateCopy.negativePowerZoneDots[dot.powerZone].push(dot);
+                stateCopy.negativePowerZoneDots[dot.powerZone][dot.id] = dot;//.push(dot);
             }
             if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
                 stateCopy.machineState.operandA = setDotsCount(stateCopy);
@@ -105,21 +121,17 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.REMOVE_DOT:
             console.log('REMOVE_DOT');
             stateCopy = {...state};
-            let i = stateCopy.positivePowerZoneDots[action.zoneId].length;
-            while(i--){
-                if(stateCopy.positivePowerZoneDots[action.zoneId][i].id === action.dotId){
-                    stateCopy.positivePowerZoneDots[action.zoneId].splice(i, 1);
-                    break;
-                }
+            //let i = stateCopy.positivePowerZoneDots[action.zoneId].length;
+            if(stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)){
+                let dot = stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
+                delete stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
+                dotPool.dispose(dot);
             }
 
-            i = stateCopy.negativePowerZoneDots[action.zoneId].length;
-            while(i--){
-                if(stateCopy.negativePowerZoneDots[action.zoneId][i].id === action.dotId){
-                    stateCopy.negativePowerZoneDots[action.zoneId].splice(i, 1);
-                    break;
-                }
+            if(stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)){
+                delete stateCopy.negativePowerZoneDots[action.zoneId][action.dotId];
             }
+
             if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
                 stateCopy.machineState.operandA = setDotsCount(stateCopy);
             }
@@ -129,17 +141,24 @@ const dotsReducer = (state = null, action) => {
             console.log('ADD_MULTIPLE_DOTS');
             stateCopy = {...state};
             action.dotsPos.forEach((newDot) => {
-                let dot = {
+                let dot = dotPool.getOne();
+                dot.x = newDot.x;
+                dot.y = newDot.y;
+                dot.powerZone = action.zoneId;
+                dot.id = makeUID();
+                dot.isPositive = action.isPositive;
+
+                /*let dot = {
                     x: newDot.x,
                     y: newDot.y,
                     powerZone: action.zoneId,
                     id: makeUID(),
                     isPositive: action.isPositive
-                };
+                };*/
                 if(dot.isPositive) {
-                    stateCopy.positivePowerZoneDots[action.zoneId].push(dot);
+                    stateCopy.positivePowerZoneDots[action.zoneId][dot.id] = dot;//.push(dot);
                 }else {
-                    stateCopy.negativePowerZoneDots[action.zoneId].push(dot);
+                    stateCopy.negativePowerZoneDots[action.zoneId][dot.id] = dot;//.push(dot);
                 }
             });
             if(action.updateValue) {
@@ -157,14 +176,21 @@ const dotsReducer = (state = null, action) => {
                 while (i--) {
                     let dot = action.dots[i];
                     if(dot.isPositive) {
-                        if (stateCopy.positivePowerZoneDots[action.zoneId].indexOf(dot) != -1) {
-                            stateCopy.positivePowerZoneDots[action.zoneId].splice(stateCopy.positivePowerZoneDots[action.zoneId].indexOf(dot), 1);
+                        if(stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)){
+                            let dotToDispose = stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
+                            delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
+                            dotPool.dispose(dotToDispose);
+                            /*
+                            delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];*/
                         }
                     }else{
-                        if (stateCopy.negativePowerZoneDots[action.zoneId].indexOf(dot) != -1) {
-                            stateCopy.negativePowerZoneDots[action.zoneId].splice(stateCopy.negativePowerZoneDots[action.zoneId].indexOf(dot), 1);
+                        if(stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)){
+                            let dotToDispose = stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
+                            delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
+                            dotPool.dispose(dotToDispose);
+                            //delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
                         }
-                    }
+                     }
                 }
             }
             if(action.updateValue) {
@@ -176,11 +202,25 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
             console.log('REZONE_DOT');
-
             if(action.dot.isPositive) {
                 let i = stateCopy.positivePowerZoneDots.length;
                 while (i--) {
-                    let j = stateCopy.positivePowerZoneDots[i].length;
+                    if(stateCopy.positivePowerZoneDots[i][action.dot.id] != undefined){
+                        stateCopy.positivePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
+                        stateCopy.positivePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.positivePowerZoneDots[i][action.dot.id];//JSON.parse(JSON.stringify(stateCopy.positivePowerZoneDots[i][action.dot.id]));
+                        delete stateCopy.positivePowerZoneDots[i][action.dot.id];
+                        break;
+                    }
+                    /*Object.keys(stateCopy.positivePowerZoneDots[i]).forEach(key => {
+                        if (key.id === action.dot.id) {
+                            stateCopy.positivePowerZoneDots[i][key].powerZone = action.zoneId;
+                            stateCopy.positivePowerZoneDots[action.zoneId][key] = stateCopy.positivePowerZoneDots[i][key];
+                            delete stateCopy.positivePowerZoneDots[i][key];
+                            break;
+                        }
+                    });*/
+
+                    /*let j = stateCopy.positivePowerZoneDots[i].length;
                     while(j--) {
                         if (stateCopy.positivePowerZoneDots[i][j].id === action.dot.id) {
                             stateCopy.positivePowerZoneDots[i][j].powerZone = action.zoneId;
@@ -188,12 +228,17 @@ const dotsReducer = (state = null, action) => {
                             stateCopy.positivePowerZoneDots[i].splice(j, 1);
                             break;
                         }
-                    }
+                    }*/
                 }
             }else {
                 let i = stateCopy.negativePowerZoneDots.length;
                 while (i--) {
-                    let j = stateCopy.negativePowerZoneDots[i].length;
+                    if(stateCopy.negativePowerZoneDots[i][action.dot.id] != undefined){
+                        stateCopy.negativePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
+                        stateCopy.negativePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.negativePowerZoneDots[i][action.dot.id];//JSON.parse(JSON.stringify(stateCopy.negativePowerZoneDots[i][action.dot.id]));
+                        delete stateCopy.negativePowerZoneDots[i][action.dot.id];
+                    }
+                    /*let j = stateCopy.negativePowerZoneDots[i].length;
                     while(j--) {
                         if (stateCopy.negativePowerZoneDots[i][j].id === action.dot.id) {
                             stateCopy.negativePowerZoneDots[i][j].powerZone = action.zoneId;
@@ -201,7 +246,7 @@ const dotsReducer = (state = null, action) => {
                             stateCopy.negativePowerZoneDots[i].splice(j, 1);
                             break;
                         }
-                    }
+                    }*/
                 }
             }
             if(action.updateValue) {

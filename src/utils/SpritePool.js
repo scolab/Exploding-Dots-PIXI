@@ -10,7 +10,7 @@ export class SpritePool {
         this.pool = [];
     }
 
-    get(color, positive){
+    getOne(color, positive){
         if(this.pool.length > 0) {
             let sprite = this.pool.pop();
             if(color == 'one'){
