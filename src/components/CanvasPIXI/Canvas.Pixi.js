@@ -464,7 +464,7 @@ class CanvasPIXI extends Component {
                         adjacentPosition.y -= POSITION_INFO.DOT_RAYON * 2;
                         break;
                 }
-                var finalPosition = this.state.movingDotsContainer.toLocal(adjacentPosition, droppedOnPowerZone);
+                let finalPosition = this.state.movingDotsContainer.toLocal(adjacentPosition, droppedOnPowerZone);
                 this.state.movingDotsContainer.addChild(dotSprite);
                 dotSprite.position.x = newPosition.x;
                 dotSprite.position.y = newPosition.y;
@@ -479,6 +479,8 @@ class CanvasPIXI extends Component {
         }
         let allRemovedDots = [];
         // tween dots to new zone
+        let finalPosition = this.state.movingDotsContainer.toLocal(positionToBeMovedTo, droppedOnPowerZone);
+        let time = new Date();
         for(let i=0; i < dotsToRemove; i++){
             let dotSprite;
             let dot;
@@ -490,10 +492,10 @@ class CanvasPIXI extends Component {
                 dotSprite.origin = new Point();
                 dotSprite.origin.copy(dotSprite.position);
                 var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
-                var finalPosition = this.state.movingDotsContainer.toLocal(positionToBeMovedTo, droppedOnPowerZone);
                 this.state.movingDotsContainer.addChild(dotSprite);
                 dotSprite.position.x = newPosition.x;
                 dotSprite.position.y = newPosition.y;
+
                 // start the particles explosion effect
                 let explosionEmitter = this.getExplosionEmitter();
                 explosionEmitter.updateOwnerPos(newPosition.x, newPosition.y);
@@ -512,6 +514,7 @@ class CanvasPIXI extends Component {
             allRemovedDots.push(dot);
             this.state.allZones[dot.powerZone].removeDotFromArray(dot);
         }
+        console.log('time:', new Date() - time);
         this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
     }
 
