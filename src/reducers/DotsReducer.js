@@ -197,53 +197,26 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
-            console.log('REZONE_DOT');
             if(action.dot.isPositive) {
                 let i = stateCopy.positivePowerZoneDots.length;
                 while (i--) {
                     if(stateCopy.positivePowerZoneDots[i][action.dot.id] != undefined){
                         stateCopy.positivePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
-                        stateCopy.positivePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.positivePowerZoneDots[i][action.dot.id];//JSON.parse(JSON.stringify(stateCopy.positivePowerZoneDots[i][action.dot.id]));
+                        stateCopy.positivePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.positivePowerZoneDots[i][action.dot.id];
                         delete stateCopy.positivePowerZoneDots[i][action.dot.id];
                         break;
                     }
-                    /*Object.keys(stateCopy.positivePowerZoneDots[i]).forEach(key => {
-                        if (key.id === action.dot.id) {
-                            stateCopy.positivePowerZoneDots[i][key].powerZone = action.zoneId;
-                            stateCopy.positivePowerZoneDots[action.zoneId][key] = stateCopy.positivePowerZoneDots[i][key];
-                            delete stateCopy.positivePowerZoneDots[i][key];
-                            break;
-                        }
-                    });*/
-
-                    /*let j = stateCopy.positivePowerZoneDots[i].length;
-                    while(j--) {
-                        if (stateCopy.positivePowerZoneDots[i][j].id === action.dot.id) {
-                            stateCopy.positivePowerZoneDots[i][j].powerZone = action.zoneId;
-                            stateCopy.positivePowerZoneDots[action.zoneId].push(stateCopy.positivePowerZoneDots[i][j])
-                            stateCopy.positivePowerZoneDots[i].splice(j, 1);
-                            break;
-                        }
-                    }*/
                 }
             }else {
                 let i = stateCopy.negativePowerZoneDots.length;
                 while (i--) {
                     if(stateCopy.negativePowerZoneDots[i][action.dot.id] != undefined){
                         stateCopy.negativePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
-                        stateCopy.negativePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.negativePowerZoneDots[i][action.dot.id];//JSON.parse(JSON.stringify(stateCopy.negativePowerZoneDots[i][action.dot.id]));
+                        stateCopy.negativePowerZoneDots[action.zoneId][action.dot.id] = stateCopy.negativePowerZoneDots[i][action.dot.id];
                         delete stateCopy.negativePowerZoneDots[i][action.dot.id];
+                        break;
                     }
-                    /*let j = stateCopy.negativePowerZoneDots[i].length;
-                    while(j--) {
-                        if (stateCopy.negativePowerZoneDots[i][j].id === action.dot.id) {
-                            stateCopy.negativePowerZoneDots[i][j].powerZone = action.zoneId;
-                            stateCopy.negativePowerZoneDots[action.zoneId].push(stateCopy.negativePowerZoneDots[i][j])
-                            stateCopy.negativePowerZoneDots[i].splice(j, 1);
-                            break;
-                        }
-                    }*/
-                }
+                  }
             }
             if(action.updateValue) {
                 if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {

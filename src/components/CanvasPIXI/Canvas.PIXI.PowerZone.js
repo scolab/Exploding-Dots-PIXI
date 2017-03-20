@@ -398,7 +398,6 @@ export class PowerZone extends PIXI.Container{
     displayHiddenDots(notShowedArray, container){
         let addedDots = [];
         while(Object.keys(notShowedArray).length > 0 && container.children.length < this.maxDotsByZone){
-            //let dot = notShowedArray.pop();
             let dot = notShowedArray[Object.keys(notShowedArray)[0]];
             delete notShowedArray[dot.id];
             let dotSprite;
@@ -525,6 +524,8 @@ export class PowerZone extends PIXI.Container{
             }else{
                 TweenMax.killTweensOf(this);
             }
+        }else{
+            TweenMax.killTweensOf(this);
         }
     }
 
