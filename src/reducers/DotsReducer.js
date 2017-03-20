@@ -3,10 +3,9 @@ import {ACTIONS} from '../actions/StoreConstants'
 import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
-import {ObjPool} from '../utils/ObjPool';
+//import {ObjPool} from '../utils/ObjPool';
 
 let initialMachineState = {};
-let dotPool = ObjPool.getInstance();
 
 function setDotsCount(state){
     let dotsCount = 0;
@@ -63,7 +62,7 @@ const dotsReducer = (state = null, action) => {
             stateCopy.machineState.startActivity = false;
             stateCopy.machineState.activityStarted = true;
             action.dotsInfo.forEach((newDot) => {
-                let dot = dotPool.getOne();
+                let dot = {};
                 dot.x = newDot.x;
                 dot.y = newDot.y;
                 dot.powerZone = newDot.zoneId;
@@ -95,7 +94,7 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.ADD_DOT:
             console.log('ADD_DOT', action.zoneId, action.isPositive);
             stateCopy = {...state};
-            let dot = dotPool.getOne();
+            let dot = {};
             dot.x = action.position[0];
             dot.y = action.position[1];
             dot.powerZone = action.zoneId;
@@ -121,11 +120,10 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.REMOVE_DOT:
             console.log('REMOVE_DOT');
             stateCopy = {...state};
-            //let i = stateCopy.positivePowerZoneDots[action.zoneId].length;
             if(stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)){
-                let dot = stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
+                //let dot = stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
                 delete stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
-                dotPool.dispose(dot);
+                //ObjPool.dispose(dot);
             }
 
             if(stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)){
@@ -141,7 +139,7 @@ const dotsReducer = (state = null, action) => {
             console.log('ADD_MULTIPLE_DOTS');
             stateCopy = {...state};
             action.dotsPos.forEach((newDot) => {
-                let dot = dotPool.getOne();
+                let dot = {};
                 dot.x = newDot.x;
                 dot.y = newDot.y;
                 dot.powerZone = action.zoneId;
@@ -176,19 +174,17 @@ const dotsReducer = (state = null, action) => {
                 while (i--) {
                     let dot = action.dots[i];
                     if(dot.isPositive) {
+                        //console.log(i, dot.id, stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(dot.id));
                         if(stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)){
-                            let dotToDispose = stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
+                            //let dotToDispose = stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
                             delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
-                            dotPool.dispose(dotToDispose);
-                            /*
-                            delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];*/
+                            //ObjPool.dispose(dotToDispose);
                         }
                     }else{
                         if(stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)){
-                            let dotToDispose = stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
+                            //let dotToDispose = stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
                             delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
-                            dotPool.dispose(dotToDispose);
-                            //delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
+                            //ObjPool.dispose(dotToDispose);
                         }
                      }
                 }

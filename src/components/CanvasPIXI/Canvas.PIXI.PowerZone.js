@@ -3,7 +3,7 @@ import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
 import {convertBase} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
-import {ObjPool} from '../../utils/ObjPool';
+//import {ObjPool} from '../../utils/ObjPool';
 
 export class PowerZone extends PIXI.Container{
 
@@ -26,7 +26,6 @@ export class PowerZone extends PIXI.Container{
     dotsCounterText = null;
     negativeDotsCounterText = null;
     spritePool = null;
-    dotPool = ObjPool.getInstance();
 
     constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, zoneCreated) {
         super();
@@ -334,7 +333,7 @@ export class PowerZone extends PIXI.Container{
         }else{
             delete this.negativeDots[dot.id];
         }
-        this.dotPool.dispose(dot);
+        //ObjPool.dispose(dot);
     }
 
     addDotToArray(dot){
@@ -372,7 +371,7 @@ export class PowerZone extends PIXI.Container{
             if(storeHash.hasOwnProperty(key) === false){
                 let dot = localHash[key];
                 delete localHash[key];
-                this.dotPool.dispose(dot);
+                //ObjPool.dispose(dot);
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
                     dotSprite.parent.removeChild(dotSprite);
@@ -447,6 +446,24 @@ export class PowerZone extends PIXI.Container{
                 TweenMax.killTweensOf(this.negativeDotsContainer);
             }
         }
+    }
+
+    getOvercrowding(amount){
+        let dotsRemoved = [];
+        if(Object.keys(this.positiveDots).length > amount){
+            dotsRemoved = this.getOvercrowdedDots(this.positiveDots, amount);
+        }else if(Object.keys(this.negativeDots).length > amount){
+            dotsRemoved = this.getOvercrowdedDots(this.negativeDots, amount);
+        }
+        return dotsRemoved;
+    }
+
+    getOvercrowdedDots(hash, amount){
+        let allRemovedDots = [];
+        while (amount--) {
+            allRemovedDots.push(hash[Object.keys(hash)[amount]]);
+        }
+        return allRemovedDots;
     }
 
     checkOvercrowding(){
