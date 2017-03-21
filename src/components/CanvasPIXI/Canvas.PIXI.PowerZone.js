@@ -509,7 +509,7 @@ export class PowerZone extends PIXI.Container{
     checkOvercrowding(){
         let dotOverload = false;
         if(Object.keys(this.positiveDots).length > this.base[1]-1) {
-            let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3,
+            /*let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3,
                 {x:this.positiveDotsContainer.x - 1},
                 {x:"+=1",
                     ease:RoughEase.ease.config({
@@ -519,11 +519,18 @@ export class PowerZone extends PIXI.Container{
                         randomize:false
                     }),
                     clearProps:"x"});
-            tween.repeat(-1).yoyo(true).play();
+            tween.repeat(-1).yoyo(true).play();*/
             this.dotsCounterText.style.fill = 0xff0000;
+            this.positiveDotsContainer.children.forEach(sprite => {
+                sprite.animationSpeed = 0.5;
+                sprite.gotoAndPlay(Math.random() * 180);
+            });
             dotOverload = true;
         }else{
-            TweenMax.killTweensOf(this.positiveDotsContainer);
+            //TweenMax.killTweensOf(this.positiveDotsContainer);
+            this.positiveDotsContainer.children.forEach(sprite => {
+                sprite.gotoAndStop(0);
+            });
             this.dotsCounterText.style.fill = 0x444444;
         }
 

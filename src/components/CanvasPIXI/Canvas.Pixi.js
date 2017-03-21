@@ -63,10 +63,6 @@ class CanvasPIXI extends Component {
         this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
         this.explodeEmitter = [];
         this.implodeEmitter = [];
-        this.positiveDotOneTexture = 'red_dot.png';
-        this.positiveDotTwoTexture = 'blue_dot.png';
-        this.negativeDotOneTexture = 'red_antidot.png';
-        this.negativeDotTwoTexture = 'blue_antidot.png';
         // to accomodate for pixel padding in TexturePacker
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
@@ -134,11 +130,7 @@ class CanvasPIXI extends Component {
     onAssetsLoaded(loader){
         if(loader.resources.machineAssets.error === null) {
             this.state.textures = loader.resources.machineAssets.textures;
-            this.spritePool = new SpritePool(this.state.textures[this.positiveDotOneTexture],
-                this.state.textures[this.positiveDotTwoTexture],
-                this.state.textures[this.negativeDotOneTexture],
-                this.state.textures[this.negativeDotTwoTexture]
-            );
+            this.spritePool = new SpritePool(this.state.textures);
             this.createZones();
             this.props.positivePowerZoneDots.forEach((zoneArray) => {
                 Object.keys(zoneArray).forEach(key => {
