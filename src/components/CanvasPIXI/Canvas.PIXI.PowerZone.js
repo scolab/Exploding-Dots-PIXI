@@ -1,7 +1,7 @@
 import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT} from '../../Constants'
 import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
-import {convertBase} from '../../utils/MathUtils'
+import {convertBase, randomFromTo} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
 //import {ObjPool} from '../../utils/ObjPool';
 
@@ -17,6 +17,8 @@ export class PowerZone extends PIXI.Container{
     negativeDotsContainer = null;
     positiveProximityManager = null;
     negativeProximityManager = null;
+    originalPositiveBoxPosition;
+    originalNegativeBoxPosition;
     zonePosition = 0;
     negativePresent = false;
     base = [];
@@ -120,6 +122,7 @@ export class PowerZone extends PIXI.Container{
             this.positiveDotsContainer.y = boxYPos;
             this.addChild(this.positiveDotsContainer);
             this.positiveDotsContainer.interactive = true;
+            this.originalPositiveBoxPosition = new PIXI.Point(this.positiveDotsContainer.position.x, this.positiveDotsContainer.position.y);
 
             this.positiveDotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
             this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
@@ -135,6 +138,7 @@ export class PowerZone extends PIXI.Container{
             this.negativeDotsContainer.y = boxYPos + BOX_INFO.HALF_BOX_HEIGHT;
             this.addChild(this.negativeDotsContainer);
             this.negativeDotsContainer.interactive = true;
+            this.originalNegativeBoxPosition = new PIXI.Point(this.negativeDotsContainer.position.x, this.negativeDotsContainer.position.y);
 
             this.negativeDotsContainer.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
             this.negativeProximityManager = new ProximityManager(100, this.negativeDotsContainer.hitArea);
@@ -474,20 +478,6 @@ export class PowerZone extends PIXI.Container{
         return addedDots;
     }
 
-    checkPositiveNegativePresence(){
-        if(this.negativePresent && this.base[1] != BASE.BASE_X){
-            if(Object.keys(this.positiveDots).length > 0 && Object.keys(this.negativeDots).length > 0) {
-                let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3, {y:this.positiveDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
-                tween.repeat(-1).yoyo(true).play();
-                let tween2 = TweenMax.fromTo(this.negativeDotsContainer, 0.3, {y:this.negativeDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
-                tween2.repeat(-1).yoyo(true).play();
-            }else{
-                TweenMax.killTweensOf(this.positiveDotsContainer);
-                TweenMax.killTweensOf(this.negativeDotsContainer);
-            }
-        }
-    }
-
     getOvercrowding(amount){
         let dotsRemoved = [];
         if(Object.keys(this.positiveDots).length > amount){
@@ -521,9 +511,10 @@ export class PowerZone extends PIXI.Container{
                     clearProps:"x"});
             tween.repeat(-1).yoyo(true).play();*/
             this.dotsCounterText.style.fill = 0xff0000;
+            let frameTotal = this.positiveDotsContainer.children[0].totalFrames;
             this.positiveDotsContainer.children.forEach(sprite => {
                 sprite.animationSpeed = 0.5;
-                sprite.gotoAndPlay(Math.random() * 180);
+                sprite.gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
             });
             dotOverload = true;
         }else{
@@ -536,7 +527,7 @@ export class PowerZone extends PIXI.Container{
 
         if (this.negativePresent) {
             if (Object.keys(this.negativeDots).length > this.base[1] - 1) {
-                let tween = TweenMax.fromTo(this.negativeDotsContainer, 0.3,
+                /*let tween = TweenMax.fromTo(this.negativeDotsContainer, 0.3,
                     {x: this.negativeDotsContainer.x - 1}, {
                         x: "+=1",
                         ease: RoughEase.ease.config({
@@ -547,33 +538,38 @@ export class PowerZone extends PIXI.Container{
                         }),
                         clearProps: "x"
                     });
-                tween.repeat(-1).yoyo(true).play();
+                tween.repeat(-1).yoyo(true).play();*/
                 this.negativeDotsCounterText.fill = 0xff0000;
+                let frameTotal = this.negativeDotsContainer.children[0].totalFrames;
+                this.negativeDotsContainer.children.forEach(sprite => {
+                    sprite.animationSpeed = 0.5;
+                    sprite.gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
+                });
                 dotOverload = true;
             } else {
-                TweenMax.killTweensOf(this.negativeDotsContainer);
+                //TweenMax.killTweensOf(this.negativeDotsContainer);
+                this.negativeDotsContainer.children.forEach(sprite => {
+                    sprite.gotoAndStop(0);
+                });
                 this.negativeDotsCounterText.style.fill = 0xDDDDDD;
             }
         }
-        if (this.negativePresent && dotOverload === false){
+        return dotOverload;
+    }
+
+    checkPositiveNegativePresence(){
+        if(this.negativePresent && this.base[1] != BASE.BASE_X){
             if(Object.keys(this.positiveDots).length > 0 && Object.keys(this.negativeDots).length > 0) {
-                let tween = TweenMax.fromTo(this, 0.3,
-                    {x: this.x - 1}, {
-                        x: "+=1",
-                        ease: RoughEase.ease.config({
-                            strength: 8,
-                            points: 20,
-                            template: Linear.easeNone,
-                            randomize: false
-                        }),
-                        clearProps: "x"
-                    });
+                let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3, {y:this.positiveDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
                 tween.repeat(-1).yoyo(true).play();
+                let tween2 = TweenMax.fromTo(this.negativeDotsContainer, 0.3, {y:this.negativeDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
+                tween2.repeat(-1).yoyo(true).play();
             }else{
-                TweenMax.killTweensOf(this);
+                TweenMax.killTweensOf(this.positiveDotsContainer);
+                TweenMax.killTweensOf(this.negativeDotsContainer);
+                this.positiveDotsContainer.position.copy(this.originalPositiveBoxPosition);
+                this.negativeDotsContainer.position.copy(this.originalNegativeBoxPosition);
             }
-        }else{
-            TweenMax.killTweensOf(this);
         }
     }
 

@@ -846,11 +846,12 @@ class CanvasPIXI extends Component {
     }
 
     checkInstability() {
+        let isOverload;
         this.state.allZones.forEach(zone => {
-            if(this.state.negativePresent) {
+            isOverload = zone.checkOvercrowding();
+            if(isOverload === false && this.state.negativePresent) {
                 zone.checkPositiveNegativePresence();
             }
-            zone.checkOvercrowding();
         });
     }
 
