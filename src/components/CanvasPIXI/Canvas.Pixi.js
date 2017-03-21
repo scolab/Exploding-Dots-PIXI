@@ -338,10 +338,9 @@ class CanvasPIXI extends Component {
                         let originalPos = data.getLocalPosition(this.state.movingDotsContainer);
                         implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
                         implosionEmitter.start();
-                        TweenMax.delayedCall(0.2, this.stopImplosionEmitter, [implosionEmitter], this);
+                        TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
                         this.props.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, false);
                     }
-
                 } else {
                     if (dotSprite.dot.isPositive) {
                         this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
@@ -480,7 +479,7 @@ class CanvasPIXI extends Component {
         let allRemovedDots = [];
         // tween dots to new zone
         let finalPosition = this.state.movingDotsContainer.toLocal(positionToBeMovedTo, droppedOnPowerZone);
-        let time = new Date();
+        let notDisplayedDotCount = 0;
         for(let i=0; i < dotsToRemove; i++){
             let dotSprite;
             let dot;
@@ -508,13 +507,14 @@ class CanvasPIXI extends Component {
                     onComplete: this.tweenDotsToNewZoneDone.bind(this),
                     onCompleteParams:[dotSprite]
                 });
+                allRemovedDots.push(dot);
+                this.state.allZones[dot.powerZone].removeDotFromArray(dot);
             }else{
-                dot = this.state.allZones[originalZoneIndex].getANotDisplayedDot(isPositive);
+                notDisplayedDotCount++;
             }
-            allRemovedDots.push(dot);
-            this.state.allZones[dot.powerZone].removeDotFromArray(dot);
         }
-        console.log('time:', new Date() - time);
+        let notDisplayedDots = this.state.allZones[originalZoneIndex].removeNotDisplayedDots(notDisplayedDotCount, isPositive);
+        allRemovedDots = allRemovedDots.concat(notDisplayedDots);
         this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
     }
 
@@ -530,7 +530,7 @@ class CanvasPIXI extends Component {
         if(this.implodeEmitter.length > 0){
             return this.implodeEmitter.pop();
         }else{
-            return new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], explodeJSON);
+            return new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], implodeJSON);
         }
     }
 

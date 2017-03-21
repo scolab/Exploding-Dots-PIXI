@@ -11,12 +11,12 @@ export class PowerZone extends PIXI.Container{
 
     positiveDots = {};
     negativeDots = {};
+    positiveDotNotDisplayed = {};
+    negativeDotNotDisplayed = {};
     positiveDotsContainer = null;
     negativeDotsContainer = null;
     positiveProximityManager = null;
     negativeProximityManager = null;
-    positiveDotNotDisplayed = {};
-    negativeDotNotDisplayed = {};
     zonePosition = 0;
     negativePresent = false;
     base = [];
@@ -314,17 +314,35 @@ export class PowerZone extends PIXI.Container{
         }
     }
 
-    getANotDisplayedDot(isPositive){
-        //console.log('getANotDisplayedDot', this.zonePosition);
-        if(isPositive) {
-            let dot = this.positiveDotNotDisplayed[Object.keys(this.positiveDotNotDisplayed)[0]];
-            delete this.positiveDotNotDisplayed[dot.id];
-            return dot;
-        }else{
-            let dot = this.negativeDotNotDisplayed[Object.keys(this.negativeDotNotDisplayed)[0]];
-            delete this.negativeDotNotDisplayed[dot.id];
-            return dot;
+    removeNotDisplayedDots(amount, isPositive){
+        let key;
+        let removed = [];
+        if(amount > 0) {
+            if (isPositive) {
+                for (key in this.positiveDotNotDisplayed) {
+                    removed.push(this.positiveDotNotDisplayed[key]);
+                    amount--;
+                    if (amount === 0) {
+                        break;
+                    }
+                }
+                removed.forEach(dot => {
+                    this.removeDotFromArray(dot);
+                });
+            } else {
+                for (key in this.negativeDotNotDisplayed) {
+                    removed.push(this.negativeDotNotDisplayed[key]);
+                    amount--;
+                    if (amount === 0) {
+                        break;
+                    }
+                }
+                removed.forEach(dot => {
+                    this.removeDotFromArray(dot);
+                });
+            }
         }
+        return removed;
     }
 
     removeDotFromArray(dot){
@@ -333,7 +351,19 @@ export class PowerZone extends PIXI.Container{
         }else{
             delete this.negativeDots[dot.id];
         }
-        //ObjPool.dispose(dot);
+        this.removeDotFromNotDisplayedArray(dot);
+    }
+
+    removeDotFromNotDisplayedArray(dot){
+        if(dot.isPositive){
+            if(this.positiveDotNotDisplayed[dot.id] != undefined) {
+                delete this.positiveDotNotDisplayed[dot.id];
+            }
+        }else{
+            if(this.negativeDotNotDisplayed[dot.id] != undefined) {
+                delete this.negativeDotNotDisplayed[dot.id];
+            }
+        }
     }
 
     addDotToArray(dot){
@@ -345,33 +375,28 @@ export class PowerZone extends PIXI.Container{
         //console.log('addDotToArray', this.zonePosition, this.positiveDots, this.negativeDots);
     }
 
+    // remove dots from store change
     removeDotsIfNeeded(storeHash, isPositive){
         let removedDots = [];
         if(isPositive) {
             if (Object.keys(this.positiveDots).length + Object.keys(this.positiveDotNotDisplayed).length > Object.keys(storeHash).length) {
-                removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDots, storeHash));
-                removedDots = removedDots.concat(this.removeDotsFromArray(this.positiveDotNotDisplayed, storeHash));
-                //console.log('removeDotsIfNeeded positive', this.zonePosition, removedDots);
-
+                removedDots = removedDots.concat(this.removeDotsFromArrayStoreChange(this.positiveDots, storeHash));
             }
         }else{
             if (Object.keys(this.negativeDots).length + Object.keys(this.negativeDotNotDisplayed).length > Object.keys(storeHash).length) {
-                removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDots, storeHash));
-                removedDots = removedDots.concat(this.removeDotsFromArray(this.negativeDotNotDisplayed, storeHash));
-                //console.log('removeDotsIfNeeded negative', this.zonePosition, removedDots);
+                removedDots = removedDots.concat(this.removeDotsFromArrayStoreChange(this.negativeDots, storeHash));
             }
         }
         return removedDots;
     }
 
-    removeDotsFromArray(localHash, storeHash){
-        //console.log('removeDotsFromArray', storeHash);
+    removeDotsFromArrayStoreChange(localHash, storeHash){
+        //console.log('removeDotsFromArrayStoreChange', storeHash);
         let removedDots = [];
         Object.keys(localHash).forEach(key => {
             if(storeHash.hasOwnProperty(key) === false){
                 let dot = localHash[key];
-                delete localHash[key];
-                //ObjPool.dispose(dot);
+                this.removeDotFromArray(dot);
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
                     dotSprite.parent.removeChild(dotSprite);
@@ -397,9 +422,25 @@ export class PowerZone extends PIXI.Container{
 
     displayHiddenDots(notShowedArray, container){
         let addedDots = [];
-        while(Object.keys(notShowedArray).length > 0 && container.children.length < this.maxDotsByZone){
-            let dot = notShowedArray[Object.keys(notShowedArray)[0]];
-            delete notShowedArray[dot.id];
+        let notShownedCount = Object.keys(notShowedArray).length;
+        if(notShownedCount > 0){
+            let toShowCount = this.maxDotsByZone - container.children.length;
+            if(notShownedCount < toShowCount){
+                toShowCount = notShownedCount;
+            }
+            if(toShowCount > 0) {
+                let key;
+                for (key in notShowedArray) {
+                    addedDots.push(notShowedArray[key]);
+                    toShowCount--;
+                    if (toShowCount === 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        addedDots.forEach(dot => {
+            this.removeDotFromNotDisplayedArray(dot);
             let dotSprite;
             if(dot.color !== 'two'){
                 dotSprite = this.spritePool.getOne('one', true);
@@ -410,7 +451,7 @@ export class PowerZone extends PIXI.Container{
             dotSprite.dot = dot;
             addedDots.push(dot);
             container.addChild(dotSprite);
-        }
+        });
         return addedDots;
     }
 
