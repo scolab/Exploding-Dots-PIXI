@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
-import { TweenMax, RoughEase, Linear} from "gsap";
+import { TweenMax, RoughEase, Linear, Quint} from "gsap";
 import {Point} from 'pixi.js';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT} from '../../Constants'
 import {ParticleEmitter} from './ParticleEmitter';
@@ -46,7 +46,8 @@ class CanvasPIXI extends Component {
         operandA: PropTypes.string.isRequired,
         operandB: PropTypes.string.isRequired,
         error: PropTypes.func.isRequired,
-        userMessage: PropTypes.func.isRequired,
+        displayUserMessage: PropTypes.func.isRequired,
+        userMessage: PropTypes.string,
     };
 
     constructor(props){
@@ -63,6 +64,7 @@ class CanvasPIXI extends Component {
         this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
         this.explodeEmitter = [];
         this.implodeEmitter = [];
+        this.pendingAction = [];
         // to accomodate for pixel padding in TexturePacker
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
@@ -273,7 +275,6 @@ class CanvasPIXI extends Component {
                 // impossible to move between different positive value zone (positive to negative)
                 // impossible to move between powerZone in base X
                 if(droppedOnPowerZone.isPositive === dotSprite.dot.isPositive && this.props.base[1] != BASE.BASE_X) {
-
                     let diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
                     let dotsToRemoveCount = 1;
                     //console.log(originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
@@ -293,14 +294,19 @@ class CanvasPIXI extends Component {
                     //console.log('finalNbOfDots', finalNbOfDots);
                     if (finalNbOfDots < 0 || this.props.base[0] > 1 && Math.abs(diffZone) > 1) {
                         if(finalNbOfDots < 0) {
-                            alert("Pas assez de points disponibles pour cette opération");
+                            //alert("Pas assez de points disponibles pour cette opération");
+                            this.props.displayUserMessage("Pas assez de points disponibles pour cette opération");
                         }else if(this.props.base[0] > 1 && Math.abs(diffZone) > 1){
-                            alert("Une case à la fois pour les base avec un dénominateur autre que 1");
+                            this.props.displayUserMessage("Une case à la fois pour les base avec un dénominateur autre que 1");
                         }
                         if (dotSprite.dot.isPositive) {
-                            this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
+                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
+                            this.state.isInteractive = false;
+                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
                         } else {
-                            this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
+                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
+                            this.state.isInteractive = false;
+                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
                         }
                         return false;
                     }
@@ -334,9 +340,18 @@ class CanvasPIXI extends Component {
                         this.props.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, false);
                     }
                 } else {
+                    if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
+                        this.props.displayUserMessage("Pas assez de points disponibles pour cette opération");
+                        this.state.isInteractive = false;
+                    }else if(this.props.base[1] === BASE.BASE_X){
+                        this.props.displayUserMessage("Base inconnue, on ne peut pas déplacer des points entre les zones");
+                        this.state.isInteractive = false;
+                    }
                     if (dotSprite.dot.isPositive) {
+                        this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
                         this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
                     } else {
+                        this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
                         this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
                     }
                 }
@@ -361,7 +376,9 @@ class CanvasPIXI extends Component {
                             this.removeDotSpriteListeners(dotSprite);
                             this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
-                            this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
+                            this.props.displayUserMessage('Aucun point à annuler');
+                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
+                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
                         }
                     }else{
                         // Negative dot drag into positive zoe
@@ -375,7 +392,9 @@ class CanvasPIXI extends Component {
                             this.removeDotSpriteListeners(dotSprite);
                             this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
-                            this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
+                            this.props.displayUserMessage('Aucun point à annuler');
+                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
+                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
                         }
                     }
                 }
@@ -395,7 +414,18 @@ class CanvasPIXI extends Component {
 
     backIntoPlace(dotSprite, currentZone){
         this.state.isInteractive = false;
-        TweenMax.to(dotSprite, 1, {x:dotSprite.originInMovingContainer.x, y:dotSprite.originInMovingContainer.y, onComplete: this.backIntoPlaceDone.bind(this), onCompleteParams:[dotSprite, currentZone]});
+        TweenMax.to(dotSprite, 1, {
+            x:dotSprite.originInMovingContainer.x,
+            y:dotSprite.originInMovingContainer.y,
+            onComplete: this.backIntoPlaceDone.bind(this),
+            onCompleteParams:[dotSprite, currentZone],
+            ease:Quint.easeInOut
+        });
+        TweenMax.to(dotSprite, 0.5, {
+            height: dotSprite.height / 2,
+            repeat: 1,
+            yoyo: true
+        });
     }
 
     backIntoPlaceDone(dotSprite, currentZone){
@@ -571,6 +601,7 @@ class CanvasPIXI extends Component {
 
     shouldComponentUpdate(nextProps){
         //console.log('shouldComponentUpdate', nextProps);
+        this.checkPendingAction(nextProps);
         this.checkBaseChange(nextProps);
         this.props = nextProps;
         this.removeDotsFromStateChange();
@@ -579,6 +610,15 @@ class CanvasPIXI extends Component {
         this.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();
         return false;
+    }
+
+    checkPendingAction(nextProps){
+        if(nextProps.userMessage === ''){
+            while(this.pendingAction.length > 0) {
+                let action = this.pendingAction.shift();
+                action.function.apply(this, action.params);
+            }
+        }
     }
 
     checkBaseChange(nextProps){

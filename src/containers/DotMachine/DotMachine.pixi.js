@@ -197,7 +197,8 @@ class DotsMachine extends Component {
                     operandA={this.props.dotsMachine.machineState.operandA}
                     operandB={this.props.dotsMachine.machineState.operandB}
                     error={this.props.error}
-                    userMessage={this.props.userMessage}
+                    displayUserMessage={this.props.userMessage}
+                    userMessage={this.props.dotsMachine.machineState.userMessage}
                 />
 
             </div>
