@@ -3,8 +3,26 @@ import {storiesOf, action} from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
 import {BASE} from '../Constants'
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
+import url from 'url';
+
+// FIXME : Found a better and more elegant solution
+function handleFullScreenToggle() {
+    let currentURL = url.parse(window.parent.location.href, true);
+    delete currentURL.search;
+
+    currentURL.query.full = currentURL.query.full ? currentURL.query.full * 1 : 0;
+    currentURL.query.full = currentURL.query.full ? 0 : 1;
+
+    window.parent.location.href = url.format(currentURL);
+}
 
 storiesOf('Exploding Dots', module)
+    .addDecorator((story) => (
+        <div>
+            <button onClick={handleFullScreenToggle}>Fullscreen</button>
+            {story()}
+        </div>
+    ))
     .add('Mecha Freeplay', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}
