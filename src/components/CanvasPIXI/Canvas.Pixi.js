@@ -849,8 +849,8 @@ class CanvasPIXI extends Component {
         let isOverload;
         this.state.allZones.forEach(zone => {
             isOverload = zone.checkOvercrowding();
-            if(isOverload === false && this.state.negativePresent) {
-                zone.checkPositiveNegativePresence();
+            if(this.state.negativePresent) {
+                zone.checkPositiveNegativePresence(isOverload);
             }
         });
     }

@@ -68,15 +68,15 @@ export class SpritePool {
             let sprite = this.pool.pop();
             if(color == 'one'){
                 if(positive){
-                    sprite.texture = this.texturePosOne;
+                    sprite.textures = this.positiveSpriteOneframes;
                 }else{
-                    sprite.texture = this.textureNegOne;
+                    sprite.textures = this.negativeSpriteOneframes;
                 }
             }else{
                 if(positive){
-                    sprite.texture = this.texturePosTwo;
+                    sprite.texture = this.positiveSpriteTwoframes;
                 }else{
-                    sprite.texture = this.textureNegTwo;
+                    sprite.texture = this.negativeSpriteTwoframes;
                 }
             }
             return sprite;
