@@ -473,6 +473,31 @@ export class PowerZone extends PIXI.Container{
         return allRemovedDots;
     }
 
+    getPositiveNegativeOverdot(amount, isPositive){
+        let key;
+        let removed = [];
+        if(amount > 0) {
+            if (isPositive) {
+                for (key in this.positiveDots) {
+                    removed.push(this.positiveDots[key]);
+                    amount--;
+                    if (amount === 0) {
+                        break;
+                    }
+                }
+            } else {
+                for (key in this.negativeDots) {
+                    removed.push(this.negativeDots[key]);
+                    amount--;
+                    if (amount === 0) {
+                        break;
+                    }
+                }
+            }
+        }
+        return removed;
+    }
+
     checkOvercrowding(){
         let dotOverload = false;
         if(Object.keys(this.positiveDots).length > this.base[1]-1) {
