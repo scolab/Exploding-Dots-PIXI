@@ -114,4 +114,25 @@ storiesOf('Exploding Dots', module)
             placeValueOn={true}
             magicWandVisible={true}
         />
+    )).add('Division Operation', () => (
+    <ExplodingDots
+        operator_mode={OPERATOR_MODE.DIVIDE}
+        usage_mode={USAGE_MODE.OPERATION}
+        allBases={BASE.ARITHMOS}
+        base={BASE.ARITHMOS[0]}
+        placeValueSwitchVisible={true}
+        placeValueOn={true}
+        magicWandVisible={true}
+    />
+    ))
+    .add('Division EXERCISE', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DIVIDE}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
     ));
