@@ -81,6 +81,16 @@ class DotsMachine extends Component {
                 id: PropTypes.string.isRequired,
                 isPositive: PropTypes.bool.isRequired,
             }))).isRequired,
+            positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+                powerZone: PropTypes.number.isRequired,
+                id: PropTypes.string.isRequired,
+                isPositive: PropTypes.bool.isRequired,
+            }))).isRequired,
+            negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+                powerZone: PropTypes.number.isRequired,
+                id: PropTypes.string.isRequired,
+                isPositive: PropTypes.bool.isRequired,
+            }))).isRequired,
             machineState: PropTypes.shape({
                 placeValueSwitchVisible: PropTypes.bool.isRequired,
                 baseSelectorVisible: PropTypes.bool.isRequired,
@@ -179,6 +189,8 @@ class DotsMachine extends Component {
                     dots={this.props.dotsMachine.dots}
                     positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
                     negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+                    positiveDividerDots={this.props.dotsMachine.positiveDividerDots}
+                    negativeDividerDots={this.props.dotsMachine.negativeDividerDots}
                     base={this.props.dotsMachine.machineState.base}
                     operator_mode={this.props.dotsMachine.machineState.operator_mode}
                     usage_mode={this.props.dotsMachine.machineState.usage_mode}

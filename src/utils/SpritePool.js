@@ -103,7 +103,8 @@ export class SpritePool {
         }
     };
 
-    dispose(obj) {
-        this.pool.push(obj);
+    dispose(sprite) {
+        sprite.destroy();
+        //this.pool.push(obj);
     };
 }

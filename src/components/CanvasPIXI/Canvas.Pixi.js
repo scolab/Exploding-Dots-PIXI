@@ -28,6 +28,16 @@ class CanvasPIXI extends Component {
             id: PropTypes.string.isRequired,
             isPositive: PropTypes.bool.isRequired,
         }))).isRequired,
+        positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+            powerZone: PropTypes.number.isRequired,
+            id: PropTypes.string.isRequired,
+            isPositive: PropTypes.bool.isRequired,
+        }))).isRequired,
+        negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+            powerZone: PropTypes.number.isRequired,
+            id: PropTypes.string.isRequired,
+            isPositive: PropTypes.bool.isRequired,
+        }))).isRequired,
         base: PropTypes.array.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
@@ -152,6 +162,8 @@ class CanvasPIXI extends Component {
         //this.powerZoneManager.positivePowerZoneDots = this.props.positivePowerZoneDots;
         this.powerZoneManager.removeDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
         this.powerZoneManager.addDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
+        this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+        this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
         this.powerZoneManager.checkInstability();
         this.powerZoneManager.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();
@@ -184,6 +196,9 @@ class CanvasPIXI extends Component {
                 dotsPerZoneB.reverse();
                 let dotsPos = [];
                 let totalDot;
+                let operandA;
+                let operandB;
+                let invalidEntry = false;
                 switch (this.props.operator_mode) {
                     case OPERATOR_MODE.DISPLAY:
                         totalDot = 0;
@@ -197,7 +212,6 @@ class CanvasPIXI extends Component {
                         break;
                     case OPERATOR_MODE.ADDITION:
                         if(this.props.operandA.indexOf('|') === -1 && this.props.operandB.indexOf('|') === -1) {
-                            totalDot = Number(this.props.operandA) + Number(this.props.operandB);
                             for (let i = 0; i < Number(this.props.operandA); ++i) {
                                 dotsPos.push(this.getDot(0, true));
                             }
@@ -213,9 +227,7 @@ class CanvasPIXI extends Component {
                                 dotsPerZoneA.push(0);
                             }
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                //let totalDotInZone = Number(dotsPerZoneA[i]) + Number(dotsPerZoneB[i]);
                                 let j = 0;
-                                //for (let j = 0; j < totalDotInZone; ++j) {
                                 for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
                                     dotsPos.push(this.getDot(i, true));
                                 }
@@ -254,9 +266,8 @@ class CanvasPIXI extends Component {
                         }
                         break;
                     case OPERATOR_MODE.SUBTRACT:
-                        let operandA = this.props.operandA.substr(0);
-                        let operandB = this.props.operandB.substr(0);
-                        let invalidEntry = false;
+                        operandA = this.props.operandA.substr(0);
+                        operandB = this.props.operandB.substr(0);
                         if(operandA.indexOf('|') === -1 && operandB.indexOf('|') === -1) {
                             let leftIsPositive = true;
                             let rightIsPositive = false;
@@ -304,12 +315,12 @@ class CanvasPIXI extends Component {
                                     dotsPerZoneB[i] = '0';
                                 }
                                 let j = 0;
-                                for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true));
+                                for (j = 0; j < Number(Math.abs(dotsPerZoneA[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
                                 }
 
-                                for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, false, 'two'));
+                                for (j = 0; j < Number(Math.abs(dotsPerZoneB[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1, 'two'));
                                 }
                             }
 
@@ -323,7 +334,73 @@ class CanvasPIXI extends Component {
                         }
                         break;
                     case OPERATOR_MODE.DIVIDE:
+                        let dividePos = [];
+                        operandA = this.props.operandA.substr(0);
+                        operandB = this.props.operandB.substr(0);
+                        if(operandA.indexOf('|') === -1 && operandB.indexOf('|') === -1) {
+                            let leftIsPositive = true;
+                            let rightIsPositive = true;
+                            let minusPos = this.props.operandA.indexOf('-');
+                            if(minusPos !== -1){
+                                // leading minus in left operand
+                                leftIsPositive = false;
+                                operandA = operandA.substr(1);
+                                if(operandA.length === 0){
+                                    invalidEntry = true;
+                                }
+                            }
+                            minusPos = this.props.operandB.indexOf('-');
+                            if(minusPos !== -1){
+                                // leading minus in right operand
+                                rightIsPositive = false;
+                                operandB = operandB.substr(1);
+                                if(operandB.length === 0){
+                                    invalidEntry = true;
+                                }
+                            }
+                            if(invalidEntry === false) {
+                                for (let i = 0; i < Number(Math.abs(operandA)); ++i) {
+                                    dotsPos.push(this.getDot(0, leftIsPositive));
+                                }
+                                for (let i = 0; i < Number(Math.abs(operandB)); ++i) {
+                                    dividePos.push(this.getDividerDot(0, rightIsPositive));
+                                }
+                                this.props.activityStarted(dotsPos, null, null, dividePos);
+                            }else{
+                                this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                            }
+                        }else{
+                            while(dotsPerZoneA.length > dotsPerZoneB.length){
+                                dotsPerZoneB.push(0);
+                            }
+                            while(dotsPerZoneB.length > dotsPerZoneA.length){
+                                dotsPerZoneA.push(0);
+                            }
+                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                                if(dotsPerZoneA[i] == ''){
+                                    dotsPerZoneA[i] = '0';
+                                }
+                                if(dotsPerZoneB[i] == ''){
+                                    dotsPerZoneB[i] = '0';
+                                }
+                                let j = 0;
+                                for (j = 0; j < Number(Math.abs(dotsPerZoneA[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
+                                }
 
+                                for (j = 0; j < Number(Math.abs(dotsPerZoneB[i])); ++j) {
+                                    dividePos.push(this.getDividerDot(i, dotsPerZoneB[i].indexOf('-') === -1, 'two'));
+                                }
+                            }
+                            // remove | bar and calculate the real value
+                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
+                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
+
+                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
+                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                            this.props.activityStarted(dotsPos, operandAValue, operandBValue, dividePos);
+                        }
+                        this.powerZoneManager.showDivider();
                         break;
                 }
             }
@@ -331,7 +408,7 @@ class CanvasPIXI extends Component {
     }
 
     getDot(zone, isPositive, color = 'one'){
-        //let dot = this.dotPool.getOne();
+        //console.log('getDot', zone, isPositive);
         let dot = {};
         dot.x = randomFromTo(POSITION_INFO.DOT_RAYON, BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON);
         if(this.state.negativePresent){
@@ -342,6 +419,13 @@ class CanvasPIXI extends Component {
         dot.zoneId = zone;
         dot.isPositive = isPositive;
         dot.color = color;
+        return dot;
+    }
+
+    getDividerDot(zone, isPositive){
+        let dot = {};
+        dot.zoneId = zone;
+        dot.isPositive = isPositive;
         return dot;
     }
 

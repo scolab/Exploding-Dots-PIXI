@@ -143,6 +143,21 @@ export default class Operator extends Component {
                 break;
             case OPERATOR_MODE.DIVIDE:
                 mainDisplay = 'fa fa-hand-spock-o';
+                return (
+                    <div className="operationItem"
+                         style={{
+                             fontFamily: 'museo-slab',
+                             fontSize: 24,
+                             backgroundImage: `url(${imgBg})`,
+                             backgroundRepeat: `no-repeat`,
+                             backgroundColor: `Transparent`,
+                             border: `none`,
+                             width: 77,
+                             height: 45
+                         }}>
+                        <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
+                    </div>
+                );
                 break;
         }
 

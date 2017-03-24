@@ -15,6 +15,8 @@ export class PowerZone extends PIXI.Container{
     negativeDotNotDisplayed = {};
     positiveDotsContainer = null;
     negativeDotsContainer = null;
+    positiveDividerText = '';
+    negativeDividerText = '';
     positiveProximityManager = null;
     negativeProximityManager = null;
     originalPositiveBoxPosition;
@@ -24,6 +26,8 @@ export class PowerZone extends PIXI.Container{
     base = [];
     totalZoneCount = 0;
     greyFilter = new PIXI.filters.ColorMatrixFilter();
+    redFilter = new PIXI.filters.ColorMatrixFilter();
+    greenFilter = new PIXI.filters.ColorMatrixFilter();
     maxDotsByZone = 0;
     dotsCounterContainer = null;
     negativeDotsCounterContainer = null;
@@ -37,6 +41,8 @@ export class PowerZone extends PIXI.Container{
         this.totalZoneCount = totalZoneCount;
         this.spritePool = spritePool;
         this.greyFilter.greyscale(0.3, true);
+        this.redFilter.night(2);
+        this.greenFilter.kodachrome(1);
         this.maxDotsByZone = negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
         this.eventEmitter = new EventEmitter();
         let boxYPos = 70;
@@ -87,6 +93,42 @@ export class PowerZone extends PIXI.Container{
         this.placeValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + (BOX_INFO.BOX_WIDTH / 2);
         this.placeValueText.y = boxYPos + (BOX_INFO.BOX_HEIGHT / 2) - 30;
         this.addChild(this.placeValueText);
+
+        if (operator_mode === OPERATOR_MODE.DIVIDE) {
+            let dividerCounter = new PIXI.Sprite(textures["dot_div_value.png"]);
+            dividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - dividerCounter.width;
+            dividerCounter.y = boxYPos;
+            this.addChild(dividerCounter);
+
+            this.positiveDividerText = new PIXI.Text('', {
+                fontFamily: 'museo-slab',
+                fontSize: 16,
+                fill: 0x565656,
+                align: 'center'
+            });
+            this.positiveDividerText.anchor.x = 0.5;
+            this.positiveDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - (dividerCounter.width / 2);
+            this.positiveDividerText.y = boxYPos + 3;
+            this.addChild(this.positiveDividerText);
+
+            if (operator_mode === OPERATOR_MODE.DIVIDE) {
+                let negativeDividerCounter = new PIXI.Sprite(textures["antidot_div_value.png"]);
+                negativeDividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth));
+                negativeDividerCounter.y = BOX_INFO.BOX_HEIGHT + boxYPos - negativeDividerCounter.height - 10;
+                this.addChild(negativeDividerCounter);
+
+                this.negativeDividerText = new PIXI.Text('', {
+                    fontFamily: 'museo-slab',
+                    fontSize: 16,
+                    fill: 0x565656,
+                    align: 'center'
+                });
+                this.negativeDividerText.anchor.x = 0.5;
+                this.negativeDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + 15;
+                this.negativeDividerText.y = negativeDividerCounter.y + 15;
+                this.addChild(this.negativeDividerText);
+            }
+        }
 
         if (negativePresent) {
             let separator = new PIXI.Sprite(textures['separator.png']);
@@ -143,41 +185,6 @@ export class PowerZone extends PIXI.Container{
             }
         }
 
-        if (operator_mode === OPERATOR_MODE.DIVIDE) {
-            let dividerCounter = new PIXI.Sprite(textures["dot_div_value.png"]);
-            dividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - dividerCounter.width;
-            dividerCounter.y = boxYPos;
-            this.addChild(dividerCounter);
-
-            this.dividerValueText = new PIXI.Text('1', {
-                fontFamily: 'museo-slab',
-                fontSize: 16,
-                fill: 0x565656,
-                align: 'center'
-            });
-            this.dividerValueText.anchor.x = 0.5;
-            this.dividerValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - (dividerCounter.width / 2);
-            this.dividerValueText.y = boxYPos + 3;
-            this.addChild(this.dividerValueText);
-
-            if (operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
-                let negativeDividerCounter = new PIXI.Sprite(textures["antidot_div_value.png"]);
-                negativeDividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth));
-                negativeDividerCounter.y = BOX_INFO.BOX_HEIGHT + boxYPos - negativeDividerCounter.height - 10;
-                this.addChild(negativeDividerCounter);
-
-                this.dividerNegativeValueText = new PIXI.Text('1', {
-                    fontFamily: 'museo-slab',
-                    fontSize: 16,
-                    fill: 0x565656,
-                    align: 'center'
-                });
-                this.dividerNegativeValueText.anchor.x = 0.5;
-                this.dividerNegativeValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + 15;
-                this.dividerNegativeValueText.y = negativeDividerCounter.y + 15;
-                this.addChild(this.dividerNegativeValueText);
-            }
-        }
         this.x += leftGutter;
     }
 
@@ -244,6 +251,34 @@ export class PowerZone extends PIXI.Container{
             } else {
                 zoneAreEmpty = true;
                 counter.setText('');
+            }
+        }
+        return zoneAreEmpty;
+    }
+
+    checkDivideResultText(doCheck){
+        if(doCheck) {
+            let dividerIsEmpty = this.getDividerTextStatus(this.positiveDividerText, false);
+            let negativeDividerIsEmpty = this.getDividerTextStatus(this.negativeDividerText, !dividerIsEmpty);
+            if(negativeDividerIsEmpty == false && dividerIsEmpty){
+                dividerIsEmpty = this.getDividerTextStatus(this.positiveDividerText, true);
+            }
+            return dividerIsEmpty && negativeDividerIsEmpty;
+        }else{
+            this.getDividerTextStatus(this.positiveDividerText, true);
+            this.getDividerTextStatus(this.negativeDividerText, false);
+            return false;
+        }
+    }
+
+    getDividerTextStatus(dividerText, populate) {
+        var zoneAreEmpty = false;
+        if (Number(dividerText.valueOf()) === 0) {
+            if (populate || this.zonePosition === 0) {
+                dividerText.text = '0';
+            } else {
+                zoneAreEmpty = true;
+                dividerText.text = '';
             }
         }
         return zoneAreEmpty;
@@ -583,5 +618,13 @@ export class PowerZone extends PIXI.Container{
 
     setValueTextAlpha(alpha){
         this.placeValueText.alpha = alpha;
+    }
+
+    divisionResult(success){
+        if(success){
+            this.filters = [this.greenFilter];
+        } else {
+            this.filters = [this.redFilter];
+        }
     }
 }

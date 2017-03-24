@@ -37,9 +37,17 @@ function setInitialState() {
         positivePowerZoneDots.push({});
         negativePowerZoneDots.push({});
     }
+    let positiveDividerDots = [];
+    let negativeDividerDots = [];
+    for (let i = 0; i < (initialMachineState.zones || 0); i++) {
+        positiveDividerDots.push({});
+        negativeDividerDots.push({});
+    }
     return {
         positivePowerZoneDots: positivePowerZoneDots,
         negativePowerZoneDots: negativePowerZoneDots,
+        positiveDividerDots: positiveDividerDots,
+        negativeDividerDots: negativeDividerDots,
         machineState: initialMachineState
     };
 }
@@ -69,19 +77,21 @@ const dotsReducer = (state = null, action) => {
                 dot.id = makeUID();
                 dot.isPositive = newDot.isPositive;
                 dot.color = newDot.color;
-
-                /*let dot = {
-                    x: newDot.x,
-                    y: newDot.y,
-                    powerZone: newDot.zoneId,
-                    id: makeUID(),
-                    isPositive: newDot.isPositive,
-                    color: newDot.color
-                };*/
                 if(dot.isPositive) {
-                    stateCopy.positivePowerZoneDots[newDot.zoneId][dot.id] = dot;//push(dot);
+                    stateCopy.positivePowerZoneDots[newDot.zoneId][dot.id] = dot;
                 }else {
-                    stateCopy.negativePowerZoneDots[newDot.zoneId][dot.id] = dot;//.push(dot);
+                    stateCopy.negativePowerZoneDots[newDot.zoneId][dot.id] = dot;
+                }
+            });
+            action.divider.forEach((dividerDot) => {
+                let dot = {};
+                dot.powerZone = dividerDot.zoneId;
+                dot.id = makeUID();
+                dot.isPositive = dividerDot.isPositive;
+                if(dot.isPositive) {
+                    stateCopy.positiveDividerDots[dividerDot.zoneId][dot.id] = dot;
+                }else {
+                    stateCopy.negativeDividerDots[dividerDot.zoneId][dot.id] = dot;
                 }
             });
             if(action.totalA != null) {
