@@ -21,7 +21,7 @@ export class SpritePool {
             textures[this.positiveDotOneFrameThree],
             textures[this.positiveDotOneFrameFour]
             ];
-        let i = 90;
+        let i = 45;
         while(i > 0){
             this.positiveSpriteOneframes.push(this.texturePosOne);
             i--;
@@ -32,7 +32,7 @@ export class SpritePool {
             textures[this.positiveDotOneFrameThree],
             textures[this.positiveDotOneFrameFour]
         ];
-        i = 90;
+        i = 45;
         while(i > 0){
             this.positiveSpriteTwoframes.push(this.texturePosTwo);
             i--;
@@ -43,7 +43,7 @@ export class SpritePool {
             textures[this.positiveDotOneFrameThree],
             textures[this.positiveDotOneFrameFour]
         ];
-        i = 90;
+        i = 45;
         while(i > 0){
             this.negativeSpriteOneframes.push(this.textureNegOne);
             i--;
@@ -54,7 +54,7 @@ export class SpritePool {
             textures[this.positiveDotOneFrameThree],
             textures[this.positiveDotOneFrameFour]
         ];
-        i = 90;
+        i = 45;
         while(i > 0){
             this.negativeSpriteTwoframes.push(this.textureNegTwo);
             i--;

@@ -126,7 +126,7 @@ class DotsMachine extends Component {
     resize(event) {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        let ratio = Math.min( w / this.state.GAME_WIDTH, h / this.state.GAME_HEIGHT);
+        //let ratio = Math.min( w / this.state.GAME_WIDTH, h / this.state.GAME_HEIGHT);
         /*this.state.stage.scale.x = this.state.stage.scale.y = ratio;
         this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));*/
     };

@@ -57,10 +57,10 @@ class CanvasPIXI extends Component {
     constructor(props){
         super(props);
         this.state = {};
-        this.state.maxX = SETTINGS.GAME_WIDTH;
+        /*this.state.maxX = SETTINGS.GAME_WIDTH;
         this.state.minX = 0;
-        this.state.maxY = SETTINGS.GAME_HEIGHT;
-        this.state.minY = 0;
+        this.state.maxY = operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT;
+        this.state.minY = 0;*/
         this.state.isWebGL = false;
         this.state.negativePresent = (props.operator_mode == OPERATOR_MODE.SUBTRACT || props.operator_mode == OPERATOR_MODE.DIVIDE || props.base[1] === BASE.BASE_X);
         this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
@@ -82,7 +82,8 @@ class CanvasPIXI extends Component {
         };
 
         let preventWebGL = false;
-        this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
+        this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT), options, preventWebGL);
+        //this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
         this.state.stage = this.state.app.stage;
         this.state.renderer = this.state.app.renderer;
         this.powerZoneManager = new PowerZoneManager(
@@ -142,9 +143,9 @@ class CanvasPIXI extends Component {
     resize(event) {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        let ratio = Math.min( w / SETTINGS.GAME_WIDTH, h / SETTINGS.GAME_HEIGHT);
+        let ratio = Math.min( w / SETTINGS.GAME_WIDTH, h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
         this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-        this.state.renderer.resize(Math.ceil(SETTINGS.GAME_WIDTH * ratio), Math.ceil(SETTINGS.GAME_HEIGHT * ratio));
+        this.state.renderer.resize(Math.ceil(SETTINGS.GAME_WIDTH * ratio), Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
     };
 
     animationCallback(...args){
@@ -162,8 +163,10 @@ class CanvasPIXI extends Component {
         //this.powerZoneManager.positivePowerZoneDots = this.props.positivePowerZoneDots;
         this.powerZoneManager.removeDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
         this.powerZoneManager.addDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
-        this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
-        this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+        if(this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
+            this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+            this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+        }
         this.powerZoneManager.checkInstability();
         this.powerZoneManager.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();

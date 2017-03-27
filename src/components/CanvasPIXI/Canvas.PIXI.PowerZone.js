@@ -7,12 +7,17 @@ import {DotCounter} from './DotCounter';
 
 export class PowerZone extends PIXI.Container{
 
+    static BG_NEUTRAL = 'BG_NEUTRAL';
+    static BG_GREEN = 'BG_GREEN';
+    static BG_RED = 'BG_RED';
     static CREATE_DOT = 'CREATE_DOT';
 
     positiveDots = {};
     negativeDots = {};
     positiveDotNotDisplayed = {};
     negativeDotNotDisplayed = {};
+    positiveDotCount;
+    negativeDotCount;
     positiveDotsContainer = null;
     negativeDotsContainer = null;
     positiveDividerText = '';
@@ -23,6 +28,7 @@ export class PowerZone extends PIXI.Container{
     originalNegativeBoxPosition;
     zonePosition = 0;
     negativePresent = false;
+    isActive = true;
     base = [];
     totalZoneCount = 0;
     greyFilter = new PIXI.filters.ColorMatrixFilter();
@@ -32,6 +38,8 @@ export class PowerZone extends PIXI.Container{
     dotsCounterContainer = null;
     negativeDotsCounterContainer = null;
     spritePool = null;
+    bgBox = null;
+    bgBoxTextures = [];
 
     constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, zoneCreated) {
         super();
@@ -61,11 +69,13 @@ export class PowerZone extends PIXI.Container{
             this.negativeDotsCounterContainer.setStyle(0xFFFFFF);
         }
 
-
-        let bgBox = new PIXI.Sprite(textures["box.png"]);
-        bgBox.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
-        bgBox.y = boxYPos;
-        this.addChild(bgBox);
+        this.bgBoxTextures.push(textures["box.png"]);
+        this.bgBoxTextures.push(textures["box_yes.png"]);
+        this.bgBoxTextures.push(textures["box_no.png"]);
+        this.bgBox = new PIXI.Sprite(this.bgBoxTextures[0]);
+        this.bgBox.x = position * (BOX_INFO.BOX_WIDTH + gutterWidth);
+        this.bgBox.y = boxYPos;
+        this.addChild(this.bgBox);
 
         if (base[1] === 'x') {
             this.placeValueText = new PIXI.Text('X' + (zoneCreated), {
@@ -223,12 +233,15 @@ export class PowerZone extends PIXI.Container{
             }
             if (positiveZoneIsEmpty === true && (this.negativePresent === false || negativeZoneIsEmpty === true)) {
                 this.filters = [this.greyFilter];
+                this.isActive = false;
             } else {
                 this.filters = null;
+                this.isActive = true;
             }
             return positiveZoneIsEmpty && negativeZoneIsEmpty;
         }else{
             this.filters = null;
+            this.isActive = true;
             this.getZoneTextAndAlphaStatus(this.positiveDots, this.dotsCounterContainer, true);
             if(this.negativePresent) {
                 this.getZoneTextAndAlphaStatus(this.negativeDots, this.negativeDotsCounterContainer, false);
@@ -550,7 +563,7 @@ export class PowerZone extends PIXI.Container{
             this.dotsCounterContainer.setStyle(0xff0000);
             let frameTotal = this.positiveDotsContainer.children[0].totalFrames;
             this.positiveDotsContainer.children.forEach(sprite => {
-                sprite.animationSpeed = 0.5;
+                sprite.animationSpeed = 0.2;
                 sprite.gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
             });
             dotOverload = true;
@@ -567,7 +580,7 @@ export class PowerZone extends PIXI.Container{
                 this.negativeDotsCounterContainer.setStyle(0xff0000);
                 let frameTotal = this.negativeDotsContainer.children[0].totalFrames;
                 this.negativeDotsContainer.children.forEach(sprite => {
-                    sprite.animationSpeed = 0.5;
+                    sprite.animationSpeed = 0.2;
                     sprite.gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
                 });
                 dotOverload = true;
@@ -620,11 +633,30 @@ export class PowerZone extends PIXI.Container{
         this.placeValueText.alpha = alpha;
     }
 
-    divisionResult(success){
-        if(success){
-            this.filters = [this.greenFilter];
-        } else {
-            this.filters = [this.redFilter];
+    precalculateDotsForDivision(){
+        this.positiveDotCount = Object.keys(this.positiveDots).length;
+        this.negativeDotCount = Object.keys(this.negativeDots).length;
+    }
+
+    setBackgroundColor(status) {
+        //console.log(this.zonePosition, this.isActive, status);
+        if (this.isActive === true) {
+            switch (status) {
+                case PowerZone.BG_NEUTRAL:
+                    this.bgBox.texture = this.bgBoxTextures[0];
+                    break;
+                case PowerZone.BG_GREEN:
+                    //console.log('111');
+                    this.bgBox.texture = this.bgBoxTextures[1];
+                    break;
+                case PowerZone.BG_RED:
+                    //console.log('222');
+                    this.bgBox.texture = this.bgBoxTextures[2];
+                    break;
+                default:
+                    //console.log('333');
+                    this.bgBox.texture = this.bgBoxTextures[0];
+            }
         }
     }
 }

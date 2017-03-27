@@ -4,7 +4,9 @@ import {EventEmitter} from 'eventemitter3';
 
 export class DividerZoneManager extends PIXI.Container{
 
+    static START_DRAG = 'START_DRAG';
     static MOVED = 'MOVED';
+    static END_DRAG = 'END_DRAG';
 
     constructor(container){
         super();
@@ -21,39 +23,45 @@ export class DividerZoneManager extends PIXI.Container{
     }
 
     createZones() {
-        for(let i = this.totalZoneCount - 1; i >= 0; i--){
+        //console.log('DividerZoneManager createZones');
+        for(let i = this.totalZoneCount; i > 0; i--){
             let dividerZone = new DividerZone();
-            dividerZone.x = i * 30;
-            dividerZone.init(this.textures['divider.png'], this.textures['red_dot.png'], this.textures['blue_dot.png']);
+            dividerZone.x = (i * 65) - 65;
+            dividerZone.init(this.textures['divider.png'], this.textures['dot_divider.png'], this.textures['antidot_divider.png']);
             this.allZones.push(dividerZone);
             this.addChild(dividerZone);
+            this.x -= 65;
         }
+        this.origin = new PIXI.Point(this.x, this.y);
     }
 
     addDots(positiveDividerDots, negativeDividerDots){
+        //console.log('DividerZoneManager addDot', positiveDividerDots, negativeDividerDots);
         let i;
-        let positiveZoneWithValue = 0;
-        let negativeZoneWithValue = 0;
-        positiveDividerDots.forEach(hash => {
-            if(Object.keys(hash).length > 0){
-                positiveZoneWithValue++;
+        let positiveZoneMaxPosition = 0;
+        let negativeZoneMaxPosition = 0;
+        for (i = 0; i < positiveDividerDots.length; i++) {
+            if(Object.keys(positiveDividerDots[i]).length > 0){
+                positiveZoneMaxPosition = i + 1;
             }
-        });
-        negativeDividerDots.forEach(hash => {
-            if(Object.keys(hash).length > 0){
-                negativeZoneWithValue++;
-            }
-        });
-        this.totalZoneCount = Math.max(positiveZoneWithValue, negativeZoneWithValue);
-        this.createZones();
-        for(i = 0; i < this.totalZoneCount; i++){
-            this.allZones[i].addDots(positiveDividerDots[i], negativeDividerDots[i]);
-            this.allZonesValue[i] = [this.allZones[i].positiveValue, this.allZones[i].negativeValue]
         }
-
+        for (i = 0; i < negativeDividerDots.length; i++) {
+            if(Object.keys(negativeDividerDots[i]).length > 0){
+                negativeZoneMaxPosition = i + 1;
+            }
+        }
+        if(this.totalZoneCount != Math.max(positiveZoneMaxPosition, negativeZoneMaxPosition)) {
+            this.totalZoneCount = Math.max(positiveZoneMaxPosition, negativeZoneMaxPosition);
+            this.createZones();
+            for (i = 0; i < this.totalZoneCount; i++) {
+                this.allZones[i].addDots(positiveDividerDots[i], negativeDividerDots[i]);
+                this.allZonesValue[i] = [this.allZones[i].positiveValue, this.allZones[i].negativeValue]
+            }
+        }
     }
 
     removeDots(positiveDividerDots, negativeDividerDots){
+        //console.log('DividerZoneManager removeDots', positiveDividerDots, negativeDividerDots);
         let newZoneCount = this.totalZoneCount;
         let removedZones = [];
         for(let i = 0; i < this.totalZoneCount; i++){
@@ -78,6 +86,7 @@ export class DividerZoneManager extends PIXI.Container{
     }
 
     start(){
+        //console.log('DividerZoneManager start');
         this.interactive = true;
         this.buttonMode = true;
         this.origin = new PIXI.Point(this.x, this.y);
@@ -102,6 +111,7 @@ export class DividerZoneManager extends PIXI.Container{
             var newPosition = this.data.getLocalPosition(this.parent);
             this.position.x = newPosition.x - (this.width / 2);
             this.position.y = newPosition.y - (this.height / 2);
+            this.eventEmitter.emit(DividerZoneManager.START_DRAG);
         }
     }
 
@@ -120,6 +130,7 @@ export class DividerZoneManager extends PIXI.Container{
             this.dragging = false;
             this.tweening = true;
             TweenMax.to(this, 1, {x:this.origin.x, y:this.origin.y, ease:Quint.easeInOut, onComplete:this.backIntoPlaceDone.bind(this)});
+            this.eventEmitter.emit(DividerZoneManager.END_DRAG, e.data, this.allZonesValue.slice(), true);
         }
         e.stopPropagation();
     }

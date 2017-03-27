@@ -39,7 +39,7 @@ export class DividerZone extends PIXI.Container{
             if(Object.keys(positiveDots).length > 0) {
                 this.positiveText = new PIXI.Text(Object.keys(positiveDots).length.toString(10), {
                     fontFamily: 'museo-slab',
-                    fontSize: 18,
+                    fontSize: 34,
                     fill: 0xBCBCBC,
                     align: 'center'
                 });
@@ -48,7 +48,7 @@ export class DividerZone extends PIXI.Container{
             if(Object.keys(negativeDots).length > 0) {
                 this.negativeText = new PIXI.Text(Object.keys(negativeDots).length.toString(10), {
                     fontFamily: 'museo-slab',
-                    fontSize: 18,
+                    fontSize: 34,
                     fill: 0xFFFFFF,
                     align: 'center'
                 });
@@ -58,6 +58,8 @@ export class DividerZone extends PIXI.Container{
         }
     }
 
+
+
     getDot(dot){
         let dotSprite;
         if(dot.isPositive){
@@ -65,8 +67,7 @@ export class DividerZone extends PIXI.Container{
         }else{
             dotSprite = new PIXI.Sprite(this.negativeTexture);
         }
-        //dotSprite.anchor.set(0.5);
-        dotSprite.scale = new PIXI.Point(0.2, 0.2);
+        dotSprite.anchor.set(0.5);
         return dotSprite;
     }
 
@@ -75,8 +76,8 @@ export class DividerZone extends PIXI.Container{
             for(let i = 0; i < this.positiveDots.length; i++) {
                 if(this.positiveDots[i].length < 3) {
                     this.positiveDots[i].push(dot);
-                    dot.sprite.x = (this.positiveDots[i].length * 6) + 1;
-                    dot.sprite.y = (i * 6) + 4;
+                    dot.sprite.x = (this.positiveDots[i].length * 15) + 1;
+                    dot.sprite.y = (i * 15) + 9;
                     break;
                 }
             }
@@ -84,8 +85,8 @@ export class DividerZone extends PIXI.Container{
             for(let i = 0; i < this.negativeDots.length; i++) {
                 if(this.negativeDots[i].length < 3) {
                     this.negativeDots[i].push(dot);
-                    dot.sprite.x = (this.positiveDots[i].length * 6) + 1;
-                    dot.sprite.y = (i * 6) + 22;
+                    dot.sprite.x = (this.negativeDots[i].length * 15) + 1;
+                    dot.sprite.y = (i * 15) + 54;
                     break;
                 }
             }
