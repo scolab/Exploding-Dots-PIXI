@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {randomFromTo} from '../../utils/MathUtils'
+import {makeBothArrayTheSameLength} from '../../utils/ArrayUtils';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT} from '../../Constants'
 import {SpritePool} from '../../utils/SpritePool';
 import {PowerZoneManager} from './PowerZoneManager';
@@ -57,10 +58,6 @@ class CanvasPIXI extends Component {
     constructor(props){
         super(props);
         this.state = {};
-        /*this.state.maxX = SETTINGS.GAME_WIDTH;
-        this.state.minX = 0;
-        this.state.maxY = operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT;
-        this.state.minY = 0;*/
         this.state.isWebGL = false;
         this.state.negativePresent = (props.operator_mode == OPERATOR_MODE.SUBTRACT || props.operator_mode == OPERATOR_MODE.DIVIDE || props.base[1] === BASE.BASE_X);
         this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
@@ -176,9 +173,6 @@ class CanvasPIXI extends Component {
     checkBaseChange(nextProps){
         if(this.props.base !==  nextProps.base){
             this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
-            /*this.state.allZones.forEach(zone => {
-               zone.baseChange(nextProps.base, nextProps.placeValueOn);
-            });*/
         }
     }
 
@@ -187,14 +181,66 @@ class CanvasPIXI extends Component {
         this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
         if(this.props.magicWandIsActive) {
             console.log('magicWandIsActive');
-            // Overcrowding
             this.powerZoneManager.magicWand();
             this.props.activateMagicWand(false);
         }else if(this.props.startActivity) {
             // ACTIVITY START
+            let advancedMode = false;
             if(this.props.usage_mode == USAGE_MODE.OPERATION) {
-                let dotsPerZoneA = this.props.operandA.split('|');
-                let dotsPerZoneB = this.props.operandB.split('|');
+                let dotsPerZoneA;
+                let dotsPerZoneB;
+                if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
+                    // advanced mode, if one side is split with |, split both side
+                    advancedMode = true;
+                    if(this.props.operandA.indexOf('|') !== -1) {
+                        dotsPerZoneA = this.props.operandA.split('|');
+                    }else{
+                        dotsPerZoneA = this.props.operandA.split('');
+                    }
+                    dotsPerZoneA.forEach(entry => {
+                        if(entry === '-'){
+                            dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
+                        }
+                    });
+                    console.log(dotsPerZoneA);
+                    if(this.props.operator_mode !== OPERATOR_MODE.MULTIPLY){
+                        // don't split multiplication operand B
+                        if(this.props.operandB.indexOf('|') !== -1) {
+                            dotsPerZoneB = this.props.operandB.split('|');
+                        }else{
+                            dotsPerZoneB = this.props.operandB.split('');
+                        }
+                    }else{
+                        // there is no | possible in operandB, but I need it as an array anyway, so split with impossible character.
+                        dotsPerZoneB = this.props.operandB.split('|');
+                    }
+                }else{
+                    // normal mode, split in certain condition
+                    if(this.props.operator_mode === OPERATOR_MODE.DISPLAY){
+                        // no | split in display mode, but I need it as an array anyway, so split with impossible character.
+                        dotsPerZoneA = this.props.operandA.split('|');
+                        // no zone B in DISPLAY mode, just pretend to prevent crash
+                        dotsPerZoneB = [];
+                    }else{
+                        dotsPerZoneA = this.props.operandA.split('');
+                        dotsPerZoneB = this.props.operandB.split('');
+                    }
+
+                }
+                if(advancedMode === false) {
+                    if (dotsPerZoneA[0] === '-') {
+                        dotsPerZoneA.splice(0, 1);
+                        for (let i = 0; i < dotsPerZoneA.length; i++) {
+                            dotsPerZoneA[i] = '-' + dotsPerZoneA[i];
+                        }
+                    }
+                    if (dotsPerZoneB[0] === '-') {
+                        dotsPerZoneB.splice(0, 1);
+                        for (let i = 0; i < dotsPerZoneB.length; i++) {
+                            dotsPerZoneB[i] = '-' + dotsPerZoneB[i];
+                        }
+                    }
+                }
                 dotsPerZoneA.reverse();
                 dotsPerZoneB.reverse();
                 let dotsPos = [];
@@ -214,194 +260,83 @@ class CanvasPIXI extends Component {
                         this.props.activityStarted(dotsPos, totalDot);
                         break;
                     case OPERATOR_MODE.ADDITION:
-                        if(this.props.operandA.indexOf('|') === -1 && this.props.operandB.indexOf('|') === -1) {
-                            for (let i = 0; i < Number(this.props.operandA); ++i) {
-                                dotsPos.push(this.getDot(0, true));
+                        makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+                        for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                            let j = 0;
+                            for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
+                                dotsPos.push(this.getDot(i, true));
                             }
-                            for (let i = 0; i < Number(this.props.operandB); ++i) {
-                                dotsPos.push(this.getDot(0, true, 'two'));
-                            }
-                            this.props.activityStarted(dotsPos);
-                        }else{
-                            while(dotsPerZoneA.length > dotsPerZoneB.length){
-                                dotsPerZoneB.push(0);
-                            }
-                            while(dotsPerZoneB.length > dotsPerZoneA.length){
-                                dotsPerZoneA.push(0);
-                            }
-                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                let j = 0;
-                                for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true));
-                                }
 
-                                for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true, 'two'));
-                                }
+                            for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
+                                dotsPos.push(this.getDot(i, true, 'two'));
                             }
-                            // remove | bar and calculate the real value
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
-
-                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
-                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
-                            this.props.activityStarted(dotsPos, operandAValue, operandBValue);
                         }
+                        let operandAValue = this.calculateValueWithoutVerticalBar(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
+                        let operandBValue = this.calculateValueWithoutVerticalBar(dotsPerZoneB);//dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                        this.props.activityStarted(dotsPos, operandAValue, operandBValue);
                         break;
                     case OPERATOR_MODE.MULTIPLY:
-                        if(this.props.operandA.indexOf('|') === -1) {
-                            totalDot = Number(this.props.operandA) * Number(this.props.operandB);
-                            for (let i = 0; i < totalDot; ++i) {
-                                dotsPos.push(this.getDot(0, true));
+                        for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                            let totalDotInZone = 0;
+                            totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
+                            for (let j = 0; j < totalDotInZone; ++j) {
+                                dotsPos.push(this.getDot(i, true));
                             }
-                            this.props.activityStarted(dotsPos);
-                        }else{
-                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                let totalDotInZone = 0;
-                                totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
-                                for (let j = 0; j < totalDotInZone; ++j) {
-                                    dotsPos.push(this.getDot(i, true));
-                                }
-                            }
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            let operandAValue = dotsPerZoneA.reverse().join('');
-                            this.props.activityStarted(dotsPos, operandAValue);
                         }
+                        operandAValue = this.calculateValueWithoutVerticalBar(dotsPerZoneA);
+                        this.props.activityStarted(dotsPos, operandAValue);
                         break;
                     case OPERATOR_MODE.SUBTRACT:
-                        operandA = this.props.operandA.substr(0);
-                        operandB = this.props.operandB.substr(0);
-                        if(operandA.indexOf('|') === -1 && operandB.indexOf('|') === -1) {
-                            let leftIsPositive = true;
-                            let rightIsPositive = false;
-                            let minusPos = this.props.operandA.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in left operand
-                                leftIsPositive = false;
-                                operandA = operandA.substr(1);
-                                if(operandA.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            minusPos = this.props.operandB.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in right operand
-                                rightIsPositive = true;
-                                operandB = operandB.substr(1);
-                                if(operandB.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            if(invalidEntry === false) {
-                                for (let i = 0; i < Number(operandA); ++i) {
-                                    dotsPos.push(this.getDot(0, leftIsPositive));
-                                }
-                                for (let i = 0; i < Number(operandB); ++i) {
-                                    dotsPos.push(this.getDot(0, rightIsPositive));
-                                }
-                                this.props.activityStarted(dotsPos);
-                            }else{
-                                this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-                            }
-                        }else{
-                            while(dotsPerZoneA.length > dotsPerZoneB.length){
-                                dotsPerZoneB.push(0);
-                            }
-                            while(dotsPerZoneB.length > dotsPerZoneA.length){
-                                dotsPerZoneA.push(0);
-                            }
+                        if(dotsPerZoneA.length === 1 && dotsPerZoneA[0] === '-'){
+                            invalidEntry = true;
+                        }
+                        if(dotsPerZoneB.length === 1 && dotsPerZoneB[0] === '-'){
+                            invalidEntry = true;
+                        }
+                        if(invalidEntry === false){
+                            makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                if(dotsPerZoneA[i] == ''){
-                                    dotsPerZoneA[i] = '0';
-                                }
-                                if(dotsPerZoneB[i] == ''){
-                                    dotsPerZoneB[i] = '0';
-                                }
                                 let j = 0;
-                                for (j = 0; j < Number(Math.abs(dotsPerZoneA[i])); ++j) {
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); ++j) {
                                     dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
                                 }
-
-                                for (j = 0; j < Number(Math.abs(dotsPerZoneB[i])); ++j) {
-                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1, 'two'));
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1));
                                 }
                             }
-
-                            // remove | bar and calculate the real value
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
-
-                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
-                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                            let operandAValue = this.calculateValueWithoutVerticalBar(dotsPerZoneA);
+                            let operandBValue = this.calculateValueWithoutVerticalBar(dotsPerZoneB);
                             this.props.activityStarted(dotsPos, operandAValue, operandBValue);
+                        }else{
+                            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                         }
                         break;
                     case OPERATOR_MODE.DIVIDE:
                         let dividePos = [];
-                        operandA = this.props.operandA.substr(0);
-                        operandB = this.props.operandB.substr(0);
-                        if(operandA.indexOf('|') === -1 && operandB.indexOf('|') === -1) {
-                            let leftIsPositive = true;
-                            let rightIsPositive = true;
-                            let minusPos = this.props.operandA.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in left operand
-                                leftIsPositive = false;
-                                operandA = operandA.substr(1);
-                                if(operandA.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            minusPos = this.props.operandB.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in right operand
-                                rightIsPositive = false;
-                                operandB = operandB.substr(1);
-                                if(operandB.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            if(invalidEntry === false) {
-                                for (let i = 0; i < Number(Math.abs(operandA)); ++i) {
-                                    dotsPos.push(this.getDot(0, leftIsPositive));
-                                }
-                                for (let i = 0; i < Number(Math.abs(operandB)); ++i) {
-                                    dividePos.push(this.getDividerDot(0, rightIsPositive));
-                                }
-                                this.props.activityStarted(dotsPos, null, null, dividePos);
-                            }else{
-                                this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-                            }
-                        }else{
-                            while(dotsPerZoneA.length > dotsPerZoneB.length){
-                                dotsPerZoneB.push(0);
-                            }
-                            while(dotsPerZoneB.length > dotsPerZoneA.length){
-                                dotsPerZoneA.push(0);
-                            }
+                        if(dotsPerZoneA.length === 1 && dotsPerZoneA[0] === '-'){
+                            invalidEntry = true;
+                        }
+                        if(dotsPerZoneB.length === 1 && dotsPerZoneB[0] === '-'){
+                            invalidEntry = true;
+                        }
+                        if(invalidEntry === false){
+                            makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                if(dotsPerZoneA[i] == ''){
-                                    dotsPerZoneA[i] = '0';
-                                }
-                                if(dotsPerZoneB[i] == ''){
-                                    dotsPerZoneB[i] = '0';
-                                }
                                 let j = 0;
-                                for (j = 0; j < Number(Math.abs(dotsPerZoneA[i])); ++j) {
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); ++j) {
                                     dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
                                 }
-
-                                for (j = 0; j < Number(Math.abs(dotsPerZoneB[i])); ++j) {
-                                    dividePos.push(this.getDividerDot(i, dotsPerZoneB[i].indexOf('-') === -1, 'two'));
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); ++j) {
+                                    dividePos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') === -1));
                                 }
                             }
-                            // remove | bar and calculate the real value
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
-
-                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
-                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                            let operandAValue = this.calculateValueWithoutVerticalBar(dotsPerZoneA);
+                            let operandBValue = this.calculateValueWithoutVerticalBar(dotsPerZoneB);
                             this.props.activityStarted(dotsPos, operandAValue, operandBValue, dividePos);
+
+                        }else{
+                            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                         }
                         this.powerZoneManager.showDivider();
                         break;
@@ -433,17 +368,11 @@ class CanvasPIXI extends Component {
     }
 
     calculateValueWithoutVerticalBar(arr){
-        for(let i = 0; i < arr.length; ++i){
-            while(Number(arr[i]) >= this.props.base[1]){
-                if(arr[i + 1] !== undefined){
-                    arr[i + 1] = Number(arr[i + 1]) + this.props.base[0];
-                    arr[i] = Number(arr[i]) - this.props.base[1];
-                }else{
-                    arr.push(this.props.base[0]);
-                    arr[i] = Number(arr[i]) - this.props.base[1];
-                }
-            }
+        let value = 0;
+        for(let i = 0; i < arr.length; i++){
+            value += arr[i] * Math.pow(this.props.base[1], i);
         }
+        return value;
     }
 
     render() {

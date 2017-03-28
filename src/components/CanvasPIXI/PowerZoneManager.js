@@ -121,18 +121,19 @@ export class PowerZoneManager extends PIXI.Container{
                     if(allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount &&
                         allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount){
                         success = true;
-                        droppedOnPowerZone.parent.setBackgroundColor(PowerZone.BG_GREEN);
                     }else {
                         success = false;
-                        droppedOnPowerZone.parent.setBackgroundColor(PowerZone.BG_RED);
                     }
                     if(success === false){
                         break;
                     }
                 }
-                if(success){
-                    for(let i = 0; i < allZonesValue.length; i++) {
+
+                for(let i = 0; i < allZonesValue.length; i++) {
+                    if (success && isDragEnd === false) {
                         this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_GREEN);
+                    } else {
+                        this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
                     }
                     if (isDragEnd === true) {
                         // apply division
