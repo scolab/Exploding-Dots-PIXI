@@ -43,16 +43,21 @@ export class DividerZone extends PIXI.Container{
                     fill: 0xBCBCBC,
                     align: 'center'
                 });
+                this.positiveText.anchor.set(0.5);
+                this.positiveText.x = 32;
+                this.positiveText.y = 25;
                 this.addChild(this.positiveText);
             }
             if(Object.keys(negativeDots).length > 0) {
                 this.negativeText = new PIXI.Text(Object.keys(negativeDots).length.toString(10), {
                     fontFamily: 'museo-slab',
                     fontSize: 34,
-                    fill: 0xFFFFFF,
+                    fill: 0xFFFF00,
                     align: 'center'
                 });
-                this.negativeText.y = 20;
+                this.negativeText.anchor.set(0.5);
+                this.negativeText.x = 32;
+                this.negativeText.y = 68;
                 this.addChild(this.negativeText);
             }
         }

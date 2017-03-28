@@ -43,7 +43,7 @@ storiesOf('Exploding Dots', module)
             operator_mode={OPERATOR_MODE.DISPLAY}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.MECHA}
-            base={BASE.MECHA[5]}
+            base={BASE.MECHA[4]}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={false}

@@ -505,9 +505,9 @@ export class PowerZone extends PIXI.Container{
 
     getOvercrowding(amount){
         let dotsRemoved = [];
-        if(Object.keys(this.positiveDots).length > amount){
+        if(Object.keys(this.positiveDots).length > amount - 1){
             dotsRemoved = this.getOvercrowdedDots(this.positiveDots, amount);
-        }else if(Object.keys(this.negativeDots).length > amount){
+        }else if(Object.keys(this.negativeDots).length > amount - 1){
             dotsRemoved = this.getOvercrowdedDots(this.negativeDots, amount);
         }
         return dotsRemoved;

@@ -83,17 +83,19 @@ const dotsReducer = (state = null, action) => {
                     stateCopy.negativePowerZoneDots[newDot.zoneId][dot.id] = dot;
                 }
             });
-            action.divider.forEach((dividerDot) => {
-                let dot = {};
-                dot.powerZone = dividerDot.zoneId;
-                dot.id = makeUID();
-                dot.isPositive = dividerDot.isPositive;
-                if(dot.isPositive) {
-                    stateCopy.positiveDividerDots[dividerDot.zoneId][dot.id] = dot;
-                }else {
-                    stateCopy.negativeDividerDots[dividerDot.zoneId][dot.id] = dot;
-                }
-            });
+            if(action.divider != null) {
+                action.divider.forEach((dividerDot) => {
+                    let dot = {};
+                    dot.powerZone = dividerDot.zoneId;
+                    dot.id = makeUID();
+                    dot.isPositive = dividerDot.isPositive;
+                    if (dot.isPositive) {
+                        stateCopy.positiveDividerDots[dividerDot.zoneId][dot.id] = dot;
+                    } else {
+                        stateCopy.negativeDividerDots[dividerDot.zoneId][dot.id] = dot;
+                    }
+                });
+            }
             if(action.totalA != null) {
                 stateCopy.machineState.operandA = action.totalA.toString();
             }
