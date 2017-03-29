@@ -72,11 +72,12 @@ export const startActivity = () => ({
     type: ACTIONS.START_ACTIVITY
 });
 
-export const startActivityDone = (dotsInfo, totalA, totalB) => ({
+export const startActivityDone = (dotsInfo, totalA, totalB, divider) => ({
     type: ACTIONS.START_ACTIVITY_DONE,
         dotsInfo,
         totalA,
-        totalB
+        totalB,
+        divider
 });
 
 export const error = (errorMessage) => ({

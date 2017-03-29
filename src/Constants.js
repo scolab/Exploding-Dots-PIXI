@@ -21,7 +21,8 @@ export const USAGE_MODE = {
 
 export const SETTINGS = {
     GAME_WIDTH : 1024,
-    GAME_HEIGHT : 377
+    GAME_HEIGHT : 377,
+    GAME_HEIGHT_DIVIDE : 500
 };
 
 export const OPERAND_POS = {

@@ -23,7 +23,7 @@ export default class Operand extends Component {
             if(this.props.operator_mode === OPERATOR_MODE.MULTIPLY && this.props.pos === OPERAND_POS.RIGHT){
                 // no | in right operand in multiply
                 var reg = new RegExp('^$|^[0-9]+$');
-            }else if(this.props.operator_mode === OPERATOR_MODE.SUBTRACT) {
+            }else if(this.props.operator_mode === OPERATOR_MODE.SUBTRACT || this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
                 /*
                 Allow the string to be:
                  - empty
