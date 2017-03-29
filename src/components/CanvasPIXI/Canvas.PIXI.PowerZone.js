@@ -40,6 +40,8 @@ export class PowerZone extends PIXI.Container{
     spritePool = null;
     bgBox = null;
     bgBoxTextures = [];
+    positiveDivideCounter;
+    negativeDivideCounter;
 
     constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, zoneCreated) {
         super();
@@ -105,10 +107,10 @@ export class PowerZone extends PIXI.Container{
         this.addChild(this.placeValueText);
 
         if (operator_mode === OPERATOR_MODE.DIVIDE) {
-            let dividerCounter = new PIXI.Sprite(textures["dot_div_value.png"]);
-            dividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - dividerCounter.width;
-            dividerCounter.y = boxYPos;
-            this.addChild(dividerCounter);
+            this.positiveDivideCounter = new PIXI.Sprite(textures["dot_div_value.png"]);
+            this.positiveDivideCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - this.positiveDivideCounter.width;
+            this.positiveDivideCounter.y = boxYPos;
+            this.addChild(this.positiveDivideCounter);
 
             this.positiveDividerText = new PIXI.Text('', {
                 fontFamily: 'museo-slab',
@@ -117,27 +119,25 @@ export class PowerZone extends PIXI.Container{
                 align: 'center'
             });
             this.positiveDividerText.anchor.x = 0.5;
-            this.positiveDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - (dividerCounter.width / 2);
+            this.positiveDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + BOX_INFO.BOX_WIDTH - (this.positiveDivideCounter.width / 2);
             this.positiveDividerText.y = boxYPos + 3;
             this.addChild(this.positiveDividerText);
 
-            if (operator_mode === OPERATOR_MODE.DIVIDE) {
-                let negativeDividerCounter = new PIXI.Sprite(textures["antidot_div_value.png"]);
-                negativeDividerCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth));
-                negativeDividerCounter.y = BOX_INFO.BOX_HEIGHT + boxYPos - negativeDividerCounter.height - 10;
-                this.addChild(negativeDividerCounter);
+            this.negativeDivideCounter = new PIXI.Sprite(textures["antidot_div_value.png"]);
+            this.negativeDivideCounter.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth));
+            this.negativeDivideCounter.y = BOX_INFO.BOX_HEIGHT + boxYPos - this.negativeDivideCounter.height - 10;
+            this.addChild(this.negativeDivideCounter);
 
-                this.negativeDividerText = new PIXI.Text('', {
-                    fontFamily: 'museo-slab',
-                    fontSize: 16,
-                    fill: 0x565656,
-                    align: 'center'
-                });
-                this.negativeDividerText.anchor.x = 0.5;
-                this.negativeDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + 15;
-                this.negativeDividerText.y = negativeDividerCounter.y + 15;
-                this.addChild(this.negativeDividerText);
-            }
+            this.negativeDividerText = new PIXI.Text('', {
+                fontFamily: 'museo-slab',
+                fontSize: 16,
+                fill: 0x565656,
+                align: 'center'
+            });
+            this.negativeDividerText.anchor.x = 0.5;
+            this.negativeDividerText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + 15;
+            this.negativeDividerText.y = this.negativeDivideCounter.y + 15;
+            this.addChild(this.negativeDividerText);
         }
 
         if (negativePresent) {
@@ -506,14 +506,14 @@ export class PowerZone extends PIXI.Container{
     getOvercrowding(amount){
         let dotsRemoved = [];
         if(Object.keys(this.positiveDots).length > amount - 1){
-            dotsRemoved = this.getOvercrowdedDots(this.positiveDots, amount);
+            dotsRemoved = this.getDotsFromHash(this.positiveDots, amount);
         }else if(Object.keys(this.negativeDots).length > amount - 1){
-            dotsRemoved = this.getOvercrowdedDots(this.negativeDots, amount);
+            dotsRemoved = this.getDotsFromHash(this.negativeDots, amount);
         }
         return dotsRemoved;
     }
 
-    getOvercrowdedDots(hash, amount){
+    getDotsFromHash(hash, amount){
         let allRemovedDots = [];
         while (amount--) {
             allRemovedDots.push(hash[Object.keys(hash)[amount]]);
@@ -657,6 +657,28 @@ export class PowerZone extends PIXI.Container{
                     //console.log('333');
                     this.bgBox.texture = this.bgBoxTextures[0];
             }
+        }
+    }
+
+    getDotsForDivision(amount, isPositive){
+        let dotsRemoved;
+        if(isPositive) {
+            if(Object.keys(this.positiveDots).length > amount - 1) {
+                dotsRemoved = this.getDotsFromHash(this.positiveDots, amount);
+            }
+        }else {
+            if (Object.keys(this.negativeDots).length > amount - 1) {
+                dotsRemoved = this.getDotsFromHash(this.negativeDots, amount);
+            }
+        }
+        return dotsRemoved;
+    }
+
+    addDivisionValue(positive){
+        if(positive) {
+            this.positiveDividerText.text = Number(this.positiveDividerText.text) + 1;
+        }else{
+            this.negativeDividerText.text = Number(this.negativeDividerText.text) + 1;
         }
     }
 }

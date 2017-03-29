@@ -129,7 +129,7 @@ export class DividerZoneManager extends PIXI.Container{
             this.data = null;
             this.dragging = false;
             this.tweening = true;
-            TweenMax.to(this, 1, {x:this.origin.x, y:this.origin.y, ease:Quint.easeInOut, onComplete:this.backIntoPlaceDone.bind(this)});
+            TweenMax.to(this, 0.3, {x:this.origin.x, y:this.origin.y, ease:Quint.easeOut, onComplete:this.backIntoPlaceDone.bind(this)});
             this.eventEmitter.emit(DividerZoneManager.END_DRAG, e.data, this.allZonesValue.slice(), true);
         }
         e.stopPropagation();

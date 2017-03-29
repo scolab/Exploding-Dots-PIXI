@@ -108,40 +108,91 @@ export class PowerZoneManager extends PIXI.Container{
                 }
             }else{
                 let success = false;
+                let antiSuccess = false;
                 allZonesValue = allZonesValue.reverse();
-                //console.log('++++++++++++++++++++', droppedOnPowerZoneIndex, allZonesValue);
                 for(let i = 0; i < allZonesValue.length; i++){
-                    //console.log('--------------', i, allZonesValue[i][0], allZonesValue[i][1]);
-                    /*console.log(Object.keys(this.allZones[droppedOnPowerZoneIndex - i].positiveDots).length, Object.keys(this.allZones[droppedOnPowerZoneIndex - i].negativeDots).length);
-                    console.log(this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount, this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount);*/
-                    /*if(allZonesValue[i][0] <= Object.keys(this.allZones[droppedOnPowerZoneIndex - i].positiveDots).length &&
-                            allZonesValue[i][1] <= Object.keys(this.allZones[droppedOnPowerZoneIndex - i].negativeDots).length){*/
-                    //console.log(allZonesValue[i][0], this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount);
-                    //console.log(allZonesValue[i][1], this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount);
                     if(allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount &&
                         allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount){
                         success = true;
                     }else {
                         success = false;
+                        if(allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount &&
+                            allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount){
+                            antiSuccess = true;
+                        }else{
+                            antiSuccess = false;
+                        }
                     }
-                    if(success === false){
+                    if(success === false && antiSuccess === false){
                         break;
                     }
                 }
 
                 for(let i = 0; i < allZonesValue.length; i++) {
-                    if (success && isDragEnd === false) {
+                    if ((success || antiSuccess) && isDragEnd === false) {
                         this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_GREEN);
                     } else {
                         this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
                     }
-                    if (isDragEnd === true) {
-                        // apply division
-                        this.allZones.forEach(zone => {
-                            zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
-                        });
+                }
+                if (isDragEnd === true) {
+                    // apply division
+                    this.allZones.forEach(zone => {
+                        zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
+                    });
+                    if (success || antiSuccess){
+                        let dotsRemovedByZone = [];
+                        for(let i = 0; i < this.totalZoneCount; i++){
+                            dotsRemovedByZone.push([]);
+                        }
+                        let dotsToMove = [];
+                        let moveToZone = droppedOnPowerZoneIndex - allZonesValue.length + 1;
+                        for(let i = 0; i < allZonesValue.length; i++) {
+                            let thisZoneDots = [];
+                            if(success) {
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][0], true));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][1], false));
+                            }else if(antiSuccess){
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][0], false));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][1], true));
+                            }
+                            dotsToMove = dotsToMove.concat(thisZoneDots);
+                            dotsRemovedByZone[droppedOnPowerZoneIndex - i] = dotsRemovedByZone[droppedOnPowerZoneIndex - i].concat(thisZoneDots);
+                        }
+                        if(dotsToMove.length > 0) {
+                            dotsToMove.forEach(dot => {
+                                let newPosition = dot.sprite.parent.toGlobal(dot.sprite.position);
+                                newPosition = this.movingDotsContainer.toLocal(newPosition);
+                                this.movingDotsContainer.addChild(dot.sprite);
+                                dot.sprite.position.x = newPosition.x;
+                                dot.sprite.position.y = newPosition.y;
+                                if(success) {
+                                    let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
+                                    finalPosition = this.movingDotsContainer.toLocal(finalPosition);
+                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 15, ease:Quint.easeOut})
+                                }else if(antiSuccess){
+                                    let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].negativeDivideCounter.position);
+                                    finalPosition = this.movingDotsContainer.toLocal(finalPosition);
+                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 25, ease:Quint.easeOut})
+                                }
+                            });
+                            if(success) {
+                                TweenMax.delayedCall(0.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, true]);
+                            }else{
+                                TweenMax.delayedCall(0.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, false]);
+                            }
+                        }
                     }
                 }
+            }
+        }
+    }
+
+    removeDotsAfterTween(dotsRemovedByZone, movedToZone, positive) {
+        this.allZones[movedToZone].addDivisionValue(positive);
+        for (let i = 0; i < dotsRemovedByZone.length; i++) {
+            if (dotsRemovedByZone[i].length > 0) {
+                this.removeMultipleDots(i, dotsRemovedByZone[i], false);
             }
         }
     }
