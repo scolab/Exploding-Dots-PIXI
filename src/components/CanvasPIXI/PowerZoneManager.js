@@ -1,6 +1,6 @@
 import {PowerZone} from './Canvas.PIXI.PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
-import { TweenMax, Quint} from "gsap";
+import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
 import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
@@ -50,6 +50,7 @@ export class PowerZoneManager extends PIXI.Container{
             });
             console.log(dotCount, childCount, this.movingDotsContainer.children.length);
         }
+        console.log()
     }
 
     createZones() {
@@ -103,6 +104,11 @@ export class PowerZoneManager extends PIXI.Container{
                 //console.log('division impossible 1');
                 if(isDragEnd === false) {
                     droppedOnPowerZone.parent.setBackgroundColor(PowerZone.BG_RED);
+                    for(let i = 0; i < allZonesValue.length; i++) {
+                        if(this.allZones[droppedOnPowerZoneIndex - i] !== undefined) {
+                            this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
+                        }
+                    }
                 }else{
                     droppedOnPowerZone.parent.setBackgroundColor(PowerZone.BG_NEUTRAL);
                 }
@@ -132,7 +138,9 @@ export class PowerZoneManager extends PIXI.Container{
                     if ((success || antiSuccess) && isDragEnd === false) {
                         this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_GREEN);
                     } else {
-                        this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
+                        if(this.allZones[droppedOnPowerZoneIndex - i] !== undefined) {
+                            this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
+                        }
                     }
                 }
                 if (isDragEnd === true) {
@@ -169,7 +177,8 @@ export class PowerZoneManager extends PIXI.Container{
                                 if(success) {
                                     let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
                                     finalPosition = this.movingDotsContainer.toLocal(finalPosition);
-                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 15, ease:Quint.easeOut})
+                                    TweenMax.to(dot.sprite.scale, 0.25, {x: 1.5, y: 1.5, yoyo: true, repeat: 3, ease:Linear.easeNone})
+                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 15, ease:Quint.easeOut, delay: 1})
                                 }else if(antiSuccess){
                                     let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].negativeDivideCounter.position);
                                     finalPosition = this.movingDotsContainer.toLocal(finalPosition);
@@ -177,7 +186,7 @@ export class PowerZoneManager extends PIXI.Container{
                                 }
                             });
                             if(success) {
-                                TweenMax.delayedCall(0.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, true]);
+                                TweenMax.delayedCall(1.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, true]);
                             }else{
                                 TweenMax.delayedCall(0.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, false]);
                             }
@@ -746,6 +755,13 @@ export class PowerZoneManager extends PIXI.Container{
             if(this.negativePresent) {
                 zone.checkPositiveNegativePresence(isOverload);
             }
+        });
+    }
+
+    reset(){
+        TweenMax.killAll();
+        this.allZones.forEach(zone => {
+           zone.reset();
         });
     }
 

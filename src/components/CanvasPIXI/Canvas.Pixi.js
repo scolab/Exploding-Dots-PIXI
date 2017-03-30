@@ -14,7 +14,7 @@ class CanvasPIXI extends Component {
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
-        activityStarted: PropTypes.func.isRequired,
+        startActivityDoneFunc: PropTypes.func.isRequired,
         positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
             x: PropTypes.number.isRequired,
             y: PropTypes.number.isRequired,
@@ -48,6 +48,7 @@ class CanvasPIXI extends Component {
         maxViewableDots: PropTypes.number.isRequired,
         magicWandIsActive: PropTypes.bool.isRequired,
         startActivity: PropTypes.bool.isRequired,
+        activityStarted: PropTypes.bool.isRequired,
         operandA: PropTypes.string.isRequired,
         operandB: PropTypes.string.isRequired,
         error: PropTypes.func.isRequired,
@@ -154,13 +155,15 @@ class CanvasPIXI extends Component {
 
     shouldComponentUpdate(nextProps){
         //console.log('shouldComponentUpdate', nextProps);
+        if(this.props.activityStarted === true && nextProps.activityStarted === false) {
+            this.powerZoneManager.reset();
+        }
         this.powerZoneManager.checkPendingAction(nextProps);
         this.checkBaseChange(nextProps);
         this.props = nextProps;
-        //this.powerZoneManager.positivePowerZoneDots = this.props.positivePowerZoneDots;
         this.powerZoneManager.removeDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
         this.powerZoneManager.addDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
-        if(this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
+        if (this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
             this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
             this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
         }
@@ -257,7 +260,7 @@ class CanvasPIXI extends Component {
                                 dotsPos.push(this.getDot(i, true));
                             }
                         }
-                        this.props.activityStarted(dotsPos, totalDot);
+                        this.props.startActivityDoneFunc(dotsPos, totalDot);
                         break;
                     case OPERATOR_MODE.ADDITION:
                         makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
@@ -273,7 +276,7 @@ class CanvasPIXI extends Component {
                         }
                         let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
                         let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);//dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
-                        this.props.activityStarted(dotsPos, operandAValue, operandBValue);
+                        this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         break;
                     case OPERATOR_MODE.MULTIPLY:
                         for (let i = 0; i < dotsPerZoneA.length; ++i) {
@@ -284,7 +287,7 @@ class CanvasPIXI extends Component {
                             }
                         }
                         operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-                        this.props.activityStarted(dotsPos, operandAValue);
+                        this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         break;
                     case OPERATOR_MODE.SUBTRACT:
                         if(dotsPerZoneA.length === 0){
@@ -306,7 +309,7 @@ class CanvasPIXI extends Component {
                             }
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                             let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
-                            this.props.activityStarted(dotsPos, operandAValue, operandBValue);
+                            this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         }else{
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                         }
@@ -332,7 +335,7 @@ class CanvasPIXI extends Component {
                             }
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                             let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
-                            this.props.activityStarted(dotsPos, operandAValue, operandBValue, dividePos);
+                            this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
 
                         }else{
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -356,13 +359,6 @@ class CanvasPIXI extends Component {
         dot.zoneId = zone;
         dot.isPositive = isPositive;
         dot.color = color;
-        return dot;
-    }
-
-    getDividerDot(zone, isPositive){
-        let dot = {};
-        dot.zoneId = zone;
-        dot.isPositive = isPositive;
         return dot;
     }
 

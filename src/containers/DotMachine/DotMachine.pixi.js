@@ -40,7 +40,7 @@ const mapDispatchToProps = (dispatch) =>{
         operandChanged: operandChanged,
         operatorChanged: operatorChanged,
         startActivity: startActivity,
-        startActivityDone: startActivityDone,
+        startActivityDoneFunc: startActivityDone,
         error: error,
         userMessage: userMessage,
         resetUserMessage: resetUserMessage,
@@ -205,7 +205,8 @@ class DotsMachine extends Component {
                     cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
                     startActivity={this.props.dotsMachine.machineState.startActivity}
-                    activityStarted={this.props.startActivityDone}
+                    startActivityDoneFunc={this.props.startActivityDoneFunc}
+                    activityStarted={this.props.dotsMachine.machineState.activityStarted}
                     operandA={this.props.dotsMachine.machineState.operandA}
                     operandB={this.props.dotsMachine.machineState.operandB}
                     error={this.props.error}
