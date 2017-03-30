@@ -1,14 +1,9 @@
 import React, {Component, PropTypes} from 'react';
-import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
-import { TweenMax, RoughEase, Linear, Quint} from "gsap";
-import {Point} from 'pixi.js';
+import {randomFromTo} from '../../utils/MathUtils'
+import {makeBothArrayTheSameLength} from '../../utils/ArrayUtils';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT} from '../../Constants'
-import {ParticleEmitter} from './ParticleEmitter';
 import {SpritePool} from '../../utils/SpritePool';
-import dragJSON from './dot_drag.json';
-import explodeJSON from './dot_explode.json';
-import implodeJSON from './dot_implode.json';
-import {PowerZone} from './Canvas.PIXI.PowerZone';
+import {PowerZoneManager} from './PowerZoneManager';
 
 class CanvasPIXI extends Component {
 
@@ -19,7 +14,7 @@ class CanvasPIXI extends Component {
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
-        activityStarted: PropTypes.func.isRequired,
+        startActivityDoneFunc: PropTypes.func.isRequired,
         positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
             x: PropTypes.number.isRequired,
             y: PropTypes.number.isRequired,
@@ -34,6 +29,16 @@ class CanvasPIXI extends Component {
             id: PropTypes.string.isRequired,
             isPositive: PropTypes.bool.isRequired,
         }))).isRequired,
+        positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+            powerZone: PropTypes.number.isRequired,
+            id: PropTypes.string.isRequired,
+            isPositive: PropTypes.bool.isRequired,
+        }))).isRequired,
+        negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
+            powerZone: PropTypes.number.isRequired,
+            id: PropTypes.string.isRequired,
+            isPositive: PropTypes.bool.isRequired,
+        }))).isRequired,
         base: PropTypes.array.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
@@ -43,6 +48,7 @@ class CanvasPIXI extends Component {
         maxViewableDots: PropTypes.number.isRequired,
         magicWandIsActive: PropTypes.bool.isRequired,
         startActivity: PropTypes.bool.isRequired,
+        activityStarted: PropTypes.bool.isRequired,
         operandA: PropTypes.string.isRequired,
         operandB: PropTypes.string.isRequired,
         error: PropTypes.func.isRequired,
@@ -53,34 +59,12 @@ class CanvasPIXI extends Component {
     constructor(props){
         super(props);
         this.state = {};
-        this.state.maxX = SETTINGS.GAME_WIDTH;
-        this.state.minX = 0;
-        this.state.maxY = SETTINGS.GAME_HEIGHT;
-        this.state.minY = 0;
         this.state.isWebGL = false;
-        this.state.allZones = []; // PowerZones
-        this.state.isInteractive = true;
         this.state.negativePresent = (props.operator_mode == OPERATOR_MODE.SUBTRACT || props.operator_mode == OPERATOR_MODE.DIVIDE || props.base[1] === BASE.BASE_X);
         this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
-        this.explodeEmitter = [];
-        this.implodeEmitter = [];
-        this.pendingAction = [];
+        this.powerZoneManager = null;
         // to accomodate for pixel padding in TexturePacker
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-
-        window.addEventListener('keyup', this.traceValue.bind(this));
-    }
-
-    traceValue(e){
-        if ((e.keyCode || e.which) == 32) {
-            let dotCount = [];
-            let childCount = [];
-            this.state.allZones.forEach(zone => {
-                dotCount.push(Object.keys(zone.positiveDots).length);
-                childCount.push(zone.positiveDotsContainer.children.length);
-            });
-            console.log(dotCount, childCount, this.state.movingDotsContainer.children.length);
-        }
     }
 
     componentDidMount(){
@@ -96,15 +80,19 @@ class CanvasPIXI extends Component {
         };
 
         let preventWebGL = false;
-        this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
+        this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT), options, preventWebGL);
+        //this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
         this.state.stage = this.state.app.stage;
         this.state.renderer = this.state.app.renderer;
-        this.state.container = new PIXI.Container();
-        this.state.stage.addChild(this.state.container);
-
-        this.state.movingDotsContainer = new PIXI.Container();
-        this.state.stage.addChild(this.state.movingDotsContainer);
-
+        this.powerZoneManager = new PowerZoneManager(
+            this.props.addDot,
+            this.props.removeDot,
+            this.props.addMultipleDots,
+            this.props.removeMultipleDots,
+            this.props.rezoneDot,
+            this.props.displayUserMessage
+        );
+        this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
         requestAnimationFrame(this.animationCallback.bind(this));
         window.addEventListener('resize', this.resize.bind(this));
@@ -131,457 +119,31 @@ class CanvasPIXI extends Component {
 
     onAssetsLoaded(loader){
         if(loader.resources.machineAssets.error === null) {
-            this.state.textures = loader.resources.machineAssets.textures;
-            this.spritePool = new SpritePool(this.state.textures);
-            this.createZones();
-            this.props.positivePowerZoneDots.forEach((zoneArray) => {
-                Object.keys(zoneArray).forEach(key => {
-                    let dotSprite = this.state.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
-                    if(dotSprite) {
-                        this.addDotSpriteProperty(zoneArray[key], dotSprite);
-                    }
-                });
-            });
-            this.props.negativePowerZoneDots.forEach((zoneArray) => {
-                //zoneArray.forEach((dot) =>{
-                Object.keys(zoneArray).forEach(key => {
-                    let dotSprite = this.state.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
-                    if(dotSprite) {
-                        this.addDotSpriteProperty(zoneArray[key], dotSprite);
-                    }
-                });
-            });
-            this.setZoneTextAndAlphaStatus();
-            this.dragParticleEmitter = new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], dragJSON);
-        }
-    }
-
-    createZones() {
-        for(let i = this.props.totalZoneCount - 1; i >= 0; i--){
-            let powerZone = new PowerZone(i,
-                this.state.textures,
+            this.textures = loader.resources.machineAssets.textures;
+            this.spritePool = new SpritePool(this.textures);
+            this.powerZoneManager.init(
+                this.textures,
+                this.spritePool,
                 this.props.base,
-                this.state.negativePresent,
                 this.props.usage_mode,
                 this.props.operator_mode,
                 this.props.totalZoneCount,
-                this.spritePool,
-                this.state.allZones.length
+                this.props.placeValueOn,
+                this.state.negativePresent,
             );
-            this.state.container.addChild(powerZone);
-            this.state.allZones.push(powerZone);
-            powerZone.eventEmitter.on(PowerZone.CREATE_DOT, this.createDot, this);
-            powerZone.setValueTextAlpha(this.props.placeValueOn ? 1 : 0);
+            this.powerZoneManager.createZones();
+            this.resize();
+            this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots);
+            this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots);
         }
-        this.resize();
-    }
-
-    setZoneTextAndAlphaStatus(){
-        // Don't display leading zeroes
-        let zoneIsEmpty = true;
-        for(let i = this.props.totalZoneCount - 1; i >=0; i--){
-            zoneIsEmpty = this.state.allZones[i].checkTextAndAlpha(zoneIsEmpty);
-        }
-    }
-
-    createDot(powerZone, position, isPositive){
-        if(this.state.isInteractive) {
-            this.props.addDot(powerZone, position, isPositive);
-        }
-    }
-
-    addDotSpriteProperty(dot, dotSprite){
-        dotSprite.anchor.set(0.5);
-        dotSprite.x = dot.x;
-        dotSprite.y = dot.y;
-        dotSprite.interactive = true;
-        dotSprite.buttonMode = true;
-        dotSprite.world = this;
-        dotSprite.on('pointerdown', this.onDragStart);
-        dotSprite.on('pointerup', this.onDragEnd);
-        dotSprite.on('pointerupoutside', this.onDragEnd);
-        dotSprite.on('pointermove', this.onDragMove);
-        dotSprite.alpha = 0;
-        TweenMax.to(dotSprite, 1, {alpha: 1});
-    }
-
-    onDragStart(e, canvas){
-        //console.log('onDragStart', this.dot.id, this.world.state.isInteractive);
-        if(this.world.state.isInteractive) {
-            let oldParent = this.parent;
-            this.origin = new Point(this.x, this.y);
-            this.data = e.data;
-            this.dragging = true;
-            this.world.state.movingDotsContainer.addChild(this);
-            var newPosition = this.data.getLocalPosition(this.parent);
-            let originDiff = this.data.getLocalPosition(oldParent);
-            this.originInMovingContainer = newPosition;
-            this.originInMovingContainer.x += this.origin.x - originDiff.x;
-            this.originInMovingContainer.y += this.origin.y - originDiff.y;
-            this.position.x = newPosition.x;
-            this.position.y = newPosition.y;
-            this.particleEmitter = this.world.dragParticleEmitter;
-            this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-            this.particleEmitter.start();
-        }
-    }
-
-    onDragMove(e){
-        if(this.world.state.isInteractive) {
-            if (this.dragging) {
-                var newPosition = this.data.getLocalPosition(this.parent);
-                this.position.x = newPosition.x;
-                this.position.y = newPosition.y;
-                this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-            }
-        }
-    }
-
-    onDragEnd(e){
-        if(this.world.state.isInteractive && this.dragging) {
-            this.dragging = false;
-            this.data = null;
-            this.world.verifyDroppedOnZone(this, e.data);
-            this.particleEmitter.stop();
-        }
-        e.stopPropagation();
-    }
-
-    verifyDroppedOnZone(dotSprite, data){
-        //console.log('verifyDroppedOnZone', dotSprite, data);
-        let originalZoneIndex = dotSprite.dot.powerZone;
-        let droppedOnPowerZone = null;
-        let droppedOnPowerZoneIndex = -1;
-
-        this.state.allZones.forEach(zone => {
-            let dataLocalZone = data.getLocalPosition(zone.positiveDotsContainer);
-            if(isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea)){
-                droppedOnPowerZone = zone.positiveDotsContainer;
-                droppedOnPowerZoneIndex = zone.zonePosition;
-            }
-            if(zone.negativeDotsContainer != null) {
-                dataLocalZone = data.getLocalPosition(zone.negativeDotsContainer);
-                if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea)) {
-                    droppedOnPowerZone = zone.negativeDotsContainer;
-                    droppedOnPowerZoneIndex = zone.zonePosition;
-                }
-            }
-        });
-
-        //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
-        if(droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
-            // has not been dropped outside a zone
-            if (droppedOnPowerZoneIndex !== originalZoneIndex) {
-                // impossible to move between different positive value zone (positive to negative)
-                // impossible to move between powerZone in base X
-                if(droppedOnPowerZone.isPositive === dotSprite.dot.isPositive && this.props.base[1] != BASE.BASE_X) {
-                    let diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
-                    let dotsToRemoveCount = 1;
-                    //console.log(originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
-                    if (diffZone < 0) {
-                        dotsToRemoveCount = Math.pow(this.props.base[1], diffZone * -1);
-                    }else{
-                        dotsToRemoveCount = this.props.base[0];
-                    }
-                    //console.log('dotsToRemoveCount', dotsToRemoveCount);
-                    //check if possible
-                    let finalNbOfDots = -1;
-                    if(dotSprite.dot.isPositive) {
-                        finalNbOfDots = Object.keys(this.state.allZones[originalZoneIndex].positiveDots).length - dotsToRemoveCount;
-                    }else{
-                        finalNbOfDots = Object.keys(this.state.allZones[originalZoneIndex].negativeDots).length - dotsToRemoveCount;
-                    }
-                    //console.log('finalNbOfDots', finalNbOfDots);
-                    if (finalNbOfDots < 0 || this.props.base[0] > 1 && Math.abs(diffZone) > 1) {
-                        if(finalNbOfDots < 0) {
-                            //alert("Pas assez de points disponibles pour cette opération");
-                            this.props.displayUserMessage("Pas assez de points disponibles pour cette opération");
-                        }else if(this.props.base[0] > 1 && Math.abs(diffZone) > 1){
-                            this.props.displayUserMessage("Une case à la fois pour les base avec un dénominateur autre que 1");
-                        }
-                        if (dotSprite.dot.isPositive) {
-                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
-                            this.state.isInteractive = false;
-                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
-                        } else {
-                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
-                            this.state.isInteractive = false;
-                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
-                        }
-                        return false;
-                    }
-                    // rezone current dot and thus remove it from the amount to be moved
-                    this.addDraggedToNewZone(dotSprite, droppedOnPowerZone, data.getLocalPosition(droppedOnPowerZone), false);
-                    dotsToRemoveCount--;
-
-                    //console.log('dotsToRemoveCount', dotsToRemoveCount);
-                    // animate zone movement and destroy
-                    let dataLocalZone = data.getLocalPosition(droppedOnPowerZone);
-                    this.tweenDotsToNewZone(originalZoneIndex, droppedOnPowerZone, dotsToRemoveCount, dataLocalZone, dotSprite.dot.isPositive);
-
-                    //Add the new dots
-                    let dotsPos = [];
-                    let newNbOfDots = Math.pow(this.props.base[1], diffZone);
-                    newNbOfDots -= this.props.base[0];
-                    //console.log('newNbOfDots', newNbOfDots, diffZone);
-                    for (let i = 0; i < newNbOfDots; i++) {
-                        dotsPos.push({
-                            x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
-                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
-                        })
-                    }
-                    if (dotsPos.length > 0) {
-                        //console.log('this.props.addMultipleDots', dotsPos.length);
-                        let implosionEmitter = this.getImplosionEmitter();
-                        let originalPos = data.getLocalPosition(this.state.movingDotsContainer);
-                        implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
-                        implosionEmitter.start();
-                        TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
-                        this.props.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, false);
-                    }
-                } else {
-                    if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
-                        this.props.displayUserMessage("Pas assez de points disponibles pour cette opération");
-                        this.state.isInteractive = false;
-                    }else if(this.props.base[1] === BASE.BASE_X){
-                        this.props.displayUserMessage("Base inconnue, on ne peut pas déplacer des points entre les zones");
-                        this.state.isInteractive = false;
-                    }
-                    if (dotSprite.dot.isPositive) {
-                        this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
-                        this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
-                    } else {
-                        this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
-                        this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
-                    }
-                }
-            }else{
-                // dots dropped on the same powerZone
-                if(dotSprite.dot.isPositive === droppedOnPowerZone.isPositive) {
-                    // just move the dots into the zone
-                    droppedOnPowerZone.addChild(dotSprite);
-                    let newPosition = data.getLocalPosition(droppedOnPowerZone);
-                    dotSprite.position.x = newPosition.x;
-                    dotSprite.position.y = newPosition.y;
-                }else{
-                    // check it possible dot / anti dot destruction
-                    if(dotSprite.dot.isPositive) {
-                        // Positive dot drag into negative zoe
-                        if(Object.keys(this.state.allZones[originalZoneIndex].negativeDots).length > 0){
-                            let allRemovedDots = [];
-                            let negativeSprite = this.state.allZones[originalZoneIndex].negativeDotsContainer.getChildAt(0);
-                            allRemovedDots.push(negativeSprite.dot);
-                            this.removeDotSpriteListeners(negativeSprite);
-                            allRemovedDots.push(dotSprite.dot);
-                            this.removeDotSpriteListeners(dotSprite);
-                            this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
-                        }else{
-                            this.props.displayUserMessage('Aucun point à annuler');
-                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer]});
-                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
-                        }
-                    }else{
-                        // Negative dot drag into positive zoe
-                        if(Object.keys(this.state.allZones[originalZoneIndex].positiveDots).length > 0){
-                            let allRemovedDots = [];
-                            let positiveSprite = this.state.allZones[originalZoneIndex].positiveDotsContainer.getChildAt(0);
-                            //let positiveSprite = this.state.positivePowerZone[originalZoneIndex].getChildAt(0);
-                            allRemovedDots.push(positiveSprite.dot);
-                            this.removeDotSpriteListeners(positiveSprite);
-                            allRemovedDots.push(dotSprite.dot);
-                            this.removeDotSpriteListeners(dotSprite);
-                            this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
-                        }else{
-                            this.props.displayUserMessage('Aucun point à annuler');
-                            this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer]});
-                            //this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
-                        }
-                    }
-                }
-            }
-        }else{
-            if(this.props.usage_mode == USAGE_MODE.FREEPLAY) {
-                this.props.removeDot(originalZoneIndex, dotSprite.dot.id);
-            }else{
-                if (dotSprite.dot.isPositive) {
-                    this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].positiveDotsContainer);
-                } else {
-                    this.backIntoPlace(dotSprite, this.state.allZones[originalZoneIndex].negativeDotsContainer);
-                }
-            }
-        }
-    }
-
-    backIntoPlace(dotSprite, currentZone){
-        this.state.isInteractive = false;
-        TweenMax.to(dotSprite, 1, {
-            x:dotSprite.originInMovingContainer.x,
-            y:dotSprite.originInMovingContainer.y,
-            onComplete: this.backIntoPlaceDone.bind(this),
-            onCompleteParams:[dotSprite, currentZone],
-            ease:Quint.easeInOut
-        });
-        TweenMax.to(dotSprite, 0.5, {
-            height: dotSprite.height / 2,
-            repeat: 1,
-            yoyo: true
-        });
-    }
-
-    backIntoPlaceDone(dotSprite, currentZone){
-        currentZone.addChild(dotSprite);
-        dotSprite.position = dotSprite.origin;
-        this.state.isInteractive = true;
-    }
-
-    addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo, updateValue){
-        console.log('addDraggedToNewZone', newZone.powerZone);
-        newZone.addChild(dotSprite);
-        dotSprite.position.x = positionToBeMovedTo.x;
-        dotSprite.position.y = positionToBeMovedTo.y;
-        // Set the dot into the array here to have his position right.
-        this.state.allZones[dotSprite.dot.powerZone].removeDotFromArray(dotSprite.dot);
-        this.state.allZones[newZone.powerZone].addDotToArray(dotSprite.dot);
-        this.props.rezoneDot(newZone.powerZone, dotSprite.dot, updateValue);
-    }
-
-    tweenDotsToNewZone(originalZoneIndex, droppedOnPowerZone, dotsToRemove, positionToBeMovedTo, isPositive){
-        //this.state.isInteractive = false;
-        //console.log('tweenDotsToNewZone', positionToBeMovedTo);
-
-        // get the original on zone
-        let dotContainer;
-        if (droppedOnPowerZone.isPositive) {
-            dotContainer = this.state.allZones[originalZoneIndex].positiveDotsContainer;
-        } else {
-            dotContainer = this.state.allZones[originalZoneIndex].negativeDotsContainer;
-        }
-        //  For 2 > 3 base.
-        if(this.props.base[0] > 1){
-            dotsToRemove -= (this.props.base[0] - 1);
-            let dotsToRezone = this.props.base[0] - 1;
-            for(let i=0; i < dotsToRezone; i++) {
-                let dotSprite = dotContainer.getChildAt(0);
-                dotSprite.origin = new Point();
-                dotSprite.origin.copy(dotSprite.position);
-                var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
-                let adjacentPosition = positionToBeMovedTo.clone();
-                let quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea);
-                switch(quadrant){
-                    case 0:
-                        adjacentPosition.x += POSITION_INFO.DOT_RAYON * 2;
-                        adjacentPosition.y += POSITION_INFO.DOT_RAYON * 2;
-                        break;
-                    case 1:
-                        adjacentPosition.x -= POSITION_INFO.DOT_RAYON * 2;
-                        adjacentPosition.y += POSITION_INFO.DOT_RAYON * 2;
-                        break;
-                    case 2:
-                        adjacentPosition.x -= POSITION_INFO.DOT_RAYON * 2;
-                        adjacentPosition.y -= POSITION_INFO.DOT_RAYON * 2;
-                        break;
-                    case 3:
-                        adjacentPosition.x += POSITION_INFO.DOT_RAYON * 2;
-                        adjacentPosition.y -= POSITION_INFO.DOT_RAYON * 2;
-                        break;
-                }
-                let finalPosition = this.state.movingDotsContainer.toLocal(adjacentPosition, droppedOnPowerZone);
-                this.state.movingDotsContainer.addChild(dotSprite);
-                dotSprite.position.x = newPosition.x;
-                dotSprite.position.y = newPosition.y;
-                TweenMax.to(dotSprite, 0.5, {
-                    x: finalPosition.x,
-                    y: finalPosition.y,
-                    onComplete: this.addDraggedToNewZone.bind(this),
-                    onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true]
-                });
-            }
-            //this.checkIfNotDisplayedSpriteCanBe();
-        }
-        let allRemovedDots = [];
-        // tween dots to new zone
-        let finalPosition = this.state.movingDotsContainer.toLocal(positionToBeMovedTo, droppedOnPowerZone);
-        let notDisplayedDotCount = 0;
-        for(let i=0; i < dotsToRemove; i++){
-            let dotSprite;
-            let dot;
-            if(dotContainer.children.length > 0) {
-                dotSprite = dotContainer.getChildAt(0);
-                dot = dotSprite.dot;
-                this.removeDotSpriteListeners(dotSprite);
-                // calculate the position of the sprite in the moving container
-                dotSprite.origin = new Point();
-                dotSprite.origin.copy(dotSprite.position);
-                var newPosition = this.state.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
-                this.state.movingDotsContainer.addChild(dotSprite);
-                dotSprite.position.x = newPosition.x;
-                dotSprite.position.y = newPosition.y;
-
-                // start the particles explosion effect
-                let explosionEmitter = this.getExplosionEmitter();
-                explosionEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-                explosionEmitter.start();
-                TweenMax.delayedCall(0.2, this.stopExplosionEmitter, [explosionEmitter], this);
-                // Move the sprite
-                TweenMax.to(dotSprite, 0.5, {
-                    x:finalPosition.x,
-                    y:finalPosition.y,
-                    onComplete: this.tweenDotsToNewZoneDone.bind(this),
-                    onCompleteParams:[dotSprite]
-                });
-                allRemovedDots.push(dot);
-                this.state.allZones[dot.powerZone].removeDotFromArray(dot);
-            }else{
-                notDisplayedDotCount++;
-            }
-        }
-        let notDisplayedDots = this.state.allZones[originalZoneIndex].removeNotDisplayedDots(notDisplayedDotCount, isPositive);
-        allRemovedDots = allRemovedDots.concat(notDisplayedDots);
-        this.props.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
-    }
-
-    getExplosionEmitter(){
-        if(this.explodeEmitter.length > 0){
-            return this.explodeEmitter.pop();
-        }else{
-            return new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], explodeJSON);
-        }
-    }
-
-    getImplosionEmitter(){
-        if(this.implodeEmitter.length > 0){
-            return this.implodeEmitter.pop();
-        }else{
-            return new ParticleEmitter(this.state.movingDotsContainer, this.state.textures["red_dot.png"], implodeJSON);
-        }
-    }
-
-    stopExplosionEmitter(explosionEmitter){
-        explosionEmitter.stop();
-        this.explodeEmitter.push(explosionEmitter);
-    }
-
-    stopImplosionEmitter(implosionEmitter){
-        implosionEmitter.stop();
-        this.implodeEmitter.push(implosionEmitter);
-    }
-
-    tweenDotsToNewZoneDone(dotSprite){
-        TweenMax.to(dotSprite, 0.3, {alpha:0, onComplete: this.removeTweenDone.bind(this), onCompleteParams:[dotSprite]});
-    }
-
-    removeTweenDone(dotSprite){
-        // TODO check this, should it be moved to the PowerZone?
-        dotSprite.parent.removeChild(dotSprite);
-        this.spritePool.dispose(dotSprite);
     }
 
     resize(event) {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        let ratio = Math.min( w / SETTINGS.GAME_WIDTH, h / SETTINGS.GAME_HEIGHT);
+        let ratio = Math.min( w / SETTINGS.GAME_WIDTH, h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
         this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-        this.state.renderer.resize(Math.ceil(SETTINGS.GAME_WIDTH * ratio), Math.ceil(SETTINGS.GAME_HEIGHT * ratio));
+        this.state.renderer.resize(Math.ceil(SETTINGS.GAME_WIDTH * ratio), Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
     };
 
     animationCallback(...args){
@@ -591,80 +153,104 @@ class CanvasPIXI extends Component {
         //this.state.stats.end();
     }
 
-    removeDotSpriteListeners(sprite){
-        sprite.off('pointerdown', this.onDragStart);
-        sprite.off('pointerup', this.onDragEnd);
-        sprite.off('pointerupoutside', this.onDragEnd);
-        sprite.off('pointermove', this.onDragMove);
-        this.state.allZones[sprite.dot.powerZone].removeFromProximityManager(sprite);
-    }
-
     shouldComponentUpdate(nextProps){
         //console.log('shouldComponentUpdate', nextProps);
-        this.checkPendingAction(nextProps);
+        if(this.props.activityStarted === true && nextProps.activityStarted === false) {
+            this.powerZoneManager.reset();
+        }
+        this.powerZoneManager.checkPendingAction(nextProps);
         this.checkBaseChange(nextProps);
         this.props = nextProps;
-        this.removeDotsFromStateChange();
-        this.addDotsFromStateChange();
-        this.checkInstability();
-        this.setZoneTextAndAlphaStatus();
+        this.powerZoneManager.removeDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
+        this.powerZoneManager.addDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
+        if (this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
+            this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+            this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+        }
+        this.powerZoneManager.checkInstability();
+        this.powerZoneManager.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();
         return false;
     }
 
-    checkPendingAction(nextProps){
-        if(nextProps.userMessage === ''){
-            while(this.pendingAction.length > 0) {
-                let action = this.pendingAction.shift();
-                action.function.apply(this, action.params);
-            }
-        }
-    }
-
     checkBaseChange(nextProps){
         if(this.props.base !==  nextProps.base){
-            this.state.allZones.forEach(zone => {
-               zone.baseChange(nextProps.base, nextProps.placeValueOn);
-            });
+            this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
         }
     }
 
     checkMachineStateValue(){
         //console.log('checkMachineStateValue', this.props.placeValueOn);
-        this.state.allZones.forEach((zone) => {
-            zone.setValueTextAlpha(this.props.placeValueOn ? 1 : 0);
-        });
+        this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
         if(this.props.magicWandIsActive) {
             console.log('magicWandIsActive');
-            // Overcrowding
-            var base = this.props.base[1];
-            for(let i = 0; i < this.state.allZones.length; i++) {
-                var dotsRemoved = this.state.allZones[i].getOvercrowding(base);
-                if(dotsRemoved.length > 0){
-                    this.props.removeMultipleDots(i, dotsRemoved, false);
-                    this.props.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true);
-                    break;
-                }
-            }
-            if(dotsRemoved.length == 0 && this.state.negativePresent){
-                // check positive / negative
-            }
+            this.powerZoneManager.magicWand();
             this.props.activateMagicWand(false);
-            /*
-            // start the particles explosion effect
-            let explosionEmitter = this.getExplosionEmitter();
-            explosionEmitter.updateOwnerPos(dot.x, dot.y);
-            explosionEmitter.start();
-            TweenMax.delayedCall(0.2, this.stopExplosionEmitter, [explosionEmitter], this);
-            */
         }else if(this.props.startActivity) {
+            // ************************************
+            // ACTIVITY START
+            // ************************************
+            let advancedMode = false;
             if(this.props.usage_mode == USAGE_MODE.OPERATION) {
-                let dotsPerZoneA = this.props.operandA.split('|');
-                let dotsPerZoneB = this.props.operandB.split('|');
+                let dotsPerZoneA;
+                let dotsPerZoneB;
+                if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
+                    // advanced mode, if one side is split with |, split both side
+                    advancedMode = true;
+                    if(this.props.operandA.indexOf('|') !== -1) {
+                        dotsPerZoneA = this.props.operandA.split('|');
+                    }else{
+                        dotsPerZoneA = this.props.operandA.split('');
+                    }
+                    dotsPerZoneA.forEach(entry => {
+                        if(entry === '-'){
+                            dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
+                        }
+                    });
+                    console.log(dotsPerZoneA);
+                    if(this.props.operator_mode !== OPERATOR_MODE.MULTIPLY){
+                        // don't split multiplication operand B
+                        if(this.props.operandB.indexOf('|') !== -1) {
+                            dotsPerZoneB = this.props.operandB.split('|');
+                        }else{
+                            dotsPerZoneB = this.props.operandB.split('');
+                        }
+                    }else{
+                        // there is no | possible in operandB, but I need it as an array anyway, so split with impossible character.
+                        dotsPerZoneB = this.props.operandB.split('|');
+                    }
+                }else{
+                    // normal mode, split in certain condition
+                    if(this.props.operator_mode === OPERATOR_MODE.DISPLAY){
+                        // no | split in display mode, but I need it as an array anyway, so split with impossible character.
+                        dotsPerZoneA = this.props.operandA.split('|');
+                        // no zone B in DISPLAY mode, just pretend to prevent crash
+                        dotsPerZoneB = [];
+                    }else{
+                        dotsPerZoneA = this.props.operandA.split('');
+                        dotsPerZoneB = this.props.operandB.split('');
+                    }
+
+                }
+                if(advancedMode === false) {
+                    if (dotsPerZoneA[0] === '-') {
+                        dotsPerZoneA.splice(0, 1);
+                        for (let i = 0; i < dotsPerZoneA.length; i++) {
+                            dotsPerZoneA[i] = '-' + dotsPerZoneA[i];
+                        }
+                    }
+                    if (dotsPerZoneB[0] === '-') {
+                        dotsPerZoneB.splice(0, 1);
+                        for (let i = 0; i < dotsPerZoneB.length; i++) {
+                            dotsPerZoneB[i] = '-' + dotsPerZoneB[i];
+                        }
+                    }
+                }
                 dotsPerZoneA.reverse();
                 dotsPerZoneB.reverse();
                 let dotsPos = [];
                 let totalDot;
+                let invalidEntry = false;
                 switch (this.props.operator_mode) {
                     case OPERATOR_MODE.DISPLAY:
                         totalDot = 0;
@@ -674,138 +260,87 @@ class CanvasPIXI extends Component {
                                 dotsPos.push(this.getDot(i, true));
                             }
                         }
-                        this.props.activityStarted(dotsPos, totalDot);
+                        this.props.startActivityDoneFunc(dotsPos, totalDot);
                         break;
                     case OPERATOR_MODE.ADDITION:
-                        if(this.props.operandA.indexOf('|') === -1 && this.props.operandB.indexOf('|') === -1) {
-                            totalDot = Number(this.props.operandA) + Number(this.props.operandB);
-                            //for (let i = 0; i < totalDot; ++i) {
-                            for (let i = 0; i < Number(this.props.operandA); ++i) {
-                                dotsPos.push(this.getDot(0, true));
+                        makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+                        for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                            let j = 0;
+                            for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
+                                dotsPos.push(this.getDot(i, true));
                             }
-                            for (let i = 0; i < Number(this.props.operandB); ++i) {
-                                dotsPos.push(this.getDot(0, true, 'two'));
-                            }
-                            this.props.activityStarted(dotsPos);
-                        }else{
-                            while(dotsPerZoneA.length > dotsPerZoneB.length){
-                                dotsPerZoneB.push(0);
-                            }
-                            while(dotsPerZoneB.length > dotsPerZoneA.length){
-                                dotsPerZoneA.push(0);
-                            }
-                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                //let totalDotInZone = Number(dotsPerZoneA[i]) + Number(dotsPerZoneB[i]);
-                                let j = 0;
-                                //for (let j = 0; j < totalDotInZone; ++j) {
-                                for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true));
-                                }
 
-                                for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true, 'two'));
-                                }
+                            for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
+                                dotsPos.push(this.getDot(i, true, 'two'));
                             }
-                            // remove | bar and calculate the real value
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
-
-                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
-                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
-                            this.props.activityStarted(dotsPos, operandAValue, operandBValue);
                         }
+                        let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
+                        let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);//dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                        this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         break;
                     case OPERATOR_MODE.MULTIPLY:
-                        if(this.props.operandA.indexOf('|') === -1) {
-                            totalDot = Number(this.props.operandA) * Number(this.props.operandB);
-                            for (let i = 0; i < totalDot; ++i) {
-                                dotsPos.push(this.getDot(0, true));
+                        for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                            let totalDotInZone = 0;
+                            totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
+                            for (let j = 0; j < totalDotInZone; ++j) {
+                                dotsPos.push(this.getDot(i, true));
                             }
-                            this.props.activityStarted(dotsPos);
-                        }else{
-                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                let totalDotInZone = 0;
-                                totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
-                                for (let j = 0; j < totalDotInZone; ++j) {
-                                    dotsPos.push(this.getDot(i, true));
-                                }
-                            }
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            let operandAValue = dotsPerZoneA.reverse().join('');
-                            this.props.activityStarted(dotsPos, operandAValue);
                         }
+                        operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+                        this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         break;
                     case OPERATOR_MODE.SUBTRACT:
-                        let operandA = this.props.operandA.substr(0);
-                        let operandB = this.props.operandB.substr(0);
-                        let invalidEntry = false;
-                        if(operandA.indexOf('|') === -1 && operandB.indexOf('|') === -1) {
-                            let leftIsPositive = true;
-                            let rightIsPositive = false;
-                            let minusPos = this.props.operandA.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in left operand
-                                leftIsPositive = false;
-                                operandA = operandA.substr(1);
-                                if(operandA.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            minusPos = this.props.operandB.indexOf('-');
-                            if(minusPos !== -1){
-                                // leading minus in right operand
-                                rightIsPositive = true;
-                                operandB = operandB.substr(1);
-                                if(operandB.length === 0){
-                                    invalidEntry = true;
-                                }
-                            }
-                            if(invalidEntry === false) {
-                                for (let i = 0; i < Number(operandA); ++i) {
-                                    dotsPos.push(this.getDot(0, leftIsPositive));
-                                }
-                                for (let i = 0; i < Number(operandB); ++i) {
-                                    dotsPos.push(this.getDot(0, rightIsPositive));
-                                }
-                                this.props.activityStarted(dotsPos);
-                            }else{
-                                this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-                            }
-                        }else{
-                            while(dotsPerZoneA.length > dotsPerZoneB.length){
-                                dotsPerZoneB.push(0);
-                            }
-                            while(dotsPerZoneB.length > dotsPerZoneA.length){
-                                dotsPerZoneA.push(0);
-                            }
+                        if(dotsPerZoneA.length === 0){
+                            invalidEntry = true;
+                        }
+                        if(dotsPerZoneB.length === 0){
+                            invalidEntry = true;
+                        }
+                        if(invalidEntry === false){
+                            makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
-                                if(dotsPerZoneA[i] == ''){
-                                    dotsPerZoneA[i] = '0';
-                                }
-                                if(dotsPerZoneB[i] == ''){
-                                    dotsPerZoneB[i] = '0';
-                                }
                                 let j = 0;
-                                for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, true));
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
                                 }
-
-                                for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
-                                    dotsPos.push(this.getDot(i, false, 'two'));
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1));
                                 }
                             }
-
-                            // remove | bar and calculate the real value
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneA);
-                            this.calculateValueWithoutVerticalBar(dotsPerZoneB);
-
-                            let operandAValue = dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
-                            let operandBValue = dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
-                            this.props.activityStarted(dotsPos, operandAValue, operandBValue);
+                            let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+                            let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                            this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+                        }else{
+                            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                         }
                         break;
                     case OPERATOR_MODE.DIVIDE:
+                        let dividePos = [];
+                        if(dotsPerZoneA.length === 0){
+                            invalidEntry = true;
+                        }
+                        if(dotsPerZoneB.length === 0){
+                            invalidEntry = true;
+                        }
+                        if(invalidEntry === false){
+                            makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+                            for (let i = 0; i < dotsPerZoneA.length; ++i) {
+                                let j = 0;
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); ++j) {
+                                    dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
+                                }
+                                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); ++j) {
+                                    dividePos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') === -1));
+                                }
+                            }
+                            let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+                            let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                            this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
 
+                        }else{
+                            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                        }
+                        this.powerZoneManager.showDivider();
                         break;
                 }
             }
@@ -813,7 +348,7 @@ class CanvasPIXI extends Component {
     }
 
     getDot(zone, isPositive, color = 'one'){
-        //let dot = this.dotPool.getOne();
+        //console.log('getDot', zone, isPositive);
         let dot = {};
         dot.x = randomFromTo(POSITION_INFO.DOT_RAYON, BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON);
         if(this.state.negativePresent){
@@ -827,74 +362,13 @@ class CanvasPIXI extends Component {
         return dot;
     }
 
-    calculateValueWithoutVerticalBar(arr){
-        for(let i = 0; i < arr.length; ++i){
-            while(Number(arr[i]) >= this.props.base[1]){
-                if(arr[i + 1] !== undefined){
-                    arr[i + 1] = Number(arr[i + 1]) + this.props.base[0];
-                    arr[i] = Number(arr[i]) - this.props.base[1];
-                }else{
-                    arr.push(this.props.base[0]);
-                    arr[i] = Number(arr[i]) - this.props.base[1];
-                }
-            }
+    calculateOperandRealValue(arr){
+        let value = 0;
+        for(let i = 0; i < arr.length; i++){
+            value += arr[i] * Math.pow(this.props.base[1], i);
         }
+        return value;
     }
-
-    removeDotsFromStateChange(){
-        //console.log('removeDotsFromStateChange');
-        for(let i = 0; i < this.state.allZones.length; i++) {
-            //console.log('removeDotsFromStateChange', i, Object.keys(this.props.positivePowerZoneDots[i]).length);
-            let removedDots = this.state.allZones[i].removeDotsIfNeeded(this.props.positivePowerZoneDots[i], true);
-            removedDots.forEach(dot => {
-                if(dot.sprite){
-                    this.removeDotSpriteListeners(dot.sprite);
-                }
-            });
-
-            removedDots = this.state.allZones[i].removeDotsIfNeeded(this.props.negativePowerZoneDots[i], false);
-            removedDots.forEach(dot => {
-                if(dot.sprite){
-                    this.removeDotSpriteListeners(dot.sprite);
-                }
-            });
-        }
-        this.checkIfNotDisplayedSpriteCanBe();
-    }
-
-    checkIfNotDisplayedSpriteCanBe(){
-        let addedDots = [];
-        this.state.allZones.forEach(zone => {
-            addedDots = addedDots.concat(zone.checkIfNotDisplayedSpriteCanBe());
-        });
-        addedDots.forEach(dot => {
-            this.addDotSpriteProperty(dot, dot.sprite);
-        });
-    }
-
-    addDotsFromStateChange(){
-        //console.log('addDotsFromStateChange1');
-        let allDots = [];
-        for(let i = 0; i < this.state.allZones.length; i++) {
-            allDots = allDots.concat(this.state.allZones[i].addDotsFromStateChange(this.props.positivePowerZoneDots[i], this.props.negativePowerZoneDots[i]));
-        }
-        allDots.forEach(dot =>{
-            if(dot.sprite) {
-                this.addDotSpriteProperty(dot, dot.sprite);
-            }
-        });
-    }
-
-    checkInstability() {
-        let isOverload;
-        this.state.allZones.forEach(zone => {
-            isOverload = zone.checkOvercrowding();
-            if(this.state.negativePresent) {
-                zone.checkPositiveNegativePresence(isOverload);
-            }
-        });
-    }
-
 
     render() {
         return (

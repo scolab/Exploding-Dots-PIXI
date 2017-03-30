@@ -61,7 +61,7 @@ storiesOf('Exploding Dots', module)
             operator_mode={OPERATOR_MODE.DISPLAY}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.MECHA}
-            base={BASE.MECHA[5]}
+            base={BASE.MECHA[4]}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={false}
@@ -125,6 +125,27 @@ storiesOf('Exploding Dots', module)
     .add('Antidotia EXERCISE', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    )).add('Division Operation', () => (
+    <ExplodingDots
+        operator_mode={OPERATOR_MODE.DIVIDE}
+        usage_mode={USAGE_MODE.OPERATION}
+        allBases={BASE.ARITHMOS}
+        base={BASE.ARITHMOS[0]}
+        placeValueSwitchVisible={true}
+        placeValueOn={true}
+        magicWandVisible={true}
+    />
+    ))
+    .add('Division EXERCISE', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DIVIDE}
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
