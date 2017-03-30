@@ -28,6 +28,12 @@ export const removeMultipleDots = (zoneId, dots, updateValue) => ({
     updateValue
 });
 
+export const removeMultipleDotsInMultipleZone = (dotsArray, updateValue) => ({
+    type: ACTIONS.REMOVE_MULTIPLE_DOTS_IN_MULTIPLE_ZONE,
+    dotsArray,
+    updateValue
+});
+
 export const rezoneDot = (zoneId, dot, updateValue) => ({
     type: ACTIONS.REZONE_DOT,
     zoneId,

@@ -554,17 +554,7 @@ export class PowerZone extends PIXI.Container{
     checkOvercrowding(){
         let dotOverload = false;
         if(Object.keys(this.positiveDots).length > this.base[1]-1) {
-            /*let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3,
-                {x:this.positiveDotsContainer.x - 1},
-                {x:"+=1",
-                    ease:RoughEase.ease.config({
-                        strength:8,
-                        points:20,
-                        template:Linear.easeNone,
-                        randomize:false
-                    }),
-                    clearProps:"x"});
-            tween.repeat(-1).yoyo(true).play();*/
+            //console.log(this.zonePosition, Object.keys(this.positiveDots).length , this.base[1]-1);
             this.dotsCounterContainer.setStyle(0xff0000);
             let frameTotal = this.positiveDotsContainer.children[0].totalFrames;
             this.positiveDotsContainer.children.forEach(sprite => {

@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine,
     showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone,
-    operatorChanged, error, userMessage, resetUserMessage} from '../../actions/'
+    operatorChanged, error, userMessage, resetUserMessage, removeMultipleDotsInMultipleZone} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -30,6 +30,7 @@ const mapDispatchToProps = (dispatch) =>{
         addDot: addDot,
         removeDot: removeDot,
         removeMultipleDots: removeMultipleDots,
+        removeMultipleDotsInMultipleZone: removeMultipleDotsInMultipleZone,
         rezoneDot: rezoneDot,
         addMultipleDots: addMultipleDots,
         changeBase: changeBase,
@@ -57,8 +58,22 @@ class DotsMachine extends Component {
     static propTypes = {
         addDot: PropTypes.func.isRequired,
         removeDot:PropTypes.func.isRequired,
+        removeMultipleDots: PropTypes.func.isRequired,
+        removeMultipleDotsInMultipleZone: PropTypes.func.isRequired,
         rezoneDot:PropTypes.func.isRequired,
         addMultipleDots: PropTypes.func.isRequired,
+        changeBase: PropTypes.func.isRequired,
+        resetMachine: PropTypes.func.isRequired,
+        showHidePlaceValue: PropTypes.func.isRequired,
+        activateMagicWand: PropTypes.func.isRequired,
+        stabilize: PropTypes.func.isRequired,
+        operandChanged: PropTypes.func.isRequired,
+        operatorChanged: PropTypes.func.isRequired,
+        startActivity: PropTypes.func.isRequired,
+        startActivityDoneFunc: PropTypes.func.isRequired,
+        error: PropTypes.func.isRequired,
+        userMessage: PropTypes.func.isRequired,
+        resetUserMessage: PropTypes.func.isRequired,
         dotsMachine:PropTypes.shape({
             dots: PropTypes.arrayOf(React.PropTypes.shape({
                 x: PropTypes.number.isRequired,
@@ -201,6 +216,7 @@ class DotsMachine extends Component {
                     rezoneDot={this.props.rezoneDot}
                     addMultipleDots={this.props.addMultipleDots}
                     removeMultipleDots={this.props.removeMultipleDots}
+                    removeMultipleDotsInMultipleZone={this.props.removeMultipleDotsInMultipleZone}
                     placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
                     cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
@@ -213,7 +229,6 @@ class DotsMachine extends Component {
                     displayUserMessage={this.props.userMessage}
                     userMessage={this.props.dotsMachine.machineState.userMessage}
                 />
-
             </div>
         );
     }

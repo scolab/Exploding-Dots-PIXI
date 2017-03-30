@@ -11,7 +11,7 @@ import dragJSON from './dot_drag.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
-    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage){
+    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage, removeMultipleDotsInMultipleZone){
         super();
         this.addDot = addDot;
         this.removeDot = removeDot;
@@ -19,6 +19,7 @@ export class PowerZoneManager extends PIXI.Container{
         this.removeMultipleDots = removeMultipleDots;
         this.rezoneDot = rezoneDot;
         this.displayUserMessage = displayUserMessage;
+        this.removeMultipleDotsInMultipleZone = removeMultipleDotsInMultipleZone;
         this.movingDotsContainer = new PIXI.Container();
         this.dividerZoneManager = null;
     }
@@ -199,11 +200,14 @@ export class PowerZoneManager extends PIXI.Container{
 
     removeDotsAfterTween(dotsRemovedByZone, movedToZone, positive) {
         this.allZones[movedToZone].addDivisionValue(positive);
+        let allDots = [];
         for (let i = 0; i < dotsRemovedByZone.length; i++) {
             if (dotsRemovedByZone[i].length > 0) {
-                this.removeMultipleDots(i, dotsRemovedByZone[i], false);
+                allDots = allDots.concat(dotsRemovedByZone[i]);
+                //this.removeMultipleDots(i, dotsRemovedByZone[i], false);
             }
         }
+        this.removeMultipleDotsInMultipleZone(allDots, false);
     }
 
     createDot(powerZone, position, isPositive){
@@ -261,7 +265,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     onDragStart(e, canvas){
-        console.log('onDragStart', this.dot.id, this.world.isInteractive);
+        //console.log('onDragStart', this.dot.id, this.world.isInteractive);
         if(this.world.isInteractive) {
             let oldParent = this.parent;
             this.origin = new Point(this.x, this.y);
