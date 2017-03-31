@@ -208,35 +208,6 @@ const dotsReducer = (state = null, action) => {
                 }
             }
             return stateCopy;
-        case ACTIONS.REMOVE_MULTIPLE_DOTS_IN_MULTIPLE_ZONE:
-            console.log('REMOVE_MULTIPLE_DOTS_IN_MULTIPLE_ZONE', action.dots);
-            stateCopy = {...state};
-            if (action.dots.length > 0) {
-                let i = action.dots.length;
-                while (i--) {
-                    let dot = action.dots[i];
-                    if(dot.isPositive) {
-                        //console.log(i, dot.id, stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(dot.id));
-                        if(stateCopy.positivePowerZoneDots[dot.zoneId].hasOwnProperty(dot.id)){
-                            //let dotToDispose = stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
-                            delete stateCopy.positivePowerZoneDots[dot.zoneId][dot.id];
-                            //ObjPool.dispose(dotToDispose);
-                        }
-                    }else{
-                        if(stateCopy.negativePowerZoneDots[dot.zoneId].hasOwnProperty(dot.id)){
-                            //let dotToDispose = stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
-                            delete stateCopy.negativePowerZoneDots[dot.zoneId][dot.id];
-                            //ObjPool.dispose(dotToDispose);
-                        }
-                    }
-                }
-            }
-            if(action.updateValue) {
-                if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY && stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
-                    stateCopy.machineState.operandA = setDotsCount(stateCopy);
-                }
-            }
-            return stateCopy;
         case ACTIONS.REZONE_DOT:
             stateCopy = {...state};
             if(action.dot.isPositive) {

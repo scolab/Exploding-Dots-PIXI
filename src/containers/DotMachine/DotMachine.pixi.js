@@ -3,7 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine,
     showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone,
-    operatorChanged, error, userMessage, resetUserMessage, removeMultipleDotsInMultipleZone} from '../../actions/'
+    operatorChanged, error, userMessage, resetUserMessage} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -30,7 +30,6 @@ const mapDispatchToProps = (dispatch) =>{
         addDot: addDot,
         removeDot: removeDot,
         removeMultipleDots: removeMultipleDots,
-        removeMultipleDotsInMultipleZone: removeMultipleDotsInMultipleZone,
         rezoneDot: rezoneDot,
         addMultipleDots: addMultipleDots,
         changeBase: changeBase,
@@ -59,7 +58,6 @@ class DotsMachine extends Component {
         addDot: PropTypes.func.isRequired,
         removeDot:PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
-        removeMultipleDotsInMultipleZone: PropTypes.func.isRequired,
         rezoneDot:PropTypes.func.isRequired,
         addMultipleDots: PropTypes.func.isRequired,
         changeBase: PropTypes.func.isRequired,
@@ -216,7 +214,6 @@ class DotsMachine extends Component {
                     rezoneDot={this.props.rezoneDot}
                     addMultipleDots={this.props.addMultipleDots}
                     removeMultipleDots={this.props.removeMultipleDots}
-                    removeMultipleDotsInMultipleZone={this.props.removeMultipleDotsInMultipleZone}
                     placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
                     cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}

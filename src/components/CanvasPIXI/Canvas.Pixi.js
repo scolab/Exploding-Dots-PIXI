@@ -13,7 +13,6 @@ class CanvasPIXI extends Component {
         rezoneDot: PropTypes.func.isRequired,
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
-        removeMultipleDotsInMultipleZone: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
         startActivityDoneFunc: PropTypes.func.isRequired,
         positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
@@ -92,7 +91,6 @@ class CanvasPIXI extends Component {
             this.props.removeMultipleDots,
             this.props.rezoneDot,
             this.props.displayUserMessage,
-            this.props.removeMultipleDotsInMultipleZone
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
@@ -156,7 +154,7 @@ class CanvasPIXI extends Component {
     }
 
     shouldComponentUpdate(nextProps){
-        console.log('shouldComponentUpdate', nextProps);
+        //console.log('shouldComponentUpdate', nextProps);
         if(this.props.activityStarted === true && nextProps.activityStarted === false) {
             this.powerZoneManager.reset();
         }
