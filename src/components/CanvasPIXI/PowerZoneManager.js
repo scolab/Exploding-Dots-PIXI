@@ -2,12 +2,13 @@ import {PowerZone} from './Canvas.PIXI.PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
 import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
-import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO} from '../../Constants'
+import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
 import {Point} from 'pixi.js';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
-import dragJSON from './dot_drag.json';
+import redDragJSON from './dot_drag_red.json';
+import blueDragJSON from './dot_drag_blue.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
@@ -37,6 +38,8 @@ export class PowerZoneManager extends PIXI.Container{
         this.pendingAction = [];
         this.explodeEmitter = [];
         this.implodeEmitter = [];
+        this.dragParticleEmitterRed = null;
+        this.dragParticleEmitterBlue = null;
         window.addEventListener('keyup', this.traceValue.bind(this));
     }
 
@@ -71,7 +74,8 @@ export class PowerZoneManager extends PIXI.Container{
             powerZone.setValueTextAlpha(this.placeValueOn ? 1 : 0);
         }
         this.setZoneTextAndAlphaStatus();
-        this.dragParticleEmitter = new ParticleEmitter(this.movingDotsContainer, this.textures["red_dot.png"], dragJSON);
+        this.dragParticleEmitterRed = new ParticleEmitter(this.movingDotsContainer, this.textures["red_dot.png"], redDragJSON);
+        this.dragParticleEmitterBlue = new ParticleEmitter(this.movingDotsContainer, this.textures["blue_dot.png"], blueDragJSON);
         this.addChild(this.movingDotsContainer);
         if(this.operator_mode === OPERATOR_MODE.DIVIDE){
             this.dividerZoneManager = new DividerZoneManager();
@@ -219,9 +223,9 @@ export class PowerZoneManager extends PIXI.Container{
         }
     }
 
-    createDot(powerZone, position, isPositive){
+    createDot(powerZone, position, isPositive, color){
         if(this.isInteractive) {
-            this.addDot(powerZone, position, isPositive);
+            this.addDot(powerZone, position, isPositive, color);
         }
     }
 
@@ -288,7 +292,11 @@ export class PowerZoneManager extends PIXI.Container{
             this.originInMovingContainer.y += this.origin.y - originDiff.y;
             this.position.x = newPosition.x;
             this.position.y = newPosition.y;
-            this.particleEmitter = this.world.dragParticleEmitter;
+            if(this.dot.color === SPRITE_COLOR.RED) {
+                this.particleEmitter = this.world.dragParticleEmitterRed;
+            }else{
+                this.particleEmitter = this.world.dragParticleEmitterBlue;
+            }
             this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
             this.particleEmitter.start();
         }
@@ -388,7 +396,7 @@ export class PowerZoneManager extends PIXI.Container{
                         implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
                         implosionEmitter.start();
                         TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
-                        this.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, false);
+                        this.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, dotSprite.dot.color, false);
                     }
                 } else {
                     if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
@@ -640,7 +648,7 @@ export class PowerZoneManager extends PIXI.Container{
     removeTweenDone(dotSprite){
         // TODO check this, should it be moved to the PowerZone?
         dotSprite.parent.removeChild(dotSprite);
-        this.spritePool.dispose(dotSprite);
+        this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
     }
 
     doBaseChange(base, placeValueOn){

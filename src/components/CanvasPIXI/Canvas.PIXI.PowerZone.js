@@ -1,4 +1,4 @@
-import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT} from '../../Constants'
+import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT, SPRITE_COLOR} from '../../Constants'
 import {ProximityManager} from '../../utils/ProximityManager';
 import {EventEmitter} from 'eventemitter3';
 import {convertBase, randomFromTo} from '../../utils/MathUtils'
@@ -218,7 +218,7 @@ export class PowerZone extends PIXI.Container{
         }else{
             clickModifiedPos.push(clickPos.y);
         }
-        this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target.powerZone, clickModifiedPos, e.target.isPositive);
+        this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target.powerZone, clickModifiedPos, e.target.isPositive, SPRITE_COLOR.RED);
     }
 
     checkTextAndAlpha(doCheck){
@@ -327,11 +327,12 @@ export class PowerZone extends PIXI.Container{
     doAddDot(dot, container, notDisplayed){
         let dotSprite;
         if(container.children.length < this.maxDotsByZone) {
-            if(dot.color !== 'two'){
-                dotSprite = this.spritePool.getOne('one', dot.isPositive);
+            /*if(dot.color === SPRITE_COLOR.RED){
+                dotSprite = this.spritePool.getOne(SPRITE_COLOR.RED, dot.isPositive);
             }else{
-                dotSprite = this.spritePool.getOne('two', dot.isPositive);
-            }
+                dotSprite = this.spritePool.getOne(SPRITE_COLOR.BLUE, dot.isPositive);
+            }*/
+            dotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
             container.addChild(dotSprite);
         }else{
             notDisplayed[dot.id] = dot;
@@ -434,7 +435,7 @@ export class PowerZone extends PIXI.Container{
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
                     dotSprite.parent.removeChild(dotSprite);
-                    this.spritePool.dispose(dotSprite);
+                    this.spritePool.dispose(dotSprite, dot.isPositive, dot.color);
                     if (dotSprite.particleEmitter) {
                         dotSprite.particleEmitter.stop();
                     }
@@ -476,10 +477,10 @@ export class PowerZone extends PIXI.Container{
         addedDots.forEach(dot => {
             this.removeDotFromNotDisplayedArray(dot);
             let dotSprite;
-            if(dot.color !== 'two'){
-                dotSprite = this.spritePool.getOne('one', true);
+            if(dot.color !== SPRITE_COLOR.BLUE){
+                dotSprite = this.spritePool.getOne(SPRITE_COLOR.RED, true);
             }else{
-                dotSprite = this.spritePool.getOne('two', true);
+                dotSprite = this.spritePool.getOne(SPRITE_COLOR.BLUE, true);
             }
             dot.sprite = dotSprite;
             dotSprite.dot = dot;

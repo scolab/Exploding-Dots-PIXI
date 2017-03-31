@@ -49,3 +49,8 @@ export const MAX_DOT = {
 export const ERROR_MESSAGE = {
     INVALID_ENTRY : 'Invalid entry in the operand'
 };
+
+export const SPRITE_COLOR = {
+    RED: 'RED',
+    BLUE : 'BLUE'
+};

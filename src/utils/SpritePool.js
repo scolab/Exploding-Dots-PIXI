@@ -1,110 +1,138 @@
-
+import {SPRITE_COLOR} from '../Constants'
 
 export class SpritePool {
 
     constructor(textures) {
-        this.positiveDotOneTexture = 'red_dot.png';
-        this.positiveDotTwoTexture = 'blue_dot.png';
-        this.negativeDotOneTexture = 'red_antidot.png';
-        this.negativeDotTwoTexture = 'blue_antidot.png';
-        this.positiveDotOneFrameTwo = 'dot1.png';
-        this.positiveDotOneFrameThree = 'dot2.png';
-        this.positiveDotOneFrameFour = 'dot3.png';
 
-        this.texturePosOne = textures[this.positiveDotOneTexture];
-        this.texturePosTwo = textures[this.positiveDotTwoTexture];
-        this.textureNegOne = textures[this.negativeDotOneTexture];
-        this.textureNegTwo = textures[this.negativeDotTwoTexture];
+        this.poolPositiveRed = [];
+        this.poolPositiveBlue = [];
+        this.poolNegativeRed = [];
+        this.poolNegativeBlue = [];
 
-        this.positiveSpriteOneframes = [this.texturePosOne,
-            textures[this.positiveDotOneFrameTwo],
-            textures[this.positiveDotOneFrameThree],
-            textures[this.positiveDotOneFrameFour]
+        this.positiveDotRedTexture = 'red_dot.png';
+        this.positiveDotBlueTexture = 'blue_dot.png';
+        this.negativeDotRedTexture = 'red_antidot.png';
+        this.negativeDotBlueTexture = 'blue_antidot.png';
+
+        this.positiveDotRedFrameTwo = 'dot1.png';
+        this.positiveDotRedFrameThree = 'dot2.png';
+        this.positiveDotRedFrameFour = 'dot3.png';
+
+        this.positiveDotBlueFrameTwo = 'b_dot1.png';
+        this.positiveDotBlueFrameThree = 'b_dot2.png';
+        this.positiveDotBlueFrameFour = 'b_dot3.png';
+
+        this.negativeDotRedFrameTwo = 'antidot1.png';
+        this.negativeDotRedFrameThree = 'antidot2.png';
+        this.negativeDotRedFrameFour = 'antidot3.png';
+
+        this.negativeDotBlueFrameTwo = 'b_antidot1.png';
+        this.negativeDotBlueFrameThree = 'b_antidot2.png';
+        this.negativeDotBlueFrameFour = 'b_antidot3.png';
+
+        this.texturePosOne = textures[this.positiveDotRedTexture];
+        this.texturePosTwo = textures[this.positiveDotBlueTexture];
+        this.textureNegOne = textures[this.negativeDotRedTexture];
+        this.textureNegTwo = textures[this.negativeDotBlueTexture];
+
+        this.positiveSpriteRedFrames = [this.texturePosOne,
+            textures[this.positiveDotRedFrameTwo],
+            textures[this.positiveDotRedFrameThree],
+            textures[this.positiveDotRedFrameFour]
             ];
         let i = 45;
         while(i > 0){
-            this.positiveSpriteOneframes.push(this.texturePosOne);
+            this.positiveSpriteRedFrames.push(this.texturePosOne);
             i--;
         }
 
-        this.positiveSpriteTwoframes = [this.texturePosTwo,
-            textures[this.positiveDotOneFrameTwo],
-            textures[this.positiveDotOneFrameThree],
-            textures[this.positiveDotOneFrameFour]
+        this.positiveSpriteBlueFrames = [this.texturePosTwo,
+            textures[this.positiveDotBlueFrameTwo],
+            textures[this.positiveDotBlueFrameThree],
+            textures[this.positiveDotBlueFrameFour]
         ];
         i = 45;
         while(i > 0){
-            this.positiveSpriteTwoframes.push(this.texturePosTwo);
+            this.positiveSpriteBlueFrames.push(this.texturePosTwo);
             i--;
         }
 
-        this.negativeSpriteOneframes = [this.textureNegOne,
-            textures[this.positiveDotOneFrameTwo],
-            textures[this.positiveDotOneFrameThree],
-            textures[this.positiveDotOneFrameFour]
+        this.negativeSpriteRedFrames = [this.textureNegOne,
+            textures[this.negativeDotRedFrameTwo],
+            textures[this.negativeDotRedFrameThree],
+            textures[this.negativeDotRedFrameFour]
         ];
         i = 45;
         while(i > 0){
-            this.negativeSpriteOneframes.push(this.textureNegOne);
+            this.negativeSpriteRedFrames.push(this.textureNegOne);
             i--;
         }
 
-        this.negativeSpriteTwoframes = [this.textureNegTwo,
-            textures[this.positiveDotOneFrameTwo],
-            textures[this.positiveDotOneFrameThree],
-            textures[this.positiveDotOneFrameFour]
+        this.negativeSpriteBlueFrames = [this.textureNegTwo,
+            textures[this.negativeDotBlueFrameTwo],
+            textures[this.negativeDotBlueFrameThree],
+            textures[this.negativeDotBlueFrameFour]
         ];
         i = 45;
         while(i > 0){
-            this.negativeSpriteTwoframes.push(this.textureNegTwo);
+            this.negativeSpriteBlueFrames.push(this.textureNegTwo);
             i--;
         }
-
-        this.pool = [];
     }
 
     getOne(color, positive){
-        if(this.pool.length > 0) {
-            let sprite = this.pool.pop();
-            if(color == 'one'){
-                if(positive){
-                    sprite.textures = this.positiveSpriteOneframes;
+        console.log('getOne', color, positive);
+        let sprite;
+        if(color == SPRITE_COLOR.RED){
+            if(positive){
+                if(this.poolPositiveRed.length > 0) {
+                    sprite = this.poolPositiveRed.pop();
                 }else{
-                    sprite.textures = this.negativeSpriteOneframes;
+                    sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteRedFrames);
                 }
             }else{
-                if(positive){
-                    sprite.texture = this.positiveSpriteTwoframes;
+                if(this.poolNegativeRed.length > 0) {
+                    sprite = this.poolNegativeRed.pop();
                 }else{
-                    sprite.texture = this.negativeSpriteTwoframes;
+                    sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteRedFrames);
                 }
             }
-            return sprite;
         }else{
-            let sprite;
-            if(color == 'one'){
-                if(positive){
-                    sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteOneframes);
-                    //sprite = new PIXI.Sprite(this.texturePosOne);
+            if(positive){
+                if(this.poolPositiveBlue.length > 0) {
+                    sprite = this.poolPositiveBlue.pop();
                 }else{
-                    sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteOneframes);
-                    //sprite = new PIXI.Sprite(this.textureNegOne);
+                    sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteBlueFrames);
                 }
             }else{
-                if(positive){
-                    sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteTwoframes);
-                    //sprite = new PIXI.Sprite(this.texturePosTwo);
+                if(this.poolNegativeBlue.length > 0) {
+                    sprite = this.poolNegativeBlue.pop();
                 }else{
-                    sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteTwoframes);
-                    //sprite = new PIXI.Sprite(this.textureNegTwo);
+                    sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteBlueFrames);
                 }
             }
-            return sprite;
         }
+        return sprite;
     };
 
-    dispose(sprite) {
-        sprite.destroy();
-        //this.pool.push(obj);
+    dispose(sprite, isPositive, color) {
+        //sprite.destroy();
+        //console.log('dispose', isPositive, color)
+        sprite.gotoAndStop(0);
+        sprite.dot = null;
+        if(isPositive){
+            if(color === SPRITE_COLOR.RED){
+                this.poolPositiveRed.push(sprite);
+            }else{
+                this.poolPositiveBlue.push(sprite);
+            }
+        }else{
+            if(color === SPRITE_COLOR.RED){
+                this.poolNegativeRed.push(sprite);
+            }else{
+                this.poolNegativeBlue.push(sprite);
+            }
+        }
+
     };
 }

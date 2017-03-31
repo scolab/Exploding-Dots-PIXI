@@ -1,10 +1,11 @@
 import {ACTIONS} from './StoreConstants';
 
-export const addDot = (zoneId, position, isPositive) => ({
+export const addDot = (zoneId, position, isPositive, color) => ({
     type: ACTIONS.ADD_DOT,
     zoneId,
     position,
-    isPositive
+    isPositive,
+    color
 });
 
 export const removeDot = (zoneId, dotId) => ({
@@ -13,11 +14,12 @@ export const removeDot = (zoneId, dotId) => ({
     dotId
 });
 
-export const addMultipleDots = (zoneId, dotsPos, isPositive, updateValue) => ({
+export const addMultipleDots = (zoneId, dotsPos, isPositive, color, updateValue) => ({
     type: ACTIONS.ADD_MULTIPLE_DOTS,
     zoneId,
     dotsPos,
     isPositive,
+    color,
     updateValue
 });
 

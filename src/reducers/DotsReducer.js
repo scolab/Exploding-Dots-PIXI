@@ -113,6 +113,7 @@ const dotsReducer = (state = null, action) => {
             dot.powerZone = action.zoneId;
             dot.id = makeUID();
             dot.isPositive = action.isPositive;
+            dot.color = action.color;
             /*let dot = {
                 x: action.position[0],
                 y: action.position[1],
@@ -158,14 +159,7 @@ const dotsReducer = (state = null, action) => {
                 dot.powerZone = action.zoneId;
                 dot.id = makeUID();
                 dot.isPositive = action.isPositive;
-
-                /*let dot = {
-                    x: newDot.x,
-                    y: newDot.y,
-                    powerZone: action.zoneId,
-                    id: makeUID(),
-                    isPositive: action.isPositive
-                };*/
+                dot.color = action.color;
                 if(dot.isPositive) {
                     stateCopy.positivePowerZoneDots[action.zoneId][dot.id] = dot;//.push(dot);
                 }else {
