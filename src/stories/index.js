@@ -135,5 +135,28 @@ storiesOf('Exploding Dots', module)
             placeValueOn={true}
             magicWandVisible={true}
         />
-    ));
+    ))
+    .add('Algebra Insighto Freeplay', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.FREEPLAY}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={false}
+        />
+    ))
+    .add('Algebra Insighto Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={false}
+        />
+    ))
+    ;
 

@@ -65,8 +65,7 @@ export class PowerZoneManager extends PIXI.Container{
                 this.usage_mode,
                 this.operator_mode,
                 this.totalZoneCount,
-                this.spritePool,
-                this.allZones.length
+                this.spritePool
             );
             this.addChild(powerZone);
             this.allZones.push(powerZone);

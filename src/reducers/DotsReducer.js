@@ -1,32 +1,71 @@
 import {makeUID} from '../utils/MathUtils'
 import {ACTIONS} from '../actions/StoreConstants'
-import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE} from '../Constants'
+import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
-//import {ObjPool} from '../utils/ObjPool';
+import {toSuperScript} from '../utils/StringUtils';
 
 let initialMachineState = {};
 
 function setDotsCount(state){
-    let dotsCount = 0;
+    console.log('setDotsCount');
     let col = 0;
+    if(state.machineState.base[1] !== BASE.BASE_X) {
+        let dotsCount = 0;
+        for (let zone of state.positivePowerZoneDots) {
+            dotsCount += Object.keys(zone).length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
+            col++;
+        }
+        return dotsCount.toString();
+    }else {
+        let value = [];
+        let toReturn = '';
+        for (let zone of state.positivePowerZoneDots) {
+            let zoneValue = Object.keys(zone).length;
+            if(col !== 0) {
+                if(zoneValue !== 0) {
+                    if(col !== 1){
+                        let xx = zoneValue + 'x' + '<sup>' + col.toString() + '</sup> +';
+                        console.log(xx);
+                        xx = toSuperScript(xx);
+                        value.push(xx);
+                    }else{
+                        value.push(zoneValue + 'x' + '+');
+                    }
 
-    for (let zone of state.positivePowerZoneDots) {
-        //console.log(Object.keys(zone).length);
-        dotsCount += Object.keys(zone).length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
-        col++;
+                }
+            }else if(zoneValue !== 0){
+                value.push(Object.keys(zone).length);
+            }
+            col++;
+        }
+
+        /*col = 0;
+        for (let zone of state.negativePowerZoneDots) {
+            let zoneValue = Object.keys(zone).length;
+            if(col !== 0) {
+                if(zoneValue !== 0) {
+                    if(col !== 1){
+                        value.push(zoneValue + 'x' + '&sup' + col.toString() + '-');
+                    }else{
+                        value.push(zoneValue + 'x' + '-');
+                    }
+
+                }
+            }else if(zoneValue !== 0){
+                value.push(Object.keys(zone).length);
+            }
+            col++;
+        }*/
+
+        for(let i = value.length; i--; i> 0){
+            toReturn += value[i];
+        }
+        if(toReturn.charAt(toReturn.length - 1) === '+'){
+            toReturn = toReturn.slice(0, -1);
+        }
+        return toReturn;
     }
-    return dotsCount.toString();
-
-    /*// negative
-     dotsCount = 0;
-     col = 0;
-
-     for(let dot of this.state.negativePowerZoneDots){
-     dotsCount += dot.length * Math.pow(this.state.base,col);
-     col++;
-     }
-     this.state.negativeDotsCount = dotsCount;*/
 }
 
 function setInitialState() {

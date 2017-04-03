@@ -191,7 +191,7 @@ class CanvasPIXI extends Component {
             // ACTIVITY START
             // ************************************
             let advancedMode = false;
-            if(this.props.usage_mode == USAGE_MODE.OPERATION) {
+            if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                 let dotsPerZoneA;
                 let dotsPerZoneB;
                 if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){

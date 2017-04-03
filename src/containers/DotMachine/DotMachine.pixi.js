@@ -128,7 +128,7 @@ class DotsMachine extends Component {
     };
 
     constructor(props) {
-        console.log('DotsMachine constructor props', props);
+        //console.log('DotsMachine constructor props', props);
         super(props);
     }
 
@@ -180,6 +180,7 @@ class DotsMachine extends Component {
                              usage_mode={this.props.dotsMachine.machineState.usage_mode}
                              pos={OPERAND_POS.LEFT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+                             base={this.props.dotsMachine.machineState.base}
                     />
                     <Operator operator_mode={this.props.dotsMachine.machineState.operator_mode}
                               usage_mode={this.props.dotsMachine.machineState.usage_mode}
@@ -192,6 +193,7 @@ class DotsMachine extends Component {
                              onChange={this.props.operandChanged}
                              pos={OPERAND_POS.RIGHT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+                             base={this.props.dotsMachine.machineState.base}
                     />
                     {this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
                         <GoButton onClick={this.props.startActivity} activityStarted={this.props.dotsMachine.machineState.activityStarted}>GO</GoButton>

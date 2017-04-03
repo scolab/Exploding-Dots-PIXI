@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
-import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE} from '../Constants';
 import img from './images/input1x.png';
+import renderHTML from 'react-render-html';
 
 export default class Operand extends Component {
 
@@ -11,6 +12,7 @@ export default class Operand extends Component {
         onChange: PropTypes.func.isRequired,
         pos: PropTypes.string.isRequired,
         activityStarted: PropTypes.bool.isRequired,
+        base: PropTypes.array.isRequired,
     };
 
     constructor(props) {
@@ -72,33 +74,69 @@ export default class Operand extends Component {
     }
 
     render() {
-        //console.log(this.props);
         if (this.props.pos === OPERAND_POS.LEFT) {
-            return (
-                <div className="operationItem">
-                    <form onSubmit={this.onSubmit.bind(this)}>
-                        <input
-                            style={{
-                                backgroundImage: `url(${img})`,
-                                backgroundRepeat: `no-repeat`,
-                                backgroundColor: `Transparent`,
-                                border: `none`,
-                                overflow: `hidden`,
-                                width: 252,
-                                height: 45,
-                                fontFamily: 'museo-slab',
-                                fontSize: 24,
-                                textAlign: 'center'
-                            }}
-                            type="text"
-                            onChange={this.onChange.bind(this)}
-                            value={this.props.value}
-                            ref={(inputText) => {
-                                this.inputText = inputText;
-                            }}/>
-                    </form>
-                </div>
-            );
+            if(this.props.base[1] !== BASE.BASE_X) {
+                return (
+                    <div className="operationItem">
+                        <form onSubmit={this.onSubmit.bind(this)}>
+                            <input
+                                style={{
+                                    backgroundImage: `url(${img})`,
+                                    backgroundRepeat: `no-repeat`,
+                                    backgroundColor: `Transparent`,
+                                    border: `none`,
+                                    overflow: `hidden`,
+                                    width: 252,
+                                    height: 45,
+                                    fontFamily: 'museo-slab',
+                                    fontSize: 24,
+                                    textAlign: 'center'
+                                }}
+
+                                type="text"
+                                onChange={this.onChange.bind(this)}
+                                value={this.props.value}
+                                ref={(inputText) => {
+                                    this.inputText = inputText;
+                                }}/>
+                        </form>
+                    </div>
+                );
+            }else{
+                let value = this.props.value;
+                if(value === ''){
+                    value = ' ';
+                }
+                return (
+                    <div className="operationItem">
+                        <form onSubmit={this.onSubmit.bind(this)}>
+                            <input
+                                style={{
+                                    backgroundImage: `url(${img})`,
+                                    backgroundRepeat: `no-repeat`,
+                                    backgroundColor: `Transparent`,
+                                    border: `none`,
+                                    overflow: `hidden`,
+                                    width: 252,
+                                    height: 45,
+                                    fontFamily: 'museo-slab',
+                                    fontSize: 24,
+                                    textAlign: 'center'
+                                }}
+
+                                type="text"
+                                onChange={this.onChange.bind(this)}
+                                value={renderHTML(value)}
+                                ref={(inputText) => {
+                                    this.inputText = inputText;
+                                }}/>
+                        </form>
+                        <div>
+                            {renderHTML(value)}
+                        </div>
+                    </div>
+                );
+            }
         } else if (this.props.pos === OPERAND_POS.RIGHT) {
             let visible = this.props.operator_mode != OPERATOR_MODE.DISPLAY;
             if (visible) {

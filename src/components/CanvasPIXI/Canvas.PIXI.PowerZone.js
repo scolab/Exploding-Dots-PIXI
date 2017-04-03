@@ -42,8 +42,10 @@ export class PowerZone extends PIXI.Container{
     bgBoxTextures = [];
     positiveDivideCounter;
     negativeDivideCounter;
+    placeValueText;
+    placeValueExponent = null;
 
-    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool, zoneCreated) {
+    constructor(position, textures, base, negativePresent, usage_mode, operator_mode, totalZoneCount, spritePool) {
         super();
         this.zonePosition = totalZoneCount - position - 1;
         this.negativePresent = negativePresent;
@@ -79,21 +81,32 @@ export class PowerZone extends PIXI.Container{
         this.bgBox.y = boxYPos;
         this.addChild(this.bgBox);
 
-        if (base[1] === 'x') {
-            this.placeValueText = new PIXI.Text('X' + (zoneCreated), {
+        if (base[1] === BASE.BASE_X) {
+            this.placeValueText = new PIXI.Text('X', {
                 fontFamily: 'museo-slab',
                 fontSize: 40,
                 fill: 0xBCBCBC,
                 align: 'center'
             });
+            if(this.zonePosition === 0){
+                this.placeValueText.text = '1';
+            }else{
+                if(this.zonePosition !== 1) {
+                    this.placeValueExponent = new PIXI.Text(this.zonePosition.toString(), {
+                        fontFamily: 'museo-slab',
+                        fontSize: 25,
+                        fill: 0xBCBCBC,
+                        align: 'center'
+                    });
+                }
+            }
         } else {
             let text;
-            if (base[0] === 1 || zoneCreated === 0) {
-                text = String(Math.pow(base[1], zoneCreated));
+            if (base[0] === 1 || this.zonePosition === 0) {
+                text = String(Math.pow(base[1], this.zonePosition));
             } else {
-                text = '(' + String(Math.pow(base[1], zoneCreated) + '/' + Math.pow(base[0], zoneCreated)) + ')';
+                text = '(' + String(Math.pow(base[1], this.zonePosition) + '/' + Math.pow(base[0], this.zonePosition)) + ')';
             }
-
             this.placeValueText = new PIXI.Text(text, {
                 fontFamily: 'museo-slab',
                 fontSize: 40,
@@ -105,6 +118,13 @@ export class PowerZone extends PIXI.Container{
         this.placeValueText.x = (position * (BOX_INFO.BOX_WIDTH + gutterWidth)) + (BOX_INFO.BOX_WIDTH / 2);
         this.placeValueText.y = boxYPos + (BOX_INFO.BOX_HEIGHT / 2) - 30;
         this.addChild(this.placeValueText);
+        if(this.placeValueExponent !== null) {
+            this.placeValueExponent.anchor.x = 0.5;
+            this.placeValueExponent.x = this.placeValueText.x + 25;
+            this.placeValueExponent.y = this.placeValueText.y - 5;
+            this.addChild(this.placeValueExponent);
+        }
+
 
         if (operator_mode === OPERATOR_MODE.DIVIDE) {
             this.positiveDivideCounter = new PIXI.Sprite(textures["dot_div_value.png"]);
@@ -609,7 +629,10 @@ export class PowerZone extends PIXI.Container{
         //console.log(base);
         this.base = base;
         if (this.base[1] === BASE.BASE_X) {
-            this.setValueText('X' + i);
+            this.setValueText('X');
+            if(this.placeValueExponent !== null){
+                this.placeValueExponent.text = '2';
+            }
         } else {
             if (base[0] === 1 || this.zonePosition === 0) {
                 this.setValueText(String(Math.pow(base[1], this.zonePosition)));
@@ -625,6 +648,9 @@ export class PowerZone extends PIXI.Container{
 
     setValueTextAlpha(alpha){
         this.placeValueText.alpha = alpha;
+        if(this.placeValueExponent !== null){
+            this.placeValueExponent.alpha = alpha;
+        }
     }
 
     precalculateDotsForDivision(){
