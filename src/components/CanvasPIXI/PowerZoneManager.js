@@ -180,6 +180,7 @@ export class PowerZoneManager extends PIXI.Container{
                                 movingSprite.position.x = newPosition.x;
                                 movingSprite.position.y = newPosition.y;
                                 this.movingDotsContainer.addChild(movingSprite);
+                                dot.sprite.alpha = 0;
                                 let finalPosition;
                                 if(success) {
                                     finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
@@ -203,7 +204,7 @@ export class PowerZoneManager extends PIXI.Container{
                                     onCompleteParams: [movingSprite]
                                 })
                             });
-                            TweenMax.delayedCall(1.5, this.removeDotsFromStoreAfterTween.bind(this), [dotsRemovedByZone]);
+                            TweenMax.delayedCall(1.5, this.processDivisionAfterTween.bind(this), [dotsRemovedByZone, moveToZone, success]);
                         }
                     }
                 }
@@ -215,12 +216,13 @@ export class PowerZoneManager extends PIXI.Container{
         sprite.destroy();
     }
 
-    removeDotsFromStoreAfterTween(dotsRemovedByZone){
+    processDivisionAfterTween(dotsRemovedByZone, moveToZone, isPositive){
         for (let i = 0; i < dotsRemovedByZone.length; i++) {
             if (dotsRemovedByZone[i].length > 0) {
                 this.removeMultipleDots(i, dotsRemovedByZone[i], false);
             }
         }
+        this.allZones[moveToZone].addDivisionValue(isPositive);
     }
 
     createDot(powerZone, position, isPositive, color){
@@ -675,23 +677,8 @@ export class PowerZoneManager extends PIXI.Container{
 
     magicWand(){
         let base = this.base[1];
-        for(let i = 0; i < this.allZones.length; i++) {
-            var dotsRemoved = this.allZones[i].getOvercrowding(base);
-            if(dotsRemoved.length > 0){
-                this.removeMultipleDots(i, dotsRemoved, false);
-                if(this.negativePresent){
-                    if(dotsRemoved[0].isPositive){
-                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], true);
-                    }else{
-                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], false);
-                    }
-                }else {
-                    this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true);
-                }
-                break;
-            }
-        }
-        if(dotsRemoved.length == 0 && this.negativePresent){
+        let dotsRemoved = [];
+        if(this.negativePresent){
             // check positive / negative
             for(let i = 0; i < this.allZones.length; i++) {
                 let positiveDots = this.allZones[i].positiveDots;
@@ -707,8 +694,25 @@ export class PowerZoneManager extends PIXI.Container{
                 }
             }
         }
+        if(dotsRemoved.length === 0) {
+            for (let i = 0; i < this.allZones.length; i++) {
+                dotsRemoved = this.allZones[i].getOvercrowding(base);
+                if (dotsRemoved.length > 0) {
+                    this.removeMultipleDots(i, dotsRemoved, false);
+                    if (this.negativePresent) {
+                        if (dotsRemoved[0].isPositive) {
+                            this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], true);
+                        } else {
+                            this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], false);
+                        }
+                    } else {
+                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true);
+                    }
+                    break;
+                }
+            }
+        }
     }
-
 
     removeDotsFromStateChange(positivePowerZoneDots, negativePowerZoneDots){
         //console.log('removeDotsFromStateChange');

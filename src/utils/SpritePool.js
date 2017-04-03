@@ -112,6 +112,7 @@ export class SpritePool {
                 }
             }
         }
+        sprite.alpha = 1;
         return sprite;
     };
 
