@@ -57,8 +57,21 @@ class DotsMachine extends Component {
     static propTypes = {
         addDot: PropTypes.func.isRequired,
         removeDot:PropTypes.func.isRequired,
+        removeMultipleDots: PropTypes.func.isRequired,
         rezoneDot:PropTypes.func.isRequired,
         addMultipleDots: PropTypes.func.isRequired,
+        changeBase: PropTypes.func.isRequired,
+        resetMachine: PropTypes.func.isRequired,
+        showHidePlaceValue: PropTypes.func.isRequired,
+        activateMagicWand: PropTypes.func.isRequired,
+        stabilize: PropTypes.func.isRequired,
+        operandChanged: PropTypes.func.isRequired,
+        operatorChanged: PropTypes.func.isRequired,
+        startActivity: PropTypes.func.isRequired,
+        startActivityDoneFunc: PropTypes.func.isRequired,
+        error: PropTypes.func.isRequired,
+        userMessage: PropTypes.func.isRequired,
+        resetUserMessage: PropTypes.func.isRequired,
         dotsMachine:PropTypes.shape({
             dots: PropTypes.arrayOf(React.PropTypes.shape({
                 x: PropTypes.number.isRequired,
@@ -213,7 +226,6 @@ class DotsMachine extends Component {
                     displayUserMessage={this.props.userMessage}
                     userMessage={this.props.dotsMachine.machineState.userMessage}
                 />
-
             </div>
         );
     }

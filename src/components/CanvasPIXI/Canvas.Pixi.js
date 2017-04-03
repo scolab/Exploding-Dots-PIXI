@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {randomFromTo} from '../../utils/MathUtils'
 import {makeBothArrayTheSameLength} from '../../utils/ArrayUtils';
-import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT} from '../../Constants'
+import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR} from '../../Constants'
 import {SpritePool} from '../../utils/SpritePool';
 import {PowerZoneManager} from './PowerZoneManager';
 
@@ -90,7 +90,7 @@ class CanvasPIXI extends Component {
             this.props.addMultipleDots,
             this.props.removeMultipleDots,
             this.props.rezoneDot,
-            this.props.displayUserMessage
+            this.props.displayUserMessage,
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
@@ -267,11 +267,11 @@ class CanvasPIXI extends Component {
                         for (let i = 0; i < dotsPerZoneA.length; ++i) {
                             let j = 0;
                             for (j = 0; j < Number(dotsPerZoneA[i]); ++j) {
-                                dotsPos.push(this.getDot(i, true));
+                                dotsPos.push(this.getDot(i, true, SPRITE_COLOR.RED));
                             }
 
                             for (j = 0; j < Number(dotsPerZoneB[i]); ++j) {
-                                dotsPos.push(this.getDot(i, true, 'two'));
+                                dotsPos.push(this.getDot(i, true, SPRITE_COLOR.BLUE));
                             }
                         }
                         let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
@@ -304,7 +304,7 @@ class CanvasPIXI extends Component {
                                     dotsPos.push(this.getDot(i, dotsPerZoneA[i].indexOf('-') === -1));
                                 }
                                 for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); ++j) {
-                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1));
+                                    dotsPos.push(this.getDot(i, dotsPerZoneB[i].indexOf('-') !== -1, SPRITE_COLOR.BLUE));
                                 }
                             }
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
@@ -347,8 +347,8 @@ class CanvasPIXI extends Component {
         }
     }
 
-    getDot(zone, isPositive, color = 'one'){
-        //console.log('getDot', zone, isPositive);
+    getDot(zone, isPositive, color = SPRITE_COLOR.RED){
+        //console.log('getDot', zone, isPositive, color);
         let dot = {};
         dot.x = randomFromTo(POSITION_INFO.DOT_RAYON, BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON);
         if(this.state.negativePresent){

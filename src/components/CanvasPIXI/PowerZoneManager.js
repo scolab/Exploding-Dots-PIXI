@@ -2,12 +2,13 @@ import {PowerZone} from './Canvas.PIXI.PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
 import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
-import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO} from '../../Constants'
+import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
 import {Point} from 'pixi.js';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
-import dragJSON from './dot_drag.json';
+import redDragJSON from './dot_drag_red.json';
+import blueDragJSON from './dot_drag_blue.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
@@ -37,6 +38,8 @@ export class PowerZoneManager extends PIXI.Container{
         this.pendingAction = [];
         this.explodeEmitter = [];
         this.implodeEmitter = [];
+        this.dragParticleEmitterRed = null;
+        this.dragParticleEmitterBlue = null;
         window.addEventListener('keyup', this.traceValue.bind(this));
     }
 
@@ -71,7 +74,8 @@ export class PowerZoneManager extends PIXI.Container{
             powerZone.setValueTextAlpha(this.placeValueOn ? 1 : 0);
         }
         this.setZoneTextAndAlphaStatus();
-        this.dragParticleEmitter = new ParticleEmitter(this.movingDotsContainer, this.textures["red_dot.png"], dragJSON);
+        this.dragParticleEmitterRed = new ParticleEmitter(this.movingDotsContainer, this.textures["red_dot.png"], redDragJSON);
+        this.dragParticleEmitterBlue = new ParticleEmitter(this.movingDotsContainer, this.textures["blue_dot.png"], blueDragJSON);
         this.addChild(this.movingDotsContainer);
         if(this.operator_mode === OPERATOR_MODE.DIVIDE){
             this.dividerZoneManager = new DividerZoneManager();
@@ -171,25 +175,36 @@ export class PowerZoneManager extends PIXI.Container{
                             dotsToMove.forEach(dot => {
                                 let newPosition = dot.sprite.parent.toGlobal(dot.sprite.position);
                                 newPosition = this.movingDotsContainer.toLocal(newPosition);
-                                this.movingDotsContainer.addChild(dot.sprite);
-                                dot.sprite.position.x = newPosition.x;
-                                dot.sprite.position.y = newPosition.y;
+                                let movingSprite = this.spritePool.getOne(dot.color, dot.isPositive);
+                                movingSprite.anchor.set(0.5);
+                                movingSprite.position.x = newPosition.x;
+                                movingSprite.position.y = newPosition.y;
+                                this.movingDotsContainer.addChild(movingSprite);
+                                dot.sprite.alpha = 0;
+                                let finalPosition;
                                 if(success) {
-                                    let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
-                                    finalPosition = this.movingDotsContainer.toLocal(finalPosition);
-                                    TweenMax.to(dot.sprite.scale, 0.25, {x: 1.5, y: 1.5, yoyo: true, repeat: 3, ease:Linear.easeNone})
-                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 15, ease:Quint.easeOut, delay: 1})
+                                    finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
                                 }else if(antiSuccess){
-                                    let finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].negativeDivideCounter.position);
-                                    finalPosition = this.movingDotsContainer.toLocal(finalPosition);
-                                    TweenMax.to(dot.sprite, 0.5, {x: finalPosition.x + 15, y: finalPosition.y + 25, ease:Quint.easeOut})
+                                    finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].negativeDivideCounter.position);
                                 }
+                                finalPosition = this.movingDotsContainer.toLocal(finalPosition);
+                                TweenMax.to(movingSprite.scale, 0.25, {
+                                    x: 1.5,
+                                    y: 1.5,
+                                    yoyo: true,
+                                    repeat: 3,
+                                    ease:Linear.easeNone
+                                });
+                                TweenMax.to(movingSprite, 0.5, {
+                                    x: finalPosition.x + 15,
+                                    y: finalPosition.y + (success ? 15 : 25),
+                                    ease:Quint.easeOut,
+                                    delay: 1,
+                                    onComplete:this.removeDotsAfterTween.bind(this),
+                                    onCompleteParams: [movingSprite]
+                                })
                             });
-                            if(success) {
-                                TweenMax.delayedCall(1.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, true]);
-                            }else{
-                                TweenMax.delayedCall(0.5, this.removeDotsAfterTween.bind(this), [dotsRemovedByZone, moveToZone, false]);
-                            }
+                            TweenMax.delayedCall(1.5, this.processDivisionAfterTween.bind(this), [dotsRemovedByZone, moveToZone, success]);
                         }
                     }
                 }
@@ -197,18 +212,22 @@ export class PowerZoneManager extends PIXI.Container{
         }
     }
 
-    removeDotsAfterTween(dotsRemovedByZone, movedToZone, positive) {
-        this.allZones[movedToZone].addDivisionValue(positive);
+    removeDotsAfterTween(sprite) {
+        sprite.destroy();
+    }
+
+    processDivisionAfterTween(dotsRemovedByZone, moveToZone, isPositive){
         for (let i = 0; i < dotsRemovedByZone.length; i++) {
             if (dotsRemovedByZone[i].length > 0) {
                 this.removeMultipleDots(i, dotsRemovedByZone[i], false);
             }
         }
+        this.allZones[moveToZone].addDivisionValue(isPositive);
     }
 
-    createDot(powerZone, position, isPositive){
+    createDot(powerZone, position, isPositive, color){
         if(this.isInteractive) {
-            this.addDot(powerZone, position, isPositive);
+            this.addDot(powerZone, position, isPositive, color);
         }
     }
 
@@ -261,7 +280,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     onDragStart(e, canvas){
-        console.log('onDragStart', this.dot.id, this.world.isInteractive);
+        //console.log('onDragStart', this.dot.id, this.world.isInteractive);
         if(this.world.isInteractive) {
             let oldParent = this.parent;
             this.origin = new Point(this.x, this.y);
@@ -275,7 +294,11 @@ export class PowerZoneManager extends PIXI.Container{
             this.originInMovingContainer.y += this.origin.y - originDiff.y;
             this.position.x = newPosition.x;
             this.position.y = newPosition.y;
-            this.particleEmitter = this.world.dragParticleEmitter;
+            if(this.dot.color === SPRITE_COLOR.RED) {
+                this.particleEmitter = this.world.dragParticleEmitterRed;
+            }else{
+                this.particleEmitter = this.world.dragParticleEmitterBlue;
+            }
             this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
             this.particleEmitter.start();
         }
@@ -375,7 +398,7 @@ export class PowerZoneManager extends PIXI.Container{
                         implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
                         implosionEmitter.start();
                         TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
-                        this.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, false);
+                        this.addMultipleDots(droppedOnPowerZoneIndex, dotsPos, dotSprite.dot.isPositive, dotSprite.dot.color, false);
                     }
                 } else {
                     if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
@@ -627,7 +650,7 @@ export class PowerZoneManager extends PIXI.Container{
     removeTweenDone(dotSprite){
         // TODO check this, should it be moved to the PowerZone?
         dotSprite.parent.removeChild(dotSprite);
-        this.spritePool.dispose(dotSprite);
+        this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
     }
 
     doBaseChange(base, placeValueOn){
@@ -654,23 +677,8 @@ export class PowerZoneManager extends PIXI.Container{
 
     magicWand(){
         let base = this.base[1];
-        for(let i = 0; i < this.allZones.length; i++) {
-            var dotsRemoved = this.allZones[i].getOvercrowding(base);
-            if(dotsRemoved.length > 0){
-                this.removeMultipleDots(i, dotsRemoved, false);
-                if(this.negativePresent){
-                    if(dotsRemoved[0].isPositive){
-                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], true);
-                    }else{
-                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], false);
-                    }
-                }else {
-                    this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true);
-                }
-                break;
-            }
-        }
-        if(dotsRemoved.length == 0 && this.negativePresent){
+        let dotsRemoved = [];
+        if(this.negativePresent){
             // check positive / negative
             for(let i = 0; i < this.allZones.length; i++) {
                 let positiveDots = this.allZones[i].positiveDots;
@@ -686,8 +694,25 @@ export class PowerZoneManager extends PIXI.Container{
                 }
             }
         }
+        if(dotsRemoved.length === 0) {
+            for (let i = 0; i < this.allZones.length; i++) {
+                dotsRemoved = this.allZones[i].getOvercrowding(base);
+                if (dotsRemoved.length > 0) {
+                    this.removeMultipleDots(i, dotsRemoved, false);
+                    if (this.negativePresent) {
+                        if (dotsRemoved[0].isPositive) {
+                            this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], true);
+                        } else {
+                            this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], false);
+                        }
+                    } else {
+                        this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true);
+                    }
+                    break;
+                }
+            }
+        }
     }
-
 
     removeDotsFromStateChange(positivePowerZoneDots, negativePowerZoneDots){
         //console.log('removeDotsFromStateChange');
