@@ -154,3 +154,4 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={true}
         />
     ));
+

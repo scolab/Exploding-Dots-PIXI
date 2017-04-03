@@ -669,7 +669,7 @@ export class PowerZone extends PIXI.Container{
         if (this.positiveDividerText != null && this.negativeDividerText != null) {
             if (positive) {
                 this.positiveDividerText.text = Number(this.positiveDividerText.text) + 1;
-                if(this.base[1] != BASE.BASE_X && Number(this.positiveDividerText.text) >= 1){//this.base[1]){
+                if(this.base[1] != BASE.BASE_X && Number(this.positiveDividerText.text) >= this.base[1]){
                     this.positiveDividerText.style.fill = 0xFF0000;
                     TweenMax.to(this.positiveDividerText.scale, 0.25, {
                         x: 1.5,
@@ -683,7 +683,7 @@ export class PowerZone extends PIXI.Container{
                 }
             } else {
                 this.negativeDividerText.text = Number(this.negativeDividerText.text) + 1;
-                if(this.base[1] != BASE.BASE_X && Number(this.negativeDividerText.text) >= 1){//this.base[1]){
+                if(this.base[1] != BASE.BASE_X && Number(this.negativeDividerText.text) >= this.base[1]){
                     this.negativeDividerText.style.fill = 0xFF0000;
                     TweenMax.to(this.negativeDividerText.scale, 0.25, {
                         x: 1.5,
