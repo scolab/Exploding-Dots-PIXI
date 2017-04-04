@@ -25,10 +25,8 @@ function setDotsCount(state){
             if(col !== 0) {
                 if(zoneValue !== 0) {
                     if(col !== 1){
-                        let xx = zoneValue + 'x' + '<sup>' + col.toString() + '</sup> +';
-                        console.log(xx);
-                        xx = toSuperScript(xx);
-                        value.push(xx);
+                        let finalValue = zoneValue + 'x' + '<sup>' + col.toString() + '</sup> +';
+                        value.push(finalValue);
                     }else{
                         value.push(zoneValue + 'x' + '+');
                     }
@@ -66,6 +64,27 @@ function setDotsCount(state){
         }
         return toReturn;
     }
+}
+
+function putExponent(value) {
+    console.log('putExponent', value);
+    let split = value.split('');
+    let toReturn = '';
+    var reg = new RegExp('^[0-9]$');
+    for(let i = 0; i < split.length; i++){
+        if(split[i] === 'X'){
+            split[i] = 'x';
+        }
+        if(split[i] === 'x'){
+            if(split.length > i+1){
+                if (reg.test(split[i+1])) {
+                    split[i+1] = '<sup>' + split[i+1] + '</sup>';
+                }
+            }
+        }
+        toReturn += split[i];
+    }
+    return toReturn;
 }
 
 function setInitialState() {
@@ -277,7 +296,15 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};
             if (action.operandPos == OPERAND_POS.LEFT) {
-                stateCopy.machineState.operandA = action.value;
+                if(stateCopy.machineState.base[1] !== BASE.BASE_X) {
+                    stateCopy.machineState.operandA = action.value;
+                }else {
+                    if(stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY){
+                        stateCopy.machineState.operandA = setDotsCount(stateCopy);
+                    }else if(stateCopy.machineState.usage_mode === USAGE_MODE.OPERATION){
+                        stateCopy.machineState.operandA = putExponent(action.value);
+                    }
+                }
             } else if (action.operandPos == OPERAND_POS.RIGHT) {
                 stateCopy.machineState.operandB = action.value;
             }
