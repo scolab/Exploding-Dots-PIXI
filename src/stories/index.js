@@ -147,15 +147,15 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={false}
         />
     ))
-    .add('Algebra Insighto Operation', () => (
+    .add('Algebra addition Operation', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.DISPLAY}
+            operator_mode={OPERATOR_MODE.ADDITION}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
             placeValueSwitchVisible={true}
             placeValueOn={true}
-            magicWandVisible={false}
+            magicWandVisible={true}
         />
     ))
     ;

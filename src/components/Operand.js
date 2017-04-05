@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE} from '../Constants';
+import {superscriptToNormal} from '../utils/StringUtils';
 import img from './images/input1x.png';
-import renderHTML from 'react-render-html';
 
 export default class Operand extends Component {
 
@@ -20,7 +20,9 @@ export default class Operand extends Component {
     }
 
     onChange(e) {
+        //console.log('onChange');
         e.preventDefault();
+        let stringToTest = e.target.value;
         if(this.props.usage_mode === USAGE_MODE.OPERATION) {
             if(this.props.operator_mode === OPERATOR_MODE.MULTIPLY && this.props.pos === OPERAND_POS.RIGHT){
                 // no | in right operand in multiply
@@ -36,15 +38,27 @@ export default class Operand extends Component {
                  - A maximum of 5 of those pattern
                 */
                 var reg = new RegExp(/^$|^-$|^(-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
-
-            }else{
+            }else if(this.props.base[1] !== BASE.BASE_X) {
                 var reg = new RegExp('^$|^[|0-9]+$');
+            }else {
+                /*
+                Base X
+                 Allow the string to be:
+                 - empty
+                 - a single (-) or (+) sign. Needed to start writing a first negative number in the left operand or a positive in the right operand
+                 - Digits, between 1 and 5
+                 - minus (-) or (+) sign followed by (x) or digits
+                 - One digit following a (x)
+                 - A maximum of 5 of those pattern
+                 */
+                var reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})([-\+](\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})){0,4}[-\+]?$/);
+                stringToTest = superscriptToNormal(stringToTest);
             }
         }else{
             var reg = new RegExp('^$|^[0-9]+$');
         }
-        if (reg.test(e.target.value)) {
-            this.props.onChange(this.props.pos, e.target.value);
+        if (reg.test(stringToTest)) {
+            this.props.onChange(this.props.pos, stringToTest);
         }
     }
 
@@ -75,68 +89,33 @@ export default class Operand extends Component {
 
     render() {
         if (this.props.pos === OPERAND_POS.LEFT) {
-            if(this.props.base[1] !== BASE.BASE_X) {
-                return (
-                    <div className="operationItem">
-                        <form onSubmit={this.onSubmit.bind(this)}>
-                            <input
-                                style={{
-                                    backgroundImage: `url(${img})`,
-                                    backgroundRepeat: `no-repeat`,
-                                    backgroundColor: `Transparent`,
-                                    border: `none`,
-                                    overflow: `hidden`,
-                                    width: 252,
-                                    height: 45,
-                                    fontFamily: 'museo-slab',
-                                    fontSize: 24,
-                                    textAlign: 'center'
-                                }}
+            return (
+                <div className="operationItem">
+                    <form onSubmit={this.onSubmit.bind(this)}>
+                        <input
+                            style={{
+                                backgroundImage: `url(${img})`,
+                                backgroundRepeat: `no-repeat`,
+                                backgroundColor: `Transparent`,
+                                border: `none`,
+                                overflow: `hidden`,
+                                width: 252,
+                                height: 45,
+                                fontFamily: 'Noto Sans',
+                                fontWeight:'bold',
+                                fontSize: 24,
+                                textAlign: 'center'
+                            }}
 
-                                type="text"
-                                onChange={this.onChange.bind(this)}
-                                value={this.props.value}
-                                ref={(inputText) => {
-                                    this.inputText = inputText;
-                                }}/>
-                        </form>
-                    </div>
-                );
-            }else{
-                let value = this.props.value;
-                if(value === ''){
-                    value = ' ';
-                }
-                return (
-                    <div className="operationItem">
-                        <form onSubmit={this.onSubmit.bind(this)}>
-                            <input
-                                style={{
-                                    backgroundImage: `url(${img})`,
-                                    backgroundRepeat: `no-repeat`,
-                                    backgroundColor: `Transparent`,
-                                    border: `none`,
-                                    overflow: `hidden`,
-                                    width: 252,
-                                    height: 45,
-                                    fontFamily: 'museo-slab',
-                                    fontSize: 24,
-                                    textAlign: 'center'
-                                }}
-
-                                type="text"
-                                onChange={this.onChange.bind(this)}
-                                value={renderHTML(value)}
-                                ref={(inputText) => {
-                                    this.inputText = inputText;
-                                }}/>
-                        </form>
-                        <div>
-                            {renderHTML(value)}
-                        </div>
-                    </div>
-                );
-            }
+                            type="text"
+                            onChange={this.onChange.bind(this)}
+                            value={this.props.value}
+                            ref={(inputText) => {
+                                this.inputText = inputText;
+                            }}/>
+                    </form>
+                </div>
+            );
         } else if (this.props.pos === OPERAND_POS.RIGHT) {
             let visible = this.props.operator_mode != OPERATOR_MODE.DISPLAY;
             if (visible) {
@@ -152,7 +131,8 @@ export default class Operand extends Component {
                                     overflow: `hidden`,
                                     width: 252,
                                     height: 45,
-                                    fontFamily: 'museo-slab',
+                                    fontFamily: 'Noto Sans',
+                                    fontWeight:'bold',
                                     fontSize: 24,
                                     textAlign: 'center'
                                 }}
