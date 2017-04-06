@@ -28,16 +28,31 @@ export default class Operand extends Component {
                 // no | in right operand in multiply
                 var reg = new RegExp('^$|^[0-9]+$');
             }else if(this.props.operator_mode === OPERATOR_MODE.SUBTRACT || this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
-                /*
-                Allow the string to be:
-                 - empty
-                 - a single minus (-) sign. Needed to start writing a first negative number
-                 - Digits, between 1 and 5
-                 - minus (-) sign followed by digits
-                 - Pipe (|) followed by a minus sign or digits
-                 - A maximum of 5 of those pattern
-                */
-                var reg = new RegExp(/^$|^-$|^(-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
+                if(this.props.base[1] !== BASE.BASE_X) {
+                    /*
+                     Allow the string to be:
+                     - empty
+                     - a single minus (-) sign. Needed to start writing a first negative number
+                     - Digits, between 1 and 5
+                     - minus (-) sign followed by digits
+                     - Pipe (|) followed by a minus sign or digits
+                     - A maximum of 5 of those pattern
+                     */
+                    var reg = new RegExp(/^$|^-$|^(-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
+                }else{
+                    /*
+                     Base X
+                     Allow the string to be:
+                     - empty
+                     - a single (-) or (+) sign. Needed to start writing a first negative number in the left operand or a positive in the right operand
+                     - Digits, between 1 and 5
+                     - minus (-) or (+) sign followed by (x) or digits
+                     - One digit following a (x)
+                     - A maximum of 5 of those pattern
+                     */
+                    var reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})([-\+](\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})){0,4}[-\+]?$/);
+                    stringToTest = superscriptToNormal(stringToTest);
+                }
             }else if(this.props.base[1] !== BASE.BASE_X) {
                 var reg = new RegExp('^$|^[|0-9]+$');
             }else {

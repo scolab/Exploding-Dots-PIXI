@@ -1,5 +1,5 @@
-const chars = '+−=()0123456789AaÆᴂɐɑɒBbcɕDdðEeƎəɛɜɜfGgɡɣhHɦIiɪɨᵻɩjJʝɟKklLʟᶅɭMmɱNnɴɲɳŋOoɔᴖᴗɵȢPpɸrRɹɻʁsʂʃTtƫUuᴜᴝʉɥɯɰʊvVʋʌwWxyzʐʑʒꝯᴥβγδθφχнნʕⵡ';
-const sup   = '⁺⁻⁼⁽⁾⁰¹²³⁴⁵⁶⁷⁸⁹ᴬᵃᴭᵆᵄᵅᶛᴮᵇᶜᶝᴰᵈᶞᴱᵉᴲᵊᵋᶟᵌᶠᴳᵍᶢˠʰᴴʱᴵⁱᶦᶤᶧᶥʲᴶᶨᶡᴷᵏˡᴸᶫᶪᶩᴹᵐᶬᴺⁿᶰᶮᶯᵑᴼᵒᵓᵔᵕᶱᴽᴾᵖᶲʳᴿʴʵʶˢᶳᶴᵀᵗᶵᵁᵘᶸᵙᶶᶣᵚᶭᶷᵛⱽᶹᶺʷᵂˣʸᶻᶼᶽᶾꝰᵜᵝᵞᵟᶿᵠᵡᵸჼˤⵯ';
+const chars = '0123456789';
+const sup   = '⁰¹²³⁴⁵⁶⁷⁸⁹';
 
 export const processSuperscript = (text) => {
     let str = '';
@@ -29,6 +29,10 @@ export const addSuperscriptWhereNeeded = (text) => {
 export const setCharAt = (str,index,chr) => {
     if(index > str.length-1) return str;
     return str.substr(0,index) + chr + str.substr(index+1);
+};
+
+export const replaceAt = (text, index, replacement) => {
+    return text.substr(0, index) + replacement + text.substr(index - 1 + replacement.length);
 };
 
 

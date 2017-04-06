@@ -158,5 +158,38 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={true}
         />
     ))
+    .add('Algebra subtract Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra multiply Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.MULTIPLY}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra divide Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DIVIDE}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
     ;
 
