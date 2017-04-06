@@ -1,32 +1,88 @@
 import {makeUID} from '../utils/MathUtils'
 import {ACTIONS} from '../actions/StoreConstants'
-import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE} from '../Constants'
+import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE} from '../Constants'
 import _array from 'lodash/array';
 import { EventEmitter } from 'events';
-//import {ObjPool} from '../utils/ObjPool';
+import {processSuperscript, addSuperscriptWhereNeeded} from '../utils/StringUtils';
 
 let initialMachineState = {};
 
 function setDotsCount(state){
-    let dotsCount = 0;
+    //console.log('setDotsCount');
     let col = 0;
+    if(state.machineState.base[1] !== BASE.BASE_X) {
+        let dotsCount = 0;
+        for (let zone of state.positivePowerZoneDots) {
+            dotsCount += Object.keys(zone).length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
+            col++;
+        }
+        return dotsCount.toString();
+    }else {
+        let positiveValue = [];
+        let negativeValue = [];
+        let toReturn = '';
 
-    for (let zone of state.positivePowerZoneDots) {
-        //console.log(Object.keys(zone).length);
-        dotsCount += Object.keys(zone).length * Math.pow(state.machineState.base[1] / state.machineState.base[0], col);
-        col++;
+        for (let zone of state.positivePowerZoneDots) {
+            let zoneValue = Object.keys(zone).length;
+            if(col !== 0) {
+                if(zoneValue !== 0) {
+                    if(col !== 1){
+                        zoneValue = zoneValue + 'x' + processSuperscript(col.toString()) + '+';
+                        positiveValue.push(zoneValue);
+                    }else{
+                        positiveValue.push(zoneValue + 'x' + '+');
+                    }
+
+                }
+            }else if(zoneValue !== 0){
+                positiveValue.push(Object.keys(zone).length);
+            }
+            col++;
+        }
+
+        col = 0;
+
+        for (let zone of state.negativePowerZoneDots) {
+            let zoneValue = Object.keys(zone).length;
+            if(col !== 0) {
+                if(zoneValue !== 0) {
+                    if(col !== 1){
+                        zoneValue = zoneValue + 'x' + processSuperscript(col.toString()) + '-';
+                        negativeValue.push(zoneValue);
+                    }else{
+                        negativeValue.push(zoneValue + 'x' + '-');
+                    }
+
+                }
+            }else if(zoneValue !== 0){
+                negativeValue.push(Object.keys(zone).length);
+            }
+            col++;
+        }
+
+        // add all positive value in order to the string
+        for(let i = positiveValue.length; i--; i> 0){
+            toReturn += positiveValue[i];
+        }
+        // remove trailing + sign
+        if(toReturn.charAt(toReturn.length - 1) === '+'){
+            toReturn = toReturn.slice(0, -1);
+        }
+
+        // if there is negative value, add - sign
+        if(negativeValue.length > 0){
+            toReturn += '-';
+        }
+        // add all negative value in order to the string
+        for(let i = negativeValue.length; i--; i> 0){
+            toReturn += negativeValue[i];
+        }
+        // remove trailing - sign
+        if(toReturn.charAt(toReturn.length - 1) === '-'){
+            toReturn = toReturn.slice(0, -1);
+        }
+        return toReturn;
     }
-    return dotsCount.toString();
-
-    /*// negative
-     dotsCount = 0;
-     col = 0;
-
-     for(let dot of this.state.negativePowerZoneDots){
-     dotsCount += dot.length * Math.pow(this.state.base,col);
-     col++;
-     }
-     this.state.negativeDotsCount = dotsCount;*/
 }
 
 function setInitialState() {
@@ -114,13 +170,6 @@ const dotsReducer = (state = null, action) => {
             dot.id = makeUID();
             dot.isPositive = action.isPositive;
             dot.color = action.color;
-            /*let dot = {
-                x: action.position[0],
-                y: action.position[1],
-                powerZone: action.zoneId,
-                id: makeUID(),
-                isPositive: action.isPositive
-            };*/
             if (dot.isPositive) {
                 stateCopy.positivePowerZoneDots[dot.powerZone][dot.id] = dot;//.push(dot);
             } else {
@@ -238,9 +287,17 @@ const dotsReducer = (state = null, action) => {
         case ACTIONS.OPERAND_CHANGED:
             stateCopy = {...state};
             if (action.operandPos == OPERAND_POS.LEFT) {
-                stateCopy.machineState.operandA = action.value;
+                if(stateCopy.machineState.base[1] !== BASE.BASE_X) {
+                    stateCopy.machineState.operandA = action.value;
+                }else{
+                    stateCopy.machineState.operandA = addSuperscriptWhereNeeded(action.value);
+                }
             } else if (action.operandPos == OPERAND_POS.RIGHT) {
-                stateCopy.machineState.operandB = action.value;
+                if(stateCopy.machineState.base[1] !== BASE.BASE_X) {
+                    stateCopy.machineState.operandB = action.value;
+                }else{
+                    stateCopy.machineState.operandB = addSuperscriptWhereNeeded(action.value);
+                }
             }
             return stateCopy;
         case ACTIONS.OPERATOR_CHANGED:

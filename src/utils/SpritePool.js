@@ -81,7 +81,7 @@ export class SpritePool {
     }
 
     getOne(color, positive){
-        console.log('getOne', color, positive);
+        //console.log('getOne', color, positive);
         let sprite;
         if(color == SPRITE_COLOR.RED){
             if(positive){
