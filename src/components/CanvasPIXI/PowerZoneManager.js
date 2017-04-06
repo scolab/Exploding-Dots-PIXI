@@ -103,14 +103,13 @@ export class PowerZoneManager extends PIXI.Container{
         });
 
         if(droppedOnPowerZoneIndex != -1){
-            //console.log(allZonesValue.length - 1, droppedOnPowerZoneIndex);
-            if(allZonesValue.length - 1 > droppedOnPowerZoneIndex){
-                //console.log('division impossible 1');
+            //console.log(droppedOnPowerZoneIndex, allZonesValue.length, this.totalZoneCount);
+            if(this.totalZoneCount - droppedOnPowerZoneIndex >= allZonesValue.length == false){
                 if(isDragEnd === false) {
                     droppedOnPowerZone.parent.setBackgroundColor(PowerZone.BG_RED);
                     for(let i = 0; i < allZonesValue.length; i++) {
-                        if(this.allZones[droppedOnPowerZoneIndex - i] !== undefined) {
-                            this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
+                        if(this.allZones[droppedOnPowerZoneIndex + i] !== undefined) {
+                            this.allZones[droppedOnPowerZoneIndex + i].setBackgroundColor(PowerZone.BG_RED);
                         }
                     }
                 }else{
@@ -119,15 +118,14 @@ export class PowerZoneManager extends PIXI.Container{
             }else{
                 let success = false;
                 let antiSuccess = false;
-                allZonesValue = allZonesValue.reverse();
                 for(let i = 0; i < allZonesValue.length; i++){
-                    if(allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount &&
-                        allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount){
+                    if(allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex + i].positiveDotCount &&
+                        allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex + i].negativeDotCount){
                         success = true;
                     }else {
                         success = false;
-                        if(allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex - i].positiveDotCount &&
-                            allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex - i].negativeDotCount){
+                        if(allZonesValue[i][1] <= this.allZones[droppedOnPowerZoneIndex + i].positiveDotCount &&
+                            allZonesValue[i][0] <= this.allZones[droppedOnPowerZoneIndex + i].negativeDotCount){
                             antiSuccess = true;
                         }else{
                             antiSuccess = false;
@@ -140,10 +138,10 @@ export class PowerZoneManager extends PIXI.Container{
 
                 for(let i = 0; i < allZonesValue.length; i++) {
                     if ((success || antiSuccess) && isDragEnd === false) {
-                        this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_GREEN);
+                        this.allZones[droppedOnPowerZoneIndex + i].setBackgroundColor(PowerZone.BG_GREEN);
                     } else {
-                        if(this.allZones[droppedOnPowerZoneIndex - i] !== undefined) {
-                            this.allZones[droppedOnPowerZoneIndex - i].setBackgroundColor(PowerZone.BG_RED);
+                        if(this.allZones[droppedOnPowerZoneIndex + i] !== undefined) {
+                            this.allZones[droppedOnPowerZoneIndex + i].setBackgroundColor(PowerZone.BG_RED);
                         }
                     }
                 }
@@ -158,18 +156,18 @@ export class PowerZoneManager extends PIXI.Container{
                             dotsRemovedByZone.push([]);
                         }
                         let dotsToMove = [];
-                        let moveToZone = droppedOnPowerZoneIndex - allZonesValue.length + 1;
+                        let moveToZone = droppedOnPowerZoneIndex;// - allZonesValue.length + 1;
                         for(let i = 0; i < allZonesValue.length; i++) {
                             let thisZoneDots = [];
                             if(success) {
-                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][0], true));
-                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][1], false));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex + i].getDotsForDivision(allZonesValue[i][0], true));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex + i].getDotsForDivision(allZonesValue[i][1], false));
                             }else if(antiSuccess){
-                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][0], false));
-                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex - i].getDotsForDivision(allZonesValue[i][1], true));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex + i].getDotsForDivision(allZonesValue[i][0], false));
+                                thisZoneDots = thisZoneDots.concat(this.allZones[droppedOnPowerZoneIndex + i].getDotsForDivision(allZonesValue[i][1], true));
                             }
                             dotsToMove = dotsToMove.concat(thisZoneDots);
-                            dotsRemovedByZone[droppedOnPowerZoneIndex - i] = dotsRemovedByZone[droppedOnPowerZoneIndex - i].concat(thisZoneDots);
+                            dotsRemovedByZone[droppedOnPowerZoneIndex + i] = dotsRemovedByZone[droppedOnPowerZoneIndex + i].concat(thisZoneDots);
                         }
                         if(dotsToMove.length > 0) {
                             dotsToMove.forEach(dot => {
@@ -784,10 +782,13 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     reset(){
-        TweenMax.killAll();
+        TweenMax.killAll(true);
         this.allZones.forEach(zone => {
            zone.reset();
         });
+        if(this.dividerZoneManager){
+            this.dividerZoneManager.reset();
+        }
     }
 
 }
