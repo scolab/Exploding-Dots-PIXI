@@ -136,7 +136,7 @@ export class DividerZoneManager extends PIXI.Container{
     }
 
     backIntoPlaceDone(){
-        TweenMax.delayedCall(1, () => {this.tweening = false});
+        TweenMax.delayedCall(0.2, () => {this.tweening = false});
     }
 
     reset(){

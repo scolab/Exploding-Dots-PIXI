@@ -424,6 +424,7 @@ class CanvasPIXI extends Component {
                         this.powerZoneManager.showDivider();
                         break;
                 }
+                this.powerZoneManager.isInteractive = true;
             }
         }
     }

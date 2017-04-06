@@ -11,6 +11,7 @@ export class PowerZone extends PIXI.Container{
     static BG_GREEN = 'BG_GREEN';
     static BG_RED = 'BG_RED';
     static CREATE_DOT = 'CREATE_DOT';
+    static DIVIDER_OVERLOAD = 'DIVIDER_OVERLOAD';
 
     positiveDots = {};
     negativeDots = {};
@@ -177,7 +178,7 @@ export class PowerZone extends PIXI.Container{
             this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
-            if (usage_mode === USAGE_MODE.FREEPLAY) {
+            if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
                 this.positiveDotsContainer.buttonMode = true;
                 this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -193,7 +194,7 @@ export class PowerZone extends PIXI.Container{
             this.negativeProximityManager = new ProximityManager(100, this.negativeDotsContainer.hitArea);
             this.negativeDotsContainer.powerZone = totalZoneCount - position - 1;
             this.negativeDotsContainer.isPositive = false;
-            if (usage_mode === USAGE_MODE.FREEPLAY) {
+            if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
                 this.negativeDotsContainer.buttonMode = true;
                 this.negativeDotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -208,7 +209,7 @@ export class PowerZone extends PIXI.Container{
             this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
-            if (usage_mode === USAGE_MODE.FREEPLAY) {
+            if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
                 this.positiveDotsContainer.buttonMode = true;
                 //this.positiveDotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
                 this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
@@ -238,7 +239,7 @@ export class PowerZone extends PIXI.Container{
         }else{
             clickModifiedPos.push(clickPos.y);
         }
-        this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target.powerZone, clickModifiedPos, e.target.isPositive, SPRITE_COLOR.RED);
+        this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target, clickModifiedPos, SPRITE_COLOR.RED);
     }
 
     checkTextAndAlpha(doCheck){
@@ -695,33 +696,65 @@ export class PowerZone extends PIXI.Container{
         if (this.positiveDividerText != null && this.negativeDividerText != null) {
             if (positive) {
                 this.positiveDividerText.text = Number(this.positiveDividerText.text) + 1;
-                if(this.base[1] != BASE.BASE_X && Number(this.positiveDividerText.text) >= this.base[1]){
-                    this.positiveDividerText.style.fill = 0xFF0000;
-                    TweenMax.to(this.positiveDividerText.scale, 0.25, {
-                        x: 1.5,
-                        y: 1.5,
-                        yoyo: true,
-                        repeat: 3,
-                        ease:Linear.easeNone
-                    });
-                }else{
-                    this.positiveDividerText.style.fill = 0x000000;
+                if(this.zonePosition != this.totalZoneCount - 1) {
+                    if (this.base[1] != BASE.BASE_X && Number(this.positiveDividerText.text) >= this.base[1]) {
+                        this.positiveDividerText.style.fill = 0xFF0000;
+                        TweenMax.to(this.positiveDividerText.scale, 0.25, {
+                            x: 1.5,
+                            y: 1.5,
+                            yoyo: true,
+                            repeat: 3,
+                            ease: Linear.easeNone,
+                            onComplete: this.onDividerOverload.bind(this),
+                            onCompleteParams: [true]
+                        });
+                    } else {
+                        this.positiveDividerText.style.fill = 0x565656;
+                    }
                 }
             } else {
                 this.negativeDividerText.text = Number(this.negativeDividerText.text) + 1;
-                if(this.base[1] != BASE.BASE_X && Number(this.negativeDividerText.text) >= this.base[1]){
-                    this.negativeDividerText.style.fill = 0xFF0000;
-                    TweenMax.to(this.negativeDividerText.scale, 0.25, {
-                        x: 1.5,
-                        y: 1.5,
-                        yoyo: true,
-                        repeat: 3,
-                        ease:Linear.easeNone
-                    });
-                }else{
-                    this.negativeDividerText.style.fill = 0x000000;
+                if(this.zonePosition != this.totalZoneCount - 1) {
+                    if (this.base[1] != BASE.BASE_X && Number(this.negativeDividerText.text) >= this.base[1]) {
+                        this.negativeDividerText.style.fill = 0xFF0000;
+                        TweenMax.to(this.negativeDividerText.scale, 0.1, {
+                            x: 1.5,
+                            y: 1.5,
+                            yoyo: true,
+                            repeat: 3,
+                            ease: Linear.easeNone,
+                            onComplete: this.onDividerOverload.bind(this),
+                            onCompleteParams: [false]
+                        });
+                    } else {
+                        this.negativeDividerText.style.fill = 0x565656;
+                    }
                 }
             }
+        }
+    }
+
+    onDividerOverload(isPositive){
+        this.eventEmitter.emit(PowerZone.DIVIDER_OVERLOAD, this.zonePosition, isPositive);
+    }
+
+    onDividerOverloadSolved(isPositive){
+        if(isPositive){
+            this.positiveDividerText.text = '0';
+            this.positiveDividerText.style.fill = 0x565656;
+        }else{
+            this.negativeDividerText.text = '0';
+            this.negativeDividerText.style.fill = 0x565656;
+        }
+    }
+
+    onDividerAutoPopulated(isPositive){
+        if(isPositive){
+            this.positiveDividerText.text = String(Number(this.positiveDividerText.text) + 1);
+            this.positiveDividerText.style.fill = 0x565656;
+        }else{
+            this.negativeDividerText.text = String(Number(this.negativeDividerText.text) + 1);
+            this.negativeDividerText.style.fill = 0x565656;
         }
     }
 
