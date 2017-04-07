@@ -39,7 +39,10 @@ export const POSITION_INFO = {
 export const BOX_INFO = {
     BOX_WIDTH: 160,
     BOX_HEIGHT: 242,
-    HALF_BOX_HEIGHT: 115
+    HALF_BOX_HEIGHT: 115,
+    BOX_Y: 70,
+    LEFT_GUTTER: 66,
+    GUTTER_WIDTH: 23
 };
 
 export const MAX_DOT = {

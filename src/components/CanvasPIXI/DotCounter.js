@@ -18,7 +18,8 @@ export class DotCounter extends PIXI.Container{
         this.addChild(this.bgRight);
 
         this.text = new PIXI.Text(position, {
-            fontFamily: 'museo-slab',
+            fontFamily: 'Noto Sans',
+            fontWeight:'bold',
             fontSize: 22,
             fill: 0x6D6D6D,
             align: 'center',

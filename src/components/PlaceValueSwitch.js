@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import img from './images/burger1x.png';
+import img from './images/place_value_tog1x.png';
 
 export default class PlaceValueSwitch extends Component {
 

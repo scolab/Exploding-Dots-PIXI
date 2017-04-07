@@ -118,6 +118,7 @@ export default class Operand extends Component {
                                 height: 45,
                                 fontFamily: 'Noto Sans',
                                 fontWeight:'bold',
+                                fontWeight:'bold',
                                 fontSize: 24,
                                 textAlign: 'center'
                             }}
@@ -147,6 +148,7 @@ export default class Operand extends Component {
                                     width: 252,
                                     height: 45,
                                     fontFamily: 'Noto Sans',
+                                    fontWeight:'bold',
                                     fontWeight:'bold',
                                     fontSize: 24,
                                     textAlign: 'center'

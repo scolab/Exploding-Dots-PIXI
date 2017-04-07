@@ -23,7 +23,8 @@ export default class BaseSelector extends Component {
                     <div style={{
                                 textAlign:'center',
                                 textVAlign:'center',
-                                fontFamily: 'museo-slab',
+                                fontFamily: 'Noto Sans',
+                                fontWeight:'bold',
                                 fontSize: 20}}>
                     {this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}
                     </div>

@@ -37,7 +37,8 @@ export default class Operator extends Component {
                     <div
                         className="operationItem"
                         style={{
-                            fontFamily: 'museo-slab',
+                            fontFamily: 'Noto Sans',
+                            fontWeight:'bold',
                             fontSize: 24,
                         }}>
                         {text}
@@ -50,14 +51,15 @@ export default class Operator extends Component {
                     return (
                          <div className="operationItem"
                             style={{
-                                fontFamily: 'museo-slab',
-                                    fontSize: 24,
-                                    backgroundImage: `url(${imgBg})`,
-                                    backgroundRepeat: `no-repeat`,
-                                    backgroundColor: `Transparent`,
-                                    border: `none`,
-                                    width: 77,
-                                    height: 45}}>
+                                fontFamily: 'Noto Sans',
+                                fontWeight:'bold',
+                                fontSize: 24,
+                                backgroundImage: `url(${imgBg})`,
+                                backgroundRepeat: `no-repeat`,
+                                backgroundColor: `Transparent`,
+                                border: `none`,
+                                width: 77,
+                                height: 45}}>
                             <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
                         </div>
                     )
@@ -99,7 +101,8 @@ export default class Operator extends Component {
                 return (
                     <div className="operationItem"
                          style={{
-                             fontFamily: 'museo-slab',
+                             fontFamily: 'Noto Sans',
+                             fontWeight:'bold',
                              fontSize: 24,
                              backgroundImage: `url(${imgBg})`,
                              backgroundRepeat: `no-repeat`,
@@ -117,7 +120,8 @@ export default class Operator extends Component {
                     return (
                         <div className="operationItem"
                              style={{
-                                 fontFamily: 'museo-slab',
+                                 fontFamily: 'Noto Sans',
+                                 fontWeight:'bold',
                                  fontSize: 24,
                                  backgroundImage: `url(${imgBg})`,
                                  backgroundRepeat: `no-repeat`,
@@ -146,7 +150,8 @@ export default class Operator extends Component {
                 return (
                     <div className="operationItem"
                          style={{
-                             fontFamily: 'museo-slab',
+                             fontFamily: 'Noto Sans',
+                             fontWeight:'bold',
                              fontSize: 24,
                              backgroundImage: `url(${imgBg})`,
                              backgroundRepeat: `no-repeat`,
