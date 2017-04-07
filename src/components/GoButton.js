@@ -23,7 +23,8 @@ export default class GoButton extends Component {
                         backgroundColor: `Transparent`,
                         border: `none`,
                         overflow: `hidden`,
-                        fontFamily: 'museo-slab',
+                        fontFamily: 'Noto Sans',
+                        fontWeight:'bold',
                         fontSize: 24,
                         textAlign: 'center',
                     }} />
@@ -41,7 +42,8 @@ export default class GoButton extends Component {
                         backgroundColor: `Transparent`,
                         border: `none`,
                         overflow: `hidden`,
-                        fontFamily: 'museo-slab',
+                        fontFamily: 'Noto Sans',
+                        fontWeight:'bold',
                         fontSize: 24,
                         textAlign: 'center'
                     }}

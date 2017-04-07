@@ -153,5 +153,61 @@ storiesOf('Exploding Dots', module)
             placeValueOn={true}
             magicWandVisible={true}
         />
-    ));
+    ))
+    .add('Algebra Insighto Freeplay', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.FREEPLAY}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={false}
+        />
+    ))
+    .add('Algebra addition Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.ADDITION}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra subtract Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra multiply Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.MULTIPLY}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra divide Operation', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DIVIDE}
+            usage_mode={USAGE_MODE.OPERATION}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    ;
 

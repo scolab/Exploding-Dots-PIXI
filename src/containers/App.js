@@ -64,7 +64,8 @@ class ExplodingDots extends Component {
         placeValueOn: true,
         startActivity: false,
         activityStarted: false,
-        cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots',
+        //cdnBaseUrl: isDev ? '' : 'https://scolab-components.s3.amazonaws.com/exploding-dots',
+        cdnBaseUrl: isDev ? '' : 'http://exploding-dots.s3.ca-central-1.amazonaws.com/',
         errorMessage: '',
         userMessage: '',
     };

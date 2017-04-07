@@ -2,6 +2,7 @@ export const BASE = {
     ALL_BASE : [[1,2],[1,3],[1,4],[1,5],[1,10],[1,12],[2,3],[1,'X']],
     MECHA : [[1,2],[1,3],[1,4],[1,5],[1,10],[1,12],[2,3]],
     ARITHMOS: [[1,10]],
+    ALGEBRA: [[1, 'X']],
     BASE_X : 'X'
 };
 
@@ -38,7 +39,10 @@ export const POSITION_INFO = {
 export const BOX_INFO = {
     BOX_WIDTH: 160,
     BOX_HEIGHT: 242,
-    HALF_BOX_HEIGHT: 115
+    HALF_BOX_HEIGHT: 115,
+    BOX_Y: 70,
+    LEFT_GUTTER: 66,
+    GUTTER_WIDTH: 23
 };
 
 export const MAX_DOT = {

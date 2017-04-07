@@ -38,7 +38,8 @@ export class DividerZone extends PIXI.Container{
         }else{
             if(Object.keys(positiveDots).length > 0) {
                 this.positiveText = new PIXI.Text(Object.keys(positiveDots).length.toString(10), {
-                    fontFamily: 'museo-slab',
+                    fontFamily: 'Noto Sans',
+                    fontWeight:'bold',
                     fontSize: 34,
                     fill: 0xBCBCBC,
                     align: 'center'
@@ -50,7 +51,8 @@ export class DividerZone extends PIXI.Container{
             }
             if(Object.keys(negativeDots).length > 0) {
                 this.negativeText = new PIXI.Text(Object.keys(negativeDots).length.toString(10), {
-                    fontFamily: 'museo-slab',
+                    fontFamily: 'Noto Sans',
+                    fontWeight:'bold',
                     fontSize: 34,
                     fill: 0xFFFF00,
                     align: 'center'
