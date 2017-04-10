@@ -201,6 +201,10 @@ class CanvasPIXI extends Component {
             if(this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
                 let dotsPerZoneA;
                 let dotsPerZoneB;
+                if(this.props.operandB.length === 0){
+                    this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                    return;
+                }
                 if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
                     // advanced mode, if one side is split with |, split both side
                     advancedMode = true;
@@ -273,7 +277,15 @@ class CanvasPIXI extends Component {
                             }else{
                                 if(isNaN(value[xIndex + 1])){
                                     // TODO Add value when only x or -x
-                                    dotsPerZoneA[1] += Number(value.substring(0, xIndex));
+                                    if(xIndex === 0){
+                                        // positive x only
+                                        dotsPerZoneA[1] = 1;
+                                    }else if(xIndex === 1 && value[0] === '-'){
+                                        // negative x only
+                                        dotsPerZoneA[1] = -1;
+                                    }else {
+                                        dotsPerZoneA[1] += Number(value.substring(0, xIndex));
+                                    }
                                 }else{
                                     if(value[xIndex + 1] > this.props.totalZoneCount - 1){
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -289,7 +301,16 @@ class CanvasPIXI extends Component {
                                 dotsPerZoneB[0] += Number(value);
                             }else{
                                 if(isNaN(value[xIndex + 1])){
-                                    dotsPerZoneB[1] += Number(value.substring(0, xIndex));
+                                    if(xIndex === 0){
+                                        // positive x only
+                                        dotsPerZoneB[1] = 1;
+                                    }else if(xIndex === 1 && value[0] === '-'){
+                                        // negative x only
+                                        dotsPerZoneB[1] = -1;
+                                    }else {
+                                        dotsPerZoneB[1] += Number(value.substring(0, xIndex));
+                                    }
+                                    //dotsPerZoneB[1] += Number(value.substring(0, xIndex));
                                 }else{
                                     if(value[xIndex + 1] > this.props.totalZoneCount - 1){
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -412,7 +433,10 @@ class CanvasPIXI extends Component {
                         if(dotsPerZoneA.length === 0){
                             invalidEntry = true;
                         }
-                        if(dotsPerZoneB.length === 0){
+                        if(dotsPerZoneB.length === 0 ||
+                            dotsPerZoneB[0] === '0' ||
+                            // validate that the sum of the value isn't 0
+                            dotsPerZoneB.reduce((a, b) => a + b, 0) === 0){
                             invalidEntry = true;
                         }
                         if(invalidEntry === false){
