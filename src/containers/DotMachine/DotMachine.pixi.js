@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) =>{
         stabilize: stabilize,
         operandChanged: operandChanged,
         operatorChanged: operatorChanged,
-        startActivity: startActivity,
+        startActivityFunc: startActivity,
         startActivityDoneFunc: startActivityDone,
         error: error,
         userMessage: userMessage,
@@ -67,7 +67,7 @@ class DotsMachine extends Component {
         stabilize: PropTypes.func.isRequired,
         operandChanged: PropTypes.func.isRequired,
         operatorChanged: PropTypes.func.isRequired,
-        startActivity: PropTypes.func.isRequired,
+        startActivityFunc: PropTypes.func.isRequired,
         startActivityDoneFunc: PropTypes.func.isRequired,
         error: PropTypes.func.isRequired,
         userMessage: PropTypes.func.isRequired,
@@ -132,18 +132,6 @@ class DotsMachine extends Component {
         super(props);
     }
 
-    componentDidMount(){
-        //window.addEventListener('resize', this.resize.bind(this));
-    }
-
-    resize(event) {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        //let ratio = Math.min( w / this.state.GAME_WIDTH, h / this.state.GAME_HEIGHT);
-        /*this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-        this.state.renderer.resize(Math.ceil(this.state.GAME_WIDTH * ratio), Math.ceil(this.state.GAME_HEIGHT * ratio));*/
-    };
-
     render() {
         //console.log('render', this.props);
         return (
@@ -194,9 +182,10 @@ class DotsMachine extends Component {
                              pos={OPERAND_POS.RIGHT}
                              activityStarted={this.props.dotsMachine.machineState.activityStarted}
                              base={this.props.dotsMachine.machineState.base}
+                             onEnter={this.props.startActivityFunc}
                     />
                     {this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
-                        <GoButton onClick={this.props.startActivity} activityStarted={this.props.dotsMachine.machineState.activityStarted}>GO</GoButton>
+                        <GoButton onClick={this.props.startActivityFunc} activityStarted={this.props.dotsMachine.machineState.activityStarted}>GO</GoButton>
                     }
                 </ActivityDescriptor>
                 <CanvasPIXI
@@ -219,6 +208,7 @@ class DotsMachine extends Component {
                     placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
                     cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
                     maxViewableDots={this.props.dotsMachine.machineState.maxViewableDots}
+                    startActivityFunc={this.props.startActivityFunc}
                     startActivity={this.props.dotsMachine.machineState.startActivity}
                     startActivityDoneFunc={this.props.startActivityDoneFunc}
                     activityStarted={this.props.dotsMachine.machineState.activityStarted}

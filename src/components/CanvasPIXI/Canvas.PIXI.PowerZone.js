@@ -182,7 +182,9 @@ export class PowerZone extends PIXI.Container{
             this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
+
             if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
+                // Dot can ba added in freeplay or in division in base X
                 this.positiveDotsContainer.buttonMode = true;
                 this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -199,6 +201,7 @@ export class PowerZone extends PIXI.Container{
             this.negativeDotsContainer.powerZone = totalZoneCount - position - 1;
             this.negativeDotsContainer.isPositive = false;
             if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
+                // Dot can ba added in freeplay or in division in base X
                 this.negativeDotsContainer.buttonMode = true;
                 this.negativeDotsContainer.on('pointerup', this.createDot.bind(this));
             }
@@ -214,8 +217,8 @@ export class PowerZone extends PIXI.Container{
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
+                // Dot can ba added in freeplay or in division in base X
                 this.positiveDotsContainer.buttonMode = true;
-                //this.positiveDotsContainer.on('pointerup', (e) => {this.eventEmitter.emit('CreateDot', e)});
                 this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
         }

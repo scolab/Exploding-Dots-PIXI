@@ -327,11 +327,11 @@ const dotsReducer = (state = null, action) => {
             return stateCopy;
         case ACTIONS.RESET:
             console.log(ACTIONS.RESET);
+            initialMachineState.operandA = '';
+            initialMachineState.operandB = '';
             if (action.machineState) {
                 initialMachineState = action.machineState;
             }
-            initialMachineState.operandA = '';
-            initialMachineState.operandB = '';
             initialMachineState.activityStarted = false;
             initialMachineState.errorMessage = '';
             return setInitialState();

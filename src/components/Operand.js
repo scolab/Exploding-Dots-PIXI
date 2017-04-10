@@ -13,6 +13,7 @@ export default class Operand extends Component {
         pos: PropTypes.string.isRequired,
         activityStarted: PropTypes.bool.isRequired,
         base: PropTypes.array.isRequired,
+        onEnter: PropTypes.func,
     };
 
     constructor(props) {
@@ -79,6 +80,9 @@ export default class Operand extends Component {
 
     onSubmit(e) {
         e.preventDefault();
+        if(this.props.pos === OPERAND_POS.RIGHT) {
+            this.props.onEnter();
+        }
     }
 
     componentDidMount() {
@@ -91,7 +95,7 @@ export default class Operand extends Component {
 
     checkIfInputActive(){
         if(this.inputText) {
-            if (this.props.usage_mode == USAGE_MODE.EXERCISE ||
+            if (this.props.usage_mode === USAGE_MODE.EXERCISE ||
                 this.props.activityStarted ||
                 this.props.operator_mode === OPERATOR_MODE.DISPLAY && this.props.usage_mode === USAGE_MODE.FREEPLAY) {
                 this.inputText.disabled = true;
