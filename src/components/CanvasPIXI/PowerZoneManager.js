@@ -285,6 +285,7 @@ export class PowerZoneManager extends PIXI.Container{
         console.log(target.powerZone)
         if(this.isInteractive) {
             if (this.usage_mode === USAGE_MODE.OPERATION && this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
+                // Add a opposite value dot in the same zone for division in base X
                 if(target.isPositive){
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
@@ -301,7 +302,7 @@ export class PowerZoneManager extends PIXI.Container{
                     this.addDot(target.powerZone, dotPos, !target.isPositive, color);
                 }
             }else {
-                console.log('here', target.powerZone, position, target.isPositive, color);
+                //console.log('here', target.powerZone, position, target.isPositive, color);
                 this.addDot(target.powerZone, position, target.isPositive, color);
             }
         }
@@ -532,7 +533,9 @@ export class PowerZoneManager extends PIXI.Container{
                 }
             }
         }else{
+            // Dropped outside any zone
             if(droppedOnPowerZone === this.leftMostZone){
+                // Dropped on the fake zone at the left
                 this.displayUserMessage("La machine ne va pas dans des nombres plus grand");
                 if (dotSprite.dot.isPositive) {
                     this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
@@ -541,9 +544,11 @@ export class PowerZoneManager extends PIXI.Container{
                 }
                 this.isInteractive = false;
             }else {
-                if (this.usage_mode == USAGE_MODE.FREEPLAY) {
+                if (this.usage_mode === USAGE_MODE.FREEPLAY) {
+                    // Remove dot in freeplay
                     this.removeDot(originalZoneIndex, dotSprite.dot.id);
                 } else {
+                    // Put back dot in it's original place
                     if (dotSprite.dot.isPositive) {
                         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
                     } else {

@@ -15,6 +15,7 @@ class CanvasPIXI extends Component {
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
+        startActivityFunc: PropTypes.func.isRequired,
         startActivityDoneFunc: PropTypes.func.isRequired,
         positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
             x: PropTypes.number.isRequired,
@@ -69,7 +70,7 @@ class CanvasPIXI extends Component {
     }
 
     componentDidMount(){
-        console.log('componentDidMount', this.state, this.props);
+        //console.log('componentDidMount', this.state, this.props);
 
         var options = {
             view: this.canvas,
@@ -137,6 +138,10 @@ class CanvasPIXI extends Component {
             this.resize();
             this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots);
             this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots);
+
+            if(this.props.usage_mode === USAGE_MODE.EXERCISE){
+                this.props.startActivityFunc();
+            }
         }
     }
 
@@ -185,7 +190,7 @@ class CanvasPIXI extends Component {
         //console.log('checkMachineStateValue', this.props.placeValueOn);
         this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
         if(this.props.magicWandIsActive) {
-            console.log('magicWandIsActive');
+            //console.log('magicWandIsActive');
             this.powerZoneManager.magicWand();
             this.props.activateMagicWand(false);
         }else if(this.props.startActivity) {
@@ -193,7 +198,7 @@ class CanvasPIXI extends Component {
             // ACTIVITY START
             // ************************************
             let advancedMode = false;
-            if(this.props.usage_mode === USAGE_MODE.OPERATION) {
+            if(this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
                 let dotsPerZoneA;
                 let dotsPerZoneB;
                 if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
@@ -230,6 +235,7 @@ class CanvasPIXI extends Component {
                             dotsPerZoneB = this.props.operandB.split('');
                         }
                     }else{
+                        // Base X parse operand
                         dotsPerZoneA = new Array(this.props.totalZoneCount);
                         dotsPerZoneB = new Array(this.props.totalZoneCount);
                         for(let i = 0; i < this.props.totalZoneCount; i++){
@@ -259,15 +265,20 @@ class CanvasPIXI extends Component {
                         });
                         let splitZoneA = cleandedOperandA.split('+');
                         let splitZoneB = cleandedOperandB.split('+');
-
+                        console.log(splitZoneA);
                         splitZoneA.forEach(value => {
                             let xIndex = value.indexOf('x');
                             if(xIndex === -1){
                                 dotsPerZoneA[0] += Number(value);
                             }else{
                                 if(isNaN(value[xIndex + 1])){
+                                    // TODO Add value when only x or -x
                                     dotsPerZoneA[1] += Number(value.substring(0, xIndex));
                                 }else{
+                                    if(value[xIndex + 1] > this.props.totalZoneCount - 1){
+                                        this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                                        return;
+                                    }
                                     dotsPerZoneA[value[xIndex + 1]] += Number(value.substring(0, xIndex));
                                 }
                             }
@@ -280,6 +291,10 @@ class CanvasPIXI extends Component {
                                 if(isNaN(value[xIndex + 1])){
                                     dotsPerZoneB[1] += Number(value.substring(0, xIndex));
                                 }else{
+                                    if(value[xIndex + 1] > this.props.totalZoneCount - 1){
+                                        this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                                        return;
+                                    }
                                     dotsPerZoneB[value[xIndex + 1]] += Number(value.substring(0, xIndex));
                                 }
                             }

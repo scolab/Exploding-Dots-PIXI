@@ -15,7 +15,7 @@ export default class GoButton extends Component {
 
     render() {
         if(this.props.activityStarted){
-            return (
+            return(
                 <div className="operationItem">
                     <button style={{
                         width: 46,
@@ -28,7 +28,6 @@ export default class GoButton extends Component {
                         fontSize: 24,
                         textAlign: 'center',
                     }} />
-
                 </div>
             )
         }else {

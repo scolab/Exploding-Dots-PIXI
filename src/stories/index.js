@@ -66,6 +66,8 @@ storiesOf('Exploding Dots', module)
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
+            operandA={'12345'}
+            operandB={'54321'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}

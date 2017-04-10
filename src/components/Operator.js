@@ -65,21 +65,7 @@ export default class Operator extends Component {
                     )
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                     return (
-                        /* <div
-                         className="operationItem"
-                         style={{
-                         fontFamily: 'museo-slab',
-                         fontSize: 24,
-                         }}>
-                         <button className="imageButton" style={{backgroundImage:`url(${imgBg})`,
-                         width:77,
-                         height:45}} type='button'>
-                         <i className={mainDisplay}>{text}</i>
-                         <img src={arrow} style={{float:'right', marginRight:'7px', marginTop:'5px'}}/>
-                         </button>
-                         </div>*/
-
-                        <div className="operationItem"
+                         <div className="operationItem"
                              style={{
                                  backgroundImage:`url(${imgBg})`,
                                  backgroundRepeat: `no-repeat`,
