@@ -707,16 +707,7 @@ export class PowerZone extends PIXI.Container{
                     if (this.base[1] != BASE.BASE_X && Number(this.positiveDividerText.text) >= this.base[1]) {
                         this.positiveDivideCounter.texture = this.textures['dot_div_value_r.png'];
                         this.onDividerOverload(true);
-                        /*TweenMax.to(this.positiveDividerText.scale, 0.25, {
-                            x: 1.5,
-                            y: 1.5,
-                            yoyo: true,
-                            repeat: 3,
-                            ease: Linear.easeNone,
-                            onComplete: this.onDividerOverload.bind(this),
-                            onCompleteParams: [true]
-                        });*/
-                    }
+                     }
                 }
             } else {
                 this.negativeDividerText.text = Number(this.negativeDividerText.text) + 1;
@@ -724,15 +715,6 @@ export class PowerZone extends PIXI.Container{
                     if (this.base[1] != BASE.BASE_X && Number(this.negativeDividerText.text) >= this.base[1]) {
                         this.negativeDivideCounter.texture = this.textures['antidot_div_value_r.png'];
                         this.onDividerOverload(false);
-                        /*TweenMax.to(this.negativeDividerText.scale, 0.1, {
-                            x: 1.5,
-                            y: 1.5,
-                            yoyo: true,
-                            repeat: 3,
-                            ease: Linear.easeNone,
-                            onComplete: this.onDividerOverload.bind(this),
-                            onCompleteParams: [false]
-                        });*/
                     }
                 }
             }

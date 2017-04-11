@@ -90,6 +90,8 @@ storiesOf('Exploding Dots', module)
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
+            operandA={'12345'}
+            operandB={'2'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
@@ -112,6 +114,8 @@ storiesOf('Exploding Dots', module)
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
+            operandA={'54321'}
+            operandB={'12345'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
@@ -133,6 +137,8 @@ storiesOf('Exploding Dots', module)
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
+            operandA={'22222'}
+            operandB={'11'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
@@ -160,12 +166,38 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={true}
         />
     ))
+    .add('Algebra addition Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.ADDITION}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            operandA={'x4+2x3+3x2+4x+5'}
+            operandB={'5x4+4x3+3x2+2x+1'}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
     .add('Algebra subtract Operation', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.SUBTRACT}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra subtract Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.SUBTRACT}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            operandA={'5x4+4x3+3x2+2x+1'}
+            operandB={'x4+2x3+3x2+4x+5'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
@@ -182,12 +214,38 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={true}
         />
     ))
+    .add('Algebra multiply Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.MULTIPLY}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            operandA={'5x4+4x3+3x2+2x+1'}
+            operandB={'3'}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
     .add('Algebra divide Operation', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DIVIDE}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
+            placeValueSwitchVisible={true}
+            placeValueOn={true}
+            magicWandVisible={true}
+        />
+    ))
+    .add('Algebra divide Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DIVIDE}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ALGEBRA}
+            base={BASE.ALGEBRA[0]}
+            operandA={'5x4+4x3+3x2+2x+1'}
+            operandB={'x+1'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
