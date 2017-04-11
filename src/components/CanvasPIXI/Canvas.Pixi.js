@@ -201,10 +201,10 @@ class CanvasPIXI extends Component {
             if(this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
                 let dotsPerZoneA;
                 let dotsPerZoneB;
-                if(this.props.operandB.length === 0){
+                /*if(this.props.operandB.length === 0){
                     this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                     return;
-                }
+                }*/
                 if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
                     // advanced mode, if one side is split with |, split both side
                     advancedMode = true;
@@ -269,7 +269,6 @@ class CanvasPIXI extends Component {
                         });
                         let splitZoneA = cleandedOperandA.split('+');
                         let splitZoneB = cleandedOperandB.split('+');
-                        console.log(splitZoneA);
                         splitZoneA.forEach(value => {
                             let xIndex = value.indexOf('x');
                             if(xIndex === -1){
@@ -287,10 +286,10 @@ class CanvasPIXI extends Component {
                                         dotsPerZoneA[1] += Number(value.substring(0, xIndex));
                                     }
                                 }else{
-                                    if(value[xIndex + 1] > this.props.totalZoneCount - 1){
+                                    /*if(value[xIndex + 1] > this.props.totalZoneCount - 1){
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
-                                    }
+                                    }*/
                                     dotsPerZoneA[value[xIndex + 1]] += Number(value.substring(0, xIndex));
                                 }
                             }
@@ -312,10 +311,10 @@ class CanvasPIXI extends Component {
                                     }
                                     //dotsPerZoneB[1] += Number(value.substring(0, xIndex));
                                 }else{
-                                    if(value[xIndex + 1] > this.props.totalZoneCount - 1){
+                                    /*if(value[xIndex + 1] > this.props.totalZoneCount - 1){
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
-                                    }
+                                    }*/
                                     dotsPerZoneB[value[xIndex + 1]] += Number(value.substring(0, xIndex));
                                 }
                             }
