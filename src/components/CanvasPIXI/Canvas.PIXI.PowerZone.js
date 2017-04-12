@@ -1,5 +1,6 @@
 import {BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT, SPRITE_COLOR} from '../../Constants'
-import {ProximityManager} from '../../utils/ProximityManager';
+//import {ProximityManager} from '../../utils/ProximityManager';
+import {Repulsion} from '../../utils/Repulsion';
 import {EventEmitter} from 'eventemitter3';
 import {convertBase, randomFromTo} from '../../utils/MathUtils'
 import { TweenMax, RoughEase, Linear} from "gsap";
@@ -179,7 +180,7 @@ export class PowerZone extends PIXI.Container{
             this.originalPositiveBoxPosition = new PIXI.Point(this.positiveDotsContainer.position.x, this.positiveDotsContainer.position.y);
 
             this.positiveDotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
-            this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
+            this.positiveProximityManager = new Repulsion(this.positiveDotsContainer.hitArea);
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
 
@@ -197,7 +198,7 @@ export class PowerZone extends PIXI.Container{
             this.originalNegativeBoxPosition = new PIXI.Point(this.negativeDotsContainer.position.x, this.negativeDotsContainer.position.y);
 
             this.negativeDotsContainer.hitArea = new PIXI.Rectangle(-0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.HALF_BOX_HEIGHT);
-            this.negativeProximityManager = new ProximityManager(100, this.negativeDotsContainer.hitArea);
+            this.negativeProximityManager = new Repulsion(this.negativeDotsContainer.hitArea);
             this.negativeDotsContainer.powerZone = totalZoneCount - position - 1;
             this.negativeDotsContainer.isPositive = false;
             if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
@@ -213,7 +214,7 @@ export class PowerZone extends PIXI.Container{
             this.positiveDotsContainer.interactive = true;
 
             this.positiveDotsContainer.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.BOX_WIDTH, BOX_INFO.BOX_HEIGHT);
-            this.positiveProximityManager = new ProximityManager(100, this.positiveDotsContainer.hitArea);
+            this.positiveProximityManager = new Repulsion(this.positiveDotsContainer.hitArea);
             this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
             this.positiveDotsContainer.isPositive = true;
             if (usage_mode === USAGE_MODE.FREEPLAY || usage_mode === USAGE_MODE.OPERATION && operator_mode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X) {
@@ -464,12 +465,12 @@ export class PowerZone extends PIXI.Container{
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
                     dotSprite.parent.removeChild(dotSprite);
-                    this.spritePool.dispose(dotSprite, dot.isPositive, dot.color);
+                    //this.spritePool.dispose(dotSprite, dot.isPositive, dot.color);
                     if (dotSprite.particleEmitter) {
                         dotSprite.particleEmitter.stop();
                     }
                 }
-                dot.sprite = null;
+                //dot.sprite = null;
                 removedDots.push(dot);
             }
         });
@@ -742,6 +743,16 @@ export class PowerZone extends PIXI.Container{
         }else{
             this.negativeDividerText.text = String(Number(this.negativeDividerText.text) + 1);
             this.negativeDividerText.style.fill = 0x565656;
+        }
+    }
+
+    update(){
+        //console.log('update');
+        if(this.negativePresent){
+            this.negativeProximityManager.draw();
+            this.positiveProximityManager.draw();
+        }else{
+            this.positiveProximityManager.draw();
         }
     }
 

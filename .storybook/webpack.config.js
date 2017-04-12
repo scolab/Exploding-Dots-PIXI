@@ -6,9 +6,8 @@ module.exports = function(config, env) {
 
     config.devtool = "eval-source-map";
 
-    config.module = config.module || {};
-    config.module.noParse = /pixi-filters/;
-    config.module.noParse = /pixi-particles/;
 
+    config.module = config.module || {};
+    config.module.noParse = [/pixi-filters/, /pixi-particles/];
     return config;
 };

@@ -95,6 +95,10 @@ export class PowerZoneManager extends PIXI.Container{
         this.leftMostZone.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.LEFT_GUTTER, BOX_INFO.BOX_HEIGHT);
     }
 
+    start(){
+        requestAnimationFrame(this.animationCallback.bind(this));
+    }
+
     precalculateForDivision(){
         this.allZones.forEach(zone => {
             zone.precalculateDotsForDivision();
@@ -546,6 +550,7 @@ export class PowerZoneManager extends PIXI.Container{
             }else {
                 if (this.usage_mode === USAGE_MODE.FREEPLAY) {
                     // Remove dot in freeplay
+                    this.removeDotSpriteListeners(dotSprite);
                     this.removeDot(originalZoneIndex, dotSprite.dot.id);
                 } else {
                     // Put back dot in it's original place
@@ -817,9 +822,10 @@ export class PowerZoneManager extends PIXI.Container{
             removedDots.forEach(dot => {
                 if(dot.sprite){
                     this.removeDotSpriteListeners(dot.sprite);
+                    this.spritePool.dispose(dot.sprite, dot.isPositive, dot.color);
+                    dot.sprite = null;
                 }
             });
-
             removedDots = this.allZones[i].removeDotsIfNeeded(negativePowerZoneDots[i], false);
             removedDots.forEach(dot => {
                 if(dot.sprite){
@@ -876,6 +882,17 @@ export class PowerZoneManager extends PIXI.Container{
                 zone.checkPositiveNegativePresence(isOverload);
             }
         });
+    }
+
+
+    animationCallback(...args){
+        //this.state.stats.begin();
+        //this.state.renderer.render(this.state.stage);
+        requestAnimationFrame(this.animationCallback.bind(this));
+        this.allZones.forEach(zone => {
+            zone.update();
+        });
+        //this.state.stats.end();
     }
 
     reset(){

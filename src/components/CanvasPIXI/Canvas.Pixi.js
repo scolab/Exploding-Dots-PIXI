@@ -96,7 +96,6 @@ class CanvasPIXI extends Component {
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
-        requestAnimationFrame(this.animationCallback.bind(this));
         window.addEventListener('resize', this.resize.bind(this));
 
         let loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
@@ -138,6 +137,7 @@ class CanvasPIXI extends Component {
             this.resize();
             this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots);
             this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots);
+            this.powerZoneManager.start();
 
             if(this.props.usage_mode === USAGE_MODE.EXERCISE){
                 this.props.startActivityFunc();
@@ -152,13 +152,6 @@ class CanvasPIXI extends Component {
         this.state.stage.scale.x = this.state.stage.scale.y = ratio;
         this.state.renderer.resize(Math.ceil(SETTINGS.GAME_WIDTH * ratio), Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
     };
-
-    animationCallback(...args){
-        //this.state.stats.begin();
-        this.state.renderer.render(this.state.stage);
-        //requestAnimationFrame(this.animationCallback.bind(this));
-        //this.state.stats.end();
-    }
 
     shouldComponentUpdate(nextProps){
         //console.log('shouldComponentUpdate', nextProps);
