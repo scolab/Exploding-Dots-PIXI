@@ -39,7 +39,7 @@ export class DotCounter extends PIXI.Container{
         switch(this.text.text.length){
             case 0:
             case 1:
-                this.bgCenter.width = 4;
+                this.bgCenter.width = 5;
                 this.bgLeft.x = 0;
                 break;
             case 2:

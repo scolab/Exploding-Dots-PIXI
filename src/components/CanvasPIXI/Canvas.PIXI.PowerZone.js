@@ -223,7 +223,6 @@ export class PowerZone extends PIXI.Container{
                 this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
             }
         }
-
         this.x += BOX_INFO.LEFT_GUTTER;
     }
 
@@ -343,7 +342,7 @@ export class PowerZone extends PIXI.Container{
         if(dot.isPositive) {
             dotSprite = this.doAddDot(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
             if(dotSprite) {
-                this.positiveProximityManager.addItem(dotSprite);
+                //this.positiveProximityManager.addItem(dotSprite);
                 dot.sprite = dotSprite;
                 dotSprite.dot = dot;
             }

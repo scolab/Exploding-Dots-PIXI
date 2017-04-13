@@ -135,8 +135,8 @@ class CanvasPIXI extends Component {
             this.powerZoneManager.createZones();
             this.powerZoneManager.createLeftmostTestZone();
             this.resize();
-            this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots);
-            this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots);
+            this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
+            this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);
             this.powerZoneManager.start();
 
             if(this.props.usage_mode === USAGE_MODE.EXERCISE){
