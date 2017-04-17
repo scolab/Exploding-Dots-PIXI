@@ -461,12 +461,10 @@ export class PowerZone extends PIXI.Container{
                 if(dot.sprite) {
                     let dotSprite = dot.sprite;
                     dotSprite.parent.removeChild(dotSprite);
-                    //this.spritePool.dispose(dotSprite, dot.isPositive, dot.color);
                     if (dotSprite.particleEmitter) {
                         dotSprite.particleEmitter.stop();
                     }
                 }
-                //dot.sprite = null;
                 removedDots.push(dot);
             }
         });
