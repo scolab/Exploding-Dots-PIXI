@@ -8,6 +8,7 @@ export class Repulsion{
         this.G = 1;
         this.mass = 1;
         this.area = area;
+        this.allDone = true;
     }
 
     applyForce(item, force) {
@@ -16,9 +17,9 @@ export class Repulsion{
     };
 
     update(item) {
+        //console.log(item.acceleration, item.velocity);
         item.velocity.add(item.acceleration);
         item.vPosition.add(item.velocity);
-        //console.log(item.dot.id, Math.abs(item.x - item.vPosition.x), Math.abs(item.y - item.vPosition.y));
         item.acceleration.multiplyScalar(0);
         if(item.vPosition.x > POSITION_INFO.DOT_RAYON &&
             item.vPosition.y > POSITION_INFO.DOT_RAYON &&
@@ -57,6 +58,7 @@ export class Repulsion{
             item.vPosition = new victor(item.x, item.y);
             item.velocity = new victor(0, 0);
             item.acceleration = new victor(0, 0);
+            this.allDone = false;
         }
     }
 
@@ -70,25 +72,36 @@ export class Repulsion{
     }
 
     draw() {
-        let variableAmount = Number((Math.min(this.movers.length, 99)/1000).toFixed(3));
-        for (let i = 0; i < this.movers.length; i++) {
-            for (let j = 0; j < this.movers.length; j++) {
-                if (i !== j) {
-                    let force = this.calculateRepulsion(this.movers[j], this.movers[i]);
-                    //console.log(force.length());
-                    if(force.length() > 0) {
-                        //console.log(this.movers[i].dot.id, force);
-                        this.applyForce(this.movers[i], force);
-                    }else{
-                        /*this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
-                        this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);*/
-                        console.log(0.9 + variableAmount);
-                        this.movers[i].acceleration.multiplyScalar(0.999);
-                        this.movers[i].velocity.multiplyScalar(0.999);
+        if(this.allDone === false) {
+            let allDone = true;
+            let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
+            for (let i = 0; i < this.movers.length; i++) {
+                for (let j = 0; j < this.movers.length; j++) {
+                    if (i !== j) {
+                        let force = this.calculateRepulsion(this.movers[j], this.movers[i]);
+                        //console.log(force.length());
+                        if (force.length() > 0) {
+                            //console.log(this.movers[i].dot.id, force);
+                            this.applyForce(this.movers[i], force);
+                            allDone = false;
+                        } else {
+                            this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
+                            this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);
+
+                            if (this.allDone === true) {
+                                allDone = this.movers[i].acceleration.length() === 0;
+                            }
+                            //console.log(0.9 + variableAmount);
+                            /*this.movers[i].acceleration.multiplyScalar(0.999);
+                             this.movers[i].velocity.multiplyScalar(0.999);*/
+                        }
                     }
                 }
+                if(allDone){
+                    this.allDone = true;
+                }
+                this.update(this.movers[i]);
             }
-            this.update(this.movers[i]);
         }
     }
 }
