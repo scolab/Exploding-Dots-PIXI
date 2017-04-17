@@ -1,6 +1,9 @@
 import victor from 'victor';
 import {constrain} from '../utils/MathUtils';
 import {POSITION_INFO} from '../Constants';
+import {TweenMax} from 'gsap';
+
+
 export class ProximityManager{
 
     constructor(area) {
@@ -38,14 +41,12 @@ export class ProximityManager{
         force = force.subtract(m2.vPosition);
         let distance = force.length();
         if(distance < POSITION_INFO.DOT_RAYON * 2) {
-            //console.log('1');
             distance = constrain(distance, 5.0, 25.0);
             force = force.normalize();
             let strength = (this.G * this.mass * this.mass) / (distance * distance);
             force = force.multiplyScalar(strength * -1);
             return force;
         }else{
-            //console.log('2');
             return new victor(0,0);
         }
     };
@@ -59,6 +60,7 @@ export class ProximityManager{
             item.velocity = new victor(0, 0);
             item.acceleration = new victor(0, 0);
             this.allDone = false;
+            TweenMax.delayedCall(5, () => {this.allDone = true}, null, this);
         }
     }
 
@@ -74,33 +76,30 @@ export class ProximityManager{
     draw() {
         if(this.allDone === false) {
             let allDone = true;
-            let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
+            //let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
             for (let i = 0; i < this.movers.length; i++) {
                 for (let j = 0; j < this.movers.length; j++) {
                     if (i !== j) {
                         let force = this.calculateRepulsion(this.movers[j], this.movers[i]);
-                        //console.log(force.length());
-                        if (force.length() > 0) {
-                            //console.log(this.movers[i].dot.id, force);
+                        if (force.length() > 0.001) {
+                            console.log('force');
                             this.applyForce(this.movers[i], force);
                             allDone = false;
                         } else {
-                            this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
-                            this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);
-
-                            if (this.allDone === true) {
-                                allDone = this.movers[i].acceleration.length() === 0;
+                            /*this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
+                            this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);*/
+                            if (allDone === true) {
+                                allDone = this.movers[i].acceleration.length() < 0.001;
                             }
-                            //console.log(0.9 + variableAmount);
-                            /*this.movers[i].acceleration.multiplyScalar(0.999);
-                             this.movers[i].velocity.multiplyScalar(0.999);*/
+                            this.movers[i].acceleration.multiplyScalar(0.999);
+                            this.movers[i].velocity.multiplyScalar(0.999);
                         }
                     }
                 }
-                if(allDone){
-                    this.allDone = true;
-                }
                 this.update(this.movers[i]);
+            }
+            if(allDone){
+                this.allDone = true;
             }
         }
     }
