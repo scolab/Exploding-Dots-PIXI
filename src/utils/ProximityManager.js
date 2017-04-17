@@ -53,7 +53,7 @@ export class ProximityManager{
 
 
     addItem(item){
-        console.log('addItem');
+        //console.log('addItem');
         if(this.movers.indexOf(item) === -1) {
             this.movers.push(item);
             item.vPosition = new victor(item.x, item.y);
@@ -65,7 +65,7 @@ export class ProximityManager{
     }
 
     removeItem(item){
-        console.log('removeItem');
+        //console.log('removeItem');
         if(this.movers.indexOf(item) !== -1) {
             this.movers.splice(this.movers.indexOf(item), 1);
             item.velocity = null;
@@ -82,7 +82,6 @@ export class ProximityManager{
                     if (i !== j) {
                         let force = this.calculateRepulsion(this.movers[j], this.movers[i]);
                         if (force.length() > 0.001) {
-                            console.log('force');
                             this.applyForce(this.movers[i], force);
                             allDone = false;
                         } else {

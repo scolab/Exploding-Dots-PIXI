@@ -286,7 +286,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     createDot(target, position, color){
-        console.log(target.powerZone)
+        //console.log(target.powerZone);
         if(this.isInteractive) {
             if (this.usage_mode === USAGE_MODE.OPERATION && this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
                 // Add a opposite value dot in the same zone for division in base X
@@ -294,14 +294,14 @@ export class PowerZoneManager extends PIXI.Container{
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
                         randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.width - POSITION_INFO.DOT_RAYON),
-                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON)
                     ];
                     this.addDot(target.powerZone, dotPos, !target.isPositive, color);
                 }else {
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
                         randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.width - POSITION_INFO.DOT_RAYON),
-                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON)
                     ];
                     this.addDot(target.powerZone, dotPos, !target.isPositive, color);
                 }
@@ -484,7 +484,7 @@ export class PowerZoneManager extends PIXI.Container{
                     for (let i = 0; i < newNbOfDots; i++) {
                         dotsPos.push({
                             x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
-                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON)
                         })
                     }
                     if (dotsPos.length > 0) {
