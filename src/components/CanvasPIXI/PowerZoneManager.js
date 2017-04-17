@@ -906,13 +906,10 @@ export class PowerZoneManager extends PIXI.Container{
 
 
     animationCallback(...args){
-        //this.state.stats.begin();
-        //this.state.renderer.render(this.state.stage);
         requestAnimationFrame(this.animationCallback.bind(this));
         this.allZones.forEach(zone => {
             zone.update();
         });
-        //this.state.stats.end();
     }
 
     reset(){
