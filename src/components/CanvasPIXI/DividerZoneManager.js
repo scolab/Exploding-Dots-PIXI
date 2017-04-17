@@ -141,8 +141,11 @@ export class DividerZoneManager extends PIXI.Container{
 
     reset(){
         this.tweening = false;
-        this.x = this.origin.x;
-        this.y = this.origin.y;
+        this.dragging = false;
+        if(this.origin) {
+            this.x = this.origin.x;
+            this.y = this.origin.y;
+        }
     }
 
 }

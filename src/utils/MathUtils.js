@@ -114,4 +114,8 @@ export const isPointInRectangle = (point, rect) => {
         return true;
     }
     return false;
-}
+};
+
+export const constrain = (aNumber, aMin, aMax) => {
+    return aNumber > aMax ? aMax : aNumber < aMin ? aMin : aNumber;
+};

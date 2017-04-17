@@ -95,6 +95,10 @@ export class PowerZoneManager extends PIXI.Container{
         this.leftMostZone.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.LEFT_GUTTER, BOX_INFO.BOX_HEIGHT);
     }
 
+    start(){
+        requestAnimationFrame(this.animationCallback.bind(this));
+    }
+
     precalculateForDivision(){
         this.allZones.forEach(zone => {
             zone.precalculateDotsForDivision();
@@ -322,12 +326,17 @@ export class PowerZoneManager extends PIXI.Container{
         }
     }
 
-    inititalPopulate(dots){
+    inititalPopulate(dots, isPositive){
         dots.forEach((zoneArray) => {
             Object.keys(zoneArray).forEach(key => {
                 let dotSprite = this.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
                 if(dotSprite) {
                     this.addDotSpriteProperty(zoneArray[key], dotSprite);
+                    if(isPositive){
+                        this.allZones[zoneArray[key].powerZone].positiveProximityManager.addItem(dotSprite);
+                    }else{
+                        this.allZones[zoneArray[key].powerZone].negativeProximityManager.addItem(dotSprite);
+                    }
                 }
             });
         });
@@ -356,10 +365,15 @@ export class PowerZoneManager extends PIXI.Container{
         this.allZones[sprite.dot.powerZone].removeFromProximityManager(sprite);
     }
 
-    onDragStart(e, canvas){
-        //console.log('onDragStart', this.dot.id, this.world.isInteractive);
+    onDragStart(e){
+        console.log('onDragStart', this.dot.isPositive);
         if(this.world.isInteractive) {
             let oldParent = this.parent;
+            if(this.dot.isPositive) {
+                this.world.allZones[this.dot.powerZone].positiveProximityManager.removeItem(this);
+            }else{
+                this.world.allZones[this.dot.powerZone].negativeProximityManager.removeItem(this);
+            }
             this.origin = new Point(this.x, this.y);
             this.data = e.data;
             this.dragging = true;
@@ -396,6 +410,11 @@ export class PowerZoneManager extends PIXI.Container{
             this.dragging = false;
             this.data = null;
             this.world.verifyDroppedOnZone(this, e.data);
+            if(this.dot.isPositive) {
+                this.world.allZones[this.dot.powerZone].positiveProximityManager.addItem(this);
+            }else{
+                this.world.allZones[this.dot.powerZone].negativeProximityManager.addItem(this);
+            }
             this.particleEmitter.stop();
         }
         e.stopPropagation();
@@ -546,6 +565,7 @@ export class PowerZoneManager extends PIXI.Container{
             }else {
                 if (this.usage_mode === USAGE_MODE.FREEPLAY) {
                     // Remove dot in freeplay
+                    this.removeDotSpriteListeners(dotSprite);
                     this.removeDot(originalZoneIndex, dotSprite.dot.id);
                 } else {
                     // Put back dot in it's original place
@@ -817,9 +837,10 @@ export class PowerZoneManager extends PIXI.Container{
             removedDots.forEach(dot => {
                 if(dot.sprite){
                     this.removeDotSpriteListeners(dot.sprite);
+                    this.spritePool.dispose(dot.sprite, dot.isPositive, dot.color);
+                    dot.sprite = null;
                 }
             });
-
             removedDots = this.allZones[i].removeDotsIfNeeded(negativePowerZoneDots[i], false);
             removedDots.forEach(dot => {
                 if(dot.sprite){
@@ -849,6 +870,11 @@ export class PowerZoneManager extends PIXI.Container{
         allDots.forEach(dot =>{
             if(dot.sprite) {
                 this.addDotSpriteProperty(dot, dot.sprite);
+                if(dot.isPositive) {
+                    this.allZones[dot.powerZone].positiveProximityManager.addItem(dot.sprite);
+                }else{
+                    this.allZones[dot.powerZone].negativeProximityManager.addItem(dot.sprite);
+                }
             }
         });
     }
@@ -875,6 +901,14 @@ export class PowerZoneManager extends PIXI.Container{
             if(this.negativePresent) {
                 zone.checkPositiveNegativePresence(isOverload);
             }
+        });
+    }
+
+
+    animationCallback(...args){
+        requestAnimationFrame(this.animationCallback.bind(this));
+        this.allZones.forEach(zone => {
+            zone.update();
         });
     }
 

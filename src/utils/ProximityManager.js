@@ -1,165 +1,109 @@
-export class ProximityManager {
+import victor from 'victor';
+import {constrain} from '../utils/MathUtils';
+import {POSITION_INFO} from '../Constants';
+import {TweenMax} from 'gsap';
 
-    constructor(gridSize,bounds) {
-        this.gridSize = gridSize;
-        this.bounds = bounds;
 
-        this.addItemsImmediately = false;
-        this._items = [];
-        this.grid = [];
-        this.deadItems = {};
-        this.checkDead = false;
-        this.liveItems = {};
-        this.w = 0;
-        this.h = 0;
-        this.offX = 0;
-        this.offY = 0;
-        this.length = 0;
-        this.lengths = [];
-        this.m = 0;
-        this.init();
+export class ProximityManager{
+
+    constructor(area) {
+        this.movers = [];
+        this.G = 1;
+        this.mass = 1;
+        this.area = area;
+        this.allDone = true;
     }
 
-    get items(){
-        return this._items;
+    applyForce(item, force) {
+        var f = force.divideScalar(this.mass);
+        item.acceleration.add(f);
+    };
+
+    update(item) {
+        //console.log(item.acceleration, item.velocity);
+        item.velocity.add(item.acceleration);
+        item.vPosition.add(item.velocity);
+        item.acceleration.multiplyScalar(0);
+        if(item.vPosition.x > POSITION_INFO.DOT_RAYON &&
+            item.vPosition.y > POSITION_INFO.DOT_RAYON &&
+            item.vPosition.x < this.area.width - POSITION_INFO.DOT_RAYON &&
+            item.vPosition.y < this.area.height - POSITION_INFO.DOT_RAYON
+            ) {
+            item.x = item.vPosition.x;
+            item.y = item.vPosition.y;
+        }
+    };
+
+
+    calculateRepulsion(m1, m2) {
+        //console.log('calculateRepulsion');
+        let force = new victor(m1.vPosition.x, m1.vPosition.y);
+        force = force.subtract(m2.vPosition);
+        let distance = force.length();
+        if(distance < POSITION_INFO.DOT_RAYON * 2) {
+            distance = constrain(distance, 5.0, 25.0);
+            force = force.normalize();
+            let strength = (this.G * this.mass * this.mass) / (distance * distance);
+            force = force.multiplyScalar(strength * -1);
+            return force;
+        }else{
+            return new victor(0,0);
+        }
+    };
+
+
+    addItem(item){
+        //console.log('addItem');
+        if(this.movers.indexOf(item) === -1) {
+            this.movers.push(item);
+            item.vPosition = new victor(item.x, item.y);
+            item.velocity = new victor(0, 0);
+            item.acceleration = new victor(0, 0);
+            this.allDone = false;
+            TweenMax.delayedCall(5, () => {this.allDone = true}, null, this);
+        }
     }
 
-    set items(value) {
-        this._items = value;
-        for (var o in this.deadItems) {
-            delete(this.deadItems[o]);
-        }
-        var l = this._items.length;
-        for (var i = 0; i < l; i++) {
-            this.liveItems[this._items[i]] = true;
+    removeItem(item){
+        //console.log('removeItem');
+        if(this.movers.indexOf(item) !== -1) {
+            this.movers.splice(this.movers.indexOf(item), 1);
+            item.velocity = null;
+            item.acceleration = null;
         }
     }
 
-    addItem(item) {
-        if (!(this.liveItems[item] || this.deadItems[item])) {
-            this._items.push(item);
-        }
-        this.liveItems[item] = true;
-        delete(this.deadItems[item]);
-
-        if (this.addItemsImmediately) {
-            var pos = ((item.x + this.offX) * this.m | 0) * this.h +( item.y + this.offY) * this.m;
-            this.grid[pos][this.lengths[pos]++] = item;
-        }
-    }
-
-    /**
-     * Removes an item from the system. It will not be returned in any subsequent getNeighbors() calls.
-     **/
-    removeItem(item) {
-        if (!this.liveItems[item]) {
-            return;
-        }
-        this.deadItems[item] = true;
-        delete(this.liveItems[item]);
-        this.checkDead = true;
-    }
-
-    /**
-     * Updates the positions of all items on the grid. Call this when items have moved, but not after *each* item moves.
-     * For example, if you have a number of sprites moving around on screen each frame, move them all, then call update() once per frame.
-     **/
-    update() {
-        // clear grid:
-        this.lengths = [];
-        for(let i = 0; i < this.length; i++){
-            this.lengths.push(0);
-        }
-        //this.lengths.length = this.length;
-        for (var i = 0; i < this.length; ++i) {
-            this.grid[i].length = 0;
-        }
-
-        // populate grid:
-        var l = this._items.length;
-        for (i = l; i-->0;) {
-            var item = this._items[i];
-            if (this.checkDead && this.deadItems[item]) {
-                this._items.splice(i,1);
-                delete(this.deadItems[item]);
-                continue;
-            }
-            var pos = Math.round(((item.x + this.offX) * this.m | 0) * this.h + (item.y + this.offY) * this.m);
-            this.grid[pos][this.lengths[pos]++] = item;
-            console.log('update', this.grid[pos], this.lengths[pos], this.grid[pos][this.lengths[pos]++]);
-        }
-        this.checkDead = false;
-    }
-
-    /**
-     * Returns the list of neighbors for the specified item. Neighbours are items in grid positions within radius positions away from the item.
-     * For example, a radius of 0 returns only items in the same position. A radius of 1 returns 9 positions (the center, + the 8 positions 1 position away).
-     * A radius of 2 returns 25 positions. It is generally recommended to only use a radius of 1, but there are occasional use cases that may benefit from using
-     * a radius of 2.
-     * <br/><br/>
-     * It is important to note that this is a coarse set of neighbors. Their distance from the target item varies depending on their location within their grid position.
-     * This is allows you to exclude items that are too far away, then use more accurate comparisions (like pythagoram distance calculations or hit tests) on the
-     * smaller set of items.
-     * <br/><br/>
-     * You can specify a resultVector to avoid the need for ProximityManager to instantiate a new Vector each time you call getNeighbors. Results will be appended
-     * to the end of the vector. You may want to clear the vector with myVector.length = 0 before reusing it.
-     **/
-    getNeighbors(item, radius = 1, resultVector=null){
-        const itemX = (item.x + this.offX) / this.gridSize | 0;
-        const itemY = (item.y + this.offY) / this.gridSize | 0;
-
-        let minX = itemX - radius;
-        if (minX < 0) {
-            minX = 0;
-        }
-
-        let minY = itemY - radius;
-        if (minY < 0) {
-            minY = 0;
-        }
-
-        let maxX = itemX + radius;
-        if (maxX > this.w) {
-            maxX = this.w;
-        }
-
-        let maxY = itemY + radius;
-        if (maxY > this.h) {
-            maxY = this.h;
-        }
-
-        let results = resultVector ? resultVector : [];
-        let count = resultVector ? resultVector.length : 0;
-        for (let x = minX; x <= maxX; x++) {
-            let adjX = x * this.h;
-            for (let y = minY; y <= maxY; y++) {
-                let itemList = this.grid[adjX + y];
-                //console.log(this.grid, itemList, itemList.length);
-                let l = itemList.length;
-                for (let i = 0; i < l; i++) {
-                    let item = itemList[i];
-                    if (!this.checkDead || !this.deadItems[item]) {
-                        results[count++] = itemList[i];
+    draw() {
+        if(this.allDone === false) {
+            let allDone = true;
+            //let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
+            for (let i = 0; i < this.movers.length; i++) {
+                for (let j = 0; j < this.movers.length; j++) {
+                    if (i !== j) {
+                        let force = this.calculateRepulsion(this.movers[j], this.movers[i]);
+                        if (force.length() > 0.001) {
+                            this.applyForce(this.movers[i], force);
+                            allDone = false;
+                        } else {
+                            /*this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
+                            this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);*/
+                            if (allDone === true) {
+                                allDone = this.movers[i].acceleration.length() < 0.001;
+                            }
+                            this.movers[i].acceleration.multiplyScalar(0.999);
+                            this.movers[i].velocity.multiplyScalar(0.999);
+                        }
                     }
                 }
+                this.update(this.movers[i]);
             }
-        }
-        return results;
-    }
-
-
-    init(){
-        this.w = Math.ceil(this.bounds.width / this.gridSize) + 1;
-        this.h = Math.ceil(this.bounds.height / this.gridSize) + 1;
-        this.length = this.w * this.h;
-        this.offX = -this.bounds.x;
-        this.offY = -this.bounds.y;
-        this.m = 1 / this.gridSize;
-
-        this.lengths = [];
-        this.grid = [];
-        for (let i = 0; i < this.length; i++) {
-            this.grid[i] = [];
+            if(allDone){
+                this.allDone = true;
+            }
         }
     }
 }
+
+
+
+
