@@ -154,10 +154,18 @@ const dotsReducer = (state = null, action) => {
                 });
             }
             if(action.totalA != null) {
-                stateCopy.machineState.operandA = action.totalA.toString();
+                if(stateCopy.machineState.base[1] === BASE.BASE_X){
+                    stateCopy.machineState.operandA = addSuperscriptWhereNeeded(action.totalA.toString());
+                }else {
+                    stateCopy.machineState.operandA = action.totalA.toString();
+                }
             }
             if(action.totalB != null) {
-                stateCopy.machineState.operandB = action.totalB.toString();
+                if(stateCopy.machineState.base[1] === BASE.BASE_X){
+                    stateCopy.machineState.operandB = addSuperscriptWhereNeeded(action.totalB.toString());
+                }else {
+                    stateCopy.machineState.operandB = action.totalB.toString();
+                }
             }
             return stateCopy;
         case ACTIONS.ADD_DOT:
