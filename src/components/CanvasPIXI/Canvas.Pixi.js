@@ -190,7 +190,6 @@ class CanvasPIXI extends Component {
             // ************************************
             // ACTIVITY START
             // ************************************
-            let advancedMode = false;
             // We should never get a activity start in Freeplay, just in case.
             if(this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
                 let dotsPerZoneA;
@@ -203,7 +202,6 @@ class CanvasPIXI extends Component {
                 }
                 if(this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1){
                     // advanced mode, if one side is split with |, split both side
-                    advancedMode = true;
                     if(this.props.operandA.indexOf('|') !== -1) {
                         dotsPerZoneA = this.props.operandA.split('|');
                     }else{
