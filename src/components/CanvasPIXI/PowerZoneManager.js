@@ -286,7 +286,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     createDot(target, position, color){
-        console.log(target.powerZone)
+        //console.log(target.powerZone);
         if(this.isInteractive) {
             if (this.usage_mode === USAGE_MODE.OPERATION && this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
                 // Add a opposite value dot in the same zone for division in base X
@@ -294,14 +294,14 @@ export class PowerZoneManager extends PIXI.Container{
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
                         randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.width - POSITION_INFO.DOT_RAYON),
-                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.negativeDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON)
                     ];
                     this.addDot(target.powerZone, dotPos, !target.isPositive, color);
                 }else {
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
                         randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.width - POSITION_INFO.DOT_RAYON),
-                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                        randomFromTo(POSITION_INFO.DOT_RAYON, target.parent.positiveDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON)
                     ];
                     this.addDot(target.powerZone, dotPos, !target.isPositive, color);
                 }
@@ -410,10 +410,14 @@ export class PowerZoneManager extends PIXI.Container{
             this.dragging = false;
             this.data = null;
             this.world.verifyDroppedOnZone(this, e.data);
-            if(this.dot.isPositive) {
-                this.world.allZones[this.dot.powerZone].positiveProximityManager.addItem(this);
-            }else{
-                this.world.allZones[this.dot.powerZone].negativeProximityManager.addItem(this);
+            // dot may have been remove if dropped outside the boxes in freeplay, so verify if it's still have a dot
+            if(this.dot) {
+                if (this.dot.isPositive) {
+                    // wait for the sprite to be back in place if dropped on an edge
+                    TweenMax.delayedCall(0.21, this.world.allZones[this.dot.powerZone].positiveProximityManager.addItem, [this], this.world.allZones[this.dot.powerZone].positiveProximityManager);
+                } else {
+                    TweenMax.delayedCall(0.21, this.world.allZones[this.dot.powerZone].negativeProximityManager.addItem, [this], this.world.allZones[this.dot.powerZone].negativeProximityManager);
+                }
             }
             this.particleEmitter.stop();
         }
@@ -484,7 +488,7 @@ export class PowerZoneManager extends PIXI.Container{
                     for (let i = 0; i < newNbOfDots; i++) {
                         dotsPos.push({
                             x: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON),
-                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON - POSITION_INFO.BOX_BOTTOM_GREY_ZONE)
+                            y: randomFromTo(POSITION_INFO.DOT_RAYON, droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON)
                         })
                     }
                     if (dotsPos.length > 0) {
@@ -515,9 +519,28 @@ export class PowerZoneManager extends PIXI.Container{
                 if(dotSprite.dot.isPositive === droppedOnPowerZone.isPositive) {
                     // just move the dots into the zone
                     droppedOnPowerZone.addChild(dotSprite);
+                    let doTween = false;
                     let newPosition = data.getLocalPosition(droppedOnPowerZone);
+                    let modifyPosition = newPosition.clone();
+                    if(newPosition.x < POSITION_INFO.DOT_RAYON){
+                        modifyPosition.x = POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }else if(newPosition.x > droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON){
+                        modifyPosition.x = droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }
+                    if(newPosition.y < POSITION_INFO.DOT_RAYON){
+                        modifyPosition.y = POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }else if(newPosition.y > droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON){
+                        modifyPosition.y = droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }
                     dotSprite.position.x = newPosition.x;
                     dotSprite.position.y = newPosition.y;
+                    if(doTween) {
+                        TweenMax.to(dotSprite.position, 0.2, {x: modifyPosition.x, y: modifyPosition.y});
+                    }
                 }else{
                     // check it possible dot / anti dot destruction
                     if(dotSprite.dot.isPositive) {

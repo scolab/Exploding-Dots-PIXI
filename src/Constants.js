@@ -32,13 +32,12 @@ export const OPERAND_POS = {
 };
 
 export const POSITION_INFO = {
-    DOT_RAYON: 12,
-    BOX_BOTTOM_GREY_ZONE: 10
+    DOT_RAYON: 12
 };
 
 export const BOX_INFO = {
     BOX_WIDTH: 160,
-    BOX_HEIGHT: 242,
+    BOX_HEIGHT: 232,
     HALF_BOX_HEIGHT: 115,
     BOX_Y: 70,
     LEFT_GUTTER: 66,
