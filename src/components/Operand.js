@@ -39,7 +39,7 @@ export default class Operand extends Component {
                      - Pipe (|) followed by a minus sign or digits
                      - A maximum of 5 of those pattern
                      */
-                    var reg = new RegExp(/^$|^-$|^(-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
+                    var reg = new RegExp(/^\|{0,4}$|^\|{0,4}-$|^(\|{0,4}-?[\d]{1,5})(\|-?[\d]{0,5}?){0,4}$/);
                 }else{
                     /*
                      Base X

@@ -615,10 +615,24 @@ export class PowerZone extends PIXI.Container{
     checkPositiveNegativePresence(isOverload){
         if(this.negativePresent && this.base[1] != BASE.BASE_X){
             if(isOverload === false && Object.keys(this.positiveDots).length > 0 && Object.keys(this.negativeDots).length > 0) {
-                let tween = TweenMax.fromTo(this.positiveDotsContainer, 0.3, {y:this.positiveDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
-                tween.repeat(-1).yoyo(true).play();
-                let tween2 = TweenMax.fromTo(this.negativeDotsContainer, 0.3, {y:this.negativeDotsContainer.y - 1}, {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}) , clearProps:"x"});
-                tween2.repeat(-1).yoyo(true).play();
+                let tween = TweenMax.fromTo(
+                    this.positiveDotsContainer,
+                    0.3,
+                    {y:this.positiveDotsContainer.y - 1},
+                    {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}),
+                        clearProps:"x"
+                    }
+                );
+                tween.repeat(-1).repeatDelay(2).yoyo(true).play();
+                let tween2 = TweenMax.fromTo(
+                    this.negativeDotsContainer,
+                    0.3,
+                    {y:this.negativeDotsContainer.y - 1},
+                    {y:"+=1", ease:RoughEase.ease.config({strength:8, points:20, template:Linear.easeNone, randomize:false}),
+                        clearProps:"x"
+                    }
+                );
+                tween2.repeat(-1).repeatDelay(2).yoyo(true).play();
             }else{
                 TweenMax.killTweensOf(this.positiveDotsContainer);
                 TweenMax.killTweensOf(this.negativeDotsContainer);

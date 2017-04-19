@@ -410,10 +410,14 @@ export class PowerZoneManager extends PIXI.Container{
             this.dragging = false;
             this.data = null;
             this.world.verifyDroppedOnZone(this, e.data);
-            if(this.dot.isPositive) {
-                this.world.allZones[this.dot.powerZone].positiveProximityManager.addItem(this);
-            }else{
-                this.world.allZones[this.dot.powerZone].negativeProximityManager.addItem(this);
+            // dot may have been remove if dropped outside the boxes in freeplay, so verify if it's still have a dot
+            if(this.dot) {
+                if (this.dot.isPositive) {
+                    // wait for the sprite to be back in place if dropped on an edge
+                    TweenMax.delayedCall(0.21, this.world.allZones[this.dot.powerZone].positiveProximityManager.addItem, [this], this.world.allZones[this.dot.powerZone].positiveProximityManager);
+                } else {
+                    TweenMax.delayedCall(0.21, this.world.allZones[this.dot.powerZone].negativeProximityManager.addItem, [this], this.world.allZones[this.dot.powerZone].negativeProximityManager);
+                }
             }
             this.particleEmitter.stop();
         }
@@ -515,9 +519,28 @@ export class PowerZoneManager extends PIXI.Container{
                 if(dotSprite.dot.isPositive === droppedOnPowerZone.isPositive) {
                     // just move the dots into the zone
                     droppedOnPowerZone.addChild(dotSprite);
+                    let doTween = false;
                     let newPosition = data.getLocalPosition(droppedOnPowerZone);
+                    let modifyPosition = newPosition.clone();
+                    if(newPosition.x < POSITION_INFO.DOT_RAYON){
+                        modifyPosition.x = POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }else if(newPosition.x > droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON){
+                        modifyPosition.x = droppedOnPowerZone.hitArea.width - POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }
+                    if(newPosition.y < POSITION_INFO.DOT_RAYON){
+                        modifyPosition.y = POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }else if(newPosition.y > droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON){
+                        modifyPosition.y = droppedOnPowerZone.hitArea.height - POSITION_INFO.DOT_RAYON;
+                        doTween = true;
+                    }
                     dotSprite.position.x = newPosition.x;
                     dotSprite.position.y = newPosition.y;
+                    if(doTween) {
+                        TweenMax.to(dotSprite.position, 0.2, {x: modifyPosition.x, y: modifyPosition.y});
+                    }
                 }else{
                     // check it possible dot / anti dot destruction
                     if(dotSprite.dot.isPositive) {
