@@ -23,8 +23,6 @@ export default class Operator extends Component {
     }
 
     render(){
-        let mainDisplay = '';
-        let secondDisplay = '';
         let text = '';
         switch (this.props.operator_mode){
             case OPERATOR_MODE.DISPLAY:
@@ -45,100 +43,94 @@ export default class Operator extends Component {
                     </div>
                 );
             case OPERATOR_MODE.ADDITION:
-                mainDisplay = 'fa fa-plus';
-                secondDisplay = 'fa fa-times';
                 if(this.props.usage_mode === USAGE_MODE.EXERCISE){
                     return (
                          <div className="operationItem"
                             style={{
                                 fontFamily: 'Noto Sans',
                                 fontWeight:'bold',
-                                fontSize: 24,
+                                fontSize: 32,
                                 backgroundImage: `url(${imgBg})`,
                                 backgroundRepeat: `no-repeat`,
                                 backgroundColor: `Transparent`,
                                 border: `none`,
                                 width: 77,
                                 height: 45}}>
-                            <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
+                            <p style={{marginTop: 2}}>&#43;</p>
                         </div>
                     )
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                     return (
-                         <div className="operationItem"
-                             style={{
-                                 backgroundImage:`url(${imgBg})`,
-                                 backgroundRepeat: `no-repeat`,
-                                 backgroundColor: `Transparent`,
-                                 border: `none`,
-                                 width:77,
-                                 height:45,
-                                 overflow:'hidden'
-                                 }}>
-                            <DropDownMenu value={OPERATOR_MODE.ADDITION} onChange={this.handleOperandChange.bind(this)} disabled={this.props.activityStarted}>
-                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='+' />
-                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='*' />
-                            </DropDownMenu>
-                        </div>
+                        <DropDownMenu style={{
+                            backgroundColor : '#FFFFFF',
+                            borderRadius: '23px'
+                            }} labelStyle={{fontSize:'32px'}} menuItemStyle={{fontSize:'32px'}} value={OPERATOR_MODE.ADDITION} onChange={this.handleOperandChange.bind(this)} disabled={this.props.activityStarted}>
+                            <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='&#43;' />
+                            <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='&#215;' />
+                        </DropDownMenu>
                     );
                 }
             case OPERATOR_MODE.SUBTRACT:
-                mainDisplay = 'fa fa-minus';
                 return (
                     <div className="operationItem"
                          style={{
                              fontFamily: 'Noto Sans',
                              fontWeight:'bold',
-                             fontSize: 24,
+                             fontSize: 32,
                              backgroundImage: `url(${imgBg})`,
                              backgroundRepeat: `no-repeat`,
                              backgroundColor: `Transparent`,
                              border: `none`,
                              width: 77,
                              height: 45}}>
-                        <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
+                        <p style={{marginTop: 2}}>&#8722;</p>
                     </div>
                 );
                 break;
             case OPERATOR_MODE.MULTIPLY:
-                mainDisplay = 'fa fa-times';
                 if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
                     return (
                         <div className="operationItem"
                              style={{
                                  fontFamily: 'Noto Sans',
                                  fontWeight:'bold',
-                                 fontSize: 24,
+                                 fontSize: 32,
                                  backgroundImage: `url(${imgBg})`,
                                  backgroundRepeat: `no-repeat`,
                                  backgroundColor: `Transparent`,
                                  border: `none`,
                                  width: 77,
                                  height: 45}}>
-                            <i className={mainDisplay} style={{marginTop: 10}}>{text}</i>
+                            <p style={{marginTop: 3}}>&#215;</p>
                         </div>
                     );
                 }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
                     return (
-                        <div className="operationItem">
-                            <DropDownMenu value={OPERATOR_MODE.MULTIPLY}
-                                          onChange={this.handleOperandChange.bind(this)}
-                                          disabled={this.props.activityStarted}>
-                                <MenuItem value={OPERATOR_MODE.ADDITION} primaryText="+" />
-                                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="*" />
-                            </DropDownMenu>
-                        </div>
+                        <DropDownMenu style={{
+                            backgroundColor : '#FFFFFF',
+                            borderRadius: '23px',
+                            marginLeft: '10px'
+                        }}
+                          labelStyle={{fontSize:'32px', lineHeight:'38px', marginBottom:'-8px', marginTop:'5px', padding:'0 40px'}}
+                          iconStyle={{top:'0px', right:'0px'}}
+                          menuItemStyle={{fontSize:'32px'}}
+                          value={OPERATOR_MODE.MULTIPLY}
+                          onChange={this.handleOperandChange.bind(this)}
+                          disabled={this.props.activityStarted}
+                        >
+                            <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='&#43;' />
+                            <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='&#215;' />
+                        </DropDownMenu>
                     )
                 }
                 break;
             case OPERATOR_MODE.DIVIDE:
-                mainDisplay = 'fa fa-hand-spock-o';
                 return (
                     <div className="operationItem"
                          style={{
                              fontFamily: 'Noto Sans',
                              fontWeight:'bold',
-                             fontSize: 24,
+                             fontSize: 32,
                              backgroundImage: `url(${imgBg})`,
                              backgroundRepeat: `no-repeat`,
                              backgroundColor: `Transparent`,
@@ -146,7 +138,7 @@ export default class Operator extends Component {
                              width: 77,
                              height: 45
                          }}>
-                        <i className={mainDisplay} style={{marginTop: 11}}>{text}</i>
+                        <p style={{marginTop: 3}}>&#247;</p>
                     </div>
                 );
                 break;

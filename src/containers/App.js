@@ -82,9 +82,12 @@ class ExplodingDots extends Component {
     };
 
     render() {
+        const theme = getMuiTheme({
+            fontFamily :'Noto sans',
+        });
         return (
             <Provider store={store}>
-                <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+                <MuiThemeProvider muiTheme={theme}>
                     <div>
                         <DotsMachine id="0"/>
                     </div>
