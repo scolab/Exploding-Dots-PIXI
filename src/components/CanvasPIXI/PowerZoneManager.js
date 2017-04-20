@@ -2,7 +2,7 @@ import {PowerZone} from './Canvas.PIXI.PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
 import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
-import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR} from '../../Constants'
+import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
 import {Point} from 'pixi.js';
 import explodeJSON from './dot_explode.json';
@@ -458,9 +458,9 @@ export class PowerZoneManager extends PIXI.Container{
                     if (finalNbOfDots < 0 || this.base[0] > 1 && Math.abs(diffZone) > 1) {
                         if(finalNbOfDots < 0) {
                             //alert("Pas assez de points disponibles pour cette opération");
-                            this.displayUserMessage("Pas assez de points disponibles pour cette opération");
+                            this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
                         }else if(this.base[0] > 1 && Math.abs(diffZone) > 1){
-                            this.displayUserMessage("Une case à la fois pour les base avec un dénominateur autre que 1");
+                            this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
                         }
                         if (dotSprite.dot.isPositive) {
                             this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
@@ -502,10 +502,10 @@ export class PowerZoneManager extends PIXI.Container{
                     }
                 } else {
                     if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
-                        this.displayUserMessage("Impossible de déplacer un point entre les zone positive et négative");
+                        this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
                         this.isInteractive = false;
                     }else if(this.base[1] === BASE.BASE_X){
-                        this.displayUserMessage("Base inconnue, on ne peut pas déplacer des points entre les zones");
+                        this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
                         this.isInteractive = false;
                     }
                     if (dotSprite.dot.isPositive) {
@@ -554,7 +554,7 @@ export class PowerZoneManager extends PIXI.Container{
                             this.removeDotSpriteListeners(dotSprite);
                             this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
-                            this.displayUserMessage('Aucun point à annuler');
+                            this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
                             this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
                         }
                     }else{
@@ -568,7 +568,7 @@ export class PowerZoneManager extends PIXI.Container{
                             this.removeDotSpriteListeners(dotSprite);
                             this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
-                            this.displayUserMessage('Aucun point à annuler');
+                            this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
                             this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer]});
                         }
                     }
@@ -578,7 +578,7 @@ export class PowerZoneManager extends PIXI.Container{
             // Dropped outside any zone
             if(droppedOnPowerZone === this.leftMostZone){
                 // Dropped on the fake zone at the left
-                this.displayUserMessage("La machine ne va pas dans des nombres plus grand");
+                this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
                 if (dotSprite.dot.isPositive) {
                     this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
                 } else {
