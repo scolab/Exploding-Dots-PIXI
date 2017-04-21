@@ -113,20 +113,16 @@ export default class Operand extends Component {
                     <form onSubmit={this.onSubmit.bind(this)}>
                         <input
                             style={{
-                                backgroundImage: `url(${img})`,
-                                backgroundRepeat: `no-repeat`,
-                                backgroundColor: `Transparent`,
-                                border: `none`,
-                                overflow: `hidden`,
-                                width: 252,
-                                height: 45,
                                 fontFamily: 'Noto Sans',
                                 fontWeight:'bold',
-                                fontWeight:'bold',
                                 fontSize: 24,
-                                textAlign: 'center'
+                                backgroundColor : '#efefef',
+                                borderRadius: '23px',
+                                width: '252px',
+                                height: '45px',
+                                textAlign: 'center',
+                                border: `none`,
                             }}
-
                             type="text"
                             onChange={this.onChange.bind(this)}
                             value={this.props.value}
@@ -144,18 +140,15 @@ export default class Operand extends Component {
                         <form onSubmit={this.onSubmit.bind(this)}>
                             <input
                                 style={{
-                                    backgroundImage: `url(${img})`,
-                                    backgroundRepeat: `no-repeat`,
-                                    backgroundColor: `Transparent`,
-                                    border: `none`,
-                                    overflow: `hidden`,
-                                    width: 252,
-                                    height: 45,
                                     fontFamily: 'Noto Sans',
                                     fontWeight:'bold',
-                                    fontWeight:'bold',
                                     fontSize: 24,
-                                    textAlign: 'center'
+                                    backgroundColor : '#efefef',
+                                    borderRadius: '23px',
+                                    width: '252px',
+                                    height: '45px',
+                                    textAlign: 'center',
+                                    border: `none`,
                                 }}
                                 type="text"
                                 onChange={this.onChange.bind(this)}

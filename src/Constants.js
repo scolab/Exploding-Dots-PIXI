@@ -57,7 +57,13 @@ export const ERROR_MESSAGE = {
     BASE_X_DRAG : 'Base inconnue, on ne peut pas déplacer des points entre les zones',
     NO_OPPOSITE_DOTS : 'Aucun point à annuler',
     NO_GREATER_ZONE : 'La machine ne va pas dans des nombres plus grand',
+};
 
+export const TEXT_COPY = {
+    THE_CODE_FOR : 'The code for',
+    PUT : 'Put',
+    IS: 'is',
+    DOTS_COUNT: 'dots in the machine',
 };
 
 export const SPRITE_COLOR = {

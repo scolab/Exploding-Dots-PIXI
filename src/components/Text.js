@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY} from '../Constants';
 
 export default class Text extends Component {
 
@@ -16,9 +16,9 @@ export default class Text extends Component {
         let text = '';
         if(this.props.operator_mode === OPERATOR_MODE.DISPLAY){
             if(this.props.usage_mode === USAGE_MODE.FREEPLAY){
-                text = "The code for"
+                text = TEXT_COPY.THE_CODE_FOR;
             }else if(this.props.usage_mode === USAGE_MODE.OPERATION) {
-                text = "Put"
+                text = TEXT_COPY.PUT;
             }
         }
         return (
