@@ -449,6 +449,7 @@ class CanvasPIXI extends Component {
                             }
                         }else{
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                            return;
                         }
                         break;
                     case OPERATOR_MODE.DIVIDE:
@@ -459,6 +460,7 @@ class CanvasPIXI extends Component {
                         if(dotsPerZoneB.length === 0){
                             invalidEntry = true;
                         }
+                        // TODO verify division by zero
                         if(invalidEntry === false){
                             makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
@@ -482,6 +484,7 @@ class CanvasPIXI extends Component {
                             }
                         }else{
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+                            return;
                         }
                         this.powerZoneManager.showDivider();
                         break;

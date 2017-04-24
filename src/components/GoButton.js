@@ -23,34 +23,40 @@ export default class GoButton extends Component {
                         backgroundColor: `Transparent`,
                         border: `none`,
                         overflow: `hidden`,
-                        fontFamily: 'Noto Sans',
+                        /*fontFamily: 'Noto Sans',
                         fontWeight:'bold',
                         fontSize: 24,
-                        textAlign: 'center',
+                        textAlign: 'center',*/
                     }} />
                 </div>
             )
         }else {
             return (
-                <div className="operationItem">
-                    <button className="imageButton" style={{
-                        backgroundImage: `url(${img})`,
-                        width: 46,
-                        height: 46,
-                        backgroundRepeat: `no-repeat`,
-                        backgroundColor: `Transparent`,
-                        border: `none`,
-                        overflow: `hidden`,
-                        fontFamily: 'Noto Sans',
-                        fontWeight:'bold',
-                        fontSize: 24,
-                        textAlign: 'center'
-                    }}
-                            type='button'
-                            onClick={this.props.onClick}>
-                        {this.props.children}
-                    </button>
-                </div>
+                <button className="imageButton"
+                        style={{
+                            fontFamily: 'Noto Sans',
+                            fontWeight:'bold',
+                            fontSize: 20,
+                            //backgroundColor : '#efefef',
+                            background: '#efefef', /* For browsers that do not support gradients */
+                            background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
+                            background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
+                            background: '-moz-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Firefox 3.6 to 15 */
+                            background: 'linear-gradient(to right, #f8f8f9, #e7e8e9)', /* Standard syntax */
+                            borderRadius: '25px',
+                            width: '47px',
+                            height: '47px',
+                            lineHeight: '47px',
+                            verticalAlign: 'middle',
+                            marginTop: '-6px',
+                            marginLeft: '10px'
+                        }}
+                        type='button'
+                        onClick={this.props.onClick}>
+                    <i className="fa fa-arrow-right"></i>
+
+                </button>
+
             )
         }
     }
