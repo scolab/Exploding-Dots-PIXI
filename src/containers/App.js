@@ -44,6 +44,7 @@ class ExplodingDots extends Component {
         errorMessage: PropTypes.string,
         userMessage: PropTypes.string,
         muted: PropTypes.bool,
+        wantedResult: PropTypes.JSON,
     };
 
     static defaultProps = {
@@ -69,6 +70,12 @@ class ExplodingDots extends Component {
         errorMessage: '',
         userMessage: '',
         muted: false,
+        wantedResult:{
+            positiveDots:[],
+            negativeDots:[],
+            positiveDivider:[],
+            negativeDivider:[]
+        },
     };
 
     constructor(props) {

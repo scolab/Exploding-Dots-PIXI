@@ -13,7 +13,7 @@ import blueDragJSON from './dot_drag_blue.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
-    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage){
+    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage, soundManager, wantedResult){
         super();
         this.addDot = addDot;
         this.removeDot = removeDot;
@@ -24,6 +24,7 @@ export class PowerZoneManager extends PIXI.Container{
         this.movingDotsContainer = new PIXI.Container();
         this.dividerZoneManager = null;
         this.soundManager = soundManager;
+        this.wantedResult = wantedResult;
     }
 
     init(textures, spritePool, base, usage_mode, operator_mode, totalZoneCount, placeValueOn, negativePresent){
@@ -971,7 +972,29 @@ export class PowerZoneManager extends PIXI.Container{
         });
     }
 
+    checkResult() {
+        let zone;
+        if(this.wantedResult.positiveDots.length >= this.allZones.length &&
+            this.wantedResult.negativeDots.length === this.allZones.length &&
+            this.wantedResult.positiveDivider.length === this.allZones.length &&
+            this.wantedResult.negativeDivider.length === this.allZones.length
+        ) {
+            for (let i = 0; i < this.allZones.length; i++) {
+                zone = this.allZones[i];
+                zone.precalculateDotsForDivision();
+                if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+                    this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
+                    this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
+                    this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
+                ) {
+                    console.log('SUCCESS!!!')
+                }
+            }
+        }
+    }
+
     reset(){
+        //console.log('PowerZoneManager reset');
         TweenMax.killAll(true);
         this.allZones.forEach(zone => {
            zone.reset();

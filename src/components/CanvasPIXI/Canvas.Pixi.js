@@ -59,6 +59,7 @@ class CanvasPIXI extends Component {
         displayUserMessage: PropTypes.func.isRequired,
         userMessage: PropTypes.string,
         muted: PropTypes.bool.isRequired,
+        wantedResult: PropTypes.object.isRequired,
     };
 
     constructor(props){
@@ -97,6 +98,7 @@ class CanvasPIXI extends Component {
             this.props.rezoneDot,
             this.props.displayUserMessage,
             this.soundManager,
+            this.props.wantedResult
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
@@ -174,6 +176,9 @@ class CanvasPIXI extends Component {
         this.powerZoneManager.checkInstability();
         this.powerZoneManager.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();
+        if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
+            this.powerZoneManager.checkResult();
+        }
         return false;
     }
 
