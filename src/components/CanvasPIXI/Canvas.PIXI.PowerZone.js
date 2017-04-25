@@ -633,11 +633,13 @@ export class PowerZone extends PIXI.Container{
                     }
                 );
                 tween2.repeat(-1).repeatDelay(2).yoyo(true).play();
+                return true;
             }else{
                 TweenMax.killTweensOf(this.positiveDotsContainer);
                 TweenMax.killTweensOf(this.negativeDotsContainer);
                 this.positiveDotsContainer.position.copy(this.originalPositiveBoxPosition);
                 this.negativeDotsContainer.position.copy(this.originalNegativeBoxPosition);
+                return false;
             }
         }
     }

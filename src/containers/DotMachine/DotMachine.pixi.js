@@ -124,6 +124,7 @@ class DotsMachine extends Component {
                 operandB: PropTypes.string.isRequired,
                 errorMessage: PropTypes.string.isRequired,
                 userMessage: PropTypes.string.isRequired,
+                muted: PropTypes.bool.isRequired,
             })
         })
     };
@@ -218,6 +219,7 @@ class DotsMachine extends Component {
                     error={this.props.error}
                     displayUserMessage={this.props.userMessage}
                     userMessage={this.props.dotsMachine.machineState.userMessage}
+                    muted={this.props.dotsMachine.machineState.muted}
                 />
             </div>
         );

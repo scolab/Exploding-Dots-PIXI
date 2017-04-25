@@ -6,6 +6,7 @@ import {superscriptToNormal, replaceAt} from '../../utils/StringUtils';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR} from '../../Constants'
 import {SpritePool} from '../../utils/SpritePool';
 import {PowerZoneManager} from './PowerZoneManager';
+import {SoundManager} from '../../utils/SoundManager';
 
 class CanvasPIXI extends Component {
 
@@ -57,6 +58,7 @@ class CanvasPIXI extends Component {
         error: PropTypes.func.isRequired,
         displayUserMessage: PropTypes.func.isRequired,
         userMessage: PropTypes.string,
+        muted: PropTypes.bool.isRequired,
     };
 
     constructor(props){
@@ -72,7 +74,6 @@ class CanvasPIXI extends Component {
 
     componentDidMount(){
         //console.log('componentDidMount', this.state, this.props);
-
         var options = {
             view: this.canvas,
             transparent: true,
@@ -87,6 +88,7 @@ class CanvasPIXI extends Component {
         //this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
         this.state.stage = this.state.app.stage;
         this.state.renderer = this.state.app.renderer;
+        this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
         this.powerZoneManager = new PowerZoneManager(
             this.props.addDot,
             this.props.removeDot,
@@ -94,6 +96,7 @@ class CanvasPIXI extends Component {
             this.props.removeMultipleDots,
             this.props.rezoneDot,
             this.props.displayUserMessage,
+            this.soundManager,
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
@@ -198,6 +201,7 @@ class CanvasPIXI extends Component {
                 // if there is no operand B value and one is displayed (OPERATOR_MODE.DISPLAY hide operand B)
                 if(this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
                     this.props.operandB.length === 0){
+                    this.soundManager.playSound(SoundManager.GO_INVALID);
                     this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                     return;
                 }
@@ -303,6 +307,7 @@ class CanvasPIXI extends Component {
                                 } else {
                                     if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
                                         // the exponent is higher than the amount of zone
+                                        this.soundManager.playSound(SoundManager.GO_INVALID);
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
                                     }
@@ -335,6 +340,7 @@ class CanvasPIXI extends Component {
                                 } else {
                                     if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
                                         // the exponent is higher than the amount of zone
+                                        this.soundManager.playSound(SoundManager.GO_INVALID);
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
                                     }
@@ -354,10 +360,12 @@ class CanvasPIXI extends Component {
 
                         // validate that the sum of the value isn't 0
                         if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
                         if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
@@ -380,6 +388,7 @@ class CanvasPIXI extends Component {
                                 dotsPos.push(this.getDot(i, true));
                             }
                         }
+                        this.soundManager.playSound(SoundManager.GO_SUCCESS);
                         this.props.startActivityDoneFunc(dotsPos, totalDot);
                         break;
                     case OPERATOR_MODE.ADDITION:
@@ -397,11 +406,13 @@ class CanvasPIXI extends Component {
                         if(this.props.base[1] !== BASE.BASE_X) {
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
                             let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);//dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         }else {
                             // remove last char in the operand if it's a - or a +
                             let operandAValue = this.removeTrailingSign(this.props.operandA);
                             let operandBValue = this.removeTrailingSign(this.props.operandB);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         }
                         break;
@@ -415,10 +426,12 @@ class CanvasPIXI extends Component {
                         }
                         if(this.props.base[1] !== BASE.BASE_X) {
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         }else{
                             // remove last char in the operand if it's a - or a +
                             let operandAValue = this.removeTrailingSign(this.props.operandA);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         }
                         break;
@@ -443,14 +456,17 @@ class CanvasPIXI extends Component {
                             if(this.props.base[1] !== BASE.BASE_X) {
                                 let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                                 let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                             }else{
                                 // remove last char in the operand if it's a - or a +
                                 let operandAValue = this.removeTrailingSign(this.props.operandA);
                                 let operandBValue = this.removeTrailingSign(this.props.operandB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                             }
                         }else{
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
@@ -478,14 +494,17 @@ class CanvasPIXI extends Component {
                             if(this.props.base[1] !== BASE.BASE_X) {
                                 let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                                 let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
                             }else{
                                 // remove last char in the operand if it's a - or a +
                                 let operandAValue = this.removeTrailingSign(this.props.operandA);
                                 let operandBValue = this.removeTrailingSign(this.props.operandB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
                             }
                         }else{
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }

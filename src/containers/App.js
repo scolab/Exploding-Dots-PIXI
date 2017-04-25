@@ -43,6 +43,7 @@ class ExplodingDots extends Component {
         cdnBaseUrl: PropTypes.string,
         errorMessage: PropTypes.string,
         userMessage: PropTypes.string,
+        muted: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -67,6 +68,7 @@ class ExplodingDots extends Component {
         cdnBaseUrl: isDev ? '' : 'https://exploding-dots.s3.ca-central-1.amazonaws.com',
         errorMessage: '',
         userMessage: '',
+        muted: false,
     };
 
     constructor(props) {
