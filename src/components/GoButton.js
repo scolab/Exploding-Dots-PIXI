@@ -1,10 +1,11 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import img from './images/wand1x.png';
 
 export default class GoButton extends Component {
 
     static propTypes = {
-        onClick: React.PropTypes.func.isRequired,
+        onClick: PropTypes.func.isRequired,
         children: PropTypes.node.isRequired,
         activityStarted: PropTypes.bool.isRequired,
     };

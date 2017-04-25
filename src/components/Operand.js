@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE} from '../Constants';
 import {superscriptToNormal} from '../utils/StringUtils';
 import img from './images/input1x.png';

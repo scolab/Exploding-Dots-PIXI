@@ -1,11 +1,12 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import img from './images/place_value.gif';
 
 export default class PlaceValueSwitch extends Component {
 
     static propTypes = {
-        visible: React.PropTypes.bool.isRequired,
-        onClick: React.PropTypes.func.isRequired
+        visible: PropTypes.bool.isRequired,
+        onClick: PropTypes.func.isRequired
     };
 
     constructor(props) {

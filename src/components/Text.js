@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY} from '../Constants';
 
 export default class Text extends Component {

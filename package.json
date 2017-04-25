@@ -54,6 +54,7 @@
     "pixi-filters": "^1.0.6",
     "pixi-particles": "^2.1.4",
     "pixi.js": "^4.4.4",
+    "prop-types": "^15.5.8",
     "react-redux": "^5.0.1",
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",

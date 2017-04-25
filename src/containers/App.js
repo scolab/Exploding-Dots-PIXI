@@ -1,19 +1,18 @@
 import 'pixi.js';
 import '../ExplodingDots.css';
 import '../font-awesome.min.css';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import {BASE} from '../Constants'
-import { resetMachine } from '../actions/';
 
 // http://www.material-ui.com/
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
