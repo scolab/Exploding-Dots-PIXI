@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 import {processSuperscript, addSuperscriptWhereNeeded} from '../utils/StringUtils';
 
 let initialMachineState = {};
+let setMachineState = null;
 
 function setDotsCount(state){
     //console.log('setDotsCount');
@@ -337,8 +338,13 @@ const dotsReducer = (state = null, action) => {
             console.log(ACTIONS.RESET);
             initialMachineState.operandA = '';
             initialMachineState.operandB = '';
-            if (action.machineState) {
-                initialMachineState = action.machineState;
+            if (action.machineState || setMachineState != null) {
+                if(action.machineState) {
+                    setMachineState = {...action.machineState};
+                }
+                initialMachineState = {...setMachineState};//action.machineState;
+                console.log('initialMachineState', initialMachineState.operandA);
+                initialMachineState.startActivity = true;
             }
             initialMachineState.activityStarted = false;
             initialMachineState.errorMessage = '';
