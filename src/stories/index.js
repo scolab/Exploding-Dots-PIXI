@@ -51,7 +51,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Arythmos addition Operation', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
@@ -62,7 +62,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Arythmos addition EXERCISE', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
@@ -181,7 +181,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Algebra addition Operation', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
@@ -192,7 +192,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Algebra addition Exercise', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}

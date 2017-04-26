@@ -338,12 +338,12 @@ const dotsReducer = (state = null, action) => {
             console.log(ACTIONS.RESET);
             initialMachineState.operandA = '';
             initialMachineState.operandB = '';
-            if (action.machineState || setMachineState != null) {
-                if(action.machineState) {
-                    setMachineState = {...action.machineState};
-                }
-                initialMachineState = {...setMachineState};//action.machineState;
-                console.log('initialMachineState', initialMachineState.operandA);
+            if(action.machineState){// we are at the start of an activity
+                setMachineState = {...action.machineState};
+                initialMachineState = {...setMachineState};
+            }else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE){
+                // reset button in Exercise mode, repopulate with starting value
+                initialMachineState = {...setMachineState};
                 initialMachineState.startActivity = true;
             }
             initialMachineState.activityStarted = false;

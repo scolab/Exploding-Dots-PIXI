@@ -17,25 +17,30 @@ export default class GoButton extends Component {
     render() {
         if(this.props.activityStarted){
             return(
-                <div className="operationItem">
-                    <button style={{
-                        width: 46,
-                        height: 46,
-                        backgroundColor: `Transparent`,
-                        border: `none`,
-                        overflow: `hidden`,
-                        /*fontFamily: 'Noto Sans',
-                        fontWeight:'bold',
-                        fontSize: 24,
-                        textAlign: 'center',*/
-                    }} />
-                </div>
+                <button
+                        style={{
+                            fontWeight:'bold',
+                            fontSize: 20,
+                            background: '#efefef', /* For browsers that do not support gradients */
+                            borderRadius: '25px',
+                            width: '47px',
+                            height: '47px',
+                            lineHeight: '47px',
+                            verticalAlign: 'middle',
+                            marginTop: '-6px',
+                            marginLeft: '10px',
+                            overflow: 'hidden',
+                            border: 'none',
+                            visibility: 'hidden'
+                        }}
+                        type='button'>
+                    <i className="fa fa-arrow-right"></i>
+                </button>
             )
         }else {
             return (
                 <button className="imageButton"
                         style={{
-                            fontFamily: 'Noto Sans',
                             fontWeight:'bold',
                             fontSize: 20,
                             //backgroundColor : '#efefef',
@@ -55,9 +60,7 @@ export default class GoButton extends Component {
                         type='button'
                         onClick={this.props.onClick}>
                     <i className="fa fa-arrow-right"></i>
-
                 </button>
-
             )
         }
     }

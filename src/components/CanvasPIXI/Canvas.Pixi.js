@@ -44,7 +44,7 @@ class CanvasPIXI extends Component {
             isPositive: PropTypes.bool.isRequired,
         }))).isRequired,
         base: PropTypes.array.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         placeValueOn: PropTypes.bool.isRequired,
         cdnBaseUrl: PropTypes.string.isRequired,
@@ -396,7 +396,7 @@ class CanvasPIXI extends Component {
                         this.soundManager.playSound(SoundManager.GO_SUCCESS);
                         this.props.startActivityDoneFunc(dotsPos, totalDot);
                         break;
-                    case OPERATOR_MODE.ADDITION:
+                    case OPERATOR_MODE.ADD:
                         makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                         for (let i = 0; i < dotsPerZoneA.length; ++i) {
                             let j = 0;

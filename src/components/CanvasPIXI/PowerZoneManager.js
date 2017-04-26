@@ -24,6 +24,11 @@ export class PowerZoneManager extends PIXI.Container{
         this.movingDotsContainer = new PIXI.Container();
         this.dividerZoneManager = null;
         this.soundManager = soundManager;
+        // reverse all the wanted result so they are in the same order as our zone.
+        wantedResult.positiveDots.reverse();
+        wantedResult.negativeDots.reverse();
+        wantedResult.positiveDivider.reverse();
+        wantedResult.negativeDivider.reverse();
         this.wantedResult = wantedResult;
     }
 
@@ -227,7 +232,7 @@ export class PowerZoneManager extends PIXI.Container{
                         }
                     }
                 }
-            }else{
+            }else if (isDragEnd === true) {
                 this.soundManager.playSound(SoundManager.DIVISION_BACKINTOPLACE);
             }
         }
@@ -973,22 +978,32 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     checkResult() {
+        console.log('checkResult');
         let zone;
-        if(this.wantedResult.positiveDots.length >= this.allZones.length &&
+        if(this.wantedResult.positiveDots.length === this.allZones.length &&
             this.wantedResult.negativeDots.length === this.allZones.length &&
             this.wantedResult.positiveDivider.length === this.allZones.length &&
             this.wantedResult.negativeDivider.length === this.allZones.length
         ) {
+            let zoneSuccess = 0;
             for (let i = 0; i < this.allZones.length; i++) {
                 zone = this.allZones[i];
                 zone.precalculateDotsForDivision();
+                console.log(this.wantedResult.positiveDots[i], zone.positiveDotCount);
+                console.log(this.wantedResult.negativeDots[i], zone.negativeDotCount);
+                console.log(this.wantedResult.positiveDivider[i], Number(zone.positiveDividerText));
+                console.log(this.wantedResult.negativeDivider[i], Number(zone.negativeDividerText));
                 if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
                     this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
                     this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
                     this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
                 ) {
-                    console.log('SUCCESS!!!')
+                    zoneSuccess++;
                 }
+            }
+            console.log('checkResult', zoneSuccess);
+            if(zoneSuccess === this.allZones.length){
+                console.log('SUCCESS!!!')
             }
         }
     }

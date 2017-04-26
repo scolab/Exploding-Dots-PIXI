@@ -114,7 +114,7 @@ class DotsMachine extends Component {
                 loginVisible: PropTypes.bool.isRequired,
                 base: PropTypes.array.isRequired,
                 maxViewableDots: PropTypes.number.isRequired,
-                operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+                operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired,
                 placeValueOn: PropTypes.bool.isRequired,
                 cdnBaseUrl: PropTypes.string.isRequired,
