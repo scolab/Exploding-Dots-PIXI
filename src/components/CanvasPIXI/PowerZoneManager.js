@@ -989,10 +989,6 @@ export class PowerZoneManager extends PIXI.Container{
             for (let i = 0; i < this.allZones.length; i++) {
                 zone = this.allZones[i];
                 zone.precalculateDotsForDivision();
-                console.log(this.wantedResult.positiveDots[i], zone.positiveDotCount);
-                console.log(this.wantedResult.negativeDots[i], zone.negativeDotCount);
-                console.log(this.wantedResult.positiveDivider[i], Number(zone.positiveDividerText));
-                console.log(this.wantedResult.negativeDivider[i], Number(zone.negativeDividerText));
                 if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
                     this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
                     this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
