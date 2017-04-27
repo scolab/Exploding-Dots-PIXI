@@ -257,7 +257,6 @@ export class PowerZoneManager extends PIXI.Container{
         let finalPosition;
         let allMovingDots = [];
         if(isPositive) {
-            // TODO this is impossible for the last box
             newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].positiveDivideCounter.position);
             finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].positiveDivideCounter.position);
             for(let i = 0; i < this.base[1]; i++) {
@@ -816,7 +815,6 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     removeTweenDone(dotSprite){
-        // TODO check this, should it be moved to the PowerZone?
         dotSprite.parent.removeChild(dotSprite);
         this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
     }

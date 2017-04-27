@@ -23,76 +23,94 @@ export class SoundManager{
 
     constructor(baseURL, muted){
         this.muted = muted;
-        baseURL += '/sounds/'
-        this.allSounds = {};
+        baseURL += '/sounds/';
+        this.allSounds = [];
 
         this.GO_SUCCESS = new Howl({
             src: [baseURL + 'GO_SUCCESS.mp3'],
         });
+        this.allSounds.push(this.GO_SUCCESS);
 
         this.GO_INVALID = new Howl({
             src: [baseURL + 'GO_INVALID.mp3'],
         });
+        this.allSounds.push(this.GO_INVALID);
 
         this.ADD_DOT = new Howl({
             src: [baseURL + 'ADD_DOT.mp3'],
         });
+        this.allSounds.push(this.ADD_DOT);
 
         this.ADD_DIVISION_DOT = new Howl({
             src: [baseURL + 'ADD_DIVISION_DOT.mp3'],
         });
+        this.allSounds.push(this.ADD_DIVISION_DOT);
 
         this.DOT_VANISH = new Howl({
             src: [baseURL + 'DOT_VANISH.mp3'],
         });
+        this.allSounds.push(this.DOT_VANISH);
 
         this.BACK_INTO_PLACE = new Howl({
             src: [baseURL + 'BACK_INTO_PLACE.mp3'],
         });
+        this.allSounds.push(this.BACK_INTO_PLACE);
 
         this.DOT_EXPLODE = new Howl({
             src: [baseURL + 'DOT_EXPLODE.mp3'],
         });
+        this.allSounds.push(this.DOT_EXPLODE);
 
         this.DOT_IMPLODE = new Howl({
             src: [baseURL + 'DOT_IMPLODE.mp3'],
         });
+        this.allSounds.push(this.DOT_IMPLODE);
 
         this.INVALID_MOVE = new Howl({
             src: [baseURL + 'INVALID_MOVE.mp3'],
         });
+        this.allSounds.push(this.INVALID_MOVE);
 
         this.NOT_ENOUGH_DOTS = new Howl({
             src: [baseURL + 'NOT_ENOUGH_DOTS.mp3'],
         });
+        this.allSounds.push(this.NOT_ENOUGH_DOTS);
 
         this.DOT_ANNIHILATION = new Howl({
             src: [baseURL + 'DOT_ANNIHILATION.mp3'],
         });
+        this.allSounds.push(this.DOT_ANNIHILATION);
 
         this.DIVISION_SUCCESS = new Howl({
             src: [baseURL + 'DIVISION_SUCCESS.mp3'],
         });
+        this.allSounds.push(this.DIVISION_SUCCESS);
 
         this.DIVISION_IMPOSSIBLE = new Howl({
             src: [baseURL + 'DIVISION_IMPOSSIBLE.mp3'],
         });
+        this.allSounds.push(this.DIVISION_IMPOSSIBLE);
 
         this.DIVISION_BACKINTOPLACE = new Howl({
             src: [baseURL + 'DIVISION_BACKINTOPLACE.mp3'],
         });
+        this.allSounds.push(this.DIVISION_BACKINTOPLACE);
 
         this.DIVISION_OVERLOAD = new Howl({
             src: [baseURL + 'DIVISION_OVERLOAD.mp3'],
         });
+        this.allSounds.push(this.DIVISION_OVERLOAD);
 
         this.BOX_OVERLOAD = new Howl({
             src: [baseURL + 'BOX_OVERLOAD.mp3'],
         });
+        this.allSounds.push(this.BOX_OVERLOAD);
 
         this.BOX_POSITIVE_NEGATIVE = new Howl({
             src: [baseURL + 'BOX_POSITIVE_NEGATIVE.mp3'],
         });
+        this.allSounds.push(this.BOX_POSITIVE_NEGATIVE);
+        this.allLoop = [this.playLoopOne, this.playLoopTwo];
     }
 
     playSound(id) {
@@ -130,6 +148,15 @@ export class SoundManager{
         }else if(id === SoundManager.BOX_POSITIVE_NEGATIVE) {
             TweenMax.killTweensOf(this.playLoopTwo);
         }
+    }
+
+    stopAllSounds(){
+        this.allSounds.forEach(sound => {
+            sound.stop();
+        });
+        this.allLoop.forEach(loop => {
+            TweenMax.killTweensOf(loop);
+        });
     }
 }
 

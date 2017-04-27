@@ -725,7 +725,6 @@ export class PowerZone extends PIXI.Container{
                     }
                 }
             } else {
-                //console.log(Number(this.negativeDividerText.text), (Number(this.negativeDividerText.text) + 1));
                 this.negativeDividerText.text = '-' + (Math.abs(Number(this.negativeDividerText.text)) + 1);
                 // check if division value exceed base
                 if (this.base[1] != BASE.BASE_X && Math.abs(Number(this.negativeDividerText.text)) >= this.base[1]) {

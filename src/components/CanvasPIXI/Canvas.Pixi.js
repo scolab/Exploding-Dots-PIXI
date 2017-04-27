@@ -118,6 +118,10 @@ class CanvasPIXI extends Component {
         loader.load();
     }
 
+    componentWillUnmount(){
+        this.soundManager.stopAllSounds()
+    }
+
     onAssetsError(loader){
         // TODO
         console.log('onAssetsError', loader.onStart);
@@ -193,8 +197,10 @@ class CanvasPIXI extends Component {
         //console.log('checkMachineStateValue', this.props.placeValueOn);
         this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
         if(this.props.magicWandIsActive) {
-            //console.log('magicWandIsActive');
             this.powerZoneManager.magicWand();
+            /*var img = new Image();
+            img.src = this.state.renderer.view.toDataURL();
+            document.body.appendChild(img);*/
             this.props.activateMagicWand(false);
         }else if(this.props.startActivity) {
             // ************************************
