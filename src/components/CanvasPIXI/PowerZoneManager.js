@@ -1,4 +1,4 @@
-import {PowerZone} from './Canvas.PIXI.PowerZone';
+import {PowerZone} from './PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
 import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
@@ -302,7 +302,7 @@ export class PowerZoneManager extends PIXI.Container{
     createDot(target, position, color){
         //console.log(target.powerZone);
         if(this.isInteractive) {
-            if (this.usage_mode === USAGE_MODE.OPERATION && this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
+            if (this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
                 // Add a opposite value dot in the same zone for division in base X
                 this.soundManager.playSound(SoundManager.ADD_DIVISION_DOT);
                 if(target.isPositive){

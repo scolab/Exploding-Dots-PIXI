@@ -34,8 +34,12 @@ export class DotCounter extends PIXI.Container{
         this.addChild(this.text);
     }
 
-    setText(text){
-        this.text.text = text;
+    setText(text, isPositive){
+        if(isPositive) {
+            this.text.text = text;
+        }else{
+            this.text.text = '-' + text;
+        }
         switch(this.text.text.length){
             case 0:
             case 1:
@@ -55,6 +59,7 @@ export class DotCounter extends PIXI.Container{
                 this.bgLeft.x = -24;
                 break;
             case 5:
+            case 6:
                 this.bgCenter.width = 60;
                 this.bgLeft.x = -29;
                 break;

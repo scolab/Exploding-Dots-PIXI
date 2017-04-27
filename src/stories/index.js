@@ -27,6 +27,18 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={false}
         />
     ))
+    .add('Mecha Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            operandA={'12345'}
+            placeValueSwitchVisible={false}
+            placeValueOn={false}
+            magicWandVisible={false}
+        />
+    ))
     .add('Insighto Freeplay', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}

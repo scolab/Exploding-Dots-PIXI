@@ -86,7 +86,6 @@ class CanvasPIXI extends Component {
 
         let preventWebGL = false;
         this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT), options, preventWebGL);
-        //this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
         this.state.stage = this.state.app.stage;
         this.state.renderer = this.state.app.renderer;
         this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
@@ -120,6 +119,7 @@ class CanvasPIXI extends Component {
     }
 
     onAssetsError(loader){
+        // TODO
         console.log('onAssetsError', loader.onStart);
         loader.onStart = null;
     }
@@ -179,6 +179,7 @@ class CanvasPIXI extends Component {
         if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
             this.powerZoneManager.checkResult();
         }
+        this.soundManager.muted = this.props.muted;
         return false;
     }
 
@@ -484,7 +485,6 @@ class CanvasPIXI extends Component {
                         if(dotsPerZoneB.length === 0){
                             invalidEntry = true;
                         }
-                        // TODO verify division by zero
                         if(invalidEntry === false){
                             makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {

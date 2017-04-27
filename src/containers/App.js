@@ -69,7 +69,7 @@ class ExplodingDots extends Component {
         cdnBaseUrl: isDev ? '' : 'https://exploding-dots.s3.ca-central-1.amazonaws.com',
         errorMessage: '',
         userMessage: '',
-        muted: false,
+        muted: true,
         wantedResult:{
             positiveDots:[],
             negativeDots:[],
