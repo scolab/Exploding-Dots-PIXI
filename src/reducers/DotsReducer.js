@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 import {processSuperscript, addSuperscriptWhereNeeded} from '../utils/StringUtils';
 
 let initialMachineState = {};
+let setMachineState = null;
 
 function setDotsCount(state){
     //console.log('setDotsCount');
@@ -337,8 +338,13 @@ const dotsReducer = (state = null, action) => {
             console.log(ACTIONS.RESET);
             initialMachineState.operandA = '';
             initialMachineState.operandB = '';
-            if (action.machineState) {
-                initialMachineState = action.machineState;
+            if(action.machineState){// we are at the start of an activity
+                setMachineState = {...action.machineState};
+                initialMachineState = {...setMachineState};
+            }else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE){
+                // reset button in Exercise mode, repopulate with starting value
+                initialMachineState = {...setMachineState};
+                initialMachineState.startActivity = true;
             }
             initialMachineState.activityStarted = false;
             initialMachineState.errorMessage = '';

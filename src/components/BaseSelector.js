@@ -1,10 +1,11 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import BG from './images/rule_dropdown1x.png';
 
 export default class BaseSelector extends Component {
     static propTypes = {
-        onClick: React.PropTypes.func.isRequired,
-        base: React.PropTypes.array.isRequired,
+        onClick: PropTypes.func.isRequired,
+        base: PropTypes.array.isRequired,
     };
 
     constructor(props) {

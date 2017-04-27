@@ -1,19 +1,18 @@
 import 'pixi.js';
 import '../ExplodingDots.css';
 import '../font-awesome.min.css';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE} from '../Constants';
 import {BASE} from '../Constants'
-import { resetMachine } from '../actions/';
 
 // http://www.material-ui.com/
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -26,7 +25,7 @@ class ExplodingDots extends Component {
 
     static PropTypes = {
         base: PropTypes.array, //.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY, USAGE_MODE.EXERCISE]), //.isRequired,
         magicWandIsActive: PropTypes.bool, //.isRequired,
         baseSelectorVisible: PropTypes.bool, //.isRequired,
@@ -44,6 +43,8 @@ class ExplodingDots extends Component {
         cdnBaseUrl: PropTypes.string,
         errorMessage: PropTypes.string,
         userMessage: PropTypes.string,
+        muted: PropTypes.bool,
+        wantedResult: PropTypes.JSON,
     };
 
     static defaultProps = {
@@ -68,6 +69,13 @@ class ExplodingDots extends Component {
         cdnBaseUrl: isDev ? '' : 'https://exploding-dots.s3.ca-central-1.amazonaws.com',
         errorMessage: '',
         userMessage: '',
+        muted: true,
+        wantedResult:{
+            positiveDots:[],
+            negativeDots:[],
+            positiveDivider:[],
+            negativeDivider:[]
+        },
     };
 
     constructor(props) {

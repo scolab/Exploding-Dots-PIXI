@@ -1,10 +1,11 @@
-import {PowerZone} from './Canvas.PIXI.PowerZone';
+import {PowerZone} from './PowerZone';
 import {ParticleEmitter} from './ParticleEmitter';
 import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
 import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
 import {Point} from 'pixi.js';
+import {SoundManager} from '../../utils/SoundManager';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
 import redDragJSON from './dot_drag_red.json';
@@ -12,7 +13,7 @@ import blueDragJSON from './dot_drag_blue.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
-    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage){
+    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage, soundManager, wantedResult){
         super();
         this.addDot = addDot;
         this.removeDot = removeDot;
@@ -22,6 +23,13 @@ export class PowerZoneManager extends PIXI.Container{
         this.displayUserMessage = displayUserMessage;
         this.movingDotsContainer = new PIXI.Container();
         this.dividerZoneManager = null;
+        this.soundManager = soundManager;
+        // reverse all the wanted result so they are in the same order as our zone.
+        wantedResult.positiveDots.reverse();
+        wantedResult.negativeDots.reverse();
+        wantedResult.positiveDivider.reverse();
+        wantedResult.negativeDivider.reverse();
+        this.wantedResult = wantedResult;
     }
 
     init(textures, spritePool, base, usage_mode, operator_mode, totalZoneCount, placeValueOn, negativePresent){
@@ -165,6 +173,7 @@ export class PowerZoneManager extends PIXI.Container{
                             zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
                         });
                         if (success || antiSuccess) {
+                            this.soundManager.playSound(SoundManager.DIVISION_SUCCESS);
                             let dotsRemovedByZone = [];
                             for (let i = 0; i < this.totalZoneCount; i++) {
                                 dotsRemovedByZone.push([]);
@@ -218,9 +227,13 @@ export class PowerZoneManager extends PIXI.Container{
                                 });
                                 TweenMax.delayedCall(.6, this.processDivisionAfterTween.bind(this), [dotsRemovedByZone, moveToZone, success]);
                             }
+                        }else{
+                            this.soundManager.playSound(SoundManager.DIVISION_IMPOSSIBLE);
                         }
                     }
                 }
+            }else if (isDragEnd === true) {
+                this.soundManager.playSound(SoundManager.DIVISION_BACKINTOPLACE);
             }
         }
     }
@@ -244,7 +257,6 @@ export class PowerZoneManager extends PIXI.Container{
         let finalPosition;
         let allMovingDots = [];
         if(isPositive) {
-            // TODO this is impossible for the last box
             newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].positiveDivideCounter.position);
             finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].positiveDivideCounter.position);
             for(let i = 0; i < this.base[1]; i++) {
@@ -275,6 +287,7 @@ export class PowerZoneManager extends PIXI.Container{
             });
             delay += 0.1;
         });
+        this.soundManager.playSound(SoundManager.DIVISION_OVERLOAD);
         TweenMax.delayedCall(delay + 0.5, this.setDividerValueAfterBalance, [zonePos, isPositive], this);
     }
 
@@ -288,8 +301,9 @@ export class PowerZoneManager extends PIXI.Container{
     createDot(target, position, color){
         //console.log(target.powerZone);
         if(this.isInteractive) {
-            if (this.usage_mode === USAGE_MODE.OPERATION && this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
+            if (this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
                 // Add a opposite value dot in the same zone for division in base X
+                this.soundManager.playSound(SoundManager.ADD_DIVISION_DOT);
                 if(target.isPositive){
                     this.addDot(target.powerZone, position, target.isPositive, color);
                     let dotPos = [
@@ -307,6 +321,7 @@ export class PowerZoneManager extends PIXI.Container{
                 }
             }else {
                 //console.log('here', target.powerZone, position, target.isPositive, color);
+                this.soundManager.playSound(SoundManager.ADD_DOT);
                 this.addDot(target.powerZone, position, target.isPositive, color);
             }
         }
@@ -366,7 +381,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     onDragStart(e){
-        console.log('onDragStart', this.dot.isPositive);
+        //console.log('onDragStart', this.dot.isPositive);
         if(this.world.isInteractive) {
             let oldParent = this.parent;
             if(this.dot.isPositive) {
@@ -430,7 +445,6 @@ export class PowerZoneManager extends PIXI.Container{
         let zoneOverInfo = this.getZoneUnderCursor(data);
         let droppedOnPowerZone = zoneOverInfo.droppedOnPowerZone;
         let droppedOnPowerZoneIndex = zoneOverInfo.droppedOnPowerZoneIndex;
-
         //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
         if(droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
             // has not been dropped outside a zone
@@ -458,8 +472,10 @@ export class PowerZoneManager extends PIXI.Container{
                     if (finalNbOfDots < 0 || this.base[0] > 1 && Math.abs(diffZone) > 1) {
                         if(finalNbOfDots < 0) {
                             //alert("Pas assez de points disponibles pour cette opération");
+                            this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
                             this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
                         }else if(this.base[0] > 1 && Math.abs(diffZone) > 1){
+                            this.soundManager.playSound(SoundManager.INVALID_MOVE);
                             this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
                         }
                         if (dotSprite.dot.isPositive) {
@@ -492,6 +508,7 @@ export class PowerZoneManager extends PIXI.Container{
                         })
                     }
                     if (dotsPos.length > 0) {
+                        this.soundManager.playSound(SoundManager.DOT_EXPLODE);
                         //console.log('this.addMultipleDots', dotsPos.length);
                         let implosionEmitter = this.getImplosionEmitter();
                         let originalPos = data.getLocalPosition(this.movingDotsContainer);
@@ -502,9 +519,11 @@ export class PowerZoneManager extends PIXI.Container{
                     }
                 } else {
                     if(droppedOnPowerZone.isPositive != dotSprite.dot.isPositive) {
+                        this.soundManager.playSound(SoundManager.INVALID_MOVE);
                         this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
                         this.isInteractive = false;
                     }else if(this.base[1] === BASE.BASE_X){
+                        this.soundManager.playSound(SoundManager.INVALID_MOVE);
                         this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
                         this.isInteractive = false;
                     }
@@ -552,8 +571,10 @@ export class PowerZoneManager extends PIXI.Container{
                             this.removeDotSpriteListeners(negativeSprite);
                             allRemovedDots.push(dotSprite.dot);
                             this.removeDotSpriteListeners(dotSprite);
+                            this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
                             this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
+                            this.soundManager.playSound(SoundManager.INVALID_MOVE);
                             this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
                             this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
                         }
@@ -566,8 +587,10 @@ export class PowerZoneManager extends PIXI.Container{
                             this.removeDotSpriteListeners(positiveSprite);
                             allRemovedDots.push(dotSprite.dot);
                             this.removeDotSpriteListeners(dotSprite);
+                            this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
                             this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
                         }else{
+                            this.soundManager.playSound(SoundManager.INVALID_MOVE);
                             this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
                             this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer]});
                         }
@@ -578,6 +601,7 @@ export class PowerZoneManager extends PIXI.Container{
             // Dropped outside any zone
             if(droppedOnPowerZone === this.leftMostZone){
                 // Dropped on the fake zone at the left
+                this.soundManager.playSound(SoundManager.ERROR);
                 this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
                 if (dotSprite.dot.isPositive) {
                     this.pendingAction.push({function:this.backIntoPlace, params:[dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer]});
@@ -588,6 +612,7 @@ export class PowerZoneManager extends PIXI.Container{
             }else {
                 if (this.usage_mode === USAGE_MODE.FREEPLAY) {
                     // Remove dot in freeplay
+                    this.soundManager.playSound(SoundManager.DOT_VANISH);
                     this.removeDotSpriteListeners(dotSprite);
                     this.removeDot(originalZoneIndex, dotSprite.dot.id);
                 } else {
@@ -629,6 +654,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     backIntoPlace(dotSprite, currentZone){
+        this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
         this.isInteractive = false;
         TweenMax.to(dotSprite, 1, {
             x:dotSprite.originInMovingContainer.x,
@@ -651,7 +677,7 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo, updateValue){
-        console.log('addDraggedToNewZone', newZone.powerZone);
+        //console.log('addDraggedToNewZone', newZone.powerZone);
         newZone.addChild(dotSprite);
         dotSprite.position.x = positionToBeMovedTo.x;
         dotSprite.position.y = positionToBeMovedTo.y;
@@ -753,6 +779,9 @@ export class PowerZoneManager extends PIXI.Container{
         let notDisplayedDots = this.allZones[originalZoneIndex].removeNotDisplayedDots(notDisplayedDotCount, isPositive);
         allRemovedDots = allRemovedDots.concat(notDisplayedDots);
         this.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
+        if(allRemovedDots.length > 0) {
+            this.soundManager.playSound(SoundManager.DOT_IMPLODE);
+        }
     }
 
     getExplosionEmitter(){
@@ -786,7 +815,6 @@ export class PowerZoneManager extends PIXI.Container{
     }
 
     removeTweenDone(dotSprite){
-        // TODO check this, should it be moved to the PowerZone?
         dotSprite.parent.removeChild(dotSprite);
         this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
     }
@@ -919,14 +947,26 @@ export class PowerZoneManager extends PIXI.Container{
 
     checkInstability() {
         let isOverload;
+        let overloadExist = false;
+        let isSignInstability;
+        let instabilityExist = false;
         this.allZones.forEach(zone => {
             isOverload = zone.checkOvercrowding();
+            overloadExist === false ? overloadExist = isOverload : false;
             if(this.negativePresent) {
-                zone.checkPositiveNegativePresence(isOverload);
+                isSignInstability = zone.checkPositiveNegativePresence(isOverload);
+                instabilityExist === false ? instabilityExist = isSignInstability : false;
             }
         });
+        if(overloadExist){
+            this.soundManager.playSound(SoundManager.BOX_OVERLOAD);
+        }else if(instabilityExist){
+            this.soundManager.playSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+        }else{
+            this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
+            this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+        }
     }
-
 
     animationCallback(...args){
         requestAnimationFrame(this.animationCallback.bind(this));
@@ -935,7 +975,35 @@ export class PowerZoneManager extends PIXI.Container{
         });
     }
 
+    checkResult() {
+        console.log('checkResult');
+        let zone;
+        if(this.wantedResult.positiveDots.length === this.allZones.length &&
+            this.wantedResult.negativeDots.length === this.allZones.length &&
+            this.wantedResult.positiveDivider.length === this.allZones.length &&
+            this.wantedResult.negativeDivider.length === this.allZones.length
+        ) {
+            let zoneSuccess = 0;
+            for (let i = 0; i < this.allZones.length; i++) {
+                zone = this.allZones[i];
+                zone.precalculateDotsForDivision();
+                if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+                    this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
+                    this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
+                    this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
+                ) {
+                    zoneSuccess++;
+                }
+            }
+            console.log('checkResult', zoneSuccess);
+            if(zoneSuccess === this.allZones.length){
+                console.log('SUCCESS!!!')
+            }
+        }
+    }
+
     reset(){
+        //console.log('PowerZoneManager reset');
         TweenMax.killAll(true);
         this.allZones.forEach(zone => {
            zone.reset();
@@ -943,6 +1011,8 @@ export class PowerZoneManager extends PIXI.Container{
         if(this.dividerZoneManager){
             this.dividerZoneManager.reset();
         }
+        this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
+        this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
     }
 
 }

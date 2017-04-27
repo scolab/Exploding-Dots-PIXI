@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE} from '../Constants';
 import {superscriptToNormal} from '../utils/StringUtils';
 import img from './images/input1x.png';
@@ -7,7 +8,7 @@ export default class Operand extends Component {
 
     static propTypes = {
         value: PropTypes.any.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]),
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         onChange: PropTypes.func.isRequired,
         pos: PropTypes.string.isRequired,

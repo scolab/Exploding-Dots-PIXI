@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine,
@@ -113,7 +114,7 @@ class DotsMachine extends Component {
                 loginVisible: PropTypes.bool.isRequired,
                 base: PropTypes.array.isRequired,
                 maxViewableDots: PropTypes.number.isRequired,
-                operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+                operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
                 zones: PropTypes.number.isRequired,
                 placeValueOn: PropTypes.bool.isRequired,
                 cdnBaseUrl: PropTypes.string.isRequired,
@@ -123,6 +124,8 @@ class DotsMachine extends Component {
                 operandB: PropTypes.string.isRequired,
                 errorMessage: PropTypes.string.isRequired,
                 userMessage: PropTypes.string.isRequired,
+                muted: PropTypes.bool.isRequired,
+                wantedResult: PropTypes.object.isRequired,
             })
         })
     };
@@ -217,6 +220,8 @@ class DotsMachine extends Component {
                     error={this.props.error}
                     displayUserMessage={this.props.userMessage}
                     userMessage={this.props.dotsMachine.machineState.userMessage}
+                    muted={this.props.dotsMachine.machineState.muted}
+                    wantedResult={this.props.dotsMachine.machineState.wantedResult}
                 />
             </div>
         );

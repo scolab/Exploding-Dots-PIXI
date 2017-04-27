@@ -1,10 +1,12 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {randomFromTo} from '../../utils/MathUtils'
 import {makeBothArrayTheSameLength} from '../../utils/ArrayUtils';
 import {superscriptToNormal, replaceAt} from '../../utils/StringUtils';
 import {BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR} from '../../Constants'
 import {SpritePool} from '../../utils/SpritePool';
 import {PowerZoneManager} from './PowerZoneManager';
+import {SoundManager} from '../../utils/SoundManager';
 
 class CanvasPIXI extends Component {
 
@@ -42,7 +44,7 @@ class CanvasPIXI extends Component {
             isPositive: PropTypes.bool.isRequired,
         }))).isRequired,
         base: PropTypes.array.isRequired,
-        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+        operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         placeValueOn: PropTypes.bool.isRequired,
         cdnBaseUrl: PropTypes.string.isRequired,
@@ -56,6 +58,8 @@ class CanvasPIXI extends Component {
         error: PropTypes.func.isRequired,
         displayUserMessage: PropTypes.func.isRequired,
         userMessage: PropTypes.string,
+        muted: PropTypes.bool.isRequired,
+        wantedResult: PropTypes.object.isRequired,
     };
 
     constructor(props){
@@ -71,7 +75,6 @@ class CanvasPIXI extends Component {
 
     componentDidMount(){
         //console.log('componentDidMount', this.state, this.props);
-
         var options = {
             view: this.canvas,
             transparent: true,
@@ -83,9 +86,9 @@ class CanvasPIXI extends Component {
 
         let preventWebGL = false;
         this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, (this.props.operator_mode === OPERATOR_MODE.DIVIDE ? SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT), options, preventWebGL);
-        //this.state.app = new PIXI.Application(SETTINGS.GAME_WIDTH, SETTINGS.GAME_HEIGHT, options, preventWebGL);
         this.state.stage = this.state.app.stage;
         this.state.renderer = this.state.app.renderer;
+        this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
         this.powerZoneManager = new PowerZoneManager(
             this.props.addDot,
             this.props.removeDot,
@@ -93,6 +96,8 @@ class CanvasPIXI extends Component {
             this.props.removeMultipleDots,
             this.props.rezoneDot,
             this.props.displayUserMessage,
+            this.soundManager,
+            this.props.wantedResult
         );
         this.state.stage.addChild(this.powerZoneManager);
         this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
@@ -113,7 +118,12 @@ class CanvasPIXI extends Component {
         loader.load();
     }
 
+    componentWillUnmount(){
+        this.soundManager.stopAllSounds()
+    }
+
     onAssetsError(loader){
+        // TODO
         console.log('onAssetsError', loader.onStart);
         loader.onStart = null;
     }
@@ -170,6 +180,10 @@ class CanvasPIXI extends Component {
         this.powerZoneManager.checkInstability();
         this.powerZoneManager.setZoneTextAndAlphaStatus();
         this.checkMachineStateValue();
+        if(this.props.usage_mode === USAGE_MODE.EXERCISE) {
+            this.powerZoneManager.checkResult();
+        }
+        this.soundManager.muted = this.props.muted;
         return false;
     }
 
@@ -183,8 +197,10 @@ class CanvasPIXI extends Component {
         //console.log('checkMachineStateValue', this.props.placeValueOn);
         this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
         if(this.props.magicWandIsActive) {
-            //console.log('magicWandIsActive');
             this.powerZoneManager.magicWand();
+            /*var img = new Image();
+            img.src = this.state.renderer.view.toDataURL();
+            document.body.appendChild(img);*/
             this.props.activateMagicWand(false);
         }else if(this.props.startActivity) {
             // ************************************
@@ -197,6 +213,7 @@ class CanvasPIXI extends Component {
                 // if there is no operand B value and one is displayed (OPERATOR_MODE.DISPLAY hide operand B)
                 if(this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
                     this.props.operandB.length === 0){
+                    this.soundManager.playSound(SoundManager.GO_INVALID);
                     this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                     return;
                 }
@@ -300,6 +317,7 @@ class CanvasPIXI extends Component {
                                 } else {
                                     if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
                                         // the exponent is higher than the amount of zone
+                                        this.soundManager.playSound(SoundManager.GO_INVALID);
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
                                     }
@@ -332,6 +350,7 @@ class CanvasPIXI extends Component {
                                 } else {
                                     if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
                                         // the exponent is higher than the amount of zone
+                                        this.soundManager.playSound(SoundManager.GO_INVALID);
                                         this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                                         return;
                                     }
@@ -351,10 +370,12 @@ class CanvasPIXI extends Component {
 
                         // validate that the sum of the value isn't 0
                         if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
                         if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
@@ -377,9 +398,10 @@ class CanvasPIXI extends Component {
                                 dotsPos.push(this.getDot(i, true));
                             }
                         }
+                        this.soundManager.playSound(SoundManager.GO_SUCCESS);
                         this.props.startActivityDoneFunc(dotsPos, totalDot);
                         break;
-                    case OPERATOR_MODE.ADDITION:
+                    case OPERATOR_MODE.ADD:
                         makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                         for (let i = 0; i < dotsPerZoneA.length; ++i) {
                             let j = 0;
@@ -394,11 +416,13 @@ class CanvasPIXI extends Component {
                         if(this.props.base[1] !== BASE.BASE_X) {
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);//dotsPerZoneA.reverse().join('').replace(/\b0+/g, '');
                             let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);//dotsPerZoneB.reverse().join('').replace(/\b0+/g, '');
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         }else {
                             // remove last char in the operand if it's a - or a +
                             let operandAValue = this.removeTrailingSign(this.props.operandA);
                             let operandBValue = this.removeTrailingSign(this.props.operandB);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                         }
                         break;
@@ -412,10 +436,12 @@ class CanvasPIXI extends Component {
                         }
                         if(this.props.base[1] !== BASE.BASE_X) {
                             let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         }else{
                             // remove last char in the operand if it's a - or a +
                             let operandAValue = this.removeTrailingSign(this.props.operandA);
+                            this.soundManager.playSound(SoundManager.GO_SUCCESS);
                             this.props.startActivityDoneFunc(dotsPos, operandAValue);
                         }
                         break;
@@ -440,14 +466,17 @@ class CanvasPIXI extends Component {
                             if(this.props.base[1] !== BASE.BASE_X) {
                                 let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                                 let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                             }else{
                                 // remove last char in the operand if it's a - or a +
                                 let operandAValue = this.removeTrailingSign(this.props.operandA);
                                 let operandBValue = this.removeTrailingSign(this.props.operandB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
                             }
                         }else{
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
@@ -460,7 +489,6 @@ class CanvasPIXI extends Component {
                         if(dotsPerZoneB.length === 0){
                             invalidEntry = true;
                         }
-                        // TODO verify division by zero
                         if(invalidEntry === false){
                             makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
                             for (let i = 0; i < dotsPerZoneA.length; ++i) {
@@ -475,14 +503,17 @@ class CanvasPIXI extends Component {
                             if(this.props.base[1] !== BASE.BASE_X) {
                                 let operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
                                 let operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
                             }else{
                                 // remove last char in the operand if it's a - or a +
                                 let operandAValue = this.removeTrailingSign(this.props.operandA);
                                 let operandBValue = this.removeTrailingSign(this.props.operandB);
+                                this.soundManager.playSound(SoundManager.GO_SUCCESS);
                                 this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
                             }
                         }else{
+                            this.soundManager.playSound(SoundManager.GO_INVALID);
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }

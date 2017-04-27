@@ -1,11 +1,12 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import img from './images/magicWand.gif';
 
 export default class MagicWand extends Component {
 
     static propTypes = {
-        onClick: React.PropTypes.func.isRequired,
-        visible: React.PropTypes.bool.isRequired,
+        onClick: PropTypes.func.isRequired,
+        visible: PropTypes.bool.isRequired,
     };
 
     constructor(props) {

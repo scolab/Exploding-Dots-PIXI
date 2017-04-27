@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY} from '../Constants';
 import imgBg from './images/operator_dropdown1x.png';
 import arrow from './images/arrow_dropdown1x.png';
@@ -8,7 +9,7 @@ import MenuItem from 'material-ui/MenuItem'; // http://www.material-ui.com/
 export default class Operator extends Component {
 
     static propTypes = {
-        operator_mode: React.PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADDITION, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
+        operator_mode: React.PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
         onChange: PropTypes.func.isRequired,
         activityStarted: PropTypes.bool.isRequired,
@@ -43,7 +44,7 @@ export default class Operator extends Component {
                     </div>
                 );
                 break;
-            case OPERATOR_MODE.ADDITION:
+            case OPERATOR_MODE.ADD:
                 if(this.props.usage_mode === USAGE_MODE.EXERCISE){
                     return (
                          <div className="operationItem"
@@ -85,11 +86,11 @@ export default class Operator extends Component {
                           iconStyle={{top:'0px', right:'0px'}}
                           menuItemStyle={{fontSize:'32px', borderRadius: '23px'}}
                           menuStyle={{borderRadius: '23px'}}
-                          value={OPERATOR_MODE.ADDITION}
+                          value={OPERATOR_MODE.ADD}
                           onChange={this.handleOperandChange.bind(this)}
                           disabled={this.props.activityStarted}
                         >
-                            <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='&#43;' />
+                            <MenuItem value={OPERATOR_MODE.ADD} primaryText='&#43;' />
                             <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='&#215;' />
                         </DropDownMenu>
                     );
@@ -161,7 +162,7 @@ export default class Operator extends Component {
                           onChange={this.handleOperandChange.bind(this)}
                           disabled={this.props.activityStarted}
                         >
-                            <MenuItem value={OPERATOR_MODE.ADDITION} primaryText='&#43;' />
+                            <MenuItem value={OPERATOR_MODE.ADD} primaryText='&#43;' />
                             <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText='&#215;' />
                         </DropDownMenu>
                     )

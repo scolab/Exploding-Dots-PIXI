@@ -45,6 +45,18 @@ storiesOf('Exploding Dots', module)
             magicWandVisible={false}
         />
     ))
+    .add('Mecha Exercise', () => (
+        <ExplodingDots
+            operator_mode={OPERATOR_MODE.DISPLAY}
+            usage_mode={USAGE_MODE.EXERCISE}
+            allBases={BASE.ARITHMOS}
+            base={BASE.ARITHMOS[0]}
+            operandA={'12345'}
+            placeValueSwitchVisible={false}
+            placeValueOn={false}
+            magicWandVisible={false}
+        />
+    ))
     .add('Insighto Freeplay', () => (
         <ExplodingDots
             operator_mode={OPERATOR_MODE.DISPLAY}
@@ -69,7 +81,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Arythmos addition Operation', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
@@ -80,7 +92,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Arythmos addition EXERCISE', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ARITHMOS}
             base={BASE.ARITHMOS[0]}
@@ -89,6 +101,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[6,6,6,6,6],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Arythmos multiply Operation', () => (
@@ -113,6 +131,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[2,4,6,9,0],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Antidotia Operation', () => (
@@ -137,6 +161,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[4,2,0,0,0],
+                negativeDots:[0,0,0,2,4],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     )).add('Division Operation', () => (
     <ExplodingDots
@@ -160,6 +190,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[0,0,0,0,2],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,0,0,2,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Algebra Insighto Freeplay', () => (
@@ -175,7 +211,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Algebra addition Operation', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.OPERATION}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
@@ -186,7 +222,7 @@ storiesOf('Exploding Dots', module)
     ))
     .add('Algebra addition Exercise', () => (
         <ExplodingDots
-            operator_mode={OPERATOR_MODE.ADDITION}
+            operator_mode={OPERATOR_MODE.ADD}
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
@@ -195,6 +231,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[6,6,6,6,6],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Algebra subtract Operation', () => (
@@ -219,6 +261,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[4,2,0,0,0],
+                negativeDots:[0,0,0,2,4],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Algebra multiply Operation', () => (
@@ -238,11 +286,17 @@ storiesOf('Exploding Dots', module)
             usage_mode={USAGE_MODE.EXERCISE}
             allBases={BASE.ALGEBRA}
             base={BASE.ALGEBRA[0]}
-            operandA={'5x4+4x3+3x2+2x+1'}
-            operandB={'3'}
+            operandA={'x4+2x3+3x2+4x+5'}
+            operandB={'2'}
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[2,4,6,9,0],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,0,0,0,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     .add('Algebra divide Operation', () => (
@@ -267,6 +321,12 @@ storiesOf('Exploding Dots', module)
             placeValueSwitchVisible={true}
             placeValueOn={true}
             magicWandVisible={true}
+            wantedResult={{
+                positiveDots:[1,0,1,0,1],
+                negativeDots:[0,0,0,0,0],
+                positiveDivider:[0,4,0,2,0],
+                negativeDivider:[0,0,0,0,0]
+            }}
         />
     ))
     ;

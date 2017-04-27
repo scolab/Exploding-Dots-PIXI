@@ -8,7 +8,7 @@ export const BASE = {
 
 export const OPERATOR_MODE = {
     DISPLAY : 'DISPLAY',
-    ADDITION : 'ADDITION',
+    ADD : 'ADD',
     SUBTRACT : 'SUBTRACT',
     MULTIPLY : 'MULTIPLY',
     DIVIDE : 'DIVIDE'

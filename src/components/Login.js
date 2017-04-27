@@ -1,11 +1,12 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import img from './images/login1x.png';
 
 export default class Login extends Component {
 
     static propTypes = {
-        onClick: React.PropTypes.func.isRequired,
-        visible: React.PropTypes.bool.isRequired,
+        onClick: PropTypes.func.isRequired,
+        visible: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
