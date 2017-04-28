@@ -37,6 +37,14 @@ export const rezoneDot = (zoneId, dot, updateValue) => ({
     updateValue
 });
 
+export const setDivisionResult = (zoneId, divisionValue, isPositive) => ({
+    type: ACTIONS.SET_DIVISION_RESULT,
+    zoneId,
+    divisionValue,
+    isPositive
+});
+
+
 export const changeBase = () =>({
     type: ACTIONS.BASE_CHANGED
 });

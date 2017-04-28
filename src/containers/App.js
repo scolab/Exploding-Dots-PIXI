@@ -25,6 +25,7 @@ class ExplodingDots extends Component {
 
     static PropTypes = {
         base: PropTypes.array, //.isRequired,
+        allBases: PropTypes.array || PropTypes.string,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]), //.isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.OPERATION, USAGE_MODE.FREEPLAY, USAGE_MODE.EXERCISE]), //.isRequired,
         magicWandIsActive: PropTypes.bool, //.isRequired,
@@ -48,8 +49,8 @@ class ExplodingDots extends Component {
     };
 
     static defaultProps = {
-        base: BASE.ALL_BASE[0],
-        allBases: BASE.ALL_BASE,
+        base: BASE.ARITHMOS[0],
+        allBases: BASE.ARITHMOS,
         operator_mode: OPERATOR_MODE.DISPLAY,
         usage_mode: USAGE_MODE.FREEPLAY,
         magicWandIsActive: false,
@@ -79,7 +80,7 @@ class ExplodingDots extends Component {
     };
 
     constructor(props) {
-        //console.log('constructor', props);
+        //console.log('App constructor', props);
         super(props);
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
