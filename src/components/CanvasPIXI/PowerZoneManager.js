@@ -4,6 +4,7 @@ import { TweenMax, Quint, Linear} from "gsap";
 import {isPointInRectangle, randomFromTo, convertBase, findQuadrant} from '../../utils/MathUtils'
 import {BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE} from '../../Constants'
 import {DividerZoneManager} from './DividerZoneManager';
+import {DividerResult} from './DividerResult';
 import {Point} from 'pixi.js';
 import {SoundManager} from '../../utils/SoundManager';
 import explodeJSON from './dot_explode.json';
@@ -13,16 +14,18 @@ import blueDragJSON from './dot_drag_blue.json';
 
 export class PowerZoneManager extends PIXI.Container{
 
-    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, displayUserMessage, soundManager, wantedResult){
+    constructor(addDot, removeDot, addMultipleDots, removeMultipleDots, rezoneDot, setDivisionResult, displayUserMessage, soundManager, wantedResult){
         super();
         this.addDot = addDot;
         this.removeDot = removeDot;
         this.addMultipleDots = addMultipleDots;
         this.removeMultipleDots = removeMultipleDots;
         this.rezoneDot = rezoneDot;
+        this.setDivisionResult = setDivisionResult;
         this.displayUserMessage = displayUserMessage;
         this.movingDotsContainer = new PIXI.Container();
         this.dividerZoneManager = null;
+        this.dividerResult = null;
         this.soundManager = soundManager;
         // reverse all the wanted result so they are in the same order as our zone.
         wantedResult.positiveDots.reverse();
@@ -92,6 +95,7 @@ export class PowerZoneManager extends PIXI.Container{
             this.dividerZoneManager.eventEmitter.on(DividerZoneManager.START_DRAG, this.precalculateForDivision, this);
             this.dividerZoneManager.eventEmitter.on(DividerZoneManager.MOVED, this.checkIfDivisionPossible, this);
             this.dividerZoneManager.eventEmitter.on(DividerZoneManager.END_DRAG, this.checkIfDivisionPossible, this);
+            this.dividerResult = new DividerResult();
         }
     }
 
@@ -179,7 +183,7 @@ export class PowerZoneManager extends PIXI.Container{
                                 dotsRemovedByZone.push([]);
                             }
                             let dotsToMove = [];
-                            let moveToZone = droppedOnPowerZoneIndex;// - allZonesValue.length + 1;
+                            //let moveToZone = droppedOnPowerZoneIndex;
                             for (let i = 0; i < allZonesValue.length; i++) {
                                 let thisZoneDots = [];
                                 if (success) {
@@ -204,9 +208,9 @@ export class PowerZoneManager extends PIXI.Container{
                                     dot.sprite.alpha = 0;
                                     let finalPosition;
                                     if (success) {
-                                        finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].positiveDivideCounter.position);
+                                        finalPosition = this.allZones[droppedOnPowerZoneIndex].toGlobal(this.allZones[droppedOnPowerZoneIndex].positiveDivideCounter.position);
                                     } else if (antiSuccess) {
-                                        finalPosition = this.allZones[moveToZone].toGlobal(this.allZones[moveToZone].negativeDivideCounter.position);
+                                        finalPosition = this.allZones[droppedOnPowerZoneIndex].toGlobal(this.allZones[droppedOnPowerZoneIndex].negativeDivideCounter.position);
                                     }
                                     finalPosition = this.movingDotsContainer.toLocal(finalPosition);
                                     TweenMax.to(movingSprite.scale, 0.1, {
@@ -225,7 +229,7 @@ export class PowerZoneManager extends PIXI.Container{
                                         onCompleteParams: [movingSprite]
                                     })
                                 });
-                                TweenMax.delayedCall(.6, this.processDivisionAfterTween.bind(this), [dotsRemovedByZone, moveToZone, success]);
+                                TweenMax.delayedCall(.6, this.processDivisionAfterTween.bind(this), [dotsRemovedByZone, zoneOverInfo.actualZone, success]);
                             }
                         }else{
                             this.soundManager.playSound(SoundManager.DIVISION_IMPOSSIBLE);
@@ -248,7 +252,11 @@ export class PowerZoneManager extends PIXI.Container{
                 this.removeMultipleDots(i, dotsRemovedByZone[i], false);
             }
         }
-        this.allZones[moveToZone].addDivisionValue(isPositive);
+        if(isPositive) {
+            this.setDivisionResult(moveToZone.zonePosition, moveToZone.positiveDivisionValue + 1, isPositive);
+        }else{
+            this.setDivisionResult(moveToZone.zonePosition, moveToZone.negativeDivisionValue + 1, isPositive);
+        }
     }
 
     balanceDivider(zonePos, isPositive){
@@ -293,6 +301,12 @@ export class PowerZoneManager extends PIXI.Container{
 
     setDividerValueAfterBalance(zonePos, isPositive){
         //console.log(zonePos, this.allZones[zonePos]);
+        this.setDivisionResult(zonePos, 0, isPositive);
+        if(isPositive) {
+            this.setDivisionResult(zonePos + 1, this.allZones[zonePos + 1].positiveDivisionValue + 1, isPositive);
+        }else {
+            this.setDivisionResult(zonePos + 1, this.allZones[zonePos + 1].negativeDivisionValue + 1, isPositive);
+        }
         this.allZones[zonePos].onDividerOverloadSolved(isPositive);
         this.allZones[zonePos + 1].onDividerAutoPopulated(isPositive);
         this.isInteractive = true;
@@ -630,6 +644,7 @@ export class PowerZoneManager extends PIXI.Container{
     getZoneUnderCursor(data){
         let droppedOnPowerZone = null;
         let droppedOnPowerZoneIndex = -1;
+        let actualZone = null;
         // verify dropped on left test zone
         let dataLocalZone = data.getLocalPosition(this.leftMostZone);
         if(isPointInRectangle(dataLocalZone, this.leftMostZone.hitArea)){
@@ -641,16 +656,18 @@ export class PowerZoneManager extends PIXI.Container{
             if(isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea)){
                 droppedOnPowerZone = zone.positiveDotsContainer;
                 droppedOnPowerZoneIndex = zone.zonePosition;
+                actualZone = zone;
             }
             if(zone.negativeDotsContainer != null) {
                 dataLocalZone = data.getLocalPosition(zone.negativeDotsContainer);
                 if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea)) {
                     droppedOnPowerZone = zone.negativeDotsContainer;
                     droppedOnPowerZoneIndex = zone.zonePosition;
+                    actualZone = zone;
                 }
             }
         });
-        return {droppedOnPowerZone: droppedOnPowerZone, droppedOnPowerZoneIndex: droppedOnPowerZoneIndex};
+        return {actualZone: actualZone, droppedOnPowerZone: droppedOnPowerZone, droppedOnPowerZoneIndex: droppedOnPowerZoneIndex};
     }
 
     backIntoPlace(dotSprite, currentZone){
@@ -930,19 +947,34 @@ export class PowerZoneManager extends PIXI.Container{
         });
     }
 
-    removeDividerDotFromStateChange(positiveDividerDots, negativeDividerDots){
+    adjustDividerDotFromStateChange(positiveDividerDots, negativeDividerDots){
         this.dividerZoneManager.removeDots(positiveDividerDots, negativeDividerDots);
-    }
-
-    addDividerDotFromStateChange(positiveDividerDots, negativeDividerDots){
         this.dividerZoneManager.addDots(positiveDividerDots, negativeDividerDots);
     }
 
-    showDivider(){
+    populateDivideResult(positiveDividerResult, negativeDividerResult){
+        //console.log('populateDivideResult', positiveDividerResult, negativeDividerResult);
+        let positiveDots = [];
+        let negativeDots = [];
+        this.allZones.forEach(zone => {
+            positiveDots.push(Object.keys(zone.positiveDots).length);
+            negativeDots.push(Object.keys(zone.negativeDots).length);
+            zone.setDivisionValue(positiveDividerResult[zone.zonePosition], negativeDividerResult[zone.zonePosition])
+        });
+        positiveDots.reverse();
+        negativeDots.reverse();
+        this.dividerResult.update(positiveDividerResult.slice(0).reverse(), negativeDividerResult.slice(0).reverse(), positiveDots, negativeDots);
+    }
+
+    showDividerAndResult(){
         this.dividerZoneManager.x = 957;
         this.dividerZoneManager.y = 375;
         this.addChild(this.dividerZoneManager);
         this.dividerZoneManager.start();
+
+        this.dividerResult.x = 100;
+        this.dividerResult.y = 375;
+        this.addChild(this.dividerResult);
     }
 
     checkInstability() {

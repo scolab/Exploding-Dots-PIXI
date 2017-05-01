@@ -90,21 +90,26 @@ function setInitialState() {
     //let dots = [];
     let positivePowerZoneDots = [];
     let negativePowerZoneDots = [];
+    let positiveDividerDots = [];
+    let negativeDividerDots = [];
+    let positiveDividerResult = [];
+    let negativeDividerResult = [];
     for (let i = 0; i < (initialMachineState.zones || 0); i++) {
         positivePowerZoneDots.push({});
         negativePowerZoneDots.push({});
-    }
-    let positiveDividerDots = [];
-    let negativeDividerDots = [];
-    for (let i = 0; i < (initialMachineState.zones || 0); i++) {
         positiveDividerDots.push({});
         negativeDividerDots.push({});
+        positiveDividerResult.push(0);
+        negativeDividerResult.push(0);
     }
+
     return {
         positivePowerZoneDots: positivePowerZoneDots,
         negativePowerZoneDots: negativePowerZoneDots,
         positiveDividerDots: positiveDividerDots,
         negativeDividerDots: negativeDividerDots,
+        positiveDividerResult: positiveDividerResult,
+        negativeDividerResult: negativeDividerResult,
         machineState: initialMachineState
     };
 }
@@ -289,6 +294,16 @@ const dotsReducer = (state = null, action) => {
                 }
             }
             return stateCopy;
+        case ACTIONS.SET_DIVISION_RESULT:
+            stateCopy = {...state};
+            //console.log('SET_DIVISION_RESULT', action.zoneId, action.divisionValue);
+            if(action.isPositive) {
+                stateCopy.positiveDividerResult[action.zoneId] = action.divisionValue;
+            }else{
+                stateCopy.negativeDividerResult[action.zoneId] = action.divisionValue;
+            }
+            //console.log(stateCopy.positiveDividerResult);
+            return stateCopy;
         case ACTIONS.SHOW_HIDE_PLACE_VALUE:
             stateCopy = {...state};
             stateCopy.machineState.placeValueOn = !stateCopy.machineState.placeValueOn;
@@ -339,6 +354,12 @@ const dotsReducer = (state = null, action) => {
             initialMachineState.operandA = '';
             initialMachineState.operandB = '';
             if(action.machineState){// we are at the start of an activity
+                // This is a hack for receiving the bases in a string format.
+                // Must be done here, before the props are read only
+                // TODO find a better way to do this
+                if(typeof(action.machineState.allBases) === 'string'){
+                    action.machineState.allBases = BASE[action.machineState.allBases];
+                }
                 setMachineState = {...action.machineState};
                 initialMachineState = {...setMachineState};
             }else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE){

@@ -16,6 +16,7 @@ class CanvasPIXI extends Component {
         rezoneDot: PropTypes.func.isRequired,
         removeDot: PropTypes.func.isRequired,
         removeMultipleDots: PropTypes.func.isRequired,
+        setDivisionResult: PropTypes.func.isRequired,
         activateMagicWand: PropTypes.func.isRequired,
         startActivityFunc: PropTypes.func.isRequired,
         startActivityDoneFunc: PropTypes.func.isRequired,
@@ -43,6 +44,8 @@ class CanvasPIXI extends Component {
             id: PropTypes.string.isRequired,
             isPositive: PropTypes.bool.isRequired,
         }))).isRequired,
+        positiveDividerResult: PropTypes.array.isRequired,
+        negativeDividerResult: PropTypes.array.isRequired,
         base: PropTypes.array.isRequired,
         operator_mode: PropTypes.oneOf([OPERATOR_MODE.DISPLAY, OPERATOR_MODE.ADD, OPERATOR_MODE.SUBTRACT, OPERATOR_MODE.MULTIPLY, OPERATOR_MODE.DIVIDE]).isRequired,
         usage_mode: PropTypes.oneOf([USAGE_MODE.FREEPLAY, USAGE_MODE.OPERATION, USAGE_MODE.EXERCISE]),
@@ -95,6 +98,7 @@ class CanvasPIXI extends Component {
             this.props.addMultipleDots,
             this.props.removeMultipleDots,
             this.props.rezoneDot,
+            this.props.setDivisionResult,
             this.props.displayUserMessage,
             this.soundManager,
             this.props.wantedResult
@@ -174,8 +178,8 @@ class CanvasPIXI extends Component {
         this.powerZoneManager.removeDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
         this.powerZoneManager.addDotsFromStateChange(this.props.positivePowerZoneDots, this.props.negativePowerZoneDots);
         if (this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
-            this.powerZoneManager.removeDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
-            this.powerZoneManager.addDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+            this.powerZoneManager.adjustDividerDotFromStateChange(this.props.positiveDividerDots, this.props.negativeDividerDots);
+            this.powerZoneManager.populateDivideResult(this.props.positiveDividerResult, this.props.negativeDividerResult);
         }
         this.powerZoneManager.checkInstability();
         this.powerZoneManager.setZoneTextAndAlphaStatus();
@@ -184,6 +188,9 @@ class CanvasPIXI extends Component {
             this.powerZoneManager.checkResult();
         }
         this.soundManager.muted = this.props.muted;
+        /*if(this.props.operator_mode === OPERATOR_MODE.DIVIDE) {
+            this.powerZoneManager.populateDivideResult(this.props.positiveDividerResult, this.props.negativeDividerResult);
+        }*/
         return false;
     }
 
@@ -517,7 +524,7 @@ class CanvasPIXI extends Component {
                             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
                             return;
                         }
-                        this.powerZoneManager.showDivider();
+                        this.powerZoneManager.showDividerAndResult();
                         break;
                 }
                 this.powerZoneManager.isInteractive = true;

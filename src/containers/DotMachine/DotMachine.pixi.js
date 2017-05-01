@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase, resetMachine,
     showHidePlaceValue, activateMagicWand, stabilize, operandChanged, startActivity, startActivityDone,
-    operatorChanged, error, userMessage, resetUserMessage} from '../../actions/'
+    operatorChanged, error, userMessage, resetUserMessage, setDivisionResult} from '../../actions/'
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -45,6 +45,7 @@ const mapDispatchToProps = (dispatch) =>{
         error: error,
         userMessage: userMessage,
         resetUserMessage: resetUserMessage,
+        setDivisionResult: setDivisionResult,
     }, dispatch);
 };
 
@@ -61,6 +62,7 @@ class DotsMachine extends Component {
         removeMultipleDots: PropTypes.func.isRequired,
         rezoneDot:PropTypes.func.isRequired,
         addMultipleDots: PropTypes.func.isRequired,
+        setDivisionResult: PropTypes.func.isRequired,
         changeBase: PropTypes.func.isRequired,
         resetMachine: PropTypes.func.isRequired,
         showHidePlaceValue: PropTypes.func.isRequired,
@@ -105,6 +107,8 @@ class DotsMachine extends Component {
                 id: PropTypes.string.isRequired,
                 isPositive: PropTypes.bool.isRequired,
             }))).isRequired,
+            positiveDividerResult: PropTypes.array.isRequired,
+            negativeDividerResult: PropTypes.array.isRequired,
             machineState: PropTypes.shape({
                 placeValueSwitchVisible: PropTypes.bool.isRequired,
                 baseSelectorVisible: PropTypes.bool.isRequired,
@@ -198,6 +202,8 @@ class DotsMachine extends Component {
                     negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
                     positiveDividerDots={this.props.dotsMachine.positiveDividerDots}
                     negativeDividerDots={this.props.dotsMachine.negativeDividerDots}
+                    positiveDividerResult={this.props.dotsMachine.positiveDividerResult}
+                    negativeDividerResult={this.props.dotsMachine.negativeDividerResult}
                     base={this.props.dotsMachine.machineState.base}
                     operator_mode={this.props.dotsMachine.machineState.operator_mode}
                     usage_mode={this.props.dotsMachine.machineState.usage_mode}
@@ -222,6 +228,7 @@ class DotsMachine extends Component {
                     userMessage={this.props.dotsMachine.machineState.userMessage}
                     muted={this.props.dotsMachine.machineState.muted}
                     wantedResult={this.props.dotsMachine.machineState.wantedResult}
+                    setDivisionResult={this.props.setDivisionResult}
                 />
             </div>
         );
