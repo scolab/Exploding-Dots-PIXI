@@ -312,11 +312,18 @@ export class PowerZone extends PIXI.Container{
                 if (negativeDividerIsEmpty == false && dividerIsEmpty) {
                     dividerIsEmpty = this.getDividerTextStatus(this.positiveDividerText, true);
                 }
+                if(dividerIsEmpty && negativeDividerIsEmpty){
+                    this.positiveDividerText.visible = false;
+                    this.negativeDividerText.visible = false;
+                }else{
+                    this.positiveDividerText.visible = true;
+                    this.negativeDividerText.visible = true;
+                }
                 return dividerIsEmpty && negativeDividerIsEmpty;
             } else {
-                // force populate
-                this.getDividerTextStatus(this.positiveDividerText, true);
-                this.getDividerTextStatus(this.negativeDividerText, true);
+                // force show
+                this.positiveDividerText.visible = true;
+                this.negativeDividerText.visible = true;
                 return false;
             }
         }
@@ -324,14 +331,11 @@ export class PowerZone extends PIXI.Container{
     }
 
     getDividerTextStatus(dividerText, populate) {
-        //console.log('getDividerTextStatus', dividerText.text === ' ', populate);
-        var zoneAreEmpty = false;
-        if (dividerText.text === ' ') {
-            if (populate || this.zonePosition === 0) {
-                dividerText.text = '0';
-            } else {
+        //console.log('getDividerTextStatus', dividerText.text, populate);
+        let zoneAreEmpty = false;
+        if (dividerText.text === '0' || dividerText.text === '-0') {
+            if (populate === false && this.zonePosition !== 0) {
                 zoneAreEmpty = true;
-                dividerText.text = ' ';
             }
         }
         return zoneAreEmpty;
@@ -718,6 +722,7 @@ export class PowerZone extends PIXI.Container{
         this.negativeDivisionValue = negative;
         if (this.positiveDividerText != null && this.negativeDividerText != null) {
             this.positiveDividerText.text = this.positiveDivisionValue;
+            // check if division value exceed base
             if (this.base[1] != BASE.BASE_X && this.positiveDivisionValue >= this.base[1]) {
                 if(this.zonePosition != this.totalZoneCount - 1) {
                     // do animate if not the leftmost box
@@ -727,7 +732,11 @@ export class PowerZone extends PIXI.Container{
                     this.positiveDividerText.style.fill = 0xff0000;
                 }
             }
-            this.negativeDividerText.text = '-' + this.negativeDivisionValue;
+            if(this.negativeDivisionValue  !== 0) {
+                this.negativeDividerText.text = '-' + this.negativeDivisionValue;
+            }else{
+                this.negativeDividerText.text = this.negativeDivisionValue;
+            }
             // check if division value exceed base
             if (this.base[1] != BASE.BASE_X && this.negativeDivisionValue >= this.base[1]) {
                 if(this.zonePosition != this.totalZoneCount - 1) {
@@ -769,8 +778,8 @@ export class PowerZone extends PIXI.Container{
 
     reset(){
         if (this.positiveDividerText != null && this.negativeDividerText != null) {
-            this.positiveDividerText.text = ' ';
-            this.negativeDividerText.text = ' ';
+            this.positiveDividerText.text = '0';
+            this.negativeDividerText.text = '0';
             this.positiveDividerText.style.fill = 0x565656;
             this.negativeDividerText.style.fill = 0x565656;
         }
