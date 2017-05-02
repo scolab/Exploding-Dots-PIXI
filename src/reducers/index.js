@@ -1,8 +1,8 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import dotsReducer from './DotsReducer';
 
 const allReducers = combineReducers({
-    dotsMachine: dotsReducer
+  dotsMachine: dotsReducer,
 });
 
 export default allReducers;

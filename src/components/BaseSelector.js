@@ -1,21 +1,21 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import BG from './images/rule_dropdown1x.png';
 
 export default class BaseSelector extends Component {
-    static propTypes = {
-        onClick: PropTypes.func.isRequired,
-        base: PropTypes.array.isRequired,
-    };
+  static propTypes = {
+    onClick: PropTypes.func.isRequired,
+    base: PropTypes.array.isRequired,
+  };
 
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render(){
-        return (
-            <div className="topRightMenuItem">
-                {/*<button className="imageButton" style={{backgroundImage:`url(${BG})`,
+  render() {
+    return (
+      <div className="topRightMenuItem">
+        {/* <button className="imageButton" style={{backgroundImage:`url(${BG})`,
                                 width:132,
                                 height:46}}
                         type='button'
@@ -30,26 +30,26 @@ export default class BaseSelector extends Component {
                     {this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}
                     </div>
                 </button>*/}
-                <button
-                    style={{
-                        fontFamily: 'Noto Sans',
-                        fontWeight: 'bold',
-                        fontSize: 24,
-                        backgroundColor: '#efefef',
-                        borderRadius: '23px',
-                        width: '132px',
-                        height: '46px',
-                        verticalAlign: 'middle',
-                        textAlign: 'center',
-                        textVAlign: 'center',
-                        border: 'none',
-                    }}
-                    type='button'
-                    onClick={this.props.onClick}
-                >
-                    {this.props.base[0]} <i className="fa fa-long-arrow-left"></i> {this.props.base[1]}
-                </button>
-            </div>
-        );
-    }
+        <button
+          style={{
+            fontFamily: 'Noto Sans',
+            fontWeight: 'bold',
+            fontSize: 24,
+            backgroundColor: '#efefef',
+            borderRadius: '23px',
+            width: '132px',
+            height: '46px',
+            verticalAlign: 'middle',
+            textAlign: 'center',
+            textVAlign: 'center',
+            border: 'none',
+          }}
+          type="button"
+          onClick={this.props.onClick}
+        >
+          {this.props.base[0]} <i className="fa fa-long-arrow-left" /> {this.props.base[1]}
+        </button>
+      </div>
+    );
+  }
 }

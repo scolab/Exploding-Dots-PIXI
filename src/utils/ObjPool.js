@@ -1,17 +1,16 @@
 export class ObjPool {
 
-    static pool = [];
+  static pool = [];
 
-    static getOne(){
-        if(this.pool.length > 0) {
-            return this.pool.pop();
-        }else{
-            return {};
-        }
-    };
+  static getOne() {
+    if (this.pool.length > 0) {
+      return this.pool.pop();
+    }
+    return {};
+  }
 
-    static dispose(objArr) {
-        this.pool.concat(objArr);
-    };
+  static dispose(objArr) {
+    this.pool.concat(objArr);
+  }
 }
 
