@@ -262,158 +262,19 @@ class CanvasPIXI extends Component {
         }
         if (this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1) {
           // advanced mode, if one side is split with |, split both side
-          if (this.props.operandA.indexOf('|') !== -1) {
-            dotsPerZoneA = this.props.operandA.split('|');
-          } else {
-            dotsPerZoneA = this.props.operandA.split('');
-          }
-          // Verify that we don't have a single minus sign in a zone
-          dotsPerZoneA.forEach((entry) => {
-            if (entry === '-') {
-              dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
-            }
-          });
-          if (this.props.operator_mode !== OPERATOR_MODE.MULTIPLY) {
-            // don't split multiplication operand B
-            if (this.props.operandB.indexOf('|') !== -1) {
-              dotsPerZoneB = this.props.operandB.split('|');
-            } else {
-              dotsPerZoneB = this.props.operandB.split('');
-            }
-          } else {
-            // there is no | possible in operandB in division,
-            // but I need it as an array anyway, so split with impossible character.
-            dotsPerZoneB = this.props.operandB.split('|');
-          }
-          // Verify that we don't have a single minus sign in a zone
-          dotsPerZoneB.forEach((entry) => {
-            if (entry === '-') {
-              dotsPerZoneB[dotsPerZoneB.indexOf(entry)] = 0;
-            }
-          });
+          const populatedArrays = this.populateDotPerZoneArrayAdvancedMode();
+          dotsPerZoneA = populatedArrays.dotsPerZoneA;
+          dotsPerZoneB = populatedArrays.dotsPerZoneB;
         } else if (this.props.base[1] !== BASE.BASE_X) {
           // normal mode, split
-          dotsPerZoneA = this.props.operandA.split('');
-          if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
-            dotsPerZoneB = [];
-          } else {
-            dotsPerZoneB = this.props.operandB.split('');
-          }
-          // If the value start with a minus sign, minus all the value
-          if (dotsPerZoneA[0] === '-') {
-            dotsPerZoneA.splice(0, 1);
-            for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-              dotsPerZoneA[i] = `-${dotsPerZoneA[i]}`;
-            }
-          }
-          if (dotsPerZoneB[0] === '-') {
-            dotsPerZoneB.splice(0, 1);
-            for (let i = 0; i < dotsPerZoneB.length; i += 1) {
-              dotsPerZoneB[i] = `-${dotsPerZoneB[i]}`;
-            }
-          }
+          const populatedArrays = this.populateDotPerZoneArrayNormalMode();
+          dotsPerZoneA = populatedArrays.dotsPerZoneA;
+          dotsPerZoneB = populatedArrays.dotsPerZoneB;
         } else {
           // Base X parse operand
-          dotsPerZoneA = new Array(this.props.totalZoneCount);
-          dotsPerZoneB = new Array(this.props.totalZoneCount);
-          for (let i = 0; i < this.props.totalZoneCount; i += 1) {
-            dotsPerZoneA[i] = 0;
-            dotsPerZoneB[i] = 0;
-          }
-
-          let cleandedOperandA = superscriptToNormal(this.props.operandA);
-          let cleandedOperandB = superscriptToNormal(this.props.operandB);
-          let indices = [];
-          for (let i = 0; i < cleandedOperandA.length; i += 1) {
-            if (cleandedOperandA[i] === '-') indices.push(i);
-          }
-          let added = 0;
-          indices.forEach((indice) => {
-            cleandedOperandA = replaceAt(cleandedOperandA, indice + added, '+-');
-            added += 1;
-          });
-          indices = [];
-          for (let i = 0; i < cleandedOperandB.length; i += 1) {
-            if (cleandedOperandB[i] === '-') indices.push(i);
-          }
-          added = 0;
-          indices.forEach((indice) => {
-            cleandedOperandB = replaceAt(cleandedOperandB, indice + added, '+-');
-            added += 1;
-          });
-          // console.log(cleandedOperandA, cleandedOperandB);
-          const splitZoneA = cleandedOperandA.split('+');
-          const splitZoneB = cleandedOperandB.split('+');
-          // console.log(splitZoneA, splitZoneB);
-          splitZoneA.forEach((val) => {
-            let value = val;
-            if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
-              value = '0';
-            }
-            const xIndex = value.indexOf('x');
-            // No x in the zone value, this is an number only
-            if (xIndex === -1) {
-              dotsPerZoneA[0] += Number(value);
-            } else {
-              let pos = 0;
-              if (isNaN(value[xIndex + 1])) {
-                // x only, no exponent
-                pos = 1;
-              } else {
-                if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
-                  // the exponent is higher than the amount of zone
-                  this.soundManager.playSound(SoundManager.GO_INVALID);
-                  this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-                  return;
-                }
-                pos = value[xIndex + 1];
-              }
-              if (xIndex === 0) {
-                // positive x only
-                dotsPerZoneA[pos] += 1;
-              } else if (xIndex === 1 && value[0] === '-') {
-                // negative x only
-                dotsPerZoneA[pos] -= 1;
-              } else {
-                dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
-              }
-            }
-          });
-          splitZoneB.forEach((val) => {
-            let value = val;
-            if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
-              value = '0';
-            }
-            const xIndex = value.indexOf('x');
-            // No x in the zone value, this is an number only
-            if (xIndex === -1) {
-              dotsPerZoneB[0] += Number(value);
-            } else {
-              let pos = 0;
-              if (isNaN(value[xIndex + 1])) {
-                // x only, no exponent
-                pos = 1;
-              } else {
-                if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
-                  // the exponent is higher than the amount of zone
-                  this.soundManager.playSound(SoundManager.GO_INVALID);
-                  this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-                  return;
-                }
-                pos = value[xIndex + 1];
-              }
-              if (xIndex === 0) {
-                // positive x only
-                dotsPerZoneB[pos] += 1;
-              } else if (xIndex === 1 && value[0] === '-') {
-                // negative x only
-                dotsPerZoneB[pos] -= 1;
-              } else {
-                dotsPerZoneB[pos] += Number(value.substring(0, xIndex));
-              }
-            }
-          });
-
+          const populatedArrays = this.populateDotPerZoneArrayBaseX();
+          dotsPerZoneA = populatedArrays.dotsPerZoneA;
+          dotsPerZoneB = populatedArrays.dotsPerZoneB;
           // validate that the sum of the value isn't 0
           if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
@@ -431,95 +292,21 @@ class CanvasPIXI extends Component {
           dotsPerZoneA.reverse();
           dotsPerZoneB.reverse();
         }
-        const dotsPos = [];
-        let totalDot;
-        let invalidEntry = false;
+
+        // Create dots and send info to the store
         switch (this.props.operator_mode) {
           case OPERATOR_MODE.DISPLAY:
-            totalDot = 0;
-            for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-              totalDot += dotsPerZoneA[i] * Math.pow(this.props.base[1], i);
-              for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
-                dotsPos.push(this.getDot(i, true));
-              }
-            }
-            this.soundManager.playSound(SoundManager.GO_SUCCESS);
-            this.props.startActivityDoneFunc(dotsPos, totalDot);
+            this.createDisplayDots(dotsPerZoneA);
             break;
           case OPERATOR_MODE.ADD:
-            makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
-            for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-              let j = 0;
-              for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
-                dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1, SPRITE_COLOR.RED));
-              }
-
-              for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
-                dotsPos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') === -1, SPRITE_COLOR.BLUE));
-              }
-            }
-            if (this.props.base[1] !== BASE.BASE_X) {
-              const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-              const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
-              this.soundManager.playSound(SoundManager.GO_SUCCESS);
-              this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
-            } else {
-              // remove last char in the operand if it's a - or a +
-              const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-              const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
-              this.soundManager.playSound(SoundManager.GO_SUCCESS);
-              this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
-            }
+            this.createAddDots(dotsPerZoneA, dotsPerZoneB);
             break;
           case OPERATOR_MODE.MULTIPLY:
-            for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-              let totalDotInZone = 0;
-              totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
-              for (let j = 0; j < Math.abs(totalDotInZone); j += 1) {
-                dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
-              }
-            }
-            if (this.props.base[1] !== BASE.BASE_X) {
-              const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-              this.soundManager.playSound(SoundManager.GO_SUCCESS);
-              this.props.startActivityDoneFunc(dotsPos, operandAValue);
-            } else {
-              // remove last char in the operand if it's a - or a +
-              const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-              this.soundManager.playSound(SoundManager.GO_SUCCESS);
-              this.props.startActivityDoneFunc(dotsPos, operandAValue);
-            }
+            this.createMultiplyDots(dotsPerZoneA);
             break;
           case OPERATOR_MODE.SUBTRACT:
-            if (dotsPerZoneA.length === 0) {
-              invalidEntry = true;
-            }
-            if (dotsPerZoneB.length === 0) {
-              invalidEntry = true;
-            }
-            if (invalidEntry === false) {
-              makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
-              for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-                let j = 0;
-                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
-                  dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
-                }
-                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
-                  dotsPos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') !== -1, SPRITE_COLOR.BLUE));
-                }
-              }
-              if (this.props.base[1] !== BASE.BASE_X) {
-                const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-                const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
-                this.soundManager.playSound(SoundManager.GO_SUCCESS);
-                this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
-              } else {
-                // remove last char in the operand if it's a - or a +
-                const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-                const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
-                this.soundManager.playSound(SoundManager.GO_SUCCESS);
-                this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
-              }
+            if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
+              this.createSubtractDots(dotsPerZoneA, dotsPerZoneA);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -527,36 +314,8 @@ class CanvasPIXI extends Component {
             }
             break;
           case OPERATOR_MODE.DIVIDE:
-            if (dotsPerZoneA.length === 0) {
-              invalidEntry = true;
-            }
-            if (dotsPerZoneB.length === 0) {
-              invalidEntry = true;
-            }
-            if (invalidEntry === false) {
-              const dividePos = [];
-              makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
-              for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-                let j = 0;
-                for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
-                  dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
-                }
-                for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
-                  dividePos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') === -1));
-                }
-              }
-              if (this.props.base[1] !== BASE.BASE_X) {
-                const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-                const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
-                this.soundManager.playSound(SoundManager.GO_SUCCESS);
-                this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
-              } else {
-                // remove last char in the operand if it's a - or a +
-                const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-                const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
-                this.soundManager.playSound(SoundManager.GO_SUCCESS);
-                this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
-              }
+            if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
+              this.createDivideDots(dotsPerZoneA, dotsPerZoneA);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -569,6 +328,281 @@ class CanvasPIXI extends Component {
         }
         this.powerZoneManager.isInteractive = true;
       }
+    }
+  }
+
+  populateDotPerZoneArrayAdvancedMode() {
+    let dotsPerZoneA;
+    let dotsPerZoneB;
+    if (this.props.operandA.indexOf('|') !== -1) {
+      dotsPerZoneA = this.props.operandA.split('|');
+    } else {
+      dotsPerZoneA = this.props.operandA.split('');
+    }
+    // Verify that we don't have a single minus sign in a zone
+    dotsPerZoneA.forEach((entry) => {
+      if (entry === '-') {
+        dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
+      }
+    });
+    if (this.props.operator_mode !== OPERATOR_MODE.MULTIPLY) {
+      // don't split multiplication operand B
+      if (this.props.operandB.indexOf('|') !== -1) {
+        dotsPerZoneB = this.props.operandB.split('|');
+      } else {
+        dotsPerZoneB = this.props.operandB.split('');
+      }
+    } else {
+      // there is no | possible in operandB in division,
+      // but I need it as an array anyway, so split with impossible character.
+      dotsPerZoneB = this.props.operandB.split('|');
+    }
+    // Verify that we don't have a single minus sign in a zone
+    dotsPerZoneB.forEach((entry) => {
+      if (entry === '-') {
+        dotsPerZoneB[dotsPerZoneB.indexOf(entry)] = 0;
+      }
+    });
+    return { dotsPerZoneA, dotsPerZoneB };
+  }
+
+  populateDotPerZoneArrayNormalMode() {
+    const dotsPerZoneA = this.props.operandA.split('');
+    let dotsPerZoneB;
+    if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
+      dotsPerZoneB = [];
+    } else {
+      dotsPerZoneB = this.props.operandB.split('');
+    }
+    // If the value start with a minus sign, minus all the value
+    if (dotsPerZoneA[0] === '-') {
+      dotsPerZoneA.splice(0, 1);
+      for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+        dotsPerZoneA[i] = `-${dotsPerZoneA[i]}`;
+      }
+    }
+    if (dotsPerZoneB[0] === '-') {
+      dotsPerZoneB.splice(0, 1);
+      for (let i = 0; i < dotsPerZoneB.length; i += 1) {
+        dotsPerZoneB[i] = `-${dotsPerZoneB[i]}`;
+      }
+    }
+    return { dotsPerZoneA, dotsPerZoneB };
+  }
+
+  populateDotPerZoneArrayBaseX() {
+    const dotsPerZoneA = new Array(this.props.totalZoneCount);
+    const dotsPerZoneB = new Array(this.props.totalZoneCount);
+    for (let i = 0; i < this.props.totalZoneCount; i += 1) {
+      dotsPerZoneA[i] = 0;
+      dotsPerZoneB[i] = 0;
+    }
+
+    let cleandedOperandA = superscriptToNormal(this.props.operandA);
+    let cleandedOperandB = superscriptToNormal(this.props.operandB);
+    let indices = [];
+    for (let i = 0; i < cleandedOperandA.length; i += 1) {
+      if (cleandedOperandA[i] === '-') indices.push(i);
+    }
+    let added = 0;
+    indices.forEach((indice) => {
+      cleandedOperandA = replaceAt(cleandedOperandA, indice + added, '+-');
+      added += 1;
+    });
+    indices = [];
+    for (let i = 0; i < cleandedOperandB.length; i += 1) {
+      if (cleandedOperandB[i] === '-') indices.push(i);
+    }
+    added = 0;
+    indices.forEach((indice) => {
+      cleandedOperandB = replaceAt(cleandedOperandB, indice + added, '+-');
+      added += 1;
+    });
+    // console.log(cleandedOperandA, cleandedOperandB);
+    const splitZoneA = cleandedOperandA.split('+');
+    const splitZoneB = cleandedOperandB.split('+');
+    // console.log(splitZoneA, splitZoneB);
+    splitZoneA.forEach((val) => {
+      let value = val;
+      if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
+        value = '0';
+      }
+      const xIndex = value.indexOf('x');
+      // No x in the zone value, this is an number only
+      if (xIndex === -1) {
+        dotsPerZoneA[0] += Number(value);
+      } else {
+        let pos = 0;
+        if (isNaN(value[xIndex + 1])) {
+          // x only, no exponent
+          pos = 1;
+        } else {
+          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+            // the exponent is higher than the amount of zone
+            this.soundManager.playSound(SoundManager.GO_INVALID);
+            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+            return;
+          }
+          pos = value[xIndex + 1];
+        }
+        if (xIndex === 0) {
+          // positive x only
+          dotsPerZoneA[pos] += 1;
+        } else if (xIndex === 1 && value[0] === '-') {
+          // negative x only
+          dotsPerZoneA[pos] -= 1;
+        } else {
+          dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
+        }
+      }
+    });
+    splitZoneB.forEach((val) => {
+      let value = val;
+      if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
+        value = '0';
+      }
+      const xIndex = value.indexOf('x');
+      // No x in the zone value, this is an number only
+      if (xIndex === -1) {
+        dotsPerZoneB[0] += Number(value);
+      } else {
+        let pos = 0;
+        if (isNaN(value[xIndex + 1])) {
+          // x only, no exponent
+          pos = 1;
+        } else {
+          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+            // the exponent is higher than the amount of zone
+            this.soundManager.playSound(SoundManager.GO_INVALID);
+            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+            return;
+          }
+          pos = value[xIndex + 1];
+        }
+        if (xIndex === 0) {
+          // positive x only
+          dotsPerZoneB[pos] += 1;
+        } else if (xIndex === 1 && value[0] === '-') {
+          // negative x only
+          dotsPerZoneB[pos] -= 1;
+        } else {
+          dotsPerZoneB[pos] += Number(value.substring(0, xIndex));
+        }
+      }
+    });
+    return { dotsPerZoneA, dotsPerZoneB };
+  }
+
+  createDisplayDots(dotsPerZoneA) {
+    let totalDot = 0;
+    const dotsPos = [];
+    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      totalDot += dotsPerZoneA[i] * Math.pow(this.props.base[1], i);
+      for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
+        dotsPos.push(this.getDot(i, true));
+      }
+    }
+    this.soundManager.playSound(SoundManager.GO_SUCCESS);
+    this.props.startActivityDoneFunc(dotsPos, totalDot);
+  }
+
+  createAddDots(dotsPerZoneA, dotsPerZoneB) {
+    const dotsPos = [];
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      let j = 0;
+      for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1, SPRITE_COLOR.RED));
+      }
+      for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') === -1, SPRITE_COLOR.BLUE));
+      }
+    }
+    if (this.props.base[1] !== BASE.BASE_X) {
+      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+    } else {
+      // remove last char in the operand if it's a - or a +
+      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+    }
+  }
+
+  createMultiplyDots(dotsPerZoneA) {
+    const dotsPos = [];
+    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      let totalDotInZone = 0;
+      totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
+      for (let j = 0; j < Math.abs(totalDotInZone); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
+      }
+    }
+    if (this.props.base[1] !== BASE.BASE_X) {
+      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue);
+    } else {
+      // remove last char in the operand if it's a - or a +
+      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue);
+    }
+  }
+
+  createSubtractDots(dotsPerZoneA, dotsPerZoneB) {
+    const dotsPos = [];
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      let j = 0;
+      for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
+      }
+      for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') !== -1, SPRITE_COLOR.BLUE));
+      }
+    }
+    if (this.props.base[1] !== BASE.BASE_X) {
+      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+    } else {
+      // remove last char in the operand if it's a - or a +
+      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+    }
+  }
+
+  createDivideDots(dotsPerZoneA, dotsPerZoneB) {
+    const dotsPos = [];
+    const dividePos = [];
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      let j = 0;
+      for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
+        dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1));
+      }
+      for (j = 0; j < Math.abs(Number(dotsPerZoneB[i])); j += 1) {
+        dividePos.push(this.getDot(i, String(dotsPerZoneB[i]).indexOf('-') === -1));
+      }
+    }
+    if (this.props.base[1] !== BASE.BASE_X) {
+      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
+    } else {
+      // remove last char in the operand if it's a - or a +
+      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     }
   }
 

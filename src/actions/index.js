@@ -91,9 +91,9 @@ export const error = errorMessage => ({
   errorMessage,
 });
 
-export const userMessage = userMessage => ({
+export const userMessage = message => ({
   type: ACTIONS.USER_MESSAGE,
-  userMessage,
+  message,
 });
 
 export const resetUserMessage = () => ({
