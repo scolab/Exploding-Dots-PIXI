@@ -142,7 +142,7 @@ class DotsMachine extends Component {
   };
 
   constructor(props) {
-    console.log('DotsMachine constructor props', props);
+    // console.log('DotsMachine constructor props', props);
     super(props);
   }
 
@@ -194,6 +194,7 @@ class DotsMachine extends Component {
             pos={OPERAND_POS.LEFT}
             activityStarted={this.props.dotsMachine.machineState.activityStarted}
             base={this.props.dotsMachine.machineState.base}
+            onEnter={this.props.startActivityFunc}
           />
           <Operator
             operator_mode={this.props.dotsMachine.machineState.operator_mode}
@@ -247,6 +248,7 @@ class DotsMachine extends Component {
           operandB={this.props.dotsMachine.machineState.operandB}
           error={this.props.error}
           displayUserMessage={this.props.userMessage}
+          userMessage={this.props.dotsMachine.machineState.userMessage}
           muted={this.props.dotsMachine.machineState.muted}
           wantedResult={this.props.dotsMachine.machineState.wantedResult}
           setDivisionResult={this.props.setDivisionResult}

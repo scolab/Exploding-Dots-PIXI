@@ -19,11 +19,12 @@ export default class Operator extends Component {
     activityStarted: PropTypes.bool.isRequired,
   };
 
-  handleOperandChange(event, index, value) {
+  handleOperandChange = (event, index, value) => {
     this.props.onChange(value);
-  }
+  };
 
   render() {
+    /* eslint-disable no-dupe-keys */
     let text = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
@@ -89,7 +90,7 @@ export default class Operator extends Component {
               menuItemStyle={{ fontSize: '32px', borderRadius: '23px' }}
               menuStyle={{ borderRadius: '23px' }}
               value={OPERATOR_MODE.ADD}
-              onChange={this.handleOperandChange.bind(this)}
+              onChange={this.handleOperandChange}
               disabled={this.props.activityStarted}
             >
               <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
@@ -165,7 +166,7 @@ export default class Operator extends Component {
               iconStyle={{ top: '0px', right: '0px' }}
               menuItemStyle={{ fontSize: '32px' }}
               value={OPERATOR_MODE.MULTIPLY}
-              onChange={this.handleOperandChange.bind(this)}
+              onChange={this.handleOperandChange}
               disabled={this.props.activityStarted}
             >
               <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
@@ -201,6 +202,7 @@ export default class Operator extends Component {
         return null;
     }
     return null;
+    /* eslint-enable */
   }
 }
 

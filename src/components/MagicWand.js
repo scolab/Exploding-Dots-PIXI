@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import img from './images/magicWand.gif';
 
 const MagicWand = (props) => {
+  /* eslint-disable no-dupe-keys */
   return (
     <button
       className="topRightMenuItem"
@@ -28,6 +29,7 @@ const MagicWand = (props) => {
       <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '4px' }} />
     </button>
   );
+  /* eslint-enable */
 };
 
 MagicWand.propTypes = {

@@ -50,6 +50,16 @@ export class PowerZone extends PIXI.Container {
   placeValueExponent = null;
   textures = null;
 
+  static getDotsFromHash(hash, amount) {
+    const allRemovedDots = [];
+    let toRemove = amount - 1;
+    while (toRemove >= 0) {
+      allRemovedDots.push(hash[Object.keys(hash)[toRemove]]);
+      toRemove -= 1;
+    }
+    return allRemovedDots;
+  }
+
   constructor(position,
               textures,
               base,
@@ -466,6 +476,7 @@ export class PowerZone extends PIXI.Container {
     const removed = [];
     if (localAmount > 0) {
       if (isPositive) {
+        // eslint-disable-next-line guard-for-in, no-restricted-syntax
         for (key in this.positiveDotNotDisplayed) {
           removed.push(this.positiveDotNotDisplayed[key]);
           localAmount -= 1;
@@ -477,6 +488,7 @@ export class PowerZone extends PIXI.Container {
           this.removeDotFromArray(dot);
         });
       } else {
+        // eslint-disable-next-line guard-for-in, no-restricted-syntax
         for (key in this.negativeDotNotDisplayed) {
           removed.push(this.negativeDotNotDisplayed[key]);
           localAmount -= 1;
@@ -551,7 +563,7 @@ export class PowerZone extends PIXI.Container {
         // console.log('removeDotsFromArrayStoreChange', storeHash);
     const removedDots = [];
     Object.keys(localHash).forEach((key) => {
-      if (storeHash.hasOwnProperty(key) === false) {
+      if (Object.prototype.hasOwnProperty.call(storeHash, key) === false) {
         const dot = localHash[key];
         this.removeDotFromArray(dot);
         if (dot.sprite) {
@@ -594,8 +606,8 @@ export class PowerZone extends PIXI.Container {
         toShowCount = notShownedCount;
       }
       if (toShowCount > 0) {
-        let key;
-        for (key in notShowedArray) {
+        // eslint-disable-next-line guard-for-in, no-restricted-syntax
+        for (const key in notShowedArray) {
           addedDots.push(notShowedArray[key]);
           toShowCount -= 1;
           if (toShowCount === 0) {
@@ -640,7 +652,7 @@ export class PowerZone extends PIXI.Container {
   doAddDotsFromStateChange(storeHash, localHash) {
     const addedDots = [];
     Object.keys(storeHash).forEach((key) => {
-      if (localHash.hasOwnProperty(key) === false) {
+      if (Object.prototype.hasOwnProperty.call(localHash, key) === false) {
         addedDots.push(storeHash[key]);
         this.addDot(storeHash[key]);
       }
@@ -649,40 +661,36 @@ export class PowerZone extends PIXI.Container {
   }
 
   getOvercrowding(amount) {
+    // console.log('getOvercrowding', amount);
     let dotsRemoved = [];
     if (Object.keys(this.positiveDots).length > amount - 1) {
-      dotsRemoved = this.getDotsFromHash(this.positiveDots, amount);
+      dotsRemoved = PowerZone.getDotsFromHash(this.positiveDots, amount);
     } else if (Object.keys(this.negativeDots).length > amount - 1) {
-      dotsRemoved = this.getDotsFromHash(this.negativeDots, amount);
+      dotsRemoved = PowerZone.getDotsFromHash(this.negativeDots, amount);
     }
     return dotsRemoved;
-  }
-
-  getDotsFromHash(hash, amount) {
-    const allRemovedDots = [];
-    while (amount -= 1) {
-      allRemovedDots.push(hash[Object.keys(hash)[amount]]);
-    }
-    return allRemovedDots;
   }
 
   getPositiveNegativeOverdot(amount, isPositive) {
     let key;
     const removed = [];
-    if (amount > 0) {
+    let myAmount = amount;
+    if (myAmount > 0) {
       if (isPositive) {
+        // eslint-disable-next-line guard-for-in, no-restricted-syntax
         for (key in this.positiveDots) {
           removed.push(this.positiveDots[key]);
-          amount -= 1;
-          if (amount === 0) {
+          myAmount -= 1;
+          if (myAmount === 0) {
             break;
           }
         }
       } else {
+        // eslint-disable-next-line guard-for-in, no-restricted-syntax
         for (key in this.negativeDots) {
           removed.push(this.negativeDots[key]);
-          amount -= 1;
-          if (amount === 0) {
+          myAmount -= 1;
+          if (myAmount === 0) {
             break;
           }
         }

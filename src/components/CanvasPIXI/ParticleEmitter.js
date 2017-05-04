@@ -1,4 +1,4 @@
-import particles from 'pixi-particles';
+import 'pixi-particles';
 
 // eslint-disable-next-line import/prefer-default-export
 export class ParticleEmitter {
@@ -43,11 +43,11 @@ export class ParticleEmitter {
   }
 
   destroy() {
-    console.log('destroy');
+    // console.log('destroy');
     this.emitter.emit = false;
     this.emitter.destroy();
     this.emitter = null;
-        // emitter.plugins.sprite.sprites.length = 0;
+    // emitter.plugins.sprite.sprites.length = 0;
   }
 
 }

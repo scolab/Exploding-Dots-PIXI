@@ -19,7 +19,7 @@ export default class Operand extends Component {
     pos: PropTypes.string.isRequired,
     activityStarted: PropTypes.bool.isRequired,
     base: PropTypes.array.isRequired,
-    onEnter: PropTypes.func,
+    onEnter: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
@@ -30,7 +30,7 @@ export default class Operand extends Component {
     this.checkIfInputActive();
   }
 
-  onChange(e) {
+  onChange = (e) => {
     // console.log('onChange');
     e.preventDefault();
     let stringToTest = e.target.value;
@@ -94,9 +94,11 @@ export default class Operand extends Component {
     }
   }
 
-  onSubmit(e) {
+  onSubmit = (e) => {
     e.preventDefault();
     if (this.props.pos === OPERAND_POS.RIGHT) {
+      this.props.onEnter();
+    } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
   }
@@ -105,8 +107,8 @@ export default class Operand extends Component {
     if (this.inputText) {
       if (this.props.usage_mode === USAGE_MODE.EXERCISE ||
                 this.props.activityStarted ||
-                this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
-                this.props.usage_mode === USAGE_MODE.FREEPLAY) {
+                (this.props.operator_mode === OPERATOR_MODE.DISPLAY &&
+                this.props.usage_mode === USAGE_MODE.FREEPLAY)) {
         this.inputText.disabled = true;
       } else if (this.props.usage_mode === USAGE_MODE.OPERATION &&
                 this.props.activityStarted === false) {
@@ -119,7 +121,7 @@ export default class Operand extends Component {
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <div className="operationItem">
-          <form onSubmit={this.onSubmit.bind(this)}>
+          <form onSubmit={this.onSubmit}>
             <input
               style={{
                 fontFamily: 'Noto Sans',
@@ -133,7 +135,7 @@ export default class Operand extends Component {
                 border: 'none',
               }}
               type="text"
-              onChange={this.onChange.bind(this)}
+              onChange={this.onChange}
               value={this.props.value}
               ref={(inputText) => {
                 this.inputText = inputText;
@@ -147,7 +149,7 @@ export default class Operand extends Component {
       if (visible) {
         return (
           <div className="operationItem">
-            <form onSubmit={this.onSubmit.bind(this)}>
+            <form onSubmit={this.onSubmit}>
               <input
                 style={{
                   fontFamily: 'Noto Sans',
@@ -161,7 +163,7 @@ export default class Operand extends Component {
                   border: 'none',
                 }}
                 type="text"
-                onChange={this.onChange.bind(this)}
+                onChange={this.onChange}
                 value={this.props.value}
                 ref={(inputText) => {
                   this.inputText = inputText;
@@ -171,8 +173,7 @@ export default class Operand extends Component {
           </div>
         );
       }
-      return null;
     }
+    return null;
   }
 }
-

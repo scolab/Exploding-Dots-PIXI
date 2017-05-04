@@ -27,6 +27,7 @@ const GoButton = (props) => {
     );
   }
   return (
+    /* eslint-disable no-dupe-keys */
     <button
       className="imageButton"
       style={{
@@ -52,6 +53,7 @@ const GoButton = (props) => {
       <i className="fa fa-arrow-right" />
     </button>
   );
+  /* eslint-enable */
 };
 
 GoButton.propTypes = {

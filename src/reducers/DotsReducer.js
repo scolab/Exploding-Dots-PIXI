@@ -121,12 +121,12 @@ const dotsReducer = (state = null, action) => {
     // console.log('dotsReducer', action.type);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
-      console.log(ACTIONS.START_ACTIVITY);
+      // console.log(ACTIONS.START_ACTIVITY);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = true;
       return stateCopy;
     case ACTIONS.START_ACTIVITY_DONE:
-      console.log(ACTIONS.START_ACTIVITY_DONE);
+      // console.log(ACTIONS.START_ACTIVITY_DONE);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = true;
@@ -173,7 +173,7 @@ const dotsReducer = (state = null, action) => {
       }
       return stateCopy;
     case ACTIONS.ADD_DOT: {
-      console.log('ADD_DOT', action.zoneId, action.isPositive);
+      // console.log('ADD_DOT', action.zoneId, action.isPositive);
       stateCopy = { ...state };
       const dot = {};
       dot.x = action.position[0];
@@ -194,15 +194,20 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     }
     case ACTIONS.REMOVE_DOT:
-      console.log('REMOVE_DOT');
+      // console.log('REMOVE_DOT');
       stateCopy = { ...state };
-      if (stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)) { //
+      if (Object.prototype.hasOwnProperty.call(
+        stateCopy.positivePowerZoneDots[action.zoneId],
+          action.dotId)) {
                 // let dot = stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
         delete stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
                 // ObjPool.dispose(dot);
       }
 
-      if (stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(action.dotId)) {
+      if (Object.prototype.hasOwnProperty.call(
+          stateCopy.negativePowerZoneDots[action.zoneId],
+          action.dotId)
+      ) {
         delete stateCopy.negativePowerZoneDots[action.zoneId][action.dotId];
       }
 
@@ -213,7 +218,7 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
 
     case ACTIONS.ADD_MULTIPLE_DOTS:
-      console.log('ADD_MULTIPLE_DOTS');
+      // console.log('ADD_MULTIPLE_DOTS');
       stateCopy = { ...state };
       action.dotsPos.forEach((newDot) => {
         const dot = {};
@@ -239,16 +244,22 @@ const dotsReducer = (state = null, action) => {
 
     case ACTIONS.REMOVE_MULTIPLE_DOTS:
       stateCopy = { ...state };
-      console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId);
+      // console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId);
       if (action.dots.length > 0) {
-        let i = action.dots.length;
+        let i = action.dots.length - 1;
         while (i >= 0) {
           const dot = action.dots[i];
           if (dot.isPositive) {
-            if (stateCopy.positivePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)) {
+            if (Object.prototype.hasOwnProperty.call(
+              stateCopy.positivePowerZoneDots[action.zoneId],
+                dot.id)
+            ) {
               delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
             }
-          } else if (stateCopy.negativePowerZoneDots[action.zoneId].hasOwnProperty(dot.id)) {
+          } else if (Object.prototype.hasOwnProperty.call(
+            stateCopy.negativePowerZoneDots[action.zoneId],
+              dot.id)
+          ) {
             delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
           }
           i -= 1;
@@ -264,7 +275,7 @@ const dotsReducer = (state = null, action) => {
     case ACTIONS.REZONE_DOT:
       stateCopy = { ...state };
       if (action.dot.isPositive) {
-        let i = stateCopy.positivePowerZoneDots.length;
+        let i = stateCopy.positivePowerZoneDots.length - 1;
         while (i >= 0) {
           if (stateCopy.positivePowerZoneDots[i][action.dot.id] !== undefined) {
             stateCopy.positivePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
@@ -275,7 +286,7 @@ const dotsReducer = (state = null, action) => {
           i -= 1;
         }
       } else {
-        let i = stateCopy.negativePowerZoneDots.length;
+        let i = stateCopy.negativePowerZoneDots.length - 1;
         while (i >= 0) {
           if (stateCopy.negativePowerZoneDots[i][action.dot.id] !== undefined) {
             stateCopy.negativePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
@@ -325,16 +336,16 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     case ACTIONS.OPERATOR_CHANGED:
       stateCopy = { ...state };
-      console.log(ACTIONS.OPERATOR_CHANGED, action.value);
+      // console.log(ACTIONS.OPERATOR_CHANGED, action.value);
       stateCopy.machineState.operator_mode = action.value;
       return stateCopy;
     case ACTIONS.ACTIVATE_MAGIC_WAND:
-      console.log(ACTIONS.ACTIVATE_MAGIC_WAND);
+      // console.log(ACTIONS.ACTIVATE_MAGIC_WAND);
       stateCopy = { ...state };
       stateCopy.machineState.magicWandIsActive = action.active;
       return stateCopy;
     case ACTIONS.BASE_CHANGED: {
-      console.log(ACTIONS.BASE_CHANGED);
+      // console.log(ACTIONS.BASE_CHANGED);
       stateCopy = { ...state };
       let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
       if (index < state.machineState.allBases.length - 1) {
@@ -350,7 +361,7 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     }
     case ACTIONS.RESET:
-      console.log(ACTIONS.RESET, action.machineState, setMachineState);
+      // console.log(ACTIONS.RESET, action.machineState, setMachineState);
       initialMachineState.operandA = '';
       initialMachineState.operandB = '';
       if (action.machineState) { // we are at the start of an activity
@@ -372,24 +383,23 @@ const dotsReducer = (state = null, action) => {
       initialMachineState.errorMessage = '';
       return setInitialState();
     case ACTIONS.ERROR:
-      console.log(ACTIONS.ERROR);
+      // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };
       stateCopy.machineState.errorMessage = action.errorMessage;
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = true;
       return stateCopy;
     case ACTIONS.USER_MESSAGE:
-      console.log(ACTIONS.USER_MESSAGE);
+      // console.log(ACTIONS.USER_MESSAGE);
       stateCopy = { ...state };
       stateCopy.machineState.userMessage = action.message;
       return stateCopy;
     case ACTIONS.RESET_USER_MESSAGE:
-      console.log(ACTIONS.RESET_USER_MESSAGE);
+      // console.log(ACTIONS.RESET_USER_MESSAGE);
       stateCopy = { ...state };
       stateCopy.machineState.userMessage = '';
       return stateCopy;
     default:
-      console.log('DEFAULT');
       return state;
   }
 };

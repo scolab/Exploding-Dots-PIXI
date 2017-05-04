@@ -1,8 +1,7 @@
 import React from 'react';
-import { storiesOf, action } from '@kadira/storybook';
+import { storiesOf } from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
-import { BASE } from '../Constants';
-import { OPERATOR_MODE, USAGE_MODE } from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 
 storiesOf('Exploding Dots', module)
     .add('Mecha Freeplay', () => (
@@ -150,7 +149,8 @@ storiesOf('Exploding Dots', module)
           negativeDivider: [0, 0, 0, 0, 0],
         }}
       />
-    )).add('Division Operation', () => (
+    ))
+    .add('Division Operation', () => (
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DIVIDE}
         usage_mode={USAGE_MODE.OPERATION}

@@ -67,7 +67,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.dragParticleEmitterRed = null;
     this.dragParticleEmitterBlue = null;
     this.leftMostZone = null;
-    window.addEventListener('keyup', this.traceValue.bind(this));
+    // window.addEventListener('keyup', this.traceValue.bind(this));
   }
 
   traceValue(e) {
@@ -78,9 +78,8 @@ export class PowerZoneManager extends PIXI.Container {
         dotCount.push(Object.keys(zone.positiveDots).length);
         childCount.push(zone.positiveDotsContainer.children.length);
       });
-      console.log(dotCount, childCount, this.movingDotsContainer.children.length);
+      // console.log(dotCount, childCount, this.movingDotsContainer.children.length);
     }
-    console.log();
   }
 
   createZones() {
@@ -999,6 +998,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   checkPendingAction(nextProps) {
+    // console.log('checkPendingAction', nextProps, nextProps.userMessage);
     if (nextProps.userMessage === '') {
       while (this.pendingAction.length > 0) {
         const action = this.pendingAction.shift();
@@ -1011,7 +1011,7 @@ export class PowerZoneManager extends PIXI.Container {
     const base = this.base[1];
     let dotsRemoved = [];
     if (this.negativePresent) {
-            // check positive / negative
+      // check positive / negative
       for (let i = 0; i < this.allZones.length; i += 1) {
         const positiveDots = this.allZones[i].positiveDots;
         const negativeDots = this.allZones[i].negativeDots;
@@ -1179,7 +1179,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   checkResult() {
-    console.log('checkResult');
+    // console.log('checkResult');
     let zone;
     if (this.wantedResult.positiveDots.length === this.allZones.length &&
             this.wantedResult.negativeDots.length === this.allZones.length &&
@@ -1198,9 +1198,8 @@ export class PowerZoneManager extends PIXI.Container {
           zoneSuccess += 1;
         }
       }
-      console.log('checkResult', zoneSuccess);
       if (zoneSuccess === this.allZones.length) {
-        console.log('SUCCESS!!!');
+        // console.log('SUCCESS!!!');
       }
     }
   }

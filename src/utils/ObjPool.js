@@ -1,4 +1,4 @@
-export class ObjPool {
+export default class ObjPool {
 
   static pool = [];
 
@@ -13,4 +13,3 @@ export class ObjPool {
     this.pool.concat(objArr);
   }
 }
-

@@ -66,12 +66,15 @@ class CanvasPIXI extends Component {
     operandB: PropTypes.string.isRequired,
     error: PropTypes.func.isRequired,
     displayUserMessage: PropTypes.func.isRequired,
+    userMessage: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
     muted: PropTypes.bool.isRequired,
     wantedResult: PropTypes.object.isRequired,
   };
 
+  // eslint-disable-next-line no-unused-vars
   static onAssetsError(loader) {
-    console.log('onAssetsError', loader);
+    // TODO Do something
+    // console.log('onAssetsError', loader);
     // loader.onStart = null;
   }
 
@@ -612,7 +615,6 @@ class CanvasPIXI extends Component {
   }
 
   resize() {
-    console.log();
     const w = window.innerWidth;
     const h = window.innerHeight;
     const ratio = Math.min(

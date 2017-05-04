@@ -1,8 +1,9 @@
-import victor from 'victor';
+import Victor from 'victor';
+import { TweenMax } from 'gsap';
 import { constrain } from '../utils/MathUtils';
 import { POSITION_INFO } from '../Constants';
-import { TweenMax } from 'gsap';
 
+// eslint-disable-next-line import/prefer-default-export
 export class ProximityManager {
 
   constructor(area) {
@@ -28,14 +29,16 @@ export class ProximityManager {
             item.vPosition.x < this.area.width - POSITION_INFO.DOT_RAYON &&
             item.vPosition.y < this.area.height - POSITION_INFO.DOT_RAYON
             ) {
+      /* eslint-disable no-param-reassign */
       item.x = item.vPosition.x;
       item.y = item.vPosition.y;
+      /* eslint-enable */
     }
   }
 
   calculateRepulsion(m1, m2) {
         // console.log('calculateRepulsion');
-    let force = new victor(m1.vPosition.x, m1.vPosition.y);
+    let force = new Victor(m1.vPosition.x, m1.vPosition.y);
     force = force.subtract(m2.vPosition);
     let distance = force.length();
     if (distance < POSITION_INFO.DOT_RAYON * 2) {
@@ -45,17 +48,19 @@ export class ProximityManager {
       force = force.multiplyScalar(strength * -1);
       return force;
     }
-    return new victor(0, 0);
+    return new Victor(0, 0);
   }
 
 
   addItem(item) {
-        // console.log('addItem');
+    // console.log('addItem');
     if (this.movers.indexOf(item) === -1) {
       this.movers.push(item);
-      item.vPosition = new victor(item.x, item.y);
-      item.velocity = new victor(0, 0);
-      item.acceleration = new victor(0, 0);
+      /* eslint-disable no-param-reassign */
+      item.vPosition = new Victor(item.x, item.y);
+      item.velocity = new Victor(0, 0);
+      item.acceleration = new Victor(0, 0);
+      /* eslint-enable */
       this.allDone = false;
       TweenMax.delayedCall(5, () => { this.allDone = true; }, null, this);
     }
@@ -65,8 +70,10 @@ export class ProximityManager {
         // console.log('removeItem');
     if (this.movers.indexOf(item) !== -1) {
       this.movers.splice(this.movers.indexOf(item), 1);
+      /* eslint-disable no-param-reassign */
       item.velocity = null;
       item.acceleration = null;
+      /* eslint-enable */
     }
   }
 
@@ -74,8 +81,8 @@ export class ProximityManager {
     if (this.allDone === false) {
       let allDone = true;
             // let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
-      for (let i = 0; i < this.movers.length; i++) {
-        for (let j = 0; j < this.movers.length; j++) {
+      for (let i = 0; i < this.movers.length; i += 1) {
+        for (let j = 0; j < this.movers.length; j += 1) {
           if (i !== j) {
             const force = this.calculateRepulsion(this.movers[j], this.movers[i]);
             if (force.length() > 0.001) {

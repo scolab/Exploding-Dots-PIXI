@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import img from './images/refresh.gif';
 
 const ResetButton = (props) => {
+  /* eslint-disable no-dupe-keys */
   return (
     <button
       className="topRightMenuItem"
@@ -28,6 +29,7 @@ const ResetButton = (props) => {
       <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '2px' }} />
     </button>
   );
+  /* eslint-enable */
 };
 
 ResetButton.propTypes = {
