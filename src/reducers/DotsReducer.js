@@ -350,7 +350,7 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     }
     case ACTIONS.RESET:
-      console.log(ACTIONS.RESET);
+      console.log(ACTIONS.RESET, action.machineState, setMachineState);
       initialMachineState.operandA = '';
       initialMachineState.operandB = '';
       if (action.machineState) { // we are at the start of an activity
@@ -364,7 +364,7 @@ const dotsReducer = (state = null, action) => {
         setMachineState = { ...action.machineState };
         initialMachineState = { ...setMachineState };
       } else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE) {
-                // reset button in Exercise mode, repopulate with starting value
+        // reset button in Exercise mode, repopulate with starting value
         initialMachineState = { ...setMachineState };
         initialMachineState.startActivity = true;
       }

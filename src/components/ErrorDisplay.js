@@ -10,10 +10,6 @@ export default class ErrorDisplay extends Component {
     onClose: PropTypes.func.isRequired,
   };
 
-  handleClose() {
-    this.props.onClose();
-  }
-
   render() {
     if (this.props.errorMessage === '') {
       return null;
@@ -22,7 +18,7 @@ export default class ErrorDisplay extends Component {
       <FlatButton
         label="OK"
         primary
-        onTouchTap={this.handleClose.bind(this)}
+        onTouchTap={() => this.props.onClose()}
       />,
     ];
     return (
@@ -31,7 +27,7 @@ export default class ErrorDisplay extends Component {
           actions={actions}
           modal={false}
           open
-          onRequestClose={this.handleClose.bind(this)}
+          onTouchTap={() => this.props.onClose()}
         >
           {this.props.errorMessage}
         </Dialog>

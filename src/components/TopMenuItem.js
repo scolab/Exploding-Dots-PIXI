@@ -1,17 +1,16 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class TopMenuItem extends Component {
-    static propTypes = {
-        children: PropTypes.node,
-    };
+const TopMenuItem = (props) => {
+  return (
+    <div style={{ marginRight: 33 }}>
+      {props.children}
+    </div>
+  );
+};
 
-    render(){
-        return (
-            <div style={{marginRight:33}}>
-                {this.props.children}
-            </div>
-        );
-    }
-}
+TopMenuItem.propTypes = {
+  children: PropTypes.node,
+};
 
+export default TopMenuItem;

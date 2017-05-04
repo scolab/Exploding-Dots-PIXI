@@ -9,7 +9,6 @@ import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 
 class CanvasPIXI extends Component {
-
   static propTypes = {
     addDot: PropTypes.func.isRequired,
     addMultipleDots: PropTypes.func.isRequired,
@@ -613,6 +612,7 @@ class CanvasPIXI extends Component {
   }
 
   resize() {
+    console.log();
     const w = window.innerWidth;
     const h = window.innerHeight;
     const ratio = Math.min(

@@ -161,7 +161,6 @@ class DotsMachine extends Component {
         <TopMenuItem>
           {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
           <PlaceValueSwitch
-            visible={this.props.dotsMachine.machineState.placeValueSwitchVisible}
             onClick={this.props.showHidePlaceValue}
           />
                     }
@@ -173,13 +172,11 @@ class DotsMachine extends Component {
                     }
           {this.props.dotsMachine.machineState.magicWandVisible === true &&
           <MagicWand
-            visible={this.props.dotsMachine.machineState.magicWandVisible}
             onClick={this.props.activateMagicWand}
           />
                     }
           {this.props.dotsMachine.machineState.resetVisible === true &&
           <ResetButton
-            visible={this.props.dotsMachine.machineState.resetVisible}
             onClick={() => this.props.resetMachine()}
           />
                     }
@@ -215,11 +212,11 @@ class DotsMachine extends Component {
             onEnter={this.props.startActivityFunc}
           />
           {this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
-          <GoButton
-            onClick={this.props.startActivityFunc}
-            activityStarted={this.props.dotsMachine.machineState.activityStarted}
-          >GO</GoButton>
-                    }
+            <GoButton
+              onClick={this.props.startActivityFunc}
+              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+            />
+          }
         </ActivityDescriptor>
         <CanvasPIXI
           totalZoneCount={this.props.dotsMachine.machineState.zones}

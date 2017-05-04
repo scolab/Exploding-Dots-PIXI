@@ -461,14 +461,15 @@ export class PowerZone extends PIXI.Container {
   }
 
   removeNotDisplayedDots(amount, isPositive) {
+    let localAmount = amount;
     let key;
     const removed = [];
-    if (amount > 0) {
+    if (localAmount > 0) {
       if (isPositive) {
         for (key in this.positiveDotNotDisplayed) {
           removed.push(this.positiveDotNotDisplayed[key]);
-          amount -= 1;
-          if (amount === 0) {
+          localAmount -= 1;
+          if (localAmount === 0) {
             break;
           }
         }
@@ -478,8 +479,8 @@ export class PowerZone extends PIXI.Container {
       } else {
         for (key in this.negativeDotNotDisplayed) {
           removed.push(this.negativeDotNotDisplayed[key]);
-          amount -= 1;
-          if (amount === 0) {
+          localAmount -= 1;
+          if (localAmount === 0) {
             break;
           }
         }

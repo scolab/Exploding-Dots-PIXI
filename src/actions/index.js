@@ -44,7 +44,6 @@ export const setDivisionResult = (zoneId, divisionValue, isPositive) => ({
   isPositive,
 });
 
-
 export const changeBase = () => ({
   type: ACTIONS.BASE_CHANGED,
 });
