@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { TweenMax } from 'gsap';
 import { randomFromTo } from '../../utils/MathUtils';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { superscriptToNormal, replaceAt } from '../../utils/StringUtils';
@@ -135,19 +136,20 @@ class CanvasPIXI extends Component {
     this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
     window.addEventListener('resize', this.resize.bind(this));
 
-    const loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
+    this.loaderName = 'machineAssets';
+    this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
-      loader.add('machineAssets', '/images/machine@4x.json');
+      this.loader.add(this.loaderName, '/images/machine@4x.json');
     } else if (window.devicePixelRatio >= 1.25) {
-      loader.add('machineAssets', '/images/machine@3x.json');
+      this.loader.add(this.loaderName, '/images/machine@3x.json');
     } else if (window.devicePixelRatio >= 1) {
-      loader.add('machineAssets', '/images/machine@2x.json');
+      this.loader.add(this.loaderName, '/images/machine@2x.json');
     } else {
-      loader.add('machineAssets', '/images/machine@1x.json');
+      this.loader.add(this.loaderName, '/images/machine@1x.json');
     }
-    loader.once('complete', this.onAssetsLoaded.bind(this));
-    loader.once('error', CanvasPIXI.onAssetsError());
-    loader.load();
+    this.loader.once('complete', this.onAssetsLoaded.bind(this));
+    this.loader.once('error', CanvasPIXI.onAssetsError());
+    this.loader.load();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -183,7 +185,28 @@ class CanvasPIXI extends Component {
   }
 
   componentWillUnmount() {
-    this.soundManager.stopAllSounds();
+    TweenMax.killAll(false, true, true, true);
+    if (this.soundManager) {
+      this.soundManager.destroy();
+    }
+    this.soundManager = null;
+    if (this.spritePool) {
+      this.spritePool.destroy();
+    }
+    this.spritePool = null;
+    if (this.powerZoneManager) {
+      this.powerZoneManager.destroy();
+    }
+    this.powerZoneManager = null;
+    this.loader.destroy();
+    // eslint-disable-next-line guard-for-in, no-restricted-syntax
+    for (const key in this.textures) {
+      this.textures[key].destroy(true);
+    }
+    const hiddenTextureName = `${this.loaderName}_image`;
+    PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
+    // PIXI.utils.destroyTextureCache();
+    this.state.app.destroy(true);
   }
 
   onAssetsLoaded(loader) {

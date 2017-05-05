@@ -1,4 +1,4 @@
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import { TweenMax } from 'gsap';
 // eslint-disable-next-line import/prefer-default-export
 export class SoundManager {
@@ -159,5 +159,11 @@ export class SoundManager {
       TweenMax.killTweensOf(loop);
     });
   }
-}
 
+  destroy() {
+    this.allSounds.forEach((howl) => {
+      howl.unload();
+    });
+    // Howler.unload();
+  }
+}

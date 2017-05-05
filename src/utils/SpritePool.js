@@ -127,4 +127,31 @@ export class SpritePool {
       this.poolNegativeBlue.push(sprite);
     }
   }
+
+  destroy() {
+    this.poolPositiveRed.forEach((sprite) => {
+      sprite.destroy();
+    });
+    this.poolPositiveBlue.forEach((sprite) => {
+      sprite.destroy();
+    });
+    this.poolNegativeRed.forEach((sprite) => {
+      sprite.destroy();
+    });
+    this.poolNegativeBlue.forEach((sprite) => {
+      sprite.destroy();
+    });
+    this.positiveSpriteRedFrames.forEach((texture) => {
+      texture.destroy();
+    });
+    this.positiveSpriteBlueFrames.forEach((texture) => {
+      texture.destroy();
+    });
+    this.negativeSpriteRedFrames.forEach((texture) => {
+      texture.destroy();
+    });
+    this.negativeSpriteBlueFrames.forEach((texture) => {
+      texture.destroy();
+    });
+  }
 }

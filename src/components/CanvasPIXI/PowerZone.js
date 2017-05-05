@@ -922,4 +922,32 @@ export class PowerZone extends PIXI.Container {
       this.negativeDividerText.style.fill = 0x565656;
     }
   }
+
+  destroy() {
+    let sprite;
+    if (this.positiveDotsContainer) {
+      while (this.positiveDotsContainer.children.length > 0) {
+        sprite = this.positiveDotsContainer.removeChildAt(0);
+        sprite.stop();
+      }
+      this.positiveDotsContainer.off('pointerup', this.createDot.bind(this));
+      this.positiveDotsContainer.destroy();
+    }
+    if (this.positiveProximityManager) {
+      this.positiveProximityManager.destroy();
+    }
+    if (this.negativePresent) {
+      if (this.negativeDotsContainer) {
+        while (this.negativeDotsContainer.children.length > 0) {
+          sprite = this.negativeDotsContainer.removeChildAt(0);
+          sprite.stop();
+        }
+        this.negativeDotsContainer.off('pointerup', this.createDot.bind(this));
+        this.negativeDotsContainer.destroy();
+      }
+      if (this.negativeProximityManager) {
+        this.negativeProximityManager.destroy();
+      }
+    }
+  }
 }

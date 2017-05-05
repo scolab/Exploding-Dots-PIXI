@@ -106,5 +106,9 @@ export class ProximityManager {
       }
     }
   }
+
+  destroy() {
+    this.movers = [];
+  }
 }
 
