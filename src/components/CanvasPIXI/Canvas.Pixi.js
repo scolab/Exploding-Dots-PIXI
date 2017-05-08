@@ -1,3 +1,4 @@
+ // @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TweenMax } from 'gsap';
@@ -9,7 +10,42 @@ import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 
-class CanvasPIXI extends Component {
+type PropsType = {
+  addDot: Function$Prototype$Apply,
+  addMultipleDots: Function$Prototype$Apply,
+  rezoneDot: Function$Prototype$Apply,
+  removeDot: Function$Prototype$Apply,
+  removeMultipleDots: Function$Prototype$Apply,
+  setDivisionResult: Function$Prototype$Apply,
+  activateMagicWand: Function$Prototype$Apply,
+  startActivityFunc: Function$Prototype$Apply,
+  startActivityDoneFunc: Function$Prototype$Apply,
+  positivePowerZoneDots: Array<mixed>,
+  negativePowerZoneDots: Array<mixed>,
+  positiveDividerDots: Array<mixed>,
+  negativeDividerDots: Array<mixed>,
+  positiveDividerResult: Array<mixed>,
+  negativeDividerResult: Array<mixed>,
+  base: Array<mixed>,
+  operator_mode: string,
+  usage_mode: string,
+  placeValueOn: boolean,
+  cdnBaseUrl: string,
+  totalZoneCount: number,
+  magicWandIsActive: boolean,
+  startActivity: boolean,
+  activityStarted: boolean,
+  operandA: string,
+  operandB: string,
+  error: Function$Prototype$Apply,
+  displayUserMessage: Function$Prototype$Apply,
+  userMessage: string, // eslint-disable-line react/no-unused-prop-types
+  muted: boolean,
+  wantedResult: JSON
+};
+
+class CanvasPIXI extends Component<void, PropsType, void> {
+
   static propTypes = {
     addDot: PropTypes.func.isRequired,
     addMultipleDots: PropTypes.func.isRequired,
@@ -73,13 +109,14 @@ class CanvasPIXI extends Component {
   };
 
   // eslint-disable-next-line no-unused-vars
-  static onAssetsError(loader) {
+  static onAssetsError(loader: window.PIXI.loader) {
     // TODO Do something
     // console.log('onAssetsError', loader);
     // loader.onStart = null;
   }
 
-  static removeTrailingSign(str) {
+  // remove last char in the operand if it's a '-' or a '+'
+  static removeTrailingSign(str: string): string {
     let string = str;
     if (string.lastIndexOf('-') === string.length - 1 || string.lastIndexOf('+') === string.length - 1) {
       string = string.substring(0, string.length - 1);
@@ -87,21 +124,22 @@ class CanvasPIXI extends Component {
     return string;
   }
 
-  constructor(props) {
+  constructor(props: PropsType) {
     super(props);
-    this.state = {};
-    this.state.isWebGL = false;
-    this.state.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
-    || props.operator_mode === OPERATOR_MODE.DIVIDE
-    || props.base[1] === BASE.BASE_X);
-    this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
-    this.powerZoneManager = null;
-        // to accomodate for pixel padding in TexturePacker
+    // to differenciate between WegGL and Canvas.
+    this.isWebGL = false;
+    // Is there negative dots in this scenario
+    this.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
+      || props.operator_mode === OPERATOR_MODE.DIVIDE
+      || props.base[1] === BASE.BASE_X);
+    this.maxDotsByZone = this.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
+    // to accomodate for pixel padding in TexturePacker
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
   }
 
   componentDidMount() {
-        // console.log('componentDidMount', this.state, this.props);
+    // console.log('componentDidMount', this.state, this.props);
+    // PIXI creation options
     const options = {
       view: this.canvas,
       transparent: true,
@@ -110,16 +148,17 @@ class CanvasPIXI extends Component {
       resolution: window.devicePixelRatio,
       autoResize: true,
     };
-
+    // this PIXI creation options is appart, and I named it so I know what it is.
     const preventWebGL = false;
-    this.state.app = new PIXI.Application(
+    // Need a greater height for division to put the divider drag object.
+    this.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT),
         options,
         preventWebGL);
-    this.state.stage = this.state.app.stage;
-    this.state.renderer = this.state.app.renderer;
+    this.stage = this.app.stage;
+    this.renderer = this.app.renderer;
     this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
     this.powerZoneManager = new PowerZoneManager(
             this.props.addDot,
@@ -132,10 +171,11 @@ class CanvasPIXI extends Component {
             this.soundManager,
             this.props.wantedResult
         );
-    this.state.stage.addChild(this.powerZoneManager);
-    this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
+    this.stage.addChild(this.powerZoneManager);
+    this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
     window.addEventListener('resize', this.resize.bind(this));
 
+    // Load the spritesheet based on screen size
     this.loaderName = 'machineAssets';
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
@@ -152,13 +192,16 @@ class CanvasPIXI extends Component {
     this.loader.load();
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: PropsType): boolean {
     // console.log('shouldComponentUpdate', nextProps);
+    // reset the machine
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
     }
+    // Some action can be queued after the popup is closed, check if it's the case.
     this.powerZoneManager.checkPendingAction(nextProps);
     this.checkBaseChange(nextProps);
+    // Apply the new props
     this.props = nextProps;
     this.powerZoneManager.removeDotsFromStateChange(
       this.props.positivePowerZoneDots,
@@ -204,12 +247,12 @@ class CanvasPIXI extends Component {
       this.textures[key].destroy(true);
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
+    window.PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
     // PIXI.utils.destroyTextureCache();
-    this.state.app.destroy(true);
+    this.app.destroy(true);
   }
 
-  onAssetsLoaded(loader) {
+  onAssetsLoaded(loader: window.PIXI.loader) {
     if (loader.resources.machineAssets.error === null) {
       this.textures = loader.resources.machineAssets.textures;
       this.spritePool = new SpritePool(this.textures);
@@ -221,7 +264,7 @@ class CanvasPIXI extends Component {
                 this.props.operator_mode,
                 this.props.totalZoneCount,
                 this.props.placeValueOn,
-                this.state.negativePresent,
+                this.negativePresent,
             );
       this.powerZoneManager.createZones();
       this.powerZoneManager.createLeftmostTestZone();
@@ -236,14 +279,14 @@ class CanvasPIXI extends Component {
     }
   }
 
-  getDot(zone, isPositive, color = SPRITE_COLOR.RED) {
+  getDot(zone: number, isPositive: boolean, color: string = SPRITE_COLOR.RED): Object {
         // console.log('getDot', zone, isPositive, color);
     const dot = {};
     dot.x = randomFromTo(
       POSITION_INFO.DOT_RAYON,
       BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON
     );
-    if (this.state.negativePresent) {
+    if (this.negativePresent) {
       dot.y = randomFromTo(
         POSITION_INFO.DOT_RAYON,
         BOX_INFO.HALF_BOX_HEIGHT - POSITION_INFO.DOT_RAYON
@@ -644,8 +687,8 @@ class CanvasPIXI extends Component {
       w / SETTINGS.GAME_WIDTH,
       h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
-    this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-    this.state.renderer.resize(
+    this.stage.scale.x = this.stage.scale.y = ratio;
+    this.renderer.resize(
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
@@ -658,6 +701,20 @@ class CanvasPIXI extends Component {
     }
     return value;
   }
+
+  powerZoneManager: PowerZoneManager;
+  soundManager: SoundManager;
+  canvas: Element;
+  loaderName: string;
+  loader: window.PIXI.loaders;
+  isWebGL: boolean;
+  negativePresent: boolean;
+  maxDotsByZone: number;
+  app: window.PIXI.app;
+  stage: window.PIXI.stage;
+  textures: Array;
+  spritePool: SpritePool;
+  renderer: window.PIXI.renderer;
 
   render() {
     return (
