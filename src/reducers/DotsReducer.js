@@ -3,6 +3,7 @@ import { makeUID } from '../utils/MathUtils';
 import { ACTIONS } from '../actions/StoreConstants';
 import { OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE } from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
+import DotVO from '../VO/DotVO';
 
 let initialMachineState = {};
 let setMachineState = null;
@@ -131,7 +132,7 @@ const dotsReducer = (state = null, action) => {
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = true;
       action.dotsInfo.forEach((newDot) => {
-        const dot = {};
+        const dot = new DotVO();
         dot.x = newDot.x;
         dot.y = newDot.y;
         dot.powerZone = newDot.zoneId;
@@ -146,7 +147,7 @@ const dotsReducer = (state = null, action) => {
       });
       if (action.divider != null) {
         action.divider.forEach((dividerDot) => {
-          const dot = {};
+          const dot = new DotVO();
           dot.powerZone = dividerDot.zoneId;
           dot.id = makeUID();
           dot.isPositive = dividerDot.isPositive;
@@ -175,7 +176,7 @@ const dotsReducer = (state = null, action) => {
     case ACTIONS.ADD_DOT: {
       // console.log('ADD_DOT', action.zoneId, action.isPositive);
       stateCopy = { ...state };
-      const dot = {};
+      const dot = new DotVO();
       dot.x = action.position[0];
       dot.y = action.position[1];
       dot.powerZone = action.zoneId;
@@ -221,7 +222,7 @@ const dotsReducer = (state = null, action) => {
       // console.log('ADD_MULTIPLE_DOTS');
       stateCopy = { ...state };
       action.dotsPos.forEach((newDot) => {
-        const dot = {};
+        const dot = new DotVO();
         dot.x = newDot.x;
         dot.y = newDot.y;
         dot.powerZone = action.zoneId;

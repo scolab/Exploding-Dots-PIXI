@@ -9,24 +9,25 @@ import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE
 import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
+import DotVO from '../../VO/DotVO';
 
 type PropsType = {
-  addDot: Function$Prototype$Apply,
-  addMultipleDots: Function$Prototype$Apply,
-  rezoneDot: Function$Prototype$Apply,
-  removeDot: Function$Prototype$Apply,
-  removeMultipleDots: Function$Prototype$Apply,
-  setDivisionResult: Function$Prototype$Apply,
-  activateMagicWand: Function$Prototype$Apply,
-  startActivityFunc: Function$Prototype$Apply,
-  startActivityDoneFunc: Function$Prototype$Apply,
-  positivePowerZoneDots: Array<mixed>,
+  addDot: PropTypes.func.isRequired,
+  addMultipleDots: PropTypes.func.isRequired,
+  rezoneDot: PropTypes.func.isRequired,
+  removeDot: PropTypes.func.isRequired,
+  removeMultipleDots: PropTypes.func.isRequired,
+  setDivisionResult: PropTypes.func.isRequired,
+  activateMagicWand: PropTypes.func.isRequired,
+  startActivityFunc: PropTypes.func.isRequired,
+  startActivityDoneFunc: PropTypes.func.isRequired,
+  positivePowerZoneDots: Array<DotVO>,
   negativePowerZoneDots: Array<mixed>,
   positiveDividerDots: Array<mixed>,
   negativeDividerDots: Array<mixed>,
   positiveDividerResult: Array<mixed>,
   negativeDividerResult: Array<mixed>,
-  base: Array<mixed>,
+  base: Array<number | string>,
   operator_mode: string,
   usage_mode: string,
   placeValueOn: boolean,
@@ -37,11 +38,16 @@ type PropsType = {
   activityStarted: boolean,
   operandA: string,
   operandB: string,
-  error: Function$Prototype$Apply,
-  displayUserMessage: Function$Prototype$Apply,
+  error: PropTypes.func.isRequired,
+  displayUserMessage: PropTypes.func.isRequired,
   userMessage: string, // eslint-disable-line react/no-unused-prop-types
   muted: boolean,
-  wantedResult: JSON
+  wantedResult: {
+    positiveDots: Array<number>, // eslint-disable-line react/no-unused-prop-types
+    negativeDots: Array<number>, // eslint-disable-line react/no-unused-prop-types
+    positiveDivider: Array<number>, // eslint-disable-line react/no-unused-prop-types
+    negativeDivider: Array<number> // eslint-disable-line react/no-unused-prop-types
+  }
 };
 
 class CanvasPIXI extends Component<void, PropsType, void> {
@@ -134,7 +140,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       || props.base[1] === BASE.BASE_X);
     this.maxDotsByZone = this.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
     // to accomodate for pixel padding in TexturePacker
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    window.PIXI.settings.SCALE_MODE = window.PIXI.SCALE_MODES.NEAREST;
   }
 
   componentDidMount() {
@@ -151,7 +157,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     // this PIXI creation options is appart, and I named it so I know what it is.
     const preventWebGL = false;
     // Need a greater height for division to put the divider drag object.
-    this.app = new PIXI.Application(
+    this.app = new window.PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT),
@@ -172,12 +178,12 @@ class CanvasPIXI extends Component<void, PropsType, void> {
             this.props.wantedResult
         );
     this.stage.addChild(this.powerZoneManager);
-    this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
+    this.isWebGL = this.renderer instanceof window.PIXI.WebGLRenderer;
     window.addEventListener('resize', this.resize.bind(this));
 
     // Load the spritesheet based on screen size
     this.loaderName = 'machineAssets';
-    this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
+    this.loader = new window.PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
       this.loader.add(this.loaderName, '/images/machine@4x.json');
     } else if (window.devicePixelRatio >= 1.25) {
@@ -279,9 +285,9 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  getDot(zone: number, isPositive: boolean, color: string = SPRITE_COLOR.RED): Object {
+  getDot(zone: number, isPositive: boolean, color: string = SPRITE_COLOR.RED): DotVO {
         // console.log('getDot', zone, isPositive, color);
-    const dot = {};
+    const dot = new DotVO();
     dot.x = randomFromTo(
       POSITION_INFO.DOT_RAYON,
       BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON
@@ -318,8 +324,8 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       // ************************************
       // We should never get a activity start in Freeplay, just in case.
       if (this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
-        let dotsPerZoneA;
-        let dotsPerZoneB;
+        let dotsPerZoneA: Array<number>;
+        let dotsPerZoneB: Array<number>;
         // if there is no operand B value and one is displayed
         // (OPERATOR_MODE.DISPLAY hide operand B)
         if (this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
@@ -344,12 +350,14 @@ class CanvasPIXI extends Component<void, PropsType, void> {
           dotsPerZoneA = populatedArrays.dotsPerZoneA;
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
           // validate that the sum of the value isn't 0
-          if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+          // eslint-disable-next-line max-len
+          if (dotsPerZoneA.reduce((acc: number, val: number): number => acc + Math.abs(val), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+          // eslint-disable-next-line max-len
+          if (dotsPerZoneB.reduce((acc: number, val: number): number => acc + Math.abs(val), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
@@ -398,173 +406,206 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       }
     }
   }
-
-  populateDotPerZoneArrayAdvancedMode() {
-    let dotsPerZoneA;
-    let dotsPerZoneB;
+  // eslint-disable-next-line max-len
+  populateDotPerZoneArrayAdvancedMode(): {dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>} {
+    let dotsPerZoneAString: Array<string>;
+    let dotsPerZoneBString: Array<string>;
     if (this.props.operandA.indexOf('|') !== -1) {
-      dotsPerZoneA = this.props.operandA.split('|');
+      dotsPerZoneAString = this.props.operandA.split('|');
     } else {
-      dotsPerZoneA = this.props.operandA.split('');
+      dotsPerZoneAString = this.props.operandA.split('');
     }
     // Verify that we don't have a single minus sign in a zone
-    dotsPerZoneA.forEach((entry) => {
+    dotsPerZoneAString.forEach((entry: string) => {
       if (entry === '-') {
-        dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
+        dotsPerZoneAString[dotsPerZoneAString.indexOf(entry)] = '0';
       }
     });
     if (this.props.operator_mode !== OPERATOR_MODE.MULTIPLY) {
       // don't split multiplication operand B
       if (this.props.operandB.indexOf('|') !== -1) {
-        dotsPerZoneB = this.props.operandB.split('|');
+        dotsPerZoneBString = this.props.operandB.split('|');
       } else {
-        dotsPerZoneB = this.props.operandB.split('');
+        dotsPerZoneBString = this.props.operandB.split('');
       }
     } else {
       // there is no | possible in operandB in division,
       // but I need it as an array anyway, so split with impossible character.
-      dotsPerZoneB = this.props.operandB.split('|');
+      dotsPerZoneBString = this.props.operandB.split('|');
     }
     // Verify that we don't have a single minus sign in a zone
-    dotsPerZoneB.forEach((entry) => {
+    dotsPerZoneBString.forEach((entry: string) => {
       if (entry === '-') {
-        dotsPerZoneB[dotsPerZoneB.indexOf(entry)] = 0;
+        dotsPerZoneBString[dotsPerZoneBString.indexOf(entry)] = '0';
       }
+    });
+    const dotsPerZoneA: Array<number> = dotsPerZoneAString.map((x: string): number => {
+      return parseInt(x, 10);
+    });
+    const dotsPerZoneB: Array<number> = dotsPerZoneBString.map((x: string): number => {
+      return parseInt(x, 10);
     });
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  populateDotPerZoneArrayNormalMode() {
-    const dotsPerZoneA = this.props.operandA.split('');
-    let dotsPerZoneB;
+  populateDotPerZoneArrayNormalMode(): {dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>} {
+    const dotsPerZoneAString: Array<string> = this.props.operandA.split('');
+    let dotsPerZoneBString: Array<string>;
     if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
-      dotsPerZoneB = [];
+      dotsPerZoneBString = [];
     } else {
-      dotsPerZoneB = this.props.operandB.split('');
+      dotsPerZoneBString = this.props.operandB.split('');
     }
     // If the value start with a minus sign, minus all the value
-    if (dotsPerZoneA[0] === '-') {
-      dotsPerZoneA.splice(0, 1);
-      for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-        dotsPerZoneA[i] = `-${dotsPerZoneA[i]}`;
+    if (dotsPerZoneAString[0] === '-') {
+      dotsPerZoneAString.splice(0, 1);
+      for (let i = 0; i < dotsPerZoneAString.length; i += 1) {
+        dotsPerZoneAString[i] = `-${dotsPerZoneAString[i]}`;
       }
     }
-    if (dotsPerZoneB[0] === '-') {
-      dotsPerZoneB.splice(0, 1);
-      for (let i = 0; i < dotsPerZoneB.length; i += 1) {
-        dotsPerZoneB[i] = `-${dotsPerZoneB[i]}`;
+    if (dotsPerZoneBString[0] === '-') {
+      dotsPerZoneBString.splice(0, 1);
+      for (let i = 0; i < dotsPerZoneBString.length; i += 1) {
+        dotsPerZoneBString[i] = `-${dotsPerZoneBString[i]}`;
       }
     }
+    const dotsPerZoneA: Array<number> = dotsPerZoneAString.map((x: string): number => {
+      return parseInt(x, 10);
+    });
+    const dotsPerZoneB: Array<number> = dotsPerZoneBString.map((x: string): number => {
+      return parseInt(x, 10);
+    });
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  populateDotPerZoneArrayBaseX() {
-    const dotsPerZoneA = new Array(this.props.totalZoneCount);
-    const dotsPerZoneB = new Array(this.props.totalZoneCount);
+  populateDotPerZoneArrayBaseX(): {dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>} {
+    const dotsPerZoneAString: Array<string> = new Array(this.props.totalZoneCount);
+    const dotsPerZoneBString: Array<string> = new Array(this.props.totalZoneCount);
     for (let i = 0; i < this.props.totalZoneCount; i += 1) {
-      dotsPerZoneA[i] = 0;
-      dotsPerZoneB[i] = 0;
+      dotsPerZoneAString[i] = '0';
+      dotsPerZoneBString[i] = '0';
     }
 
-    let cleandedOperandA = superscriptToNormal(this.props.operandA);
-    let cleandedOperandB = superscriptToNormal(this.props.operandB);
-    let indices = [];
-    for (let i = 0; i < cleandedOperandA.length; i += 1) {
-      if (cleandedOperandA[i] === '-') indices.push(i);
+    let cleanedOperandA: string = superscriptToNormal(this.props.operandA);
+    let cleanedOperandB: string = superscriptToNormal(this.props.operandB);
+    let indices: Array<number> = [];
+    for (let i = 0; i < cleanedOperandA.length; i += 1) {
+      if (cleanedOperandA[i] === '-') indices.push(i);
     }
     let added = 0;
-    indices.forEach((indice) => {
-      cleandedOperandA = replaceAt(cleandedOperandA, indice + added, '+-');
+    indices.forEach((indice: number) => {
+      cleanedOperandA = replaceAt(cleanedOperandA, indice + added, '+-');
       added += 1;
     });
     indices = [];
-    for (let i = 0; i < cleandedOperandB.length; i += 1) {
-      if (cleandedOperandB[i] === '-') indices.push(i);
+    for (let i = 0; i < cleanedOperandB.length; i += 1) {
+      if (cleanedOperandB[i] === '-') indices.push(i);
     }
     added = 0;
-    indices.forEach((indice) => {
-      cleandedOperandB = replaceAt(cleandedOperandB, indice + added, '+-');
+    indices.forEach((indice: number) => {
+      cleanedOperandB = replaceAt(cleanedOperandB, indice + added, '+-');
       added += 1;
     });
     // console.log(cleandedOperandA, cleandedOperandB);
-    const splitZoneA = cleandedOperandA.split('+');
-    const splitZoneB = cleandedOperandB.split('+');
+    const splitZoneA: Array<string> = cleanedOperandA.split('+');
+    const splitZoneB: Array<string> = cleanedOperandB.split('+');
     // console.log(splitZoneA, splitZoneB);
-    splitZoneA.forEach((val) => {
-      let value = val;
+    splitZoneA.forEach((val: string) => {
+      let value: string = val;
+      let actualValue: number;
       if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
         value = '0';
       }
       const xIndex = value.indexOf('x');
-      // No x in the zone value, this is an number only
       if (xIndex === -1) {
-        dotsPerZoneA[0] += Number(value);
+        // No x in the zone value, this is an number only
+        actualValue = Number(dotsPerZoneAString[0]);
+        dotsPerZoneAString[0] = (actualValue + value).toString();
       } else {
-        let pos = 0;
+        let pos: number = 0;
         if (isNaN(value[xIndex + 1])) {
           // x only, no exponent
           pos = 1;
         } else {
-          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+          if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
             // the exponent is higher than the amount of zone
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          pos = value[xIndex + 1];
+          pos = Number(value[xIndex + 1]);
         }
         if (xIndex === 0) {
           // positive x only
-          dotsPerZoneA[pos] += 1;
+          actualValue = Number(dotsPerZoneAString[pos]);
+          dotsPerZoneAString[pos] = (actualValue += 1).toString();
         } else if (xIndex === 1 && value[0] === '-') {
           // negative x only
-          dotsPerZoneA[pos] -= 1;
+          actualValue = Number(dotsPerZoneAString[pos]);
+          dotsPerZoneAString[pos] = (actualValue -= 1).toString();
         } else {
-          dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
+          actualValue = Number(dotsPerZoneAString[pos]);
+          dotsPerZoneAString[pos] = (actualValue + Number(value.substring(0, xIndex))).toString();
+          // dotsPerZoneA[pos] += value.substring(0, xIndex);
         }
       }
     });
-    splitZoneB.forEach((val) => {
-      let value = val;
+    splitZoneB.forEach((val: string) => {
+      let value: string = val;
+      let actualValue: number;
       if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
         value = '0';
       }
       const xIndex = value.indexOf('x');
       // No x in the zone value, this is an number only
       if (xIndex === -1) {
-        dotsPerZoneB[0] += Number(value);
+        actualValue = Number(dotsPerZoneBString[0]);
+        dotsPerZoneBString[0] = (actualValue + value).toString();
       } else {
-        let pos = 0;
+        let pos: number = 0;
         if (isNaN(value[xIndex + 1])) {
           // x only, no exponent
           pos = 1;
         } else {
-          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+          if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
             // the exponent is higher than the amount of zone
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          pos = value[xIndex + 1];
+          pos = Number(value[xIndex + 1]);
         }
         if (xIndex === 0) {
           // positive x only
-          dotsPerZoneB[pos] += 1;
+          actualValue = Number(dotsPerZoneBString[pos]);
+          dotsPerZoneBString[pos] = (actualValue += 1).toString();
+          // dotsPerZoneB[pos] += 1;
         } else if (xIndex === 1 && value[0] === '-') {
           // negative x only
-          dotsPerZoneB[pos] -= 1;
+          actualValue = Number(dotsPerZoneBString[pos]);
+          dotsPerZoneBString[pos] = (actualValue -= 1).toString();
+          // dotsPerZoneB[pos] -= 1;
         } else {
-          dotsPerZoneB[pos] += Number(value.substring(0, xIndex));
+          actualValue = Number(dotsPerZoneBString[pos]);
+          dotsPerZoneBString[pos] = (actualValue + Number(value.substring(0, xIndex))).toString();
+          // dotsPerZoneB[pos] += value.substring(0, xIndex);
         }
       }
+    });
+    const dotsPerZoneA: Array<number> = dotsPerZoneAString.map((x: string): number => {
+      return parseInt(x, 10);
+    });
+    const dotsPerZoneB: Array<number> = dotsPerZoneBString.map((x: string): number => {
+      return parseInt(x, 10);
     });
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  createDisplayDots(dotsPerZoneA) {
+  createDisplayDots(dotsPerZoneA: Array<number>) {
     let totalDot = 0;
-    const dotsPos = [];
+    const dotsPos: Array<DotVO> = [];
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
+      // $FlowIgnore
       totalDot += dotsPerZoneA[i] * Math.pow(this.props.base[1], i);
       for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
         dotsPos.push(this.getDot(i, true));
@@ -574,11 +615,11 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     this.props.startActivityDoneFunc(dotsPos, totalDot);
   }
 
-  createAddDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
+  createAddDots(dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>) {
+    const dotsPos: Array<DotVO> = [];
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
-    for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-      let j = 0;
+    for (let i: number = 0; i < dotsPerZoneA.length; i += 1) {
+      let j: number = 0;
       for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
         dotsPos.push(this.getDot(i, String(dotsPerZoneA[i]).indexOf('-') === -1, SPRITE_COLOR.RED));
       }
@@ -600,8 +641,8 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  createMultiplyDots(dotsPerZoneA) {
-    const dotsPos = [];
+  createMultiplyDots(dotsPerZoneA: Array<number>) {
+    const dotsPos: Array<DotVO> = [];
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let totalDotInZone = 0;
       totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
@@ -621,8 +662,8 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  createSubtractDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
+  createSubtractDots(dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>) {
+    const dotsPos: Array<DotVO> = [];
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
@@ -647,9 +688,9 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  createDivideDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
-    const dividePos = [];
+  createDivideDots(dotsPerZoneA: Array<number>, dotsPerZoneB: Array<number>) {
+    const dotsPos: Array<DotVO> = [];
+    const dividePos: Array<DotVO> = [];
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
@@ -674,7 +715,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  checkBaseChange(nextProps) {
+  checkBaseChange(nextProps: PropTypes) {
     if (this.props.base !== nextProps.base) {
       this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
     }
@@ -694,9 +735,10 @@ class CanvasPIXI extends Component<void, PropsType, void> {
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
   }
 
-  calculateOperandRealValue(arr) {
+  calculateOperandRealValue(arr: Array<number>): number {
     let value = 0;
     for (let i = 0; i < arr.length; i += 1) {
+      // $FlowIgnore
       value += arr[i] * Math.pow(this.props.base[1], i);
     }
     return value;
@@ -712,13 +754,13 @@ class CanvasPIXI extends Component<void, PropsType, void> {
   maxDotsByZone: number;
   app: window.PIXI.app;
   stage: window.PIXI.stage;
-  textures: Array;
+  textures: { string: window.PIXI.Texture };
   spritePool: SpritePool;
   renderer: window.PIXI.renderer;
 
-  render() {
+  render(): React$Element<*> {
     return (
-      <canvas ref={(canvas) => { this.canvas = canvas; }} />
+      <canvas ref={(canvas: HTMLElement) => { this.canvas = canvas; }} />
     );
   }
 }

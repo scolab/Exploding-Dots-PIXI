@@ -838,10 +838,10 @@ export class PowerZone extends PIXI.Container {
     let dotsRemoved;
     if (isPositive) {
       if (Object.keys(this.positiveDots).length > amount - 1) {
-        dotsRemoved = this.getDotsFromHash(this.positiveDots, amount);
+        dotsRemoved = PowerZone.getDotsFromHash(this.positiveDots, amount);
       }
     } else if (Object.keys(this.negativeDots).length > amount - 1) {
-      dotsRemoved = this.getDotsFromHash(this.negativeDots, amount);
+      dotsRemoved = PowerZone.getDotsFromHash(this.negativeDots, amount);
     }
     return dotsRemoved;
   }
