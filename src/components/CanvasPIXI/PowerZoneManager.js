@@ -287,7 +287,7 @@ export class PowerZoneManager extends PIXI.Container {
           y: finalPosition.y + (success ? 15 : 25),
           ease: Quint.easeOut,
           delay: 0.4,
-          onComplete: this.removeDotsAfterTween.bind(this),
+          onComplete: PowerZoneManager.removeDotsAfterTween.bind(this),
           onCompleteParams: [movingSprite],
         });
       });
@@ -352,7 +352,7 @@ export class PowerZoneManager extends PIXI.Container {
         y: finalPosition.y + 15,
         ease: Quint.easeOut,
         delay,
-        onComplete: this.removeDotsAfterTween.bind(this),
+        onComplete: PowerZoneManager.removeDotsAfterTween,
         onCompleteParams: [sprite],
       });
       delay += 0.1;

@@ -21,7 +21,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import MessageDisplay from '../../components/MessageDisplay';
 import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS } from '../../Constants';
 
-const DotsMachineInternal = (props) => {
+const DotsMachine = (props) => {
   return (
     <div>
       <ErrorDisplay
@@ -131,7 +131,7 @@ const DotsMachineInternal = (props) => {
   );
 };
 
-DotsMachineInternal.propTypes = {
+DotsMachine.propTypes = {
   addDot: PropTypes.func.isRequired,
   removeDot: PropTypes.func.isRequired,
   removeMultipleDots: PropTypes.func.isRequired,
@@ -245,14 +245,7 @@ const mapDispatchToProps = (dispatch) => {
   }, dispatch);
 };
 
-const DotsMachine = connect(
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(DotsMachineInternal);
-
-/* @connect(
-  mapStateToProps,
-  mapDispatchToProps
-)*/
-
-export default DotsMachine;
+)(DotsMachine);
