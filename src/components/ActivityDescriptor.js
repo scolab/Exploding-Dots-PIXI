@@ -1,21 +1,21 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-export default class ActivityDescriptor extends Component {
-    static propTypes = {
-        children: PropTypes.node,
-    };
+const ActivityDescriptor = (props) => {
+  return (
+    <div
+      style={{
+        clear: 'right',
+        textAlign: 'center',
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};
 
-    render(){
-        return (
-            <div style={{
-                clear:'right',
-                textAlign:'center'
-            }}>
+ActivityDescriptor.propTypes = {
+  children: PropTypes.node,
+};
 
-
-                {this.props.children}
-            </div>
-        );
-    }
-}
+export default ActivityDescriptor;
