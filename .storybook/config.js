@@ -6,7 +6,7 @@
 import { configure } from '@kadira/storybook';
 
 function loadStories() {
-  require('../src/stories');
+  require('../src/stories/index.tsx');
 }
 
 configure(loadStories, module);

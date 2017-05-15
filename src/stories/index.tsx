@@ -1,5 +1,5 @@
 import React from 'react';
-import url from 'url';
+import * as url from 'url';
 import { storiesOf } from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
