@@ -6,7 +6,7 @@ import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, chan
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
     startActivity, startActivityDone, operatorChanged, error, userMessage,
     resetUserMessage, setDivisionResult } from '../../actions/';
-import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi.ts';
+import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi.tsx';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';

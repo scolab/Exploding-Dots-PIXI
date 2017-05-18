@@ -152,7 +152,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
       this.loader.add(this.loaderName, '/images/machine@1x.json');
     }
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
-    this.loader.once('error', CanvasPIXI.onAssetsError());
+    this.loader.once('error', CanvasPIXI.onAssetsError);
     this.loader.load();
   }
 
@@ -306,12 +306,12 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
           dotsPerZoneA = populatedArrays.dotsPerZoneA;
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
           // validate that the sum of the value isn't 0
-          if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+          if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(val), 0) === 0) {
+          if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
@@ -533,7 +533,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
     const dotsPos: DotVO[] = new Array<DotVO>();
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       // tslint:disable-next-line
-      totalDot += Number(dotsPerZoneA[i]) * Math.pow(this.props.base[1], i);
+      totalDot += Number(dotsPerZoneA[i]) * Math.pow(Number(this.props.base[1]), i);
       for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
         dotsPos.push(this.getDot(i, true));
       }
@@ -663,17 +663,17 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   }
 
   private calculateOperandRealValue(arr: string[]): number {
-    let value = 0;
+    let value:number = 0;
     for (let i = 0; i < arr.length; i += 1) {
       // tslint:disable-next-line
-      value += arr[i] * Math.pow(this.props.base[1], i);
+      value += Number(arr[i]) * Math.pow(Number(this.props.base[1]), i);
     }
     return value;
   }
 
   public render() {
     return (
-      /*<canvas ref={(canvas) => { this.canvas = canvas; }} />*/
+      <canvas ref={(canvas) => { this.canvas = canvas; }} />
     )
   }
 }
