@@ -1,6 +1,6 @@
 {
-  "name": "Exploding-Dots",
-  "version": "0.0.0",
+  "name": "scolab-component-exploding-dots",
+  "version": "0.0.4",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -14,7 +14,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -s ./static -p 9010",
-    "publish-storybook": "bash .scripts/publish_storybook.sh"
+    "publish-storybook": "bash .scripts/publish_storybook.sh",
+    "prepublish": ". ./.scripts/prepublish.sh"
   },
   "devDependencies": {
     "@kadira/storybook": "^2.18.1",
@@ -62,7 +63,7 @@
     "redux": "^3.6.0",
     "victor": "^1.1.0"
   },
-  "main": "dist/index.js",
+  "main": "dist/containers/App.js",
   "engines": {
     "node": "~6.9.0",
     "npm": "^3.0.0"
