@@ -1,106 +1,111 @@
-import React, { Component } from 'react';
+import * as React from 'react';
+import {Component, ReactHTMLElement} from 'react';
 import PropTypes from 'prop-types';
 import { TweenMax } from 'gsap';
-import { randomFromTo } from '../../utils/MathUtils';
-import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
-import { superscriptToNormal, replaceAt } from '../../utils/StringUtils';
-import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR } from '../../Constants';
+import { randomFromTo } from '../../utils/MathUtils.js';
+import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils.js';
+import { superscriptToNormal, replaceAt } from '../../utils/StringUtils.js';
+import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR, IOPERATOR_MODE, IUSAGE_MODE} from '../../Constants';
 import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
+import TextureDictionary = PIXI.loaders.TextureDictionary;
 
-class CanvasPIXI extends Component {
-  static propTypes = {
-    addDot: PropTypes.func.isRequired,
-    addMultipleDots: PropTypes.func.isRequired,
-    rezoneDot: PropTypes.func.isRequired,
-    removeDot: PropTypes.func.isRequired,
-    removeMultipleDots: PropTypes.func.isRequired,
-    setDivisionResult: PropTypes.func.isRequired,
-    activateMagicWand: PropTypes.func.isRequired,
-    startActivityFunc: PropTypes.func.isRequired,
-    startActivityDoneFunc: PropTypes.func.isRequired,
-    positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerResult: PropTypes.array.isRequired,
-    negativeDividerResult: PropTypes.array.isRequired,
-    base: PropTypes.array.isRequired,
-    operator_mode: PropTypes.oneOf([
-      OPERATOR_MODE.DISPLAY,
-      OPERATOR_MODE.ADD,
-      OPERATOR_MODE.SUBTRACT,
-      OPERATOR_MODE.MULTIPLY,
-      OPERATOR_MODE.DIVIDE]).isRequired,
-    usage_mode: PropTypes.oneOf([
-      USAGE_MODE.FREEPLAY,
-      USAGE_MODE.OPERATION,
-      USAGE_MODE.EXERCISE]),
-    placeValueOn: PropTypes.bool.isRequired,
-    cdnBaseUrl: PropTypes.string.isRequired,
-    totalZoneCount: PropTypes.number.isRequired,
-    magicWandIsActive: PropTypes.bool.isRequired,
-    startActivity: PropTypes.bool.isRequired,
-    activityStarted: PropTypes.bool.isRequired,
-    operandA: PropTypes.string.isRequired,
-    operandB: PropTypes.string.isRequired,
-    error: PropTypes.func.isRequired,
-    displayUserMessage: PropTypes.func.isRequired,
-    userMessage: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-    muted: PropTypes.bool.isRequired,
-    wantedResult: PropTypes.object.isRequired,
-  };
+interface IDots {
+  x: number;
+  y: number;
+  powerZone: number;
+  id: string;
+  isPositive: boolean;
+}
 
+interface IDividerDots {
+  powerZone: number;
+  id: string;
+  isPositive: boolean;
+}
+
+interface IOperantProcessedArray {
+  dotsPerZoneA: string[];
+  dotsPerZoneB: string[];
+}
+
+interface ICanvasPIXIProps {
+  addDot: PropTypes.func.isRequired;
+  addMultipleDots: PropTypes.func.isRequired;
+  rezoneDot: PropTypes.func.isRequired;
+  removeDot: PropTypes.func.isRequired;
+  removeMultipleDots: PropTypes.func.isRequired;
+  setDivisionResult: PropTypes.func.isRequired;
+  activateMagicWand: PropTypes.func.isRequired;
+  startActivityFunc: PropTypes.func.isRequired;
+  startActivityDoneFunc: PropTypes.func.isRequired;
+  positivePowerZoneDots: IDots[];
+  negativePowerZoneDots: IDots[];
+  positiveDividerDots: IDividerDots[];
+  negativeDividerDots: IDividerDots[];
+  positiveDividerResult: number[];
+  negativeDividerResult: number[];
+  base: Array<number | string>;
+  operator_mode: IOPERATOR_MODE;
+  usage_mode: IUSAGE_MODE;
+  placeValueOn: boolean;
+  cdnBaseUrl: string;
+  totalZoneCount: number;
+  magicWandIsActive: boolean;
+  startActivity: boolean;
+  activityStarted: boolean;
+  operandA: string;
+  operandB: string;
+  error: PropTypes.func.isRequired;
+  displayUserMessage: PropTypes.func.isRequired,
+  userMessage: string;
+  muted: boolean;
+  wantedResult: PropTypes.object.isRequired;
+}
+
+class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   // eslint-disable-next-line no-unused-vars
-  static onAssetsError(loader) {
+  private static onAssetsError(loader?) {
     // TODO Do something
     // console.log('onAssetsError', loader);
     // loader.onStart = null;
   }
 
-  static removeTrailingSign(str) {
-    let string = str;
-    if (string.lastIndexOf('-') === string.length - 1 || string.lastIndexOf('+') === string.length - 1) {
-      string = string.substring(0, string.length - 1);
+  private static removeTrailingSign(str: string) {
+    let aString: string = str;
+    if (aString.lastIndexOf('-') === aString.length - 1 || aString.lastIndexOf('+') === aString.length - 1) {
+      aString = aString.substring(0, aString.length - 1);
     }
-    return string;
+    return aString;
   }
+
+  private isWebGL: boolean;
+  private negativePresent: boolean;
+  private maxDotsByZone: number;
+  private powerZoneManager: PowerZoneManager;
+  private canvas: HTMLCanvasElement;
+  private app: PIXI.Application;
+  private stage: PIXI.Container;
+  private renderer: PIXI.WebGLRenderer | PIXI.CanvasRenderer;
+  private soundManager: SoundManager;
+  private loader: PIXI.loaders.Loader;
+  private spritePool: SpritePool;
+  private loaderName: string = 'machineAssets';
+  private textures: TextureDictionary | undefined;
 
   constructor(props) {
     super(props);
-    this.state = {};
-    this.state.isWebGL = false;
-    this.state.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
+    this.isWebGL = false;
+    this.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
     || props.operator_mode === OPERATOR_MODE.DIVIDE
     || props.base[1] === BASE.BASE_X);
-    this.state.maxDotsByZone = this.state.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
-    this.powerZoneManager = null;
-        // to accomodate for pixel padding in TexturePacker
+    this.maxDotsByZone = this.negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
+    // to accomodate for pixel padding in TexturePacker
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
   }
 
-  componentDidMount() {
+  public componentDidMount() {
         // console.log('componentDidMount', this.state, this.props);
     const options = {
       view: this.canvas,
@@ -112,14 +117,14 @@ class CanvasPIXI extends Component {
     };
 
     const preventWebGL = false;
-    this.state.app = new PIXI.Application(
+    this.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT),
         options,
         preventWebGL);
-    this.state.stage = this.state.app.stage;
-    this.state.renderer = this.state.app.renderer;
+    this.stage = this.app.stage;
+    this.renderer = this.app.renderer;
     this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
     this.powerZoneManager = new PowerZoneManager(
             this.props.addDot,
@@ -132,11 +137,10 @@ class CanvasPIXI extends Component {
             this.soundManager,
             this.props.wantedResult
         );
-    this.state.stage.addChild(this.powerZoneManager);
-    this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
+    this.stage.addChild(this.powerZoneManager);
+    this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
     window.addEventListener('resize', this.resize.bind(this));
 
-    this.loaderName = 'machineAssets';
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
       this.loader.add(this.loaderName, '/images/machine@4x.json');
@@ -152,7 +156,7 @@ class CanvasPIXI extends Component {
     this.loader.load();
   }
 
-  shouldComponentUpdate(nextProps) {
+  public shouldComponentUpdate(nextProps: ICanvasPIXIProps) {
     // console.log('shouldComponentUpdate', nextProps);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
@@ -184,32 +188,33 @@ class CanvasPIXI extends Component {
     return false;
   }
 
-  componentWillUnmount() {
+  public componentWillUnmount() {
     TweenMax.killAll(false, true, true, true);
     if (this.soundManager) {
       this.soundManager.destroy();
     }
-    this.soundManager = null;
     if (this.spritePool) {
       this.spritePool.destroy();
     }
-    this.spritePool = null;
     if (this.powerZoneManager) {
       this.powerZoneManager.destroy();
     }
-    this.powerZoneManager = null;
     this.loader.destroy();
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
-    for (const key in this.textures) {
-      this.textures[key].destroy(true);
+    if (this.textures) {
+      for (const key in this.textures) {
+        if (this.textures[key]) {
+          this.textures[key].destroy(true);
+        }
+      }
     }
     const hiddenTextureName = `${this.loaderName}_image`;
     PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
     // PIXI.utils.destroyTextureCache();
-    this.state.app.destroy(true);
+    this.app.destroy(true);
   }
 
-  onAssetsLoaded(loader) {
+  private onAssetsLoaded(loader: PIXI.loaders.Loader) {
     if (loader.resources.machineAssets.error === null) {
       this.textures = loader.resources.machineAssets.textures;
       this.spritePool = new SpritePool(this.textures);
@@ -221,7 +226,7 @@ class CanvasPIXI extends Component {
                 this.props.operator_mode,
                 this.props.totalZoneCount,
                 this.props.placeValueOn,
-                this.state.negativePresent,
+                this.negativePresent,
             );
       this.powerZoneManager.createZones();
       this.powerZoneManager.createLeftmostTestZone();
@@ -236,14 +241,14 @@ class CanvasPIXI extends Component {
     }
   }
 
-  getDot(zone, isPositive, color = SPRITE_COLOR.RED) {
+  private getDot(zone: number, isPositive: boolean, color = SPRITE_COLOR.RED): DotVO {
         // console.log('getDot', zone, isPositive, color);
-    const dot = {};
+    const dot: DotVO = new DotVO();
     dot.x = randomFromTo(
       POSITION_INFO.DOT_RAYON,
       BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON
     );
-    if (this.state.negativePresent) {
+    if (this.negativePresent) {
       dot.y = randomFromTo(
         POSITION_INFO.DOT_RAYON,
         BOX_INFO.HALF_BOX_HEIGHT - POSITION_INFO.DOT_RAYON
@@ -260,7 +265,7 @@ class CanvasPIXI extends Component {
     return dot;
   }
 
-  checkMachineStateValue() {
+  private checkMachineStateValue(): void {
     // console.log('checkMachineStateValue', this.props.placeValueOn);
     this.powerZoneManager.setValueTextAlpha(this.props.placeValueOn);
     if (this.props.magicWandIsActive) {
@@ -275,8 +280,8 @@ class CanvasPIXI extends Component {
       // ************************************
       // We should never get a activity start in Freeplay, just in case.
       if (this.props.usage_mode !== USAGE_MODE.FREEPLAY) {
-        let dotsPerZoneA;
-        let dotsPerZoneB;
+        let dotsPerZoneA: string[];
+        let dotsPerZoneB: string[];
         // if there is no operand B value and one is displayed
         // (OPERATOR_MODE.DISPLAY hide operand B)
         if (this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
@@ -356,9 +361,9 @@ class CanvasPIXI extends Component {
     }
   }
 
-  populateDotPerZoneArrayAdvancedMode() {
-    let dotsPerZoneA;
-    let dotsPerZoneB;
+  private populateDotPerZoneArrayAdvancedMode(): IOperantProcessedArray {
+    let dotsPerZoneA: string[];
+    let dotsPerZoneB: string[];
     if (this.props.operandA.indexOf('|') !== -1) {
       dotsPerZoneA = this.props.operandA.split('|');
     } else {
@@ -367,7 +372,7 @@ class CanvasPIXI extends Component {
     // Verify that we don't have a single minus sign in a zone
     dotsPerZoneA.forEach((entry) => {
       if (entry === '-') {
-        dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = 0;
+        dotsPerZoneA[dotsPerZoneA.indexOf(entry)] = '0';
       }
     });
     if (this.props.operator_mode !== OPERATOR_MODE.MULTIPLY) {
@@ -385,15 +390,15 @@ class CanvasPIXI extends Component {
     // Verify that we don't have a single minus sign in a zone
     dotsPerZoneB.forEach((entry) => {
       if (entry === '-') {
-        dotsPerZoneB[dotsPerZoneB.indexOf(entry)] = 0;
+        dotsPerZoneB[dotsPerZoneB.indexOf(entry)] = '0';
       }
     });
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  populateDotPerZoneArrayNormalMode() {
+  private populateDotPerZoneArrayNormalMode(): IOperantProcessedArray {
     const dotsPerZoneA = this.props.operandA.split('');
-    let dotsPerZoneB;
+    let dotsPerZoneB: string[];
     if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       dotsPerZoneB = [];
     } else {
@@ -415,28 +420,31 @@ class CanvasPIXI extends Component {
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  populateDotPerZoneArrayBaseX() {
-    const dotsPerZoneA = new Array(this.props.totalZoneCount);
-    const dotsPerZoneB = new Array(this.props.totalZoneCount);
+  private populateDotPerZoneArrayBaseX(): IOperantProcessedArray {
+    const dotsPerZoneA: string[] = new Array(this.props.totalZoneCount);
+    const dotsPerZoneB: string[] = new Array(this.props.totalZoneCount);
     for (let i = 0; i < this.props.totalZoneCount; i += 1) {
-      dotsPerZoneA[i] = 0;
-      dotsPerZoneB[i] = 0;
+      dotsPerZoneA[i] = '0';
+      dotsPerZoneB[i] = '0';
     }
-
-    let cleandedOperandA = superscriptToNormal(this.props.operandA);
-    let cleandedOperandB = superscriptToNormal(this.props.operandB);
-    let indices = [];
+    let cleandedOperandA: string = superscriptToNormal(this.props.operandA);
+    let cleandedOperandB: string = superscriptToNormal(this.props.operandB);
+    let indices: number[] = [];
     for (let i = 0; i < cleandedOperandA.length; i += 1) {
-      if (cleandedOperandA[i] === '-') indices.push(i);
+      if (cleandedOperandA[i] === '-') {
+        indices.push(i);
+      }
     }
-    let added = 0;
-    indices.forEach((indice) => {
+    let added: number = 0;
+    indices.forEach((indice: number) => {
       cleandedOperandA = replaceAt(cleandedOperandA, indice + added, '+-');
       added += 1;
     });
     indices = [];
     for (let i = 0; i < cleandedOperandB.length; i += 1) {
-      if (cleandedOperandB[i] === '-') indices.push(i);
+      if (cleandedOperandB[i] === '-') {
+        indices.push(i);
+      }
     }
     added = 0;
     indices.forEach((indice) => {
@@ -447,9 +455,10 @@ class CanvasPIXI extends Component {
     const splitZoneA = cleandedOperandA.split('+');
     const splitZoneB = cleandedOperandB.split('+');
     // console.log(splitZoneA, splitZoneB);
-    splitZoneA.forEach((val) => {
+    splitZoneA.forEach((val: string) => {
       let value = val;
-      if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
+      // in case of entries like -2-, where the second - will be split in a zone value
+      if (value === '-' || value === '+') {
         value = '0';
       }
       const xIndex = value.indexOf('x');
@@ -457,33 +466,34 @@ class CanvasPIXI extends Component {
       if (xIndex === -1) {
         dotsPerZoneA[0] += Number(value);
       } else {
-        let pos = 0;
-        if (isNaN(value[xIndex + 1])) {
+        let pos: number = 0;
+        if (isNaN(Number(value[xIndex + 1]))) {
           // x only, no exponent
           pos = 1;
         } else {
-          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+          if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
             // the exponent is higher than the amount of zone
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          pos = value[xIndex + 1];
+          pos = Number(value[xIndex + 1]);
         }
         if (xIndex === 0) {
           // positive x only
-          dotsPerZoneA[pos] += 1;
+          dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) + 1).toString();
         } else if (xIndex === 1 && value[0] === '-') {
           // negative x only
-          dotsPerZoneA[pos] -= 1;
+          dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) - 1).toString();
         } else {
           dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
         }
       }
     });
-    splitZoneB.forEach((val) => {
+    splitZoneB.forEach((val: string) => {
       let value = val;
-      if (value === '-' || value === '+') { // in case of entries like -2-, where the second - will be split in a zone value
+      // in case of entries like -2-, where the second - will be split in a zone value
+      if (value === '-' || value === '+') {
         value = '0';
       }
       const xIndex = value.indexOf('x');
@@ -492,24 +502,24 @@ class CanvasPIXI extends Component {
         dotsPerZoneB[0] += Number(value);
       } else {
         let pos = 0;
-        if (isNaN(value[xIndex + 1])) {
+        if (isNaN(Number(value[xIndex + 1]))) {
           // x only, no exponent
           pos = 1;
         } else {
-          if (value[xIndex + 1] > this.props.totalZoneCount - 1) {
+          if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
             // the exponent is higher than the amount of zone
             this.soundManager.playSound(SoundManager.GO_INVALID);
             this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
             return;
           }
-          pos = value[xIndex + 1];
+          pos = Number(value[xIndex + 1]);
         }
         if (xIndex === 0) {
           // positive x only
-          dotsPerZoneB[pos] += 1;
+          dotsPerZoneB[pos] = (Number(dotsPerZoneB[pos]) + 1).toString();
         } else if (xIndex === 1 && value[0] === '-') {
           // negative x only
-          dotsPerZoneB[pos] -= 1;
+          dotsPerZoneB[pos] = (Number(dotsPerZoneB[pos]) - 1).toString();
         } else {
           dotsPerZoneB[pos] += Number(value.substring(0, xIndex));
         }
@@ -518,11 +528,12 @@ class CanvasPIXI extends Component {
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  createDisplayDots(dotsPerZoneA) {
-    let totalDot = 0;
-    const dotsPos = [];
+  private createDisplayDots(dotsPerZoneA: string[]): void {
+    let totalDot: number = 0;
+    const dotsPos: DotVO[] = new Array<DotVO>();
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
-      totalDot += dotsPerZoneA[i] * Math.pow(this.props.base[1], i);
+      // tslint:disable-next-line
+      totalDot += Number(dotsPerZoneA[i]) * Math.pow(this.props.base[1], i);
       for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
         dotsPos.push(this.getDot(i, true));
       }
@@ -531,8 +542,8 @@ class CanvasPIXI extends Component {
     this.props.startActivityDoneFunc(dotsPos, totalDot);
   }
 
-  createAddDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
+  private createAddDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
+    const dotsPos: DotVO[] = new Array<DotVO>();
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
@@ -557,8 +568,8 @@ class CanvasPIXI extends Component {
     }
   }
 
-  createMultiplyDots(dotsPerZoneA) {
-    const dotsPos = [];
+  private createMultiplyDots(dotsPerZoneA: string[]): void {
+    const dotsPos: DotVO[] = new Array<DotVO>();
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let totalDotInZone = 0;
       totalDotInZone = Number(dotsPerZoneA[i]) * Number(this.props.operandB);
@@ -578,8 +589,8 @@ class CanvasPIXI extends Component {
     }
   }
 
-  createSubtractDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
+  private createSubtractDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
+    const dotsPos: DotVO[] = new Array<DotVO>();
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
@@ -604,9 +615,9 @@ class CanvasPIXI extends Component {
     }
   }
 
-  createDivideDots(dotsPerZoneA, dotsPerZoneB) {
-    const dotsPos = [];
-    const dividePos = [];
+  private createDivideDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
+    const dotsPos: DotVO[] = new Array<DotVO>();
+    const dividePos: DotVO[] = new Array<DotVO>();
     makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
@@ -631,38 +642,39 @@ class CanvasPIXI extends Component {
     }
   }
 
-  checkBaseChange(nextProps) {
+  private checkBaseChange(nextProps: ICanvasPIXIProps): void {
     if (this.props.base !== nextProps.base) {
       this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
     }
   }
 
-  resize() {
+  private resize(): void {
     const w = window.innerWidth;
     const h = window.innerHeight;
     const ratio = Math.min(
       w / SETTINGS.GAME_WIDTH,
       h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
-    this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-    this.state.renderer.resize(
+    this.stage.scale.x = this.stage.scale.y = ratio;
+    this.renderer.resize(
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
   }
 
-  calculateOperandRealValue(arr) {
+  private calculateOperandRealValue(arr: string[]): number {
     let value = 0;
     for (let i = 0; i < arr.length; i += 1) {
+      // tslint:disable-next-line
       value += arr[i] * Math.pow(this.props.base[1], i);
     }
     return value;
   }
 
-  render() {
+  public render() {
     return (
-      <canvas ref={(canvas) => { this.canvas = canvas; }} />
-    );
+      /*<canvas ref={(canvas) => { this.canvas = canvas; }} />*/
+    )
   }
 }
 

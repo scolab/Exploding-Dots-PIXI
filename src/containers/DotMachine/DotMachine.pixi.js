@@ -6,7 +6,7 @@ import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, chan
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
     startActivity, startActivityDone, operatorChanged, error, userMessage,
     resetUserMessage, setDivisionResult } from '../../actions/';
-import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
+import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi.ts';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';
@@ -19,7 +19,7 @@ import Text from '../../components/Text';
 import GoButton from '../../components/GoButton';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import MessageDisplay from '../../components/MessageDisplay';
-import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS } from '../../Constants';
+import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS } from '../../Constants.ts';
 
 const DotsMachine = (props) => {
   return (

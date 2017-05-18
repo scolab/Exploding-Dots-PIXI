@@ -5,6 +5,8 @@ export const BASE = {
   BASE_X: 'X',
 };
 
+export type IOPERATOR_MODE = 'DISPLAY' | 'ADD' | 'SUBTRACT' | 'MULTIPLY' | 'DIVIDE';
+
 export const OPERATOR_MODE = {
   DISPLAY: 'DISPLAY',
   ADD: 'ADD',
@@ -12,6 +14,8 @@ export const OPERATOR_MODE = {
   MULTIPLY: 'MULTIPLY',
   DIVIDE: 'DIVIDE',
 };
+
+export type IUSAGE_MODE = 'FREEPLAY' | 'OPERATION' | 'EXERCISE';
 
 export const USAGE_MODE = {
   FREEPLAY: 'FREEPLAY',
