@@ -340,7 +340,7 @@ class CanvasPIXI extends Component {
             break;
           case OPERATOR_MODE.DIVIDE:
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
-              this.createDivideDots(dotsPerZoneA, dotsPerZoneA);
+              this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
