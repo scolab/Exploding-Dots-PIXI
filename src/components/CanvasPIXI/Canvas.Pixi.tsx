@@ -9,7 +9,6 @@ import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE
 import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
-import TextureDictionary = PIXI.loaders.TextureDictionary;
 import { DotVO }  from '../../VO/DotVO';
 
 interface IDots {
@@ -93,7 +92,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   private loader: PIXI.loaders.Loader;
   private spritePool: SpritePool;
   private loaderName: string = 'machineAssets';
-  private textures: TextureDictionary | undefined;
+  private textures: PIXI.loaders.TextureDictionary | undefined;
 
   constructor(props) {
     super(props);

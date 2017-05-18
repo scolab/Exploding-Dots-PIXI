@@ -3,17 +3,55 @@ import { TweenMax, Quint, Linear } from 'gsap';
 import { PowerZone } from './PowerZone';
 import { ParticleEmitter } from './ParticleEmitter';
 import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/MathUtils';
-import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE } from '../../Constants';
+import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
+import { SpritePool } from '../../utils/SpritePool';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
 import redDragJSON from './dot_drag_red.json';
 import blueDragJSON from './dot_drag_blue.json';
 
+interface IPendingAction{
+  function: Function,
+  params: Array<PIXI.Sprite | PIXI.Container>
+}
+
 // eslint-disable-next-line import/prefer-default-export
 export class PowerZoneManager extends PIXI.Container {
+
+  private addDot: Function;
+  private removeDot: Function;
+  private addMultipleDots: Function;
+  private removeMultipleDots: Function;
+  private rezoneDot: Function;
+  private setDivisionResult: Function;
+  private displayUserMessage: Function;
+  private movingDotsContainer: PIXI.Container;
+  private dividerZoneManager: DividerZoneManager;
+  private dividerResult: DividerResult;
+  private soundManager: SoundManager;
+  private wantedResult: Object;
+  private ticker: PIXI.ticker.Ticker;
+
+  private textures: PIXI.loaders.TextureDictionary;
+  private spritePool: SpritePool;
+  private base: Array<number | string>;
+  private usage_mode: IUSAGE_MODE;
+  private operator_mode: IOPERATOR_MODE;
+  private totalZoneCount: number;
+  private placeValueOn: boolean;
+  private negativePresent: boolean;
+  private allZones: PowerZone[];
+  private pendingAction: IPendingAction[];
+  private explodeEmitter: ParticleEmitter[];
+  private implodeEmitter: ParticleEmitter[];
+  private dragParticleEmitterRed: ParticleEmitter;
+  private dragParticleEmitterBlue: ParticleEmitter;
+  private leftMostZone: PIXI.Container;
+  public isInteractive: boolean;
+
   constructor(addDot,
               removeDot,
               addMultipleDots,
@@ -32,8 +70,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.setDivisionResult = setDivisionResult;
     this.displayUserMessage = displayUserMessage;
     this.movingDotsContainer = new PIXI.Container();
-    this.dividerZoneManager = null;
-    this.dividerResult = null;
     this.soundManager = soundManager;
     // reverse all the wanted result so they are in the same order as our zone.
     wantedResult.positiveDots.reverse();
@@ -63,20 +99,17 @@ export class PowerZoneManager extends PIXI.Container {
     this.negativePresent = negativePresent;
     this.allZones = [];
     this.isInteractive = usageMode === USAGE_MODE.FREEPLAY;
-    this.pendingAction = [];
-    this.explodeEmitter = [];
-    this.implodeEmitter = [];
-    this.dragParticleEmitterRed = null;
-    this.dragParticleEmitterBlue = null;
-    this.leftMostZone = null;
+    this.pendingAction = new Array<IPendingAction>();
+    this.explodeEmitter = new Array<ParticleEmitter>();
+    this.implodeEmitter = new Array<ParticleEmitter>();
     // window.addEventListener('keyup', this.traceValue.bind(this));
   }
 
   traceValue(e) {
     if ((e.keyCode || e.which) === 32) {
-      const dotCount = [];
-      const childCount = [];
-      this.allZones.forEach((zone) => {
+      const dotCount = new Array<number>();
+      const childCount = new Array<number>();
+      this.allZones.forEach((zone: PowerZone) => {
         dotCount.push(Object.keys(zone.positiveDots).length);
         childCount.push(zone.positiveDotsContainer.children.length);
       });
