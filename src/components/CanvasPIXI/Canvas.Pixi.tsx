@@ -10,6 +10,7 @@ import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
+import { DotVO }  from '../../VO/DotVO';
 
 interface IDots {
   x: number;
@@ -322,7 +323,6 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
           dotsPerZoneA.reverse();
           dotsPerZoneB.reverse();
         }
-
         // Create dots and send info to the store
         switch (this.props.operator_mode) {
           case OPERATOR_MODE.DISPLAY:
@@ -345,7 +345,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
             break;
           case OPERATOR_MODE.DIVIDE:
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
-              this.createDivideDots(dotsPerZoneA, dotsPerZoneA);
+              this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);

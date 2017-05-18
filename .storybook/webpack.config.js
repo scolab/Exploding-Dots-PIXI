@@ -12,12 +12,12 @@ module.exports = function (config, env) {
 
   config.module.loaders.push({
     test: /\.tsx$/,
-    loader: 'ts-loader'
+    loader: 'babel!ts-loader'
   });
 
   config.module.loaders.push({
     test: /\.ts$/,
-    loader: 'ts-loader'
+    loader: 'babel!ts-loader'
   });
 
   config.resolve.extensions.push(".tsx");
