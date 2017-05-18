@@ -94,7 +94,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   private loaderName: string = 'machineAssets';
   private textures: PIXI.loaders.TextureDictionary | undefined;
 
-  constructor(props) {
+  constructor(props: ICanvasPIXIProps) {
     super(props);
     this.isWebGL = false;
     this.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -107,7 +107,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
 
   public componentDidMount() {
         // console.log('componentDidMount', this.state, this.props);
-    const options = {
+    const options: object = {
       view: this.canvas,
       transparent: true,
       antialias: true,
@@ -116,7 +116,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
       autoResize: true,
     };
 
-    const preventWebGL = false;
+    const preventWebGL:boolean = false;
     this.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?

@@ -8,10 +8,10 @@ import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
-import explodeJSON from './dot_explode.json';
+/*import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
 import redDragJSON from './dot_drag_red.json';
-import blueDragJSON from './dot_drag_blue.json';
+import blueDragJSON from './dot_drag_blue.json';*/
 
 interface IPendingAction{
   function: Function,
@@ -50,6 +50,10 @@ export class PowerZoneManager extends PIXI.Container {
   private dragParticleEmitterRed: ParticleEmitter;
   private dragParticleEmitterBlue: ParticleEmitter;
   private leftMostZone: PIXI.Container;
+  private explodeJSON: Object;
+  private implodeJSON: Object;
+  private redDragJSON: Object;
+  private blueDragJSON: Object;
   public isInteractive: boolean;
 
   constructor(addDot,
@@ -79,9 +83,13 @@ export class PowerZoneManager extends PIXI.Container {
     this.wantedResult = wantedResult;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
+    this.explodeJSON = require('./dot_explode.json');
+    this.implodeJSON = require('./dot_implode.json');
+    this.redDragJSON = require('./dot_drag_red.json');
+    this.blueDragJSON = require('./dot_drag_blue.json');
   }
 
-  init(textures,
+  public init(textures,
    spritePool,
    base,
    usageMode,
@@ -119,7 +127,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   createZones() {
     for (let i = this.totalZoneCount - 1; i >= 0; i -= 1) {
-      const powerZone = new PowerZone(i,
+      const powerZone: PowerZone = new PowerZone(i,
                 this.textures,
                 this.base,
                 this.negativePresent,
