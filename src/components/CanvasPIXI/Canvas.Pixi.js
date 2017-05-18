@@ -22,7 +22,7 @@ type PropsType = {
   startActivityFunc: PropTypes.func.isRequired,
   startActivityDoneFunc: PropTypes.func.isRequired,
   positivePowerZoneDots: Array<DotVO>,
-  negativePowerZoneDots: Array<mixed>,
+  negativePowerZoneDots: Array<DotVO>,
   positiveDividerDots: Array<mixed>,
   negativeDividerDots: Array<mixed>,
   positiveDividerResult: Array<mixed>,
@@ -205,7 +205,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       this.powerZoneManager.reset();
     }
     // Some action can be queued after the popup is closed, check if it's the case.
-    this.powerZoneManager.checkPendingAction(nextProps);
+    this.powerZoneManager.checkPendingAction(nextProps.userMessage);
     this.checkBaseChange(nextProps);
     // Apply the new props
     this.props = nextProps;
@@ -246,7 +246,6 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     if (this.powerZoneManager) {
       this.powerZoneManager.destroy();
     }
-    this.powerZoneManager = null;
     this.loader.destroy();
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
     for (const key in this.textures) {
@@ -275,8 +274,6 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       this.powerZoneManager.createZones();
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
-      this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
-      this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);
       this.powerZoneManager.start();
 
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
@@ -391,7 +388,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
             break;
           case OPERATOR_MODE.DIVIDE:
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
-              this.createDivideDots(dotsPerZoneA, dotsPerZoneA);
+              this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
@@ -715,7 +712,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     }
   }
 
-  checkBaseChange(nextProps: PropTypes) {
+  checkBaseChange(nextProps: PropsType) {
     if (this.props.base !== nextProps.base) {
       this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
     }
