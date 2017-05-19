@@ -50,10 +50,10 @@ export class PowerZoneManager extends PIXI.Container {
   private dragParticleEmitterRed: ParticleEmitter;
   private dragParticleEmitterBlue: ParticleEmitter;
   private leftMostZone: PIXI.Container;
-  private explodeJSON: Object;
-  private implodeJSON: Object;
-  private redDragJSON: Object;
-  private blueDragJSON: Object;
+  private explodeJSON: object;
+  private implodeJSON: object;
+  private redDragJSON: object;
+  private blueDragJSON: object;
   public isInteractive: boolean;
 
   constructor(addDot,
@@ -125,7 +125,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  createZones() {
+  public createZones() {
     for (let i = this.totalZoneCount - 1; i >= 0; i -= 1) {
       const powerZone: PowerZone = new PowerZone(i,
                 this.textures,
@@ -143,8 +143,8 @@ export class PowerZoneManager extends PIXI.Container {
       powerZone.setValueTextAlpha(this.placeValueOn ? 1 : 0);
     }
     this.setZoneTextAndAlphaStatus();
-    this.dragParticleEmitterRed = new ParticleEmitter(this.movingDotsContainer, this.textures['red_dot.png'], redDragJSON);
-    this.dragParticleEmitterBlue = new ParticleEmitter(this.movingDotsContainer, this.textures['blue_dot.png'], blueDragJSON);
+    this.dragParticleEmitterRed = new ParticleEmitter(this.movingDotsContainer, this.textures['red_dot.png'], this.redDragJSON);
+    this.dragParticleEmitterBlue = new ParticleEmitter(this.movingDotsContainer, this.textures['blue_dot.png'], this.blueDragJSON);
     this.addChild(this.movingDotsContainer);
     if (this.operator_mode === OPERATOR_MODE.DIVIDE) {
       this.dividerZoneManager = new DividerZoneManager();
@@ -162,7 +162,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  createLeftmostTestZone() {
+  public createLeftmostTestZone() {
     this.leftMostZone = new PIXI.Container();
     this.leftMostZone.x = 0;
     this.leftMostZone.y = BOX_INFO.BOX_Y;
@@ -170,7 +170,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.leftMostZone.hitArea = new PIXI.Rectangle(0, 0, BOX_INFO.LEFT_GUTTER, BOX_INFO.BOX_HEIGHT);
   }
 
-  start() {
+  public start() {
     this.ticker.add((deltaTime) => {
       this.animationCallback(deltaTime);
     });
@@ -178,13 +178,13 @@ export class PowerZoneManager extends PIXI.Container {
     // requestAnimationFrame(this.animationCallback.bind(this));
   }
 
-  precalculateForDivision() {
+  public precalculateForDivision() {
     this.allZones.forEach((zone) => {
       zone.precalculateDotsForDivision();
     });
   }
 
-  checkIfDivisionPossible(data, allZonesValue, isDragEnd = false) {
+  private checkIfDivisionPossible(data, allZonesValue, isDragEnd = false) {
         // console.log('checkIfDivisionPossible', allZonesValue);
     if (this.isInteractive) {
       const zoneOverInfo = this.getZoneUnderCursor(data);
@@ -338,7 +338,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  static removeDotsAfterTween(sprite) {
+  private static removeDotsAfterTween(sprite) {
     sprite.destroy();
   }
 
