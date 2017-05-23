@@ -5,7 +5,14 @@
     ],
     "jsRules": {},
     "rules": {
-      "quotemark": [true, "single", "avoid-escape"]
+      "quotemark": [true, "single", "avoid-escape"],
+      "ordered-imports": [
+        true,
+        {
+          "import-sources-order": "any",
+          "named-imports-order": "any"
+        }
+      ]
     },
     "rulesDirectory": []
 }

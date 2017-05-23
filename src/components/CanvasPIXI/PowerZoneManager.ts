@@ -8,14 +8,10 @@ import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
-/*import explodeJSON from './dot_explode.json';
-import implodeJSON from './dot_implode.json';
-import redDragJSON from './dot_drag_red.json';
-import blueDragJSON from './dot_drag_blue.json';*/
 
-interface IPendingAction{
-  function: Function,
-  params: Array<PIXI.Sprite | PIXI.Container>
+interface IPendingAction {
+  function: Function;
+  params: Array<PIXI.Sprite | PIXI.Container>;
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -32,7 +28,7 @@ export class PowerZoneManager extends PIXI.Container {
   private dividerZoneManager: DividerZoneManager;
   private dividerResult: DividerResult;
   private soundManager: SoundManager;
-  private wantedResult: Object;
+  private wantedResult: object;
   private ticker: PIXI.ticker.Ticker;
 
   private textures: PIXI.loaders.TextureDictionary;
@@ -66,6 +62,12 @@ export class PowerZoneManager extends PIXI.Container {
               soundManager,
               wantedResult) {
     super();
+
+    this.explodeJSON = require('./dot_explode.json');
+    this.implodeJSON = require('./dot_implode.json');
+    this.redDragJSON = require('./dot_drag_red.json');
+    this.blueDragJSON = require('./dot_drag_blue.json');
+
     this.addDot = addDot;
     this.removeDot = removeDot;
     this.addMultipleDots = addMultipleDots;
@@ -83,20 +85,17 @@ export class PowerZoneManager extends PIXI.Container {
     this.wantedResult = wantedResult;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
-    this.explodeJSON = require('./dot_explode.json');
-    this.implodeJSON = require('./dot_implode.json');
-    this.redDragJSON = require('./dot_drag_red.json');
-    this.blueDragJSON = require('./dot_drag_blue.json');
+
   }
 
   public init(textures,
-   spritePool,
-   base,
-   usageMode,
-   operatorMode,
-   totalZoneCount,
-   placeValueOn,
-   negativePresent) {
+              spritePool,
+              base,
+              usageMode,
+              operatorMode,
+              totalZoneCount,
+              placeValueOn,
+              negativePresent) {
     this.textures = textures;
     this.spritePool = spritePool;
     this.base = base;
@@ -113,7 +112,7 @@ export class PowerZoneManager extends PIXI.Container {
     // window.addEventListener('keyup', this.traceValue.bind(this));
   }
 
-  traceValue(e) {
+  private traceValue(e) {
     if ((e.keyCode || e.which) === 32) {
       const dotCount = new Array<number>();
       const childCount = new Array<number>();
@@ -507,7 +506,7 @@ export class PowerZoneManager extends PIXI.Container {
     TweenMax.to(dotSprite, 1, { alpha: 1 });
   }
 
-  removeDotSpriteListeners(sprite) {
+  private removeDotSpriteListeners(sprite: PIXI.Sprite) {
     sprite.off('pointerdown', this.onDragStart);
     sprite.off('pointerup', this.onDragEnd);
     sprite.off('pointerupoutside', this.onDragEnd);
@@ -515,8 +514,8 @@ export class PowerZoneManager extends PIXI.Container {
     this.allZones[sprite.dot.powerZone].removeFromProximityManager(sprite);
   }
 
-  onDragStart(e) {
-        // console.log('onDragStart', this.dot.isPositive);
+  private onDragStart(e: PIXI.interaction.InteractionEvent) {
+    // console.log('onDragStart', this.dot.isPositive);
     if (this.world.isInteractive) {
       const oldParent = this.parent;
       if (this.dot.isPositive) {
@@ -626,7 +625,7 @@ export class PowerZoneManager extends PIXI.Container {
                 {
                   function: this.backIntoPlace,
                   params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-                }
+                },
               );
               this.isInteractive = false;
             } else {
@@ -847,7 +846,7 @@ export class PowerZoneManager extends PIXI.Container {
     return { actualZone, droppedOnPowerZone, droppedOnPowerZoneIndex };
   }
 
-  backIntoPlace(dotSprite, currentZone) {
+  private backIntoPlace(dotSprite: PIXI.Sprite, currentZone: PowerZone) {
     this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
     TweenMax.to(dotSprite, 1, {

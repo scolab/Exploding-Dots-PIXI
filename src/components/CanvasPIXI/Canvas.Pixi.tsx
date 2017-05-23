@@ -1,15 +1,16 @@
-import * as React from 'react';
-import {Component, ReactHTMLElement} from 'react';
 import PropTypes from 'prop-types';
-import { TweenMax } from 'gsap';
-import { randomFromTo } from '../../utils/MathUtils.js';
-import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils.js';
-import { superscriptToNormal, replaceAt } from '../../utils/StringUtils.js';
-import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE, BOX_INFO, MAX_DOT, SPRITE_COLOR, IOPERATOR_MODE, IUSAGE_MODE} from '../../Constants';
-import { SpritePool } from '../../utils/SpritePool';
+import * as React from 'react';
+import { BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE,
+  MAX_DOT, OPERATOR_MODE, POSITION_INFO, SETTINGS, SPRITE_COLOR, USAGE_MODE} from '../../Constants';
+import { Component } from 'react';
+import { DotVO } from '../../VO/DotVO';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
-import { DotVO }  from '../../VO/DotVO';
+import { SpritePool } from '../../utils/SpritePool';
+import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils.js';
+import { randomFromTo } from '../../utils/MathUtils.js';
+import { replaceAt, superscriptToNormal } from '../../utils/StringUtils.js';
+import { TweenMax } from 'gsap';
 
 interface IDots {
   x: number;
@@ -58,7 +59,7 @@ interface ICanvasPIXIProps {
   operandA: string;
   operandB: string;
   error: PropTypes.func.isRequired;
-  displayUserMessage: PropTypes.func.isRequired,
+  displayUserMessage: PropTypes.func.isRequired;
   userMessage: string;
   muted: boolean;
   wantedResult: PropTypes.object.isRequired;
@@ -105,18 +106,24 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
   }
 
+  public render() {
+    return (
+      <canvas ref={(canvas) => { this.canvas = canvas; }} />
+    );
+  }
+
   public componentDidMount() {
         // console.log('componentDidMount', this.state, this.props);
     const options: object = {
-      view: this.canvas,
-      transparent: true,
       antialias: true,
+      autoResize: true,
       preserveDrawingBuffer: false,
       resolution: window.devicePixelRatio,
-      autoResize: true,
+      transparent: true,
+      view: this.canvas,
     };
 
-    const preventWebGL:boolean = false;
+    const preventWebGL: boolean = false;
     this.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
@@ -135,7 +142,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
             this.props.setDivisionResult,
             this.props.displayUserMessage,
             this.soundManager,
-            this.props.wantedResult
+            this.props.wantedResult,
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
@@ -246,17 +253,17 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
     const dot: DotVO = new DotVO();
     dot.x = randomFromTo(
       POSITION_INFO.DOT_RAYON,
-      BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON
+      BOX_INFO.BOX_WIDTH - POSITION_INFO.DOT_RAYON,
     );
     if (this.negativePresent) {
       dot.y = randomFromTo(
         POSITION_INFO.DOT_RAYON,
-        BOX_INFO.HALF_BOX_HEIGHT - POSITION_INFO.DOT_RAYON
+        BOX_INFO.HALF_BOX_HEIGHT - POSITION_INFO.DOT_RAYON,
       );
     } else {
       dot.y = randomFromTo(
         POSITION_INFO.DOT_RAYON,
-        BOX_INFO.BOX_HEIGHT - POSITION_INFO.DOT_RAYON
+        BOX_INFO.BOX_HEIGHT - POSITION_INFO.DOT_RAYON,
       );
     }
     dot.zoneId = zone;
@@ -662,18 +669,12 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   }
 
   private calculateOperandRealValue(arr: string[]): number {
-    let value:number = 0;
+    let value: number = 0;
     for (let i = 0; i < arr.length; i += 1) {
       // tslint:disable-next-line
       value += Number(arr[i]) * Math.pow(Number(this.props.base[1]), i);
     }
     return value;
-  }
-
-  public render() {
-    return (
-      <canvas ref={(canvas) => { this.canvas = canvas; }} />
-    )
   }
 }
 
