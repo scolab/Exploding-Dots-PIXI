@@ -12,14 +12,6 @@ import { randomFromTo } from '../../utils/MathUtils.js';
 import { replaceAt, superscriptToNormal } from '../../utils/StringUtils.js';
 import { TweenMax } from 'gsap';
 
-interface IDots {
-  x: number;
-  y: number;
-  powerZone: number;
-  id: string;
-  isPositive: boolean;
-}
-
 interface IDividerDots {
   powerZone: number;
   id: string;
@@ -41,8 +33,8 @@ interface ICanvasPIXIProps {
   activateMagicWand: PropTypes.func.isRequired;
   startActivityFunc: PropTypes.func.isRequired;
   startActivityDoneFunc: PropTypes.func.isRequired;
-  positivePowerZoneDots: IDots[];
-  negativePowerZoneDots: IDots[];
+  positivePowerZoneDots: DotVO[];
+  negativePowerZoneDots: DotVO[];
   positiveDividerDots: IDividerDots[];
   negativeDividerDots: IDividerDots[];
   positiveDividerResult: number[];
@@ -62,7 +54,7 @@ interface ICanvasPIXIProps {
   displayUserMessage: PropTypes.func.isRequired;
   userMessage: string;
   muted: boolean;
-  wantedResult: PropTypes.object.isRequired;
+  wantedResult: IWantedResult;
 }
 
 class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
@@ -238,8 +230,8 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
       this.powerZoneManager.createZones();
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
-      this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
-      this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);
+      /*this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
+      this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);*/
       this.powerZoneManager.start();
 
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
@@ -650,7 +642,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
 
   private checkBaseChange(nextProps: ICanvasPIXIProps): void {
     if (this.props.base !== nextProps.base) {
-      this.powerZoneManager.doBaseChange(nextProps.base, nextProps.placeValueOn);
+      this.powerZoneManager.doBaseChange(nextProps.base); // , nextProps.placeValueOn);
     }
   }
 

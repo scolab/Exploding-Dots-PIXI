@@ -10,7 +10,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
-import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants.ts';
 import '../ExplodingDots.css';
 import '../font-awesome.min.css';
 // Needed for onTouchTap

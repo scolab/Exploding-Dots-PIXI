@@ -1,17 +1,19 @@
-// eslint-disable-next-line import/prefer-default-export
 export class DividerResult extends PIXI.Text {
 
   constructor() {
     super('allo', {
-      fontFamily: 'Noto Sans',
-      fontWeight: 'bold',
-      fontSize: 34,
-      fill: 0xBCBCBC,
       align: 'center',
+      fill: 0xBCBCBC,
+      fontFamily: 'Noto Sans',
+      fontSize: 34,
+      fontWeight: 'bold',
     });
   }
 
-  update(positiveDividerValue, negativeDividerValue, positiveDots, negativeDots) {
+  public update(positiveDividerValue: number[],
+                negativeDividerValue: number[],
+                positiveDots: number[],
+                negativeDots: number[]) {
     let dotValue = '';
 
     for (let i = 0; i < positiveDividerValue.length; i += 1) {

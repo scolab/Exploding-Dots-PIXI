@@ -69,6 +69,8 @@ export const TEXT_COPY = {
   DOTS_COUNT: 'dots in the machine',
 };
 
+export type ISPRITE_COLOR = 'RED' | 'BLUE';
+
 export const SPRITE_COLOR = {
   RED: 'RED',
   BLUE: 'BLUE',

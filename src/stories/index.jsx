@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as url from 'url';
 import { storiesOf } from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
-import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants.ts';
 
 // FIXME : Found a better and more elegant solution
 function handleFullScreenToggle() {

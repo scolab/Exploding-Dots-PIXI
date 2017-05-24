@@ -1,34 +1,46 @@
-import { SPRITE_COLOR } from '../Constants';
+import {ISPRITE_COLOR, SPRITE_COLOR} from '../Constants';
+import {DotSprite} from '../components/CanvasPIXI/DotSprite';
+import {DotVO} from "../VO/DotVO";
 
-// eslint-disable-next-line import/prefer-default-export
 export class SpritePool {
 
+  private poolPositiveRed: DotSprite[] = new Array<DotSprite>();
+  private poolPositiveBlue: DotSprite[] = new Array<DotSprite>();
+  private poolNegativeRed: DotSprite[] = new Array<DotSprite>();
+  private poolNegativeBlue: DotSprite[] = new Array<DotSprite>();
+
+  private positiveDotRedTexture: string = 'red_dot.png';
+  private positiveDotBlueTexture: string = 'blue_dot.png';
+  private negativeDotRedTexture: string = 'red_antidot.png';
+  private negativeDotBlueTexture: string = 'blue_antidot.png';
+
+  private positiveDotRedFrameTwo: string = 'dot1.png';
+  private positiveDotRedFrameThree: string = 'dot2.png';
+  private positiveDotRedFrameFour: string = 'dot3.png';
+
+  private positiveDotBlueFrameTwo: string = 'b_dot1.png';
+  private positiveDotBlueFrameThree: string = 'b_dot2.png';
+  private positiveDotBlueFrameFour: string = 'b_dot3.png';
+
+  private negativeDotRedFrameTwo: string = 'antidot1.png';
+  private negativeDotRedFrameThree: string = 'antidot2.png';
+  private negativeDotRedFrameFour: string = 'antidot3.png';
+
+  private negativeDotBlueFrameTwo: string = 'b_antidot1.png';
+  private negativeDotBlueFrameThree: string = 'b_antidot2.png';
+  private negativeDotBlueFrameFour: string = 'b_antidot3.png';
+
+  private texturePosOne: PIXI.Texture;
+  private texturePosTwo: PIXI.Texture;
+  private textureNegOne: PIXI.Texture;
+  private textureNegTwo: PIXI.Texture;
+
+  private positiveSpriteRedFrames: PIXI.Texture[];
+  private positiveSpriteBlueFrames: PIXI.Texture[];
+  private negativeSpriteRedFrames: PIXI.Texture[];
+  private negativeSpriteBlueFrames: PIXI.Texture[];
+
   constructor(textures) {
-    this.poolPositiveRed = [];
-    this.poolPositiveBlue = [];
-    this.poolNegativeRed = [];
-    this.poolNegativeBlue = [];
-
-    this.positiveDotRedTexture = 'red_dot.png';
-    this.positiveDotBlueTexture = 'blue_dot.png';
-    this.negativeDotRedTexture = 'red_antidot.png';
-    this.negativeDotBlueTexture = 'blue_antidot.png';
-
-    this.positiveDotRedFrameTwo = 'dot1.png';
-    this.positiveDotRedFrameThree = 'dot2.png';
-    this.positiveDotRedFrameFour = 'dot3.png';
-
-    this.positiveDotBlueFrameTwo = 'b_dot1.png';
-    this.positiveDotBlueFrameThree = 'b_dot2.png';
-    this.positiveDotBlueFrameFour = 'b_dot3.png';
-
-    this.negativeDotRedFrameTwo = 'antidot1.png';
-    this.negativeDotRedFrameThree = 'antidot2.png';
-    this.negativeDotRedFrameFour = 'antidot3.png';
-
-    this.negativeDotBlueFrameTwo = 'b_antidot1.png';
-    this.negativeDotBlueFrameThree = 'b_antidot2.png';
-    this.negativeDotBlueFrameFour = 'b_antidot3.png';
 
     this.texturePosOne = textures[this.positiveDotRedTexture];
     this.texturePosTwo = textures[this.positiveDotBlueTexture];
@@ -80,41 +92,41 @@ export class SpritePool {
     }
   }
 
-  getOne(color, positive) {
+  public getOne(color: string, positive: boolean): DotSprite {
         // console.log('getOne', color, positive);
-    let sprite;
+    let sprite: DotSprite;
     if (color === SPRITE_COLOR.RED) {
       if (positive) {
         if (this.poolPositiveRed.length > 0) {
-          sprite = this.poolPositiveRed.pop();
+          sprite = this.poolPositiveRed.pop() as DotSprite;
         } else {
-          sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteRedFrames);
+          sprite = new DotSprite(this.positiveSpriteRedFrames);
         }
       } else if (this.poolNegativeRed.length > 0) {
-        sprite = this.poolNegativeRed.pop();
+        sprite = this.poolNegativeRed.pop() as DotSprite;
       } else {
-        sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteRedFrames);
+        sprite = new DotSprite(this.negativeSpriteRedFrames);
       }
     } else if (positive) {
       if (this.poolPositiveBlue.length > 0) {
-        sprite = this.poolPositiveBlue.pop();
+        sprite = this.poolPositiveBlue.pop() as DotSprite;
       } else {
-        sprite = new PIXI.extras.AnimatedSprite(this.positiveSpriteBlueFrames);
+        sprite = new DotSprite(this.positiveSpriteBlueFrames);
       }
     } else if (this.poolNegativeBlue.length > 0) {
-      sprite = this.poolNegativeBlue.pop();
+      sprite = this.poolNegativeBlue.pop() as DotSprite;
     } else {
-      sprite = new PIXI.extras.AnimatedSprite(this.negativeSpriteBlueFrames);
+      sprite = new DotSprite(this.negativeSpriteBlueFrames);
     }
     sprite.alpha = 1;
     return sprite;
   }
 
-  dispose(sprite, isPositive, color) {
+  public dispose(sprite: DotSprite, isPositive: boolean, color: string) {
         // sprite.destroy();
         // console.log('dispose', isPositive, color)
     sprite.gotoAndStop(0);
-    sprite.dot = null; // eslint-disable-line no-param-reassign
+    sprite.dot = new DotVO();
     if (isPositive) {
       if (color === SPRITE_COLOR.RED) {
         this.poolPositiveRed.push(sprite);
@@ -128,7 +140,7 @@ export class SpritePool {
     }
   }
 
-  destroy() {
+  public destroy() {
     this.poolPositiveRed.forEach((sprite) => {
       sprite.destroy();
     });
