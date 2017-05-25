@@ -7,9 +7,9 @@ import { DotVO } from '../../VO/DotVO';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
-import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils.js';
-import { randomFromTo } from '../../utils/MathUtils.js';
-import { replaceAt, superscriptToNormal } from '../../utils/StringUtils.js';
+import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
+import { randomFromTo } from '../../utils/MathUtils';
+import { replaceAt, superscriptToNormal } from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 
 interface IDividerDots {
@@ -542,7 +542,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
 
   private createAddDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
     const dotsPos: DotVO[] = new Array<DotVO>();
-    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB, 0);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
       for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
@@ -589,7 +589,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
 
   private createSubtractDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
     const dotsPos: DotVO[] = new Array<DotVO>();
-    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB, 0);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
       for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {
@@ -616,7 +616,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   private createDivideDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
     const dotsPos: DotVO[] = new Array<DotVO>();
     const dividePos: DotVO[] = new Array<DotVO>();
-    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB);
+    makeBothArrayTheSameLength(dotsPerZoneA, dotsPerZoneB, 0);
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       let j = 0;
       for (j = 0; j < Math.abs(Number(dotsPerZoneA[i])); j += 1) {

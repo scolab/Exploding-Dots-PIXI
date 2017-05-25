@@ -1,15 +1,15 @@
 export default class ObjPool {
 
-  static pool = [];
-
-  static getOne() {
+  public static getOne(): any {
     if (this.pool.length > 0) {
       return this.pool.pop();
     }
     return {};
   }
 
-  static dispose(objArr) {
+  public static dispose(objArr) {
     this.pool.concat(objArr);
   }
+
+  private static pool: any[] = new Array<any>();
 }

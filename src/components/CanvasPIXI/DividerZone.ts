@@ -1,24 +1,39 @@
-// eslint-disable-next-line import/prefer-default-export
+import {DotVO} from "../../VO/DotVO";
+import Texture = PIXI.Texture;
+import Text = PIXI.Text;
 export class DividerZone extends PIXI.Container {
+
+  public positiveValue: number;
+  public negativeValue: number;
+
+  private positiveDots: DotVO[][];
+  private negativeDots: DotVO[][];
+  private positiveText: Text;
+  private negativeText: Text;
+  private bg: PIXI.Sprite;
+  private positiveTexture: Texture;
+  private negativeTexture: Texture;
 
   constructor() {
     super();
-    this.positiveDots = [[], [], []];
-    this.negativeDots = [[], [], []];
-    this.positiveText = null;
-    this.negativeText = null;
+    this.positiveDots = new Array<DotVO[]>();
+    this.negativeDots = new Array<DotVO[]>();
+    for (let i = 0; i < 3; i += 1) {
+      this.positiveDots[i] = new Array<DotVO>();
+      this.negativeDots[i] = new Array<DotVO>();
+    }
     this.positiveValue = 0;
     this.negativeValue = 0;
   }
 
-  init(backgroundTexture, positiveTexture, negativeTexture) {
+  public init(backgroundTexture: Texture, positiveTexture: Texture, negativeTexture: Texture) {
     this.bg = new PIXI.Sprite(backgroundTexture);
     this.positiveTexture = positiveTexture;
     this.negativeTexture = negativeTexture;
     this.addChild(this.bg);
   }
 
-  addDots(positiveDots, negativeDots) {
+  public addDots(positiveDots: object, negativeDots: object) {
     this.positiveValue = Object.keys(positiveDots).length;
     this.negativeValue = Object.keys(negativeDots).length;
     if (this.positiveValue < 10 && this.negativeValue < 10) {
@@ -38,12 +53,12 @@ export class DividerZone extends PIXI.Container {
       });
     } else {
       if (Object.keys(positiveDots).length > 0) {
-        this.positiveText = new PIXI.Text(Object.keys(positiveDots).length.toString(10), {
-          fontFamily: 'Noto Sans',
-          fontWeight: 'bold',
-          fontSize: 34,
-          fill: 0xBCBCBC,
+        this.positiveText = new Text(Object.keys(positiveDots).length.toString(10), {
           align: 'center',
+          fill: 0xBCBCBC,
+          fontFamily: 'Noto Sans',
+          fontSize: 34,
+          fontWeight: 'bold',
         });
         this.positiveText.anchor.set(0.5);
         this.positiveText.x = 32;
@@ -51,12 +66,12 @@ export class DividerZone extends PIXI.Container {
         this.addChild(this.positiveText);
       }
       if (Object.keys(negativeDots).length > 0) {
-        this.negativeText = new PIXI.Text(Object.keys(negativeDots).length.toString(10), {
-          fontFamily: 'Noto Sans',
-          fontWeight: 'bold',
-          fontSize: 34,
-          fill: 0xFFFF00,
+        this.negativeText = new Text(Object.keys(negativeDots).length.toString(10), {
           align: 'center',
+          fill: 0xFFFF00,
+          fontFamily: 'Noto Sans',
+          fontSize: 34,
+          fontWeight: 'bold',
         });
         this.negativeText.anchor.set(0.5);
         this.negativeText.x = 32;
@@ -66,8 +81,7 @@ export class DividerZone extends PIXI.Container {
     }
   }
 
-
-  getDot(dot) {
+  public getDot(dot: DotVO) {
     let dotSprite;
     if (dot.isPositive) {
       dotSprite = new PIXI.Sprite(this.positiveTexture);
@@ -78,14 +92,12 @@ export class DividerZone extends PIXI.Container {
     return dotSprite;
   }
 
-  addDotToArray(dot) {
+  public addDotToArray(dot) {
     if (dot.isPositive) {
-      for (let i = 0; i < this.positiveDots.length; i += 1) {
+      for (let i = 0; i < this.positiveDots.length; i++) {
         if (this.positiveDots[i].length < 3) {
           this.positiveDots[i].push(dot);
-          // eslint-disable-next-line no-param-reassign
           dot.sprite.x = (this.positiveDots[i].length * 15) + 1;
-          // eslint-disable-next-line no-param-reassign
           dot.sprite.y = (i * 15) + 9;
           break;
         }
@@ -94,9 +106,7 @@ export class DividerZone extends PIXI.Container {
       for (let i = 0; i < this.negativeDots.length; i += 1) {
         if (this.negativeDots[i].length < 3) {
           this.negativeDots[i].push(dot);
-          // eslint-disable-next-line no-param-reassign
           dot.sprite.x = (this.negativeDots[i].length * 15) + 1;
-          // eslint-disable-next-line no-param-reassign
           dot.sprite.y = (i * 15) + 54;
           break;
         }
@@ -104,16 +114,20 @@ export class DividerZone extends PIXI.Container {
     }
   }
 
-  destroy() {
-    this.positiveDots = null;
-    this.negativeDots = null;
+  public destroy() {
+    this.positiveDots = new Array<DotVO[]>();
+    this.negativeDots = new Array<DotVO[]>();
     while (this.children.length > 0) {
       const child = this.getChildAt(0);
       this.removeChild(child);
       child.destroy();
     }
-    this.positiveText = null;
-    this.negativeText = null;
+    if (this.positiveText !== undefined) {
+      this.positiveText.destroy();
+    }
+    if (this.negativeText !== undefined) {
+      this.negativeText.destroy();
+    }
     super.destroy();
   }
 

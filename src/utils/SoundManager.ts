@@ -3,29 +3,53 @@ import { TweenMax } from 'gsap';
 // eslint-disable-next-line import/prefer-default-export
 export class SoundManager {
 
-  static GO_SUCCESS = 'GO_SUCCESS';
-  static GO_INVALID = 'GO_INVALID';
-  static ADD_DOT = 'ADD_DOT';
-  static ADD_DIVISION_DOT = 'ADD_DIVISION_DOT';
-  static DOT_VANISH = 'DOT_VANISH';
-  static BACK_INTO_PLACE = 'BACK_INTO_PLACE';
-  static DOT_EXPLODE = 'DOT_EXPLODE';
-  static DOT_IMPLODE = 'DOT_IMPLODE';
-  static INVALID_MOVE = 'INVALID_MOVE';
-  static NOT_ENOUGH_DOTS = 'NOT_ENOUGH_DOTS';
-  static DOT_ANNIHILATION = 'DOT_ANNIHILATION';
-  static DIVISION_SUCCESS = 'DIVISION_SUCCESS';
-  static DIVISION_IMPOSSIBLE = 'DIVISION_IMPOSSIBLE';
-  static DIVISION_BACKINTOPLACE = 'DIVISION_BACKINTOPLACE';
-  static DIVISION_OVERLOAD = 'DIVISION_OVERLOAD';
-  static BOX_OVERLOAD = 'BOX_OVERLOAD';
-  static BOX_POSITIVE_NEGATIVE = 'BOX_POSITIVE_NEGATIVE';
+  public static GO_SUCCESS: string = 'GO_SUCCESS';
+  public static GO_INVALID: string = 'GO_INVALID';
+  public static ADD_DOT: string = 'ADD_DOT';
+  public static ADD_DIVISION_DOT: string = 'ADD_DIVISION_DOT';
+  public static DOT_VANISH: string = 'DOT_VANISH';
+  public static BACK_INTO_PLACE: string = 'BACK_INTO_PLACE';
+  public static DOT_EXPLODE: string = 'DOT_EXPLODE';
+  public static DOT_IMPLODE: string = 'DOT_IMPLODE';
+  public static INVALID_MOVE: string = 'INVALID_MOVE';
+  public static NOT_ENOUGH_DOTS: string = 'NOT_ENOUGH_DOTS';
+  public static DOT_ANNIHILATION: string = 'DOT_ANNIHILATION';
+  public static DIVISION_SUCCESS: string = 'DIVISION_SUCCESS';
+  public static DIVISION_IMPOSSIBLE: string = 'DIVISION_IMPOSSIBLE';
+  public static DIVISION_BACKINTOPLACE: string = 'DIVISION_BACKINTOPLACE';
+  public static DIVISION_OVERLOAD: string = 'DIVISION_OVERLOAD';
+  public static BOX_OVERLOAD: string = 'BOX_OVERLOAD';
+  public static BOX_POSITIVE_NEGATIVE: string = 'BOX_POSITIVE_NEGATIVE';
+
+  public muted: boolean;
+
+  private baseURL: string;
+  private allSounds: Howl[];
+  private allLoop: Array<(string) => void>; // tslint:disable-line variable-name
+
+  private GO_SUCCESS: Howl;
+  private GO_INVALID: Howl;
+  private ADD_DOT: Howl;
+  private ADD_DIVISION_DOT: Howl;
+  private DOT_VANISH: Howl;
+  private BACK_INTO_PLACE: Howl;
+  private DOT_EXPLODE: Howl;
+  private DOT_IMPLODE: Howl;
+  private INVALID_MOVE: Howl;
+  private NOT_ENOUGH_DOTS: Howl;
+  private DOT_ANNIHILATION: Howl;
+  private DIVISION_SUCCESS: Howl;
+  private DIVISION_IMPOSSIBLE: Howl;
+  private DIVISION_BACKINTOPLACE: Howl;
+  private DIVISION_OVERLOAD: Howl;
+  private BOX_OVERLOAD: Howl;
+  private BOX_POSITIVE_NEGATIVE: Howl;
 
   constructor(baseURL, muted) {
     this.muted = muted;
     this.baseURL = baseURL;
     this.baseURL += '/sounds/';
-    this.allSounds = [];
+    this.allSounds = new Array<Howl>();
 
     this.GO_SUCCESS = new Howl({
       src: [`${this.baseURL}GO_SUCCESS.mp3`],
@@ -114,7 +138,7 @@ export class SoundManager {
     this.allLoop = [this.playLoopOne, this.playLoopTwo];
   }
 
-  playSound(id) {
+  public playSound(id: string) {
     if (!this.muted) {
       if (id === SoundManager.BOX_OVERLOAD) {
         TweenMax.delayedCall(1, this.playLoopOne, [id], this);
@@ -126,21 +150,7 @@ export class SoundManager {
     }
   }
 
-  playLoopOne(id) {
-    if (this[id]) {
-      this[id].play();
-      TweenMax.delayedCall(5, this.playLoopOne, [id], this);
-    }
-  }
-
-  playLoopTwo(id) {
-    if (this[id]) {
-      this[id].play();
-      TweenMax.delayedCall(5, this.playLoopTwo, [id], this);
-    }
-  }
-
-  stopSound(id) {
+  public stopSound(id: string) {
     if (this[id]) {
       this[id].stop();
     }
@@ -151,7 +161,7 @@ export class SoundManager {
     }
   }
 
-  stopAllSounds() {
+  public stopAllSounds() {
     this.allSounds.forEach((sound) => {
       sound.stop();
     });
@@ -160,10 +170,24 @@ export class SoundManager {
     });
   }
 
-  destroy() {
+  public destroy() {
     this.allSounds.forEach((howl) => {
       howl.unload();
     });
     // Howler.unload();
+  }
+
+  private playLoopOne(id: string) {
+    if (this[id]) {
+      this[id].play();
+      TweenMax.delayedCall(5, this.playLoopOne, [id], this);
+    }
+  }
+
+  private playLoopTwo(id: string) {
+    if (this[id]) {
+      this[id].play();
+      TweenMax.delayedCall(5, this.playLoopTwo, [id], this);
+    }
   }
 }

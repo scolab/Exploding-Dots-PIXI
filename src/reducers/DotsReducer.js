@@ -3,6 +3,7 @@ import { makeUID } from '../utils/MathUtils';
 import { ACTIONS } from '../actions/StoreConstants';
 import { OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE } from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
+import { DotVO } from '../VO/DotVO';
 
 let initialMachineState = {};
 let setMachineState = null;
@@ -146,7 +147,7 @@ const dotsReducer = (state = null, action) => {
       });
       if (action.divider != null) {
         action.divider.forEach((dividerDot) => {
-          const dot = {};
+          const dot = new DotVO();
           dot.powerZone = dividerDot.zoneId;
           dot.id = makeUID();
           dot.isPositive = dividerDot.isPositive;

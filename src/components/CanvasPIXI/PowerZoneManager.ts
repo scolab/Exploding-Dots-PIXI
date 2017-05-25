@@ -13,6 +13,7 @@ import {DotVO} from "../../VO/DotVO";
 import {DotSprite} from "./DotSprite";
 import Rectangle = PIXI.Rectangle;
 import {DotsContainer} from "./DotsContainer";
+import Sprite = PIXI.Sprite;
 
 interface IPendingAction {
   // tslint:disable-next-line ban-types
@@ -911,7 +912,7 @@ export class PowerZoneManager extends PIXI.Container {
           dotsToRemoveCount -= 1;
           // console.log('dotsToRemoveCount', dotsToRemoveCount);
           // animate zone movement and destroy
-          const dataLocalZone = data.getLocalPosition(droppedOnPowerZone);
+          const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
           this.tweenDotsToNewZone(
               originalZoneIndex,
               droppedOnPowerZone,
@@ -1092,20 +1093,20 @@ export class PowerZoneManager extends PIXI.Container {
     let actualZone: PowerZone | null = null;
         // verify dropped on left test zone
     let dataLocalZone = data.getLocalPosition(this.leftMostZone);
-    if (isPointInRectangle(dataLocalZone, this.leftMostZone.hitArea)) {
+    if (isPointInRectangle(dataLocalZone, this.leftMostZone.hitArea as Rectangle)) {
       droppedOnPowerZone = this.leftMostZone;
       return { droppedOnPowerZone, droppedOnPowerZoneIndex };
     }
     this.allZones.forEach((zone) => {
       dataLocalZone = data.getLocalPosition(zone.positiveDotsContainer);
-      if (isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea)) {
+      if (isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea as Rectangle)) {
         droppedOnPowerZone = zone.positiveDotsContainer;
         droppedOnPowerZoneIndex = zone.zonePosition;
         actualZone = zone;
       }
       if (zone.negativeDotsContainer != null) {
         dataLocalZone = data.getLocalPosition(zone.negativeDotsContainer);
-        if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea)) {
+        if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea as Rectangle)) {
           droppedOnPowerZone = zone.negativeDotsContainer;
           droppedOnPowerZoneIndex = zone.zonePosition;
           actualZone = zone;
@@ -1151,15 +1152,15 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private tweenDotsToNewZone(
-    originalZoneIndex,
-    droppedOnPowerZone,
-    dotsToRemov,
-    positionToBeMovedTo,
-    isPositive) {
+    originalZoneIndex: number,
+    droppedOnPowerZone: DotsContainer,
+    dotsToRemov: number,
+    positionToBeMovedTo: Point,
+    isPositive: boolean) {
     // console.log('tweenDotsToNewZone', positionToBeMovedTo);
     // get the original on zone
-    let dotsToRemove = dotsToRemov;
-    let dotContainer;
+    let dotsToRemove: number = dotsToRemov;
+    let dotContainer: DotsContainer;
     if (droppedOnPowerZone.isPositive) {
       dotContainer = this.allZones[originalZoneIndex].positiveDotsContainer;
     } else {
@@ -1170,12 +1171,12 @@ export class PowerZoneManager extends PIXI.Container {
       dotsToRemove -= ((this.base[0] as number) - 1);
       const dotsToRezone = (this.base[0] as number)  - 1;
       for (let i = 0; i < dotsToRezone; i += 1) {
-        const dotSprite = dotContainer.getChildAt(0);
+        const dotSprite: DotSprite = dotContainer.getChildAt(0) as DotSprite;
         dotSprite.origin = new Point();
         dotSprite.origin.copy(dotSprite.position);
-        const newPosition = this.movingDotsContainer.toLocal(dotSprite.position, dotSprite.parent);
+        const newPosition = this.movingDotsContainer.toLocal(dotSprite.position as Point, dotSprite.parent);
         const adjacentPosition = positionToBeMovedTo.clone();
-        const quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea);
+        const quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea as Rectangle);
         switch (quadrant) {
           case 0:
             adjacentPosition.x += POSITION_INFO.DOT_RAYON * 2;

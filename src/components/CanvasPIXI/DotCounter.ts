@@ -1,32 +1,34 @@
 
-// eslint-disable-next-line import/prefer-default-export
+import Sprite = PIXI.Sprite;
+import Text = PIXI.Text;
 export class DotCounter extends PIXI.Container {
 
-  bgLeft = null;
-  bgCenter = null;
-  bgRight = null;
-  text = null;
+  private bgLeft: Sprite;
+  private bgCenter: Sprite;
+  private bgRight: Sprite;
+  private text: Text;
 
   constructor(position, left, center, right) {
     super();
-    this.bgLeft = new PIXI.Sprite(left);
-    this.bgCenter = new PIXI.Sprite(center);
-    this.bgRight = new PIXI.Sprite(right);
+    this.bgLeft = new Sprite(left);
+    this.bgCenter = new Sprite(center);
+    this.bgRight = new Sprite(right);
 
     this.addChild(this.bgLeft);
     this.addChild(this.bgCenter);
     this.addChild(this.bgRight);
 
-    this.text = new PIXI.Text(position, {
-      fontFamily: 'Noto Sans',
-      fontWeight: 'bold',
-      fontSize: 22,
-      fill: 0x6D6D6D,
+    this.text = new Text(position, {
       align: 'center',
+      fill: 0x6D6D6D,
+      fontFamily: 'Noto Sans',
+      fontSize: 22,
+      fontWeight: 'bold',
     });
     this.text.anchor.y = 0.5;
     this.text.anchor.x = 0.5;
-    this.setText('');
+    this.setText('', true);
+    this.setText('', false);
 
     this.text.x = this.getWidth() / 2;
     this.text.y = 15;
@@ -34,7 +36,7 @@ export class DotCounter extends PIXI.Container {
     this.addChild(this.text);
   }
 
-  setText(text, isPositive) {
+  public setText(text: string, isPositive: boolean) {
     if (isPositive) {
       this.text.text = text;
     } else {
@@ -71,16 +73,16 @@ export class DotCounter extends PIXI.Container {
     this.setPosition();
   }
 
-  setPosition() {
-    this.bgCenter.x = (this.bgLeft.x + this.bgLeft.width) - 1;
-    this.bgRight.x = (this.bgLeft.x + this.bgLeft.width + this.bgCenter.width) - 2;
-  }
-
-  setStyle(value) {
+  public setStyle(value) {
     this.text.style.fill = value;
   }
 
-  getWidth() {
+  public getWidth() {
     return (this.bgLeft.width + this.bgCenter.width + this.bgRight.width) - 3;
+  }
+
+  private setPosition() {
+    this.bgCenter.x = (this.bgLeft.x + this.bgLeft.width) - 1;
+    this.bgRight.x = (this.bgLeft.x + this.bgLeft.width + this.bgCenter.width) - 2;
   }
 }

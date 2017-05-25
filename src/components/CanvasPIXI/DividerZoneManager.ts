@@ -82,7 +82,6 @@ export class DividerZoneManager extends PIXI.Container {
         this.allZones[i].destroy();
         removedZones.push(this.allZones[i]);
         newZoneCount -= 1;
-        //this.allZonesValue[i] = null;
       }
     }
     removedZones.forEach((zone) => {
@@ -98,7 +97,7 @@ export class DividerZoneManager extends PIXI.Container {
   }
 
   public start() {
-        // console.log('DividerZoneManager start');
+    // console.log('DividerZoneManager start');
     this.interactive = true;
     this.buttonMode = true;
     this.origin = new PIXI.Point(this.x, this.y);
@@ -113,6 +112,15 @@ export class DividerZoneManager extends PIXI.Container {
     this.off('pointerup', this.onDragEnd);
     this.off('pointerupoutside', this.onDragEnd);
     this.off('pointermove', this.onDragMove);
+  }
+
+  public reset() {
+    this.tweening = false;
+    this.dragging = false;
+    if (this.origin) {
+      this.x = this.origin.x;
+      this.y = this.origin.y;
+    }
   }
 
   private onDragStart(e) {
@@ -153,15 +161,6 @@ export class DividerZoneManager extends PIXI.Container {
 
   private backIntoPlaceDone() {
     TweenMax.delayedCall(0.2, () => { this.tweening = false; });
-  }
-
-  public reset() {
-    this.tweening = false;
-    this.dragging = false;
-    if (this.origin) {
-      this.x = this.origin.x;
-      this.y = this.origin.y;
-    }
   }
 
 }

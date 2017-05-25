@@ -3,6 +3,7 @@ import Texture = PIXI.Texture;
 import {PowerZoneManager} from "./PowerZoneManager";
 import Point = PIXI.Point;
 import { ParticleEmitter } from './ParticleEmitter';
+import Victor from 'victor';
 
 export class DotSprite extends PIXI.extras.AnimatedSprite{
   public dot: DotVO;
@@ -12,6 +13,9 @@ export class DotSprite extends PIXI.extras.AnimatedSprite{
   public dragging: boolean;
   public particleEmitter: ParticleEmitter;
   public originInMovingContainer: Point;
+  public vPosition: Victor;
+  public velocity: Victor;
+  public acceleration: Victor;
 
   constructor(textures: Texture[]) {
     super(textures);
