@@ -5,6 +5,7 @@ export class ParticleEmitter {
   private params: object;
   private emitter: Emitter;
   private elapsed: number;
+  private ticker: PIXI.ticker.Ticker;
 
   constructor(container, texture, params) {
     // console.log(container, texture, params, this.emitter);
@@ -15,14 +16,19 @@ export class ParticleEmitter {
             params,
         );
     this.emitter.addAtBack = true;
+    this.ticker = new PIXI.ticker.Ticker();
+    this.ticker.stop();
   }
 
   public start() {
     this.elapsed = Date.now();
-        // Start emitting
+    // Start emitting
     this.emitter.emit = true;
-        // Start the update
-    this.update();
+    // Start the update
+    this.ticker.add(() => {
+      this.update();
+    });
+    this.ticker.start();
   }
 
   public stop() {
@@ -40,14 +46,14 @@ export class ParticleEmitter {
   }
 
   private update() {
-        // Update the next frame
+    // Update the next frame
     if (this.emitter && this.emitter.emit) {
-      requestAnimationFrame(this.update.bind(this));
-      const now = Date.now();
-            // The emitter requires the elapsed
-            // number of seconds since the last update
-      this.emitter.update((now - this.elapsed) * 0.001);
-      this.elapsed = now;
+      // The emitter requires the elapsed
+      // number of seconds since the last update
+      this.emitter.update(this.ticker.elapsedMS * 0.001);
+    }else {
+      this.ticker.stop();
     }
   }
+
 }

@@ -187,8 +187,8 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public start() {
-    this.ticker.add((deltaTime) => {
-      this.animationCallback(deltaTime);
+    this.ticker.add(() => {
+      this.animationCallback();
     });
     this.ticker.start();
     // requestAnimationFrame(this.animationCallback.bind(this));
@@ -735,22 +735,6 @@ export class PowerZoneManager extends PIXI.Container {
       }
     }
   }
-
-  /*inititalPopulate(dots, isPositive) {
-    dots.forEach((zoneArray) => {
-      Object.keys(zoneArray).forEach((key) => {
-        const dotSprite = this.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
-        if (dotSprite) {
-          this.addDotSpriteProperty(zoneArray[key], dotSprite);
-          if (isPositive) {
-            this.allZones[zoneArray[key].powerZone].positiveProximityManager.addItem(dotSprite);
-          } else {
-            this.allZones[zoneArray[key].powerZone].negativeProximityManager.addItem(dotSprite);
-          }
-        }
-      });
-    });
-  }*/
 
   private addDotSpriteProperty(dot: DotVO, dotSprite: DotSprite) {
     dotSprite.anchor.set(0.5);
@@ -1310,8 +1294,7 @@ export class PowerZoneManager extends PIXI.Container {
     });
   }
 
-  private animationCallback(time?: number) {
-    // requestAnimationFrame(this.animationCallback.bind(this));
+  private animationCallback() {
     this.allZones.forEach((zone) => {
       zone.update();
     });
