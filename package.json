@@ -1,5 +1,5 @@
 {
-  "name": "scolab-component-exploding-dots",
+  "name": "@scolab/component-exploding-dots",
   "version": "0.0.4",
   "description": "Exploding dots component",
   "repository": {
