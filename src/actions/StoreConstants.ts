@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export const ACTIONS = {
   ADD_DOT: 'ADD_DOT',
   ADD_MULTIPLE_DOTS: 'ADD_MULTIPLE_DOTS',

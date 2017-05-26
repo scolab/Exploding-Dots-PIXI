@@ -1,22 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const BaseSelector = (props) => {
+interface IProps {
+  onClick: PropTypes.func.isRequired;
+  base: PropTypes.array.isRequired;
+}
+
+const BaseSelector = (props: IProps) => {
   return (
     <div className="topRightMenuItem">
       <button
         style={{
-          fontFamily: 'Noto Sans',
-          fontWeight: 'bold',
-          fontSize: 24,
           backgroundColor: '#efefef',
+          border: 'none',
           borderRadius: '23px',
-          width: '132px',
+          fontFamily: 'Noto Sans',
+          fontSize: 24,
+          fontWeight: 'bold',
           height: '46px',
-          verticalAlign: 'middle',
           textAlign: 'center',
           textVAlign: 'center',
-          border: 'none',
+          verticalAlign: 'middle',
+          width: '132px',
         }}
         type="button"
         onClick={props.onClick}
@@ -28,8 +33,3 @@ const BaseSelector = (props) => {
 };
 
 export default BaseSelector;
-
-BaseSelector.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  base: PropTypes.array.isRequired,
-};

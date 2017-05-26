@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const ActivityDescriptor = (props) => {
+interface IProps {
+  children: PropTypes.node;
+}
+const ActivityDescriptor = (props: IProps) => {
   return (
     <div
       style={{
@@ -12,10 +15,6 @@ const ActivityDescriptor = (props) => {
       {props.children}
     </div>
   );
-};
-
-ActivityDescriptor.propTypes = {
-  children: PropTypes.node,
 };
 
 export default ActivityDescriptor;

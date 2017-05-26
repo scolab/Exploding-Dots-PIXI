@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as url from 'url';
 import { storiesOf } from '@kadira/storybook';
 import ExplodingDots from '../containers/App';
-import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants.ts';
+import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 
 // FIXME : Found a better and more elegant solution
 function handleFullScreenToggle() {
@@ -14,7 +14,7 @@ function handleFullScreenToggle() {
 }
 
 storiesOf('Exploding Dots', module)
-    .addDecorator(story => (
+    .addDecorator((story) => (
       <div>
         <button onClick={handleFullScreenToggle}>Fullscreen</button>
         {story()}

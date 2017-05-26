@@ -6,7 +6,7 @@ import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, chan
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
     startActivity, startActivityDone, operatorChanged, error, userMessage,
     resetUserMessage, setDivisionResult } from '../../actions/';
-import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi.tsx';
+import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';
@@ -19,9 +19,10 @@ import Text from '../../components/Text';
 import GoButton from '../../components/GoButton';
 import ErrorDisplay from '../../components/ErrorDisplay';
 import MessageDisplay from '../../components/MessageDisplay';
-import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS } from '../../Constants.ts';
+import {USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE} from '../../Constants';
+import {DotVO} from "../../VO/DotVO";
 
-const DotsMachine = (props) => {
+const DotsMachine = (props: IProps) => {
   return (
     <div>
       <ErrorDisplay
@@ -91,11 +92,10 @@ const DotsMachine = (props) => {
           onClick={props.startActivityFunc}
           activityStarted={props.dotsMachine.machineState.activityStarted}
         />
-          }
+        }
       </ActivityDescriptor>
       <CanvasPIXI
         totalZoneCount={props.dotsMachine.machineState.zones}
-        dots={props.dotsMachine.dots}
         positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
         negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
         positiveDividerDots={props.dotsMachine.positiveDividerDots}
@@ -131,91 +131,97 @@ const DotsMachine = (props) => {
   );
 };
 
-DotsMachine.propTypes = {
-  addDot: PropTypes.func.isRequired,
-  removeDot: PropTypes.func.isRequired,
-  removeMultipleDots: PropTypes.func.isRequired,
-  rezoneDot: PropTypes.func.isRequired,
-  addMultipleDots: PropTypes.func.isRequired,
-  setDivisionResult: PropTypes.func.isRequired,
-  changeBase: PropTypes.func.isRequired,
-  resetMachine: PropTypes.func.isRequired,
-  showHidePlaceValue: PropTypes.func.isRequired,
-  activateMagicWand: PropTypes.func.isRequired,
-  operandChanged: PropTypes.func.isRequired,
-  operatorChanged: PropTypes.func.isRequired,
-  startActivityFunc: PropTypes.func.isRequired,
-  startActivityDoneFunc: PropTypes.func.isRequired,
-  error: PropTypes.func.isRequired,
-  userMessage: PropTypes.func.isRequired,
-  resetUserMessage: PropTypes.func.isRequired,
-  dotsMachine: PropTypes.shape({
-    dots: PropTypes.arrayOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    })),
-    positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerResult: PropTypes.array.isRequired,
-    negativeDividerResult: PropTypes.array.isRequired,
-    machineState: PropTypes.shape({
-      placeValueSwitchVisible: PropTypes.bool.isRequired,
-      baseSelectorVisible: PropTypes.bool.isRequired,
-      magicWandVisible: PropTypes.bool.isRequired,
-      magicWandIsActive: PropTypes.bool.isRequired,
-      resetVisible: PropTypes.bool.isRequired,
-      base: PropTypes.array.isRequired,
-      operator_mode: PropTypes.oneOf([
-        OPERATOR_MODE.DISPLAY,
-        OPERATOR_MODE.ADD,
-        OPERATOR_MODE.SUBTRACT,
-        OPERATOR_MODE.MULTIPLY,
-        OPERATOR_MODE.DIVIDE]).isRequired,
-      usage_mode: PropTypes.oneOf([
-        USAGE_MODE.EXERCISE,
-        USAGE_MODE.FREEPLAY,
-        USAGE_MODE.OPERATION,
-      ]),
-      zones: PropTypes.number.isRequired,
-      placeValueOn: PropTypes.bool.isRequired,
-      cdnBaseUrl: PropTypes.string.isRequired,
-      startActivity: PropTypes.bool.isRequired,
-      activityStarted: PropTypes.bool.isRequired,
-      operandA: PropTypes.string.isRequired,
-      operandB: PropTypes.string.isRequired,
-      errorMessage: PropTypes.string.isRequired,
-      userMessage: PropTypes.string.isRequired,
-      muted: PropTypes.bool.isRequired,
-      wantedResult: PropTypes.object.isRequired,
-    }),
-  }),
-};
+/*
+ totalZoneCount={props.dotsMachine.machineState.zones}
+ dots={props.dotsMachine.dots}
+ positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
+ negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
+ positiveDividerDots={props.dotsMachine.positiveDividerDots}
+ negativeDividerDots={props.dotsMachine.negativeDividerDots}
+ positiveDividerResult={props.dotsMachine.positiveDividerResult}
+ negativeDividerResult={props.dotsMachine.negativeDividerResult}
+ base={props.dotsMachine.machineState.base}
+ operator_mode={props.dotsMachine.machineState.operator_mode}
+ usage_mode={props.dotsMachine.machineState.usage_mode}
+ magicWandIsActive={props.dotsMachine.machineState.magicWandIsActive}
+ activateMagicWand={props.activateMagicWand}
+ addDot={props.addDot}
+ removeDot={props.removeDot}
+ rezoneDot={props.rezoneDot}
+ addMultipleDots={props.addMultipleDots}
+ removeMultipleDots={props.removeMultipleDots}
+ placeValueOn={props.dotsMachine.machineState.placeValueOn}
+ cdnBaseUrl={props.dotsMachine.machineState.cdnBaseUrl}
+ startActivityFunc={props.startActivityFunc}
+ startActivity={props.dotsMachine.machineState.startActivity}
+ startActivityDoneFunc={props.startActivityDoneFunc}
+ activityStarted={props.dotsMachine.machineState.activityStarted}
+ operandA={props.dotsMachine.machineState.operandA}
+ operandB={props.dotsMachine.machineState.operandB}
+ error={props.error}
+ displayUserMessage={props.userMessage}
+ userMessage={props.dotsMachine.machineState.userMessage}
+ muted={props.dotsMachine.machineState.muted}
+ wantedResult={props.dotsMachine.machineState.wantedResult}
+ setDivisionResult={props.setDivisionResult}
 
+ */
+
+interface IProps {
+  addDot: PropTypes.func;
+  removeDot: PropTypes.func;
+  removeMultipleDots: PropTypes.func;
+  rezoneDot: PropTypes.func;
+  addMultipleDots: PropTypes.func;
+  setDivisionResult: PropTypes.func;
+  changeBase: PropTypes.func;
+  resetMachine: PropTypes.func;
+  showHidePlaceValue: PropTypes.func;
+  activateMagicWand: PropTypes.func;
+  operandChanged: PropTypes.func;
+  operatorChanged: PropTypes.func;
+  startActivityFunc: PropTypes.func;
+  startActivityDoneFunc: PropTypes.func;
+  error: PropTypes.func;
+  userMessage: PropTypes.func;
+  resetUserMessage: PropTypes.func;
+  dotsMachine: {
+    dots: Array<{
+      x: number,
+      y: number,
+      powerZone: number,
+      id: string,
+      isPositive: boolean,
+    }>,
+    positivePowerZoneDots: DotVO[];
+    negativePowerZoneDots: DotVO[];
+    positiveDividerDots: IDividerDot[];
+    negativeDividerDots: IDividerDot[];
+    positiveDividerResult: number[];
+    negativeDividerResult: number[];
+    machineState: {
+      placeValueSwitchVisible: boolean;
+      baseSelectorVisible: boolean;
+      magicWandVisible: boolean;
+      magicWandIsActive: boolean;
+      resetVisible: boolean;
+      base: Array<number | string>;
+      operator_mode: IOPERATOR_MODE;
+      usage_mode: IUSAGE_MODE;
+      zones: number;
+      placeValueOn: boolean;
+      cdnBaseUrl: string;
+      startActivity: boolean;
+      activityStarted: boolean;
+      operandA: string;
+      operandB: string;
+      errorMessage: string;
+      userMessage: string;
+      muted: boolean;
+      wantedResult: IWantedResult;
+    };
+  };
+}
 
 const mapStateToProps = (store) => {
   return {
@@ -247,5 +253,5 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(DotsMachine);

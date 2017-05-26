@@ -48,7 +48,7 @@ export const changeBase = () => ({
   type: ACTIONS.BASE_CHANGED,
 });
 
-export const resetMachine = machineState => ({
+export const resetMachine = (machineState) => ({
   type: ACTIONS.RESET,
   machineState,
 });
@@ -57,7 +57,7 @@ export const showHidePlaceValue = () => ({
   type: ACTIONS.SHOW_HIDE_PLACE_VALUE,
 });
 
-export const activateMagicWand = active => ({
+export const activateMagicWand = (active) => ({
   type: ACTIONS.ACTIVATE_MAGIC_WAND,
   active,
 });
@@ -68,7 +68,7 @@ export const operandChanged = (operandPos, value) => ({
   value,
 });
 
-export const operatorChanged = value => ({
+export const operatorChanged = (value) => ({
   type: ACTIONS.OPERATOR_CHANGED,
   value,
 });
@@ -85,12 +85,12 @@ export const startActivityDone = (dotsInfo, totalA, totalB, divider) => ({
   divider,
 });
 
-export const error = errorMessage => ({
+export const error = (errorMessage) => ({
   type: ACTIONS.ERROR,
   errorMessage,
 });
 
-export const userMessage = message => ({
+export const userMessage = (message) => ({
   type: ACTIONS.USER_MESSAGE,
   message,
 });

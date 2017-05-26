@@ -3,22 +3,22 @@ import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
-export default class ErrorDisplay extends Component {
+interface IProps {
+  userMessage: string;
+  onClose: PropTypes.func.isRequired;
+}
 
-  static propTypes = {
-    errorMessage: PropTypes.string,
-    onClose: PropTypes.func.isRequired,
-  };
+export default class MessageDisplay extends Component<IProps, {}> {
 
-  render() {
-    if (this.props.errorMessage === '') {
+  public render() {
+    if (this.props.userMessage === '') {
       return null;
     }
     const actions = [
       <FlatButton
         label="OK"
         primary
-        onTouchTap={() => this.props.onClose()}
+        onTouchTap={this.props.onClose}
       />,
     ];
     return (
@@ -27,11 +27,12 @@ export default class ErrorDisplay extends Component {
           actions={actions}
           modal={false}
           open
-          onTouchTap={() => this.props.onClose()}
+          onRequestClose={this.props.onClose}
         >
-          {this.props.errorMessage}
+          {this.props.userMessage}
         </Dialog>
       </div>
     );
   }
 }
+

@@ -1,8 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { OPERATOR_MODE, USAGE_MODE, TEXT_COPY } from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
 
-const Text = (props) => {
+interface IProps {
+  operator_mode: IOPERATOR_MODE;
+  usage_mode: IUSAGE_MODE;
+}
+
+const Text = (props: IProps) => {
   let text = '';
   if (props.operator_mode === OPERATOR_MODE.DISPLAY) {
     if (props.usage_mode === USAGE_MODE.FREEPLAY) {
@@ -16,24 +20,11 @@ const Text = (props) => {
       className="operationItem"
       style={{
         fontFamily: 'Noto Sans',
-        fontWeight: 'bold',
         fontSize: 24,
+        fontWeight: 'bold',
       }}
     >{text}</div>
   );
-};
-
-Text.propTypes = {
-  operator_mode: PropTypes.oneOf([
-    OPERATOR_MODE.DISPLAY,
-    OPERATOR_MODE.ADD,
-    OPERATOR_MODE.SUBTRACT,
-    OPERATOR_MODE.MULTIPLY,
-    OPERATOR_MODE.DIVIDE]),
-  usage_mode: PropTypes.oneOf([
-    USAGE_MODE.OPERATION,
-    USAGE_MODE.FREEPLAY,
-    USAGE_MODE.EXERCISE]),
 };
 
 export default Text;

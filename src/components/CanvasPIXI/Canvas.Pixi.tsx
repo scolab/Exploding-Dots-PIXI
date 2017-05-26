@@ -12,18 +12,12 @@ import { randomFromTo } from '../../utils/MathUtils';
 import { replaceAt, superscriptToNormal } from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 
-interface IDividerDots {
-  powerZone: number;
-  id: string;
-  isPositive: boolean;
-}
-
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
   dotsPerZoneB: string[];
 }
 
-interface ICanvasPIXIProps {
+interface IProps {
   addDot: PropTypes.func.isRequired;
   addMultipleDots: PropTypes.func.isRequired;
   rezoneDot: PropTypes.func.isRequired;
@@ -35,8 +29,8 @@ interface ICanvasPIXIProps {
   startActivityDoneFunc: PropTypes.func.isRequired;
   positivePowerZoneDots: DotVO[];
   negativePowerZoneDots: DotVO[];
-  positiveDividerDots: IDividerDots[];
-  negativeDividerDots: IDividerDots[];
+  positiveDividerDots: IDividerDot[];
+  negativeDividerDots: IDividerDot[];
   positiveDividerResult: number[];
   negativeDividerResult: number[];
   base: Array<number | string>;
@@ -57,7 +51,7 @@ interface ICanvasPIXIProps {
   wantedResult: IWantedResult;
 }
 
-class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
+class CanvasPIXI extends Component<IProps, {}> {
   // eslint-disable-next-line no-unused-vars
   private static onAssetsError(loader?) {
     // TODO Do something
@@ -87,7 +81,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
   private loaderName: string = 'machineAssets';
   private textures: PIXI.loaders.TextureDictionary | undefined;
 
-  constructor(props: ICanvasPIXIProps) {
+  constructor(props: IProps) {
     super(props);
     this.isWebGL = false;
     this.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -155,7 +149,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
     this.loader.load();
   }
 
-  public shouldComponentUpdate(nextProps: ICanvasPIXIProps) {
+  public shouldComponentUpdate(nextProps: IProps) {
     // console.log('shouldComponentUpdate', nextProps);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
@@ -638,7 +632,7 @@ class CanvasPIXI extends Component<ICanvasPIXIProps, {}> {
     }
   }
 
-  private checkBaseChange(nextProps: ICanvasPIXIProps): void {
+  private checkBaseChange(nextProps: IProps): void {
     if (this.props.base !== nextProps.base) {
       this.powerZoneManager.doBaseChange(nextProps.base); // , nextProps.placeValueOn);
     }
