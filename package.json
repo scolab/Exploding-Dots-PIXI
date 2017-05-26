@@ -1,6 +1,6 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -63,7 +63,8 @@
     "redux": "^3.6.0",
     "victor": "^1.1.0"
   },
-  "main": "dist/containers/App.js",
+  "main": "dist/containers/App.server.js",
+  "browser": "dist/containers/App.client.js",
   "engines": {
     "node": "~6.9.0",
     "npm": "^3.0.0"
