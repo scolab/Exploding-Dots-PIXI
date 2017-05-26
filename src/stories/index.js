@@ -1,7 +1,7 @@
 import React from 'react';
 import url from 'url';
 import { storiesOf } from '@kadira/storybook';
-import ExplodingDots from '../containers/App';
+import ExplodingDots from '../containers/App.client';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 
 // FIXME : Found a better and more elegant solution

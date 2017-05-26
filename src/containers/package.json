@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "App",
+  "main": "./App.server.js",
+  "browser": "./App.client.js"
+}
