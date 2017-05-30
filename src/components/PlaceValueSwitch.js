@@ -6,7 +6,6 @@ const PlaceValueSwitch = (props) => {
   /* eslint-disable no-dupe-keys */
   return (
     <button
-      className="topRightMenuItem"
       style={{
         background: '#efefef', /* For browsers that do not support gradients */
         background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
@@ -21,6 +20,7 @@ const PlaceValueSwitch = (props) => {
         cursor: 'pointer',
         marginLeft: '10px',
         marginTop: '33px',
+        float:'right',
       }}
       type="button"
       onClick={() => props.onClick(true)}

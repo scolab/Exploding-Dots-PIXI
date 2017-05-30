@@ -35,11 +35,13 @@ export default class Operator extends Component {
         }
         return (
           <div
-            className="operationItem"
             style={{
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
               fontSize: 24,
+              marginTop: '30px',
+              marginLeft: '10px',
+              display: 'inline-block',
             }}
           >
             {text}
@@ -49,7 +51,6 @@ export default class Operator extends Component {
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
             <div
-              className="operationItem"
               style={{
                 fontFamily: 'Noto Sans',
                 fontWeight: 'bold',
@@ -66,6 +67,8 @@ export default class Operator extends Component {
                 lineHeight: '47px',
                 verticalAlign: 'middle',
                 marginTop: '-6px',
+                marginLeft: '10px',
+                display: 'inline-block',
               }}
             >&#43;</div>
           );
@@ -102,7 +105,6 @@ export default class Operator extends Component {
       case OPERATOR_MODE.SUBTRACT:
         return (
           <div
-            className="operationItem"
             style={{
               background: '#efefef', /* For browsers that do not support gradients */
               background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
@@ -118,6 +120,8 @@ export default class Operator extends Component {
               lineHeight: '47px',
               verticalAlign: 'middle',
               marginTop: '-6px',
+              marginLeft: '10px',
+              display: 'inline-block',
             }}
           >&#8722;</div>
         );
@@ -125,7 +129,6 @@ export default class Operator extends Component {
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
             <div
-              className="operationItem"
               style={{
                 background: '#efefef', /* For browsers that do not support gradients */
                 background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
@@ -141,6 +144,8 @@ export default class Operator extends Component {
                 lineHeight: '47px',
                 verticalAlign: 'middle',
                 marginTop: '-6px',
+                marginLeft: '10px',
+                display: 'inline-block',
               }}
             >
               <p style={{ marginTop: 3 }}>&#215;</p>
@@ -178,7 +183,6 @@ export default class Operator extends Component {
       case OPERATOR_MODE.DIVIDE:
         return (
           <div
-            className="operationItem"
             style={{
               background: '#efefef', /* For browsers that do not support gradients */
               background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
@@ -188,13 +192,14 @@ export default class Operator extends Component {
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
               fontSize: 32,
-                             // backgroundColor : '#efefef',
               borderRadius: '23px',
               width: '77px',
               height: '47px',
               lineHeight: '47px',
               verticalAlign: 'middle',
               marginTop: '-6px',
+              marginLeft: '10px',
+              display: 'inline-block',
             }}
           >&#247;</div>
         );

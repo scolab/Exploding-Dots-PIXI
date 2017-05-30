@@ -13,11 +13,13 @@ const Text = (props) => {
   }
   return (
     <div
-      className="operationItem"
       style={{
         fontFamily: 'Noto Sans',
         fontWeight: 'bold',
         fontSize: 24,
+        marginTop: '30px',
+        marginLeft: '10px',
+        display: 'inline-block',
       }}
     >{text}</div>
   );

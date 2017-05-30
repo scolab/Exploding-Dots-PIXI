@@ -1,9 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import img from './images/longArrowLeft.gif';
 
 const BaseSelector = (props) => {
+  const style = {
+    float:'right',
+    marginLeft: '10px',
+    marginTop: '33px',
+  };
   return (
-    <div className="topRightMenuItem">
+    <div style={style}>
       <button
         style={{
           fontFamily: 'Noto Sans',
@@ -17,11 +23,12 @@ const BaseSelector = (props) => {
           textAlign: 'center',
           textVAlign: 'center',
           border: 'none',
+          cursor: 'pointer',
         }}
         type="button"
         onClick={props.onClick}
       >
-        {props.base[0]} <i className="fa fa-long-arrow-left" /> {props.base[1]}
+        {props.base[0]} <img src={img} role="presentation" style={{ marginBottom: '1px', marginLeft: '3px', marginRight: '3px' }} /> {props.base[1]}
       </button>
     </div>
   );

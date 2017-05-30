@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import img from './images/arrow-right.gif';
 
 const GoButton = (props) => {
   if (props.activityStarted) {
     return (
       <button
         style={{
-          fontWeight: 'bold',
-          fontSize: 20,
           background: '#efefef', /* For browsers that do not support gradients */
           borderRadius: '25px',
           width: '47px',
@@ -22,18 +21,15 @@ const GoButton = (props) => {
         }}
         type="button"
       >
-        <i className="fa fa-arrow-right" />
+        <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
       </button>
     );
   }
+
   return (
     /* eslint-disable no-dupe-keys */
     <button
-      className="imageButton"
       style={{
-        fontWeight: 'bold',
-        fontSize: 20,
-          // backgroundColor : '#efefef',
         background: '#efefef', /* For browsers that do not support gradients */
         background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
         background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
@@ -46,11 +42,14 @@ const GoButton = (props) => {
         verticalAlign: 'middle',
         marginTop: '-6px',
         marginLeft: '10px',
+
+        border: 'none',
+        cursor: 'pointer',
       }}
       type="button"
       onClick={props.onClick}
     >
-      <i className="fa fa-arrow-right" />
+      <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
     </button>
   );
   /* eslint-enable */

@@ -11,8 +11,6 @@ import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
-import '../ExplodingDots.css';
-import '../font-awesome.min.css';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -21,7 +19,6 @@ try {
 } catch(e){
   // Preventing error if injectTapEventPlugin() is already call.
 }
-
 
 const store = createStore(rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ &&

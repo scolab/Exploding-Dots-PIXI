@@ -118,9 +118,14 @@ export default class Operand extends Component {
   }
 
   render() {
+    const style = {
+      marginTop: '30px',
+      marginLeft: '10px',
+      display: 'inline-block',
+    };
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
-        <div className="operationItem">
+        <div style={style}>
           <form onSubmit={this.onSubmit}>
             <input
               style={{
@@ -148,7 +153,7 @@ export default class Operand extends Component {
       const visible = this.props.operator_mode !== OPERATOR_MODE.DISPLAY;
       if (visible) {
         return (
-          <div className="operationItem">
+          <div style={style}>
             <form onSubmit={this.onSubmit}>
               <input
                 style={{
