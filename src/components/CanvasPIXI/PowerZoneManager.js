@@ -1213,14 +1213,18 @@ export class PowerZoneManager extends PIXI.Container {
   reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    this.allZones.forEach((zone) => {
-      zone.reset();
-    });
+    if(this.allZones) {
+      this.allZones.forEach((zone) => {
+        zone.reset();
+      });
+    }
     if (this.dividerZoneManager) {
       this.dividerZoneManager.reset();
     }
-    this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
-    this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    if(this.soundManager) {
+      this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
+      this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    }
   }
 
   destroy() {
