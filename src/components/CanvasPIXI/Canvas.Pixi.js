@@ -134,7 +134,8 @@ class CanvasPIXI extends Component {
         );
     this.state.stage.addChild(this.powerZoneManager);
     this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
-    window.addEventListener('resize', this.resize.bind(this));
+    this.bound_onResize = this.resize.bind(this);
+    window.addEventListener('resize', this.bound_onResize);
 
     this.loaderName = 'machineAssets';
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
@@ -212,6 +213,7 @@ class CanvasPIXI extends Component {
     if(this.state.app) {
       this.state.app.destroy(true);
     }
+    window.removeEventListener('resize', this.bound_onResize);
   }
 
   onAssetsLoaded(loader) {
@@ -649,11 +651,11 @@ class CanvasPIXI extends Component {
       w / SETTINGS.GAME_WIDTH,
       h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
         SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
-    this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-    this.state.renderer.resize(
-      Math.ceil(SETTINGS.GAME_WIDTH * ratio),
-      Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-          SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
+      this.state.stage.scale.x = this.state.stage.scale.y = ratio;
+      this.state.renderer.resize(
+        Math.ceil(SETTINGS.GAME_WIDTH * ratio),
+        Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
+            SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
   }
 
   calculateOperandRealValue(arr) {
