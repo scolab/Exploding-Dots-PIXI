@@ -92,7 +92,7 @@ class ExplodingDots extends Component {
   };
 
   constructor(props) {
-        // console.log('App constructor', props);
+    console.log('DotsMachine constructor', props);
     super(props);
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
