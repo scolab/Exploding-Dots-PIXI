@@ -24,8 +24,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DISPLAY}
         usage_mode={USAGE_MODE.FREEPLAY}
-        allBases={'MECHA'}
-        base={BASE.MECHA[0]}
+        allBases={'MECHANIA'}
+        base={BASE.MECHANIA[0]}
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
@@ -35,8 +35,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DISPLAY}
         usage_mode={USAGE_MODE.OPERATION}
-        allBases={BASE.MECHA}
-        base={BASE.MECHA[0]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[0]}
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
@@ -58,8 +58,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DISPLAY}
         usage_mode={USAGE_MODE.FREEPLAY}
-        allBases={BASE.MECHA}
-        base={BASE.MECHA[5]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[5]}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible={false}
@@ -69,8 +69,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DISPLAY}
         usage_mode={USAGE_MODE.OPERATION}
-        allBases={BASE.MECHA}
-        base={BASE.MECHA[4]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[4]}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible={false}

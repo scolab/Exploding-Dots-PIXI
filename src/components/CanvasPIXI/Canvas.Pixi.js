@@ -198,15 +198,20 @@ class CanvasPIXI extends Component {
       this.powerZoneManager.destroy();
     }
     this.powerZoneManager = null;
-    this.loader.destroy();
+    if(this.loader) {
+      this.loader.destroy();
+    }
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
     for (const key in this.textures) {
       this.textures[key].destroy(true);
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
-    // PIXI.utils.destroyTextureCache();
-    this.state.app.destroy(true);
+    if(PIXI.utils.TextureCache[hiddenTextureName]) {
+      PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
+    }
+    if(this.state.app) {
+      this.state.app.destroy(true);
+    }
   }
 
   onAssetsLoaded(loader) {
