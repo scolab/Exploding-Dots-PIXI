@@ -36,8 +36,6 @@ export class PowerZone extends PIXI.Container {
   base = [];
   totalZoneCount = 0;
   greyFilter = new PIXI.filters.ColorMatrixFilter();
-  redFilter = new PIXI.filters.ColorMatrixFilter();
-  greenFilter = new PIXI.filters.ColorMatrixFilter();
   maxDotsByZone = 0;
   dotsCounterContainer = null;
   negativeDotsCounterContainer = null;
@@ -76,8 +74,6 @@ export class PowerZone extends PIXI.Container {
     this.totalZoneCount = totalZoneCount;
     this.spritePool = spritePool;
     this.greyFilter.greyscale(0.3, true);
-    this.redFilter.night(2);
-    this.greenFilter.kodachrome(1);
     this.maxDotsByZone = negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
     this.eventEmitter = new EventEmitter();
     this.dotsCounterContainer = new DotCounter(

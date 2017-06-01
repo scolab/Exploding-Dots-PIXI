@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TweenMax } from 'gsap';
+import { ticker } from 'pixi.js';
 import { randomFromTo } from '../../utils/MathUtils';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { superscriptToNormal, replaceAt } from '../../utils/StringUtils';
@@ -8,6 +9,7 @@ import { BASE, OPERATOR_MODE, USAGE_MODE, SETTINGS, POSITION_INFO, ERROR_MESSAGE
 import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
+import VisibilitySensor from 'react-visibility-sensor';
 
 class CanvasPIXI extends Component {
   static propTypes = {
@@ -105,8 +107,10 @@ class CanvasPIXI extends Component {
     const options = {
       view: this.canvas,
       transparent: true,
+      //backgroundColor: 0xffffff,
       antialias: true,
       preserveDrawingBuffer: false,
+      clearBeforeRender: true,
       resolution: window.devicePixelRatio,
       autoResize: true,
     };
@@ -151,6 +155,31 @@ class CanvasPIXI extends Component {
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError());
     this.loader.load();
+    this.ticker = ticker.shared;
+    this.ticker.autoStart = false;
+    this.ticker.stop();
+  }
+
+  onVisibilityChange(isVisible) {
+    if(this.powerZoneManager) {
+      this.powerZoneManager.setVisibility(isVisible);
+    }
+    if(this.ticker) {
+      if (isVisible) {
+        this.ticker.start();
+        if(this.state.renderer) {
+          this.state.renderer.currentRenderer.start();
+          this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+        }
+      } else {
+        this.ticker.stop();
+        if(this.state.renderer) {
+          this.state.renderer.currentRenderer.stop();
+          this.state.renderer.plugins.interaction.destroy();
+        }
+      }
+    }
+    console.log('Element is now %s', isVisible ? 'visible' : 'hidden');
   }
 
   shouldComponentUpdate(nextProps) {
@@ -668,7 +697,17 @@ class CanvasPIXI extends Component {
 
   render() {
     return (
-      <canvas ref={(canvas) => { this.canvas = canvas; }} />
+      <div>
+        <VisibilitySensor
+          onChange={this.onVisibilityChange.bind(this)}
+          partialVisibility={true}
+          scrollCheck={true}
+          scrollThrottle={100}
+          intervalDelay={8000}
+        >
+          <canvas ref={(canvas) => { this.canvas = canvas; }} />
+        </VisibilitySensor>
+      </div>
     );
   }
 }

@@ -69,7 +69,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.dragParticleEmitterRed = null;
     this.dragParticleEmitterBlue = null;
     this.leftMostZone = null;
-    // window.addEventListener('keyup', this.traceValue.bind(this));
   }
 
   traceValue(e) {
@@ -119,6 +118,10 @@ export class PowerZoneManager extends PIXI.Container {
           this);
       this.dividerResult = new DividerResult();
     }
+  }
+
+  setVisibility(isVisible){
+    this.renderable = isVisible;
   }
 
   createLeftmostTestZone() {
