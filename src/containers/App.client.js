@@ -20,10 +20,6 @@ try {
   // Preventing error if injectTapEventPlugin() is already call.
 }
 
-const store = createStore(rootReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ &&
-    window.__REDUX_DEVTOOLS_EXTENSION__());
-
 const isDev = process.env.NODE_ENV === 'development';
 
 class ExplodingDots extends Component {
@@ -94,9 +90,12 @@ class ExplodingDots extends Component {
   constructor(props) {
     console.log('DotsMachine constructor', props);
     super(props);
+    this.store = createStore(rootReducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__());
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
-    store.dispatch({
+    this.store.dispatch({
       type: 'RESET',
       machineState: Object.assign({}, props),
     });
@@ -107,7 +106,7 @@ class ExplodingDots extends Component {
       fontFamily: 'Noto sans',
     });
     return (
-      <Provider store={store}>
+      <Provider store={this.store}>
         <MuiThemeProvider muiTheme={theme}>
           <div>
             <DotsMachine id="0" />
