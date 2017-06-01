@@ -6,11 +6,12 @@ import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { createStore } from 'redux';
+import { createStore, compose } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
+import instanceMapReducerEnhancer from '../reducers/InstanceMapReducerEnhancer'
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -20,9 +21,17 @@ try {
   // Preventing error if injectTapEventPlugin() is already call.
 }
 
-const store = createStore(rootReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ &&
-    window.__REDUX_DEVTOOLS_EXTENSION__());
+const enhancers = [
+  instanceMapReducerEnhancer
+];
+
+const composeEnhancers =
+  process.env.NODE_ENV !== 'production' &&
+  typeof window === 'object' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ?
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : compose;
+
+const store = createStore(rootReducer, composeEnhancers(...enhancers));
 
 const isDev = process.env.NODE_ENV === 'development';
 
