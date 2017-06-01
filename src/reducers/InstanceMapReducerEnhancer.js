@@ -12,5 +12,5 @@ export default function instanceMapReducerEnhancer(reducer, controlInstanceKeyRe
 }
 
 function defaultKeyResolver(action) {
-  return action.meta ? action.meta.controlInstanceKey : undefined;
+  return action && action.meta ? action.meta.controlInstanceKey : undefined;
 }
