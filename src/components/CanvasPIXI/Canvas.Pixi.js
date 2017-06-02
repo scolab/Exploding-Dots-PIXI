@@ -13,6 +13,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 
 class CanvasPIXI extends Component {
   static propTypes = {
+    title: PropTypes.string.isRequired,
     addDot: PropTypes.func.isRequired,
     addMultipleDots: PropTypes.func.isRequired,
     rezoneDot: PropTypes.func.isRequired,
@@ -114,7 +115,6 @@ class CanvasPIXI extends Component {
       resolution: window.devicePixelRatio,
       autoResize: true,
     };
-
     const preventWebGL = false;
     this.state.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
@@ -140,7 +140,6 @@ class CanvasPIXI extends Component {
     this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
     this.bound_onResize = this.resize.bind(this);
     window.addEventListener('resize', this.bound_onResize);
-
     this.loaderName = 'machineAssets';
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
@@ -155,31 +154,27 @@ class CanvasPIXI extends Component {
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError());
     this.loader.load();
-    this.ticker = ticker.shared;
-    this.ticker.autoStart = false;
-    this.ticker.stop();
+
   }
 
   onVisibilityChange(isVisible) {
-    if(this.powerZoneManager) {
-      this.powerZoneManager.setVisibility(isVisible);
-    }
-    if(this.ticker) {
+    if(this.state.app) {
       if (isVisible) {
-        this.ticker.start();
+        this.state.app.ticker.start();
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.start();
           this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
         }
       } else {
-        this.ticker.stop();
+        this.state.app.ticker.stop();
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.stop();
           this.state.renderer.plugins.interaction.destroy();
         }
       }
+    }else if (isVisible === false){
+      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
     }
-    console.log('Element is now %s', isVisible ? 'visible' : 'hidden');
   }
 
   shouldComponentUpdate(nextProps) {
@@ -702,7 +697,8 @@ class CanvasPIXI extends Component {
           onChange={this.onVisibilityChange.bind(this)}
           partialVisibility={true}
           scrollCheck={true}
-          scrollThrottle={100}
+          scrollDelay={250}
+          intervalCheck={true}
           intervalDelay={8000}
         >
           <canvas ref={(canvas) => { this.canvas = canvas; }} />

@@ -25,6 +25,7 @@ const isDev = process.env.NODE_ENV === 'development';
 class ExplodingDots extends Component {
 
   static PropTypes = {
+    title: PropTypes.string,
     base: PropTypes.array, // .isRequired,
     allBases: PropTypes.array || PropTypes.string,
     operator_mode: PropTypes.oneOf([
@@ -58,6 +59,7 @@ class ExplodingDots extends Component {
   };
 
   static defaultProps = {
+    title: 'default title',
     base: BASE.ARITHMOS[0],
     allBases: BASE.ARITHMOS,
     operator_mode: OPERATOR_MODE.DISPLAY,

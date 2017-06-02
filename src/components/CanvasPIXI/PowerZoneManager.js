@@ -120,10 +120,6 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  setVisibility(isVisible){
-    this.renderable = isVisible;
-  }
-
   createLeftmostTestZone() {
     this.leftMostZone = new PIXI.Container();
     this.leftMostZone.x = 0;
