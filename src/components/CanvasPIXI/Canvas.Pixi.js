@@ -164,12 +164,14 @@ class CanvasPIXI extends Component {
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.start();
           this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+          console.log(`Element ${this.props.title} is visible`);
         }
       } else {
         this.state.app.ticker.stop();
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.stop();
           this.state.renderer.plugins.interaction.destroy();
+          console.log(`Element ${this.props.title} is hidden`);
         }
       }
     }else if (isVisible === false){
@@ -669,8 +671,8 @@ class CanvasPIXI extends Component {
   }
 
   resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = Math.min(window.innerWidth, this.canvas.parentElement.offsetWidth);
+    const h = Math.min(window.innerHeight, this.canvas.parentElement.offsetHeight);
     const ratio = Math.min(
       w / SETTINGS.GAME_WIDTH,
       h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
