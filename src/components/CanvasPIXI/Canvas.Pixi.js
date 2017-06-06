@@ -672,16 +672,17 @@ class CanvasPIXI extends Component {
 
   resize() {
     const w = Math.min(window.innerWidth, this.canvas.parentElement.offsetWidth);
-    const h = Math.min(window.innerHeight, this.canvas.parentElement.offsetHeight);
-    const ratio = Math.min(
+    //const h = Math.min(window.innerHeight, this.canvas.parentElement.offsetHeight);
+    const ratio = w / SETTINGS.GAME_WIDTH;
+    /*const ratio = Math.min(
       w / SETTINGS.GAME_WIDTH,
       h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-        SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
-      this.state.stage.scale.x = this.state.stage.scale.y = ratio;
-      this.state.renderer.resize(
-        Math.ceil(SETTINGS.GAME_WIDTH * ratio),
-        Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-            SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
+        SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));*/
+    this.state.stage.scale.x = this.state.stage.scale.y = ratio;
+    this.state.renderer.resize(
+      Math.ceil(SETTINGS.GAME_WIDTH * ratio),
+      Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
+          SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
   }
 
   calculateOperandRealValue(arr) {
