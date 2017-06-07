@@ -10,6 +10,7 @@ import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import VisibilitySensor from 'react-visibility-sensor';
+import img from './images/placeholder.gif';
 
 class CanvasPIXI extends Component {
   static propTypes = {
@@ -163,14 +164,14 @@ class CanvasPIXI extends Component {
         this.state.app.ticker.start();
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.start();
-          this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+          //this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
           console.log(`Element ${this.props.title} is visible`);
         }
       } else {
         this.state.app.ticker.stop();
         if(this.state.renderer) {
           this.state.renderer.currentRenderer.stop();
-          this.state.renderer.plugins.interaction.destroy();
+          //this.state.renderer.plugins.interaction.destroy();
           console.log(`Element ${this.props.title} is hidden`);
         }
       }
@@ -262,7 +263,10 @@ class CanvasPIXI extends Component {
       this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
       this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);
       this.powerZoneManager.start();
-
+      this.canvasDiv.style.visibility = 'visible';
+      this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
+      this.canvasDiv.style.overflow = 'visible';
+      this.placeHolder.style.visibility = 'hidden';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
@@ -694,6 +698,7 @@ class CanvasPIXI extends Component {
   }
 
   render() {
+    console.log(this.state.app);
     return (
       <div>
         <VisibilitySensor
@@ -704,7 +709,27 @@ class CanvasPIXI extends Component {
           intervalCheck={true}
           intervalDelay={8000}
         >
-          <canvas ref={(canvas) => { this.canvas = canvas; }} />
+          <div>
+            <div
+              ref={(canvasDiv) => { this.canvasDiv = canvasDiv; }}
+              style={{
+                visibility:'hidden',
+                height: '1px',
+                overflow: 'hidden',
+              }}
+            >
+            <canvas
+              ref={(canvas) => { this.canvas = canvas; }}
+            />
+            </div>
+            <img
+              ref={(placeholder) => { this.placeHolder = placeholder; }}
+              src={img}
+              role="presentation"
+              style={{ width: '100%',
+                height: '100%',
+              }} />
+          </div>
         </VisibilitySensor>
       </div>
     );
