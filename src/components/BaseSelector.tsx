@@ -7,8 +7,9 @@ interface IProps {
 }
 
 const BaseSelector = (props: IProps) => {
+  const styles = require('./ExplodingDots.css');
   return (
-    <div className="topRightMenuItem">
+    <div className={styles.topRightMenuItem}>
       <button
         style={{
           backgroundColor: '#efefef',
@@ -26,7 +27,7 @@ const BaseSelector = (props: IProps) => {
         type="button"
         onClick={props.onClick}
       >
-        {props.base[0]} <i className="fa fa-long-arrow-left" /> {props.base[1]}
+        {props.base[0]} ⟵ {props.base[1]}
       </button>
     </div>
   );

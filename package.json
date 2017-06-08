@@ -1,6 +1,6 @@
 {
   "name": "Exploding-Dots",
-  "version": "0.0.0",
+  "version": "0.0.47",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -68,6 +68,7 @@
     "pixi-particles": "^2.1.4",
     "pixi.js": "^4.5.1",
     "prop-types": "^15.5.8",
+    "react-css-modules": "^4.3.0",
     "react-redux": "^5.0.1",
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",

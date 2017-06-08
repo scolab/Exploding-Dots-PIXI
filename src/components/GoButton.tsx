@@ -7,6 +7,7 @@ interface IProps {
 }
 
 const GoButton = (props: IProps) => {
+  const styles = require('./ExplodingDots.css');
   if (props.activityStarted) {
     return (
       <button
@@ -26,20 +27,19 @@ const GoButton = (props: IProps) => {
           visibility: 'hidden',
         }}
         type="button"
-      >
-        <i className="fa fa-arrow-right" />
+      >➔
       </button>
     );
   }
   return (
     /* eslint-disable no-dupe-keys */
     <button
-      className="gradientBackground"
+      className={styles.gradientBackground}
       style={{
         border: 'none',
         cursor: 'pointer',
-        fontWeight: 'bold',
         fontSize: 20,
+        fontWeight: 'bold',
         width: '47px',
         height: '47px',
         lineHeight: '47px',
@@ -49,8 +49,7 @@ const GoButton = (props: IProps) => {
       }}
       type="button"
       onClick={props.onClick}
-    >
-      <i className="fa fa-arrow-right" />
+    >➔
     </button>
   );
   /* eslint-enable */

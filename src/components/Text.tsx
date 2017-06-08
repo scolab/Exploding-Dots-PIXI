@@ -15,9 +15,10 @@ const Text = (props: IProps) => {
       text = TEXT_COPY.PUT;
     }
   }
+  const styles = require('./ExplodingDots.css');
   return (
     <div
-      className="operationItem"
+      className={styles.operationItem}
       style={{
         fontFamily: 'Noto Sans',
         fontSize: 24,

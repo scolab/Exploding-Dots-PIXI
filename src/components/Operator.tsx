@@ -14,6 +14,7 @@ interface IProps {
 export default class Operator extends Component<IProps, {}> {
 
   public render() {
+    const styles = require('./ExplodingDots.css');
     let text = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
@@ -24,7 +25,7 @@ export default class Operator extends Component<IProps, {}> {
         }
         return (
           <div
-            className="operationItem"
+            className={styles.operationItem}
             style={{
               fontFamily: 'Noto Sans',
               fontSize: 24,
@@ -37,25 +38,27 @@ export default class Operator extends Component<IProps, {}> {
       case OPERATOR_MODE.ADD:
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
-            <div
-              className="operationItem gradientBackground"
-              style={{
-                borderRadius: '23px',
-                fontFamily: 'Noto Sans',
-                fontSize: 32,
-                fontWeight: 'bold',
-                height: '47px',
-                lineHeight: '47px',
-                marginTop: '-6px',
-                verticalAlign: 'middle',
-                width: '77px',
-              }}
-            >&#43;</div>
+            <div className={styles.operationItem}>
+              <div
+                className={styles.gradientBackground}
+                style={{
+                  borderRadius: '23px',
+                  fontFamily: 'Noto Sans',
+                  fontSize: 32,
+                  fontWeight: 'bold',
+                  height: '47px',
+                  lineHeight: '47px',
+                  marginTop: '-6px',
+                  verticalAlign: 'middle',
+                  width: '77px',
+                }}
+              >&#43;</div>
+            </div>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
             <DropDownMenu
-              className="gradientBackground"
+              className={styles.gradientBackground}
               style={{
                 borderRadius: '23px',
                 height: '47px',
@@ -80,26 +83,9 @@ export default class Operator extends Component<IProps, {}> {
         break;
       case OPERATOR_MODE.SUBTRACT:
         return (
-          <div
-            className="operationItem gradientBackground"
-            style={{
-              fontFamily: 'Noto Sans',
-              fontWeight: 'bold',
-              fontSize: 32,
-              borderRadius: '23px',
-              width: '77px',
-              height: '47px',
-              lineHeight: '47px',
-              verticalAlign: 'middle',
-              marginTop: '-6px',
-            }}
-          >&#8722;</div>
-        );
-      case OPERATOR_MODE.MULTIPLY:
-        if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
-          return (
+          <div className={styles.operationItem}>
             <div
-              className="operationItem gradientBackground"
+              className={styles.gradientBackground}
               style={{
                 fontFamily: 'Noto Sans',
                 fontWeight: 'bold',
@@ -111,14 +97,35 @@ export default class Operator extends Component<IProps, {}> {
                 verticalAlign: 'middle',
                 marginTop: '-6px',
               }}
-            >
-              <p style={{ marginTop: 3 }}>&#215;</p>
+            >&#8722;</div>
+          </div>
+        );
+      case OPERATOR_MODE.MULTIPLY:
+        if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
+          return (
+            <div className={styles.operationItem}>
+              <div
+                className={styles.gradientBackground}
+                style={{
+                  fontFamily: 'Noto Sans',
+                  fontWeight: 'bold',
+                  fontSize: 32,
+                  borderRadius: '23px',
+                  width: '77px',
+                  height: '47px',
+                  lineHeight: '47px',
+                  verticalAlign: 'middle',
+                  marginTop: '-6px',
+                }}
+              >
+                <p style={{ marginTop: 3 }}>&#215;</p>
+              </div>
             </div>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
             <DropDownMenu
-              className="gradientBackground"
+              className={styles.gradientBackground}
               style={{
                 borderRadius: '23px',
                 marginLeft: '10px',
@@ -142,20 +149,22 @@ export default class Operator extends Component<IProps, {}> {
         break;
       case OPERATOR_MODE.DIVIDE:
         return (
-          <div
-            className="operationItem gradientBackground"
-            style={{
-              borderRadius: '23px',
-              fontFamily: 'Noto Sans',
-              fontSize: 32,
-              fontWeight: 'bold',
-              height: '47px',
-              lineHeight: '47px',
-              marginTop: '-6px',
-              verticalAlign: 'middle',
-              width: '77px',
-            }}
-          >&#247;</div>
+          <div className={styles.operationItem}>
+            <div
+              className={styles.gradientBackground}
+              style={{
+                borderRadius: '23px',
+                fontFamily: 'Noto Sans',
+                fontSize: 32,
+                fontWeight: 'bold',
+                height: '47px',
+                lineHeight: '47px',
+                marginTop: '-6px',
+                verticalAlign: 'middle',
+                width: '77px',
+              }}
+            >&#247;</div>
+          </div>
         );
       default:
         return null;

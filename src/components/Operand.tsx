@@ -27,9 +27,10 @@ export default class Operand extends Component<IProps, {}> {
   }
 
   public render() {
+    const styles = require('./ExplodingDots.css');
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
-        <div className="operationItem">
+        <div className={styles.operationItem}>
           <form onSubmit={this.onSubmit}>
             <input
               style={{
@@ -57,7 +58,7 @@ export default class Operand extends Component<IProps, {}> {
       const visible = this.props.operator_mode !== OPERATOR_MODE.DISPLAY;
       if (visible) {
         return (
-          <div className="operationItem">
+          <div className={styles.operationItem}>
             <form onSubmit={this.onSubmit}>
               <input
                 style={{
