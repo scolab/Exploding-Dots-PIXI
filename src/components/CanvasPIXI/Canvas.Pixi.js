@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { TweenMax } from 'gsap';
-import { ticker } from 'pixi.js';
 import { randomFromTo } from '../../utils/MathUtils';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { superscriptToNormal, replaceAt } from '../../utils/StringUtils';
@@ -155,7 +154,7 @@ class CanvasPIXI extends Component {
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError());
     this.loader.load();
-
+    this.resize();
   }
 
   onVisibilityChange(isVisible) {
@@ -266,7 +265,7 @@ class CanvasPIXI extends Component {
       this.canvasDiv.style.visibility = 'visible';
       this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
       this.canvasDiv.style.overflow = 'visible';
-      this.placeHolder.style.visibility = 'hidden';
+      this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
@@ -676,17 +675,17 @@ class CanvasPIXI extends Component {
 
   resize() {
     const w = Math.min(window.innerWidth, this.canvas.parentElement.offsetWidth);
-    //const h = Math.min(window.innerHeight, this.canvas.parentElement.offsetHeight);
     const ratio = w / SETTINGS.GAME_WIDTH;
-    /*const ratio = Math.min(
-      w / SETTINGS.GAME_WIDTH,
-      h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-        SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));*/
     this.state.stage.scale.x = this.state.stage.scale.y = ratio;
     this.state.renderer.resize(
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
+    if(this.placeHolder.style.visibility !== 'hidden'){
+      this.placeHolder.style.height = `${Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
+          SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio)}px`;
+    }
+    //console.log('resize', this.placeHolder.style.height);
   }
 
   calculateOperandRealValue(arr) {
@@ -698,7 +697,6 @@ class CanvasPIXI extends Component {
   }
 
   render() {
-    console.log(this.state.app);
     return (
       <div>
         <VisibilitySensor
@@ -726,8 +724,9 @@ class CanvasPIXI extends Component {
               ref={(placeholder) => { this.placeHolder = placeholder; }}
               src={img}
               role="presentation"
-              style={{ width: '100%',
-                height: '100%',
+              style={{
+                width: '100%',
+                height: '1px',
               }} />
           </div>
         </VisibilitySensor>
