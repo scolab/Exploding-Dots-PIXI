@@ -2,7 +2,7 @@ import DropDownMenu from 'material-ui/DropDownMenu'; // http://www.material-ui.c
 import MenuItem from 'material-ui/MenuItem'; // http://www.material-ui.com/
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { gradientBackground } from './StylesForComponents';
+import { gradientBackground, operationItem } from './StylesForComponents';
 import PropTypes from 'prop-types';
 import { OPERATOR_MODE, USAGE_MODE, TEXT_COPY } from '../Constants';
 
@@ -36,6 +36,10 @@ export default class Operator extends Component {
       ${gradientBackground}
     `;
 
+    const OperationDiv = styled.div`
+      ${operationItem}
+    `;
+
     let text = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
@@ -45,18 +49,15 @@ export default class Operator extends Component {
           text = TEXT_COPY.DOTS_COUNT;
         }
         return (
-          <div
+          <OperationDiv
             style={{
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
               fontSize: 24,
-              marginTop: '30px',
-              marginLeft: '10px',
-              display: 'inline-block',
             }}
           >
             {text}
-          </div>
+          </OperationDiv>
         );
       case OPERATOR_MODE.ADD:
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {

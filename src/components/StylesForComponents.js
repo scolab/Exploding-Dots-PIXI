@@ -11,3 +11,9 @@ export const topLeftElement = `
   margin-top: 33px;
   float: right;
 `;
+
+export const operationItem = `
+  margin-top: 30px;
+  margin-left: 10px;
+  display: inline-block;
+`;

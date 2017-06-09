@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { operationItem } from './StylesForComponents';
 import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE } from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
 
@@ -118,14 +120,14 @@ export default class Operand extends Component {
   }
 
   render() {
-    const style = {
-      marginTop: '30px',
-      marginLeft: '10px',
-      display: 'inline-block',
-    };
+
+    const OperationDiv = styled.div`
+      ${operationItem}
+    `;
+
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
-        <div style={style}>
+        <OperationDiv>
           <form onSubmit={this.onSubmit}>
             <input
               style={{
@@ -147,13 +149,13 @@ export default class Operand extends Component {
               }}
             />
           </form>
-        </div>
+        </OperationDiv>
       );
     } else if (this.props.pos === OPERAND_POS.RIGHT) {
       const visible = this.props.operator_mode !== OPERATOR_MODE.DISPLAY;
       if (visible) {
         return (
-          <div style={style}>
+          <OperationDiv>
             <form onSubmit={this.onSubmit}>
               <input
                 style={{
@@ -175,7 +177,7 @@ export default class Operand extends Component {
                 }}
               />
             </form>
-          </div>
+          </OperationDiv>
         );
       }
     }
