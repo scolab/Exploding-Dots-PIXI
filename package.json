@@ -63,6 +63,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "react-visibility-sensor": "^3.9.0",
     "redux": "^3.6.0",
+    "styled-components": "^2.0.1",
     "victor": "^1.1.0"
   },
   "main": "dist/containers/App.server.js",

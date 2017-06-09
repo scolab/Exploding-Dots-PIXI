@@ -1,6 +1,8 @@
 import DropDownMenu from 'material-ui/DropDownMenu'; // http://www.material-ui.com/
 import MenuItem from 'material-ui/MenuItem'; // http://www.material-ui.com/
 import React, { Component } from 'react';
+import styled from 'styled-components';
+import { gradientBackground } from './StylesForComponents';
 import PropTypes from 'prop-types';
 import { OPERATOR_MODE, USAGE_MODE, TEXT_COPY } from '../Constants';
 
@@ -25,6 +27,15 @@ export default class Operator extends Component {
 
   render() {
     /* eslint-disable no-dupe-keys */
+
+    const GradientBackgroundDiv = styled.div`
+      ${gradientBackground}
+    `;
+
+    const GradientBackgroundDropDown = styled(DropDownMenu)`
+      ${gradientBackground}
+    `;
+
     let text = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
@@ -50,17 +61,11 @@ export default class Operator extends Component {
       case OPERATOR_MODE.ADD:
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
-            <div
+            <GradientBackgroundDiv
               style={{
                 fontFamily: 'Noto Sans',
                 fontWeight: 'bold',
                 fontSize: 32,
-                                  // backgroundColor : '#efefef',
-                background: '#efefef', /* For browsers that do not support gradients */
-                background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
-                background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
-                background: '-moz-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Firefox 3.6 to 15 */
-                background: 'linear-gradient(to right, #f8f8f9, #e7e8e9)', /* Standard syntax */
                 borderRadius: '23px',
                 width: '77px',
                 height: '47px',
@@ -70,7 +75,7 @@ export default class Operator extends Component {
                 marginLeft: '10px',
                 display: 'inline-block',
               }}
-            >&#43;</div>
+            >&#43;</GradientBackgroundDiv>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
@@ -104,17 +109,11 @@ export default class Operator extends Component {
         break;
       case OPERATOR_MODE.SUBTRACT:
         return (
-          <div
+          <GradientBackgroundDiv
             style={{
-              background: '#efefef', /* For browsers that do not support gradients */
-              background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
-              background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
-              background: '-moz-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Firefox 3.6 to 15 */
-              background: 'linear-gradient(to right, #f8f8f9, #e7e8e9)', /* Standard syntax */
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
               fontSize: 32,
-              borderRadius: '23px',
               width: '77px',
               height: '47px',
               lineHeight: '47px',
@@ -123,22 +122,16 @@ export default class Operator extends Component {
               marginLeft: '10px',
               display: 'inline-block',
             }}
-          >&#8722;</div>
+          >&#8722;</GradientBackgroundDiv>
         );
       case OPERATOR_MODE.MULTIPLY:
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
-            <div
+            <GradientBackgroundDiv
               style={{
-                background: '#efefef', /* For browsers that do not support gradients */
-                background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
-                background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
-                background: '-moz-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Firefox 3.6 to 15 */
-                background: 'linear-gradient(to right, #f8f8f9, #e7e8e9)', /* Standard syntax */
                 fontFamily: 'Noto Sans',
                 fontWeight: 'bold',
                 fontSize: 32,
-                borderRadius: '23px',
                 width: '77px',
                 height: '47px',
                 lineHeight: '47px',
@@ -149,7 +142,7 @@ export default class Operator extends Component {
               }}
             >
               <p style={{ marginTop: 3 }}>&#215;</p>
-            </div>
+            </GradientBackgroundDiv>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
@@ -182,17 +175,11 @@ export default class Operator extends Component {
         break;
       case OPERATOR_MODE.DIVIDE:
         return (
-          <div
+          <GradientBackgroundDiv
             style={{
-              background: '#efefef', /* For browsers that do not support gradients */
-              background: '-webkit-linear-gradient(left, #f8f8f9, #e7e8e9)', /* For Safari 5.1 to 6.0 */
-              background: '-o-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Opera 11.1 to 12.0 */
-              background: '-moz-linear-gradient(right, #f8f8f9, #e7e8e9)', /* For Firefox 3.6 to 15 */
-              background: 'linear-gradient(to right, #f8f8f9, #e7e8e9)', /* Standard syntax */
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
               fontSize: 32,
-              borderRadius: '23px',
               width: '77px',
               height: '47px',
               lineHeight: '47px',
@@ -201,7 +188,7 @@ export default class Operator extends Component {
               marginLeft: '10px',
               display: 'inline-block',
             }}
-          >&#247;</div>
+          >&#247;</GradientBackgroundDiv>
         );
       default:
         return null;
