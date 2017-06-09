@@ -266,7 +266,7 @@ class CanvasPIXI extends Component {
       this.canvasDiv.style.visibility = 'visible';
       this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
       this.canvasDiv.style.overflow = 'visible';
-      this.placeHolder.style.visibility = 'hidden';
+      this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
