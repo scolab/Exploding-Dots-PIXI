@@ -11,21 +11,21 @@ import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
-import '../ExplodingDots.css';
-import '../font-awesome.min.css';
+
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin();
-
-const store = createStore(rootReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ &&
-    window.__REDUX_DEVTOOLS_EXTENSION__());
+try {
+  injectTapEventPlugin();
+} catch(e){
+  // Preventing error if injectTapEventPlugin() is already call.
+}
 
 const isDev = process.env.NODE_ENV === 'development';
 
 class ExplodingDots extends Component {
 
   static PropTypes = {
+    title: PropTypes.string,
     base: PropTypes.array, // .isRequired,
     allBases: PropTypes.array || PropTypes.string,
     operator_mode: PropTypes.oneOf([
@@ -59,6 +59,7 @@ class ExplodingDots extends Component {
   };
 
   static defaultProps = {
+    title: 'default title',
     base: BASE.ARITHMOS[0],
     allBases: BASE.ARITHMOS,
     operator_mode: OPERATOR_MODE.DISPLAY,
@@ -89,11 +90,14 @@ class ExplodingDots extends Component {
   };
 
   constructor(props) {
-        // console.log('App constructor', props);
+    console.log('DotsMachine constructor', props);
     super(props);
+    this.store = createStore(rootReducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__());
         // FIXME: find a way to use resetMachine
         // Initialize the default machineState values
-    store.dispatch({
+    this.store.dispatch({
       type: 'RESET',
       machineState: Object.assign({}, props),
     });
@@ -104,7 +108,7 @@ class ExplodingDots extends Component {
       fontFamily: 'Noto sans',
     });
     return (
-      <Provider store={store}>
+      <Provider store={this.store}>
         <MuiThemeProvider muiTheme={theme}>
           <div>
             <DotsMachine id="0" />

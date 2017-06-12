@@ -94,6 +94,7 @@ const DotsMachine = (props) => {
           }
       </ActivityDescriptor>
       <CanvasPIXI
+        title={props.dotsMachine.machineState.title}
         totalZoneCount={props.dotsMachine.machineState.zones}
         dots={props.dotsMachine.dots}
         positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
@@ -184,6 +185,7 @@ DotsMachine.propTypes = {
     positiveDividerResult: PropTypes.array.isRequired,
     negativeDividerResult: PropTypes.array.isRequired,
     machineState: PropTypes.shape({
+      title: PropTypes.string.isRequired,
       placeValueSwitchVisible: PropTypes.bool.isRequired,
       baseSelectorVisible: PropTypes.bool.isRequired,
       magicWandVisible: PropTypes.bool.isRequired,

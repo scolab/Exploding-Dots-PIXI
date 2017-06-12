@@ -1,2 +1,11 @@
 src
+circle.yml
+*.log
+.idea
 .babelrc
+.scripts
+.storybook
+.editorconfig
+.eslintrc
+.gitattributes
+.npmignore

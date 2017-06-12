@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { operationItem } from './StylesForComponents';
 import { OPERATOR_MODE, USAGE_MODE, TEXT_COPY } from '../Constants';
 
 const Text = (props) => {
@@ -11,15 +13,19 @@ const Text = (props) => {
       text = TEXT_COPY.PUT;
     }
   }
+
+  const OperationDiv = styled.div`
+      ${operationItem}
+    `;
+
   return (
-    <div
-      className="operationItem"
+    <OperationDiv
       style={{
         fontFamily: 'Noto Sans',
         fontWeight: 'bold',
         fontSize: 24,
       }}
-    >{text}</div>
+    >{text}</OperationDiv>
   );
 };
 

@@ -93,7 +93,6 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.dragParticleEmitterRed = null;
     this.dragParticleEmitterBlue = null;
     this.leftMostZone = null;
-    // window.addEventListener('keyup', this.traceValue.bind(this));
   }
 
   traceValue(e: SyntheticKeyboardEvent) {
@@ -316,7 +315,7 @@ export class PowerZoneManager extends window.PIXI.Container {
           y: finalPosition.y + (success ? 15 : 25),
           ease: Quint.easeOut,
           delay: 0.4,
-          onComplete: this.removeDotsAfterTween.bind(this),
+          onComplete: PowerZoneManager.removeDotsAfterTween.bind(this),
           onCompleteParams: [movingSprite],
         });
       });
@@ -381,7 +380,7 @@ export class PowerZoneManager extends window.PIXI.Container {
         y: finalPosition.y + 15,
         ease: Quint.easeOut,
         delay,
-        onComplete: this.removeDotsAfterTween.bind(this),
+        onComplete: PowerZoneManager.removeDotsAfterTween,
         onCompleteParams: [sprite],
       });
       delay += 0.1;
@@ -1242,49 +1241,55 @@ export class PowerZoneManager extends window.PIXI.Container {
   reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    this.allZones.forEach((zone) => {
-      zone.reset();
-    });
+    if(this.allZones) {
+      this.allZones.forEach((zone) => {
+        zone.reset();
+      });
+    }
     if (this.dividerZoneManager) {
       this.dividerZoneManager.reset();
     }
-    this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
-    this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    if(this.soundManager) {
+      this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
+      this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    }
   }
 
   destroy() {
     this.reset();
     this.ticker.stop();
     let key;
-    this.allZones.forEach((zone) => {
-      // eslint-disable-next-line no-restricted-syntax
-      for (key in zone.positiveDots) {
-        if (zone.positiveDots[key].sprite) {
-          this.removeDotSpriteListeners(zone.positiveDots[key].sprite);
+    if (this.allZones) {
+      this.allZones.forEach((zone) => {
+        // eslint-disable-next-line no-restricted-syntax
+        for (key in zone.positiveDots) {
+          if (zone.positiveDots[key].sprite) {
+            this.removeDotSpriteListeners(zone.positiveDots[key].sprite);
+          }
         }
-      }
-      // eslint-disable-next-line no-restricted-syntax
-      for (key in zone.negativeDots) {
-        if (zone.negativeDots[key].sprite) {
-          this.removeDotSpriteListeners(zone.negativeDots[key].sprite);
+        // eslint-disable-next-line no-restricted-syntax
+        for (key in zone.negativeDots) {
+          if (zone.negativeDots[key].sprite) {
+            this.removeDotSpriteListeners(zone.negativeDots[key].sprite);
+          }
         }
-      }
-      zone.eventEmitter.off(PowerZone.CREATE_DOT, this.createDot, this);
-      zone.eventEmitter.off(PowerZone.DIVIDER_OVERLOAD, this.balanceDivider, this);
-      zone.destroy();
-      if (this.dividerZoneManager) {
-        this.dividerZoneManager.stop();
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.START_DRAG,
-          this.precalculateForDivision,
-          this);
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.MOVED,
-          this.checkIfDivisionPossible,
-          this);
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.END_DRAG,
-          this.checkIfDivisionPossible,
-          this);
-      }
-    });
+        zone.eventEmitter.off(PowerZone.CREATE_DOT, this.createDot, this);
+        zone.eventEmitter.off(PowerZone.DIVIDER_OVERLOAD, this.balanceDivider, this);
+        zone.destroy();
+      });
+    }
+    if (this.dividerZoneManager) {
+      this.dividerZoneManager.stop();
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.START_DRAG,
+        this.precalculateForDivision,
+        this);
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.MOVED,
+        this.checkIfDivisionPossible,
+        this);
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.END_DRAG,
+        this.checkIfDivisionPossible,
+        this);
+    }
   }
 }
 

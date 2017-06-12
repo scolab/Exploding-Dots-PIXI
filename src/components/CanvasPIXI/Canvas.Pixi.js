@@ -10,6 +10,8 @@ import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import DotVO from '../../VO/DotVO';
+import VisibilitySensor from 'react-visibility-sensor';
+import img from './images/placeholder.gif';
 
 type PropsType = {
   addDot: PropTypes.func.isRequired,
@@ -47,72 +49,11 @@ type PropsType = {
     negativeDots: Array<number>, // eslint-disable-line react/no-unused-prop-types
     positiveDivider: Array<number>, // eslint-disable-line react/no-unused-prop-types
     negativeDivider: Array<number> // eslint-disable-line react/no-unused-prop-types
-  }
+  },
+  title: string,
 };
 
 class CanvasPIXI extends Component<void, PropsType, void> {
-
-  static propTypes = {
-    addDot: PropTypes.func.isRequired,
-    addMultipleDots: PropTypes.func.isRequired,
-    rezoneDot: PropTypes.func.isRequired,
-    removeDot: PropTypes.func.isRequired,
-    removeMultipleDots: PropTypes.func.isRequired,
-    setDivisionResult: PropTypes.func.isRequired,
-    activateMagicWand: PropTypes.func.isRequired,
-    startActivityFunc: PropTypes.func.isRequired,
-    startActivityDoneFunc: PropTypes.func.isRequired,
-    positivePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativePowerZoneDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      x: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      y: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    negativeDividerDots: PropTypes.arrayOf(React.PropTypes.objectOf(React.PropTypes.shape({
-      powerZone: PropTypes.number.isRequired, // eslint-disable-line react/no-unused-prop-types
-      id: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-      isPositive: PropTypes.bool.isRequired, // eslint-disable-line react/no-unused-prop-types
-    }))).isRequired,
-    positiveDividerResult: PropTypes.array.isRequired,
-    negativeDividerResult: PropTypes.array.isRequired,
-    base: PropTypes.array.isRequired,
-    operator_mode: PropTypes.oneOf([
-      OPERATOR_MODE.DISPLAY,
-      OPERATOR_MODE.ADD,
-      OPERATOR_MODE.SUBTRACT,
-      OPERATOR_MODE.MULTIPLY,
-      OPERATOR_MODE.DIVIDE]).isRequired,
-    usage_mode: PropTypes.oneOf([
-      USAGE_MODE.FREEPLAY,
-      USAGE_MODE.OPERATION,
-      USAGE_MODE.EXERCISE]),
-    placeValueOn: PropTypes.bool.isRequired,
-    cdnBaseUrl: PropTypes.string.isRequired,
-    totalZoneCount: PropTypes.number.isRequired,
-    magicWandIsActive: PropTypes.bool.isRequired,
-    startActivity: PropTypes.bool.isRequired,
-    activityStarted: PropTypes.bool.isRequired,
-    operandA: PropTypes.string.isRequired,
-    operandB: PropTypes.string.isRequired,
-    error: PropTypes.func.isRequired,
-    displayUserMessage: PropTypes.func.isRequired,
-    userMessage: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-    muted: PropTypes.bool.isRequired,
-    wantedResult: PropTypes.object.isRequired,
-  };
 
   // eslint-disable-next-line no-unused-vars
   static onAssetsError(loader: window.PIXI.loader) {
@@ -151,6 +92,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       transparent: true,
       antialias: true,
       preserveDrawingBuffer: false,
+      clearBeforeRender: true,
       resolution: window.devicePixelRatio,
       autoResize: true,
     };
@@ -179,7 +121,8 @@ class CanvasPIXI extends Component<void, PropsType, void> {
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof window.PIXI.WebGLRenderer;
-    window.addEventListener('resize', this.resize.bind(this));
+    this.bound_onResize = this.resize.bind(this);
+    window.addEventListener('resize', this.bound_onResize);
 
     // Load the spritesheet based on screen size
     this.loaderName = 'machineAssets';
@@ -196,6 +139,29 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError());
     this.loader.load();
+    this.resize();
+  }
+
+  onVisibilityChange(isVisible: boolean) {
+    if(this.app) {
+      if (isVisible) {
+        this.app.ticker.start();
+        if(this.renderer) {
+          this.renderer.currentRenderer.start();
+          //this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+          console.log(`Element ${this.props.title} is visible`);
+        }
+      } else {
+        this.app.ticker.stop();
+        if(this.renderer) {
+          this.renderer.currentRenderer.stop();
+          //this.state.renderer.plugins.interaction.destroy();
+          console.log(`Element ${this.props.title} is hidden`);
+        }
+      }
+    }else if (isVisible === false){
+      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
+    }
   }
 
   shouldComponentUpdate(nextProps: PropsType): boolean {
@@ -246,15 +212,21 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     if (this.powerZoneManager) {
       this.powerZoneManager.destroy();
     }
-    this.loader.destroy();
+    if(this.loader) {
+      this.loader.destroy();
+    }
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
     for (const key in this.textures) {
       this.textures[key].destroy(true);
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    window.PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
-    // PIXI.utils.destroyTextureCache();
-    this.app.destroy(true);
+    if(window.PIXI.utils.TextureCache[hiddenTextureName]) {
+      window.PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
+    }
+    if(this.app) {
+      this.app.destroy(true);
+    }
+    window.removeEventListener('resize', this.bound_onResize);
   }
 
   onAssetsLoaded(loader: window.PIXI.loader) {
@@ -275,7 +247,10 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
       this.powerZoneManager.start();
-
+      this.canvasDiv.style.visibility = 'visible';
+      this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
+      this.canvasDiv.style.overflow = 'visible';
+      this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
@@ -719,17 +694,18 @@ class CanvasPIXI extends Component<void, PropsType, void> {
   }
 
   resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const ratio = Math.min(
-      w / SETTINGS.GAME_WIDTH,
-      h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-        SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
+    const w = Math.min(window.innerWidth, this.canvas.parentElement.offsetWidth);
+    const ratio = w / SETTINGS.GAME_WIDTH;
     this.stage.scale.x = this.stage.scale.y = ratio;
     this.renderer.resize(
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
+    if(this.placeHolder.style.visibility !== 'hidden'){
+      this.placeHolder.style.height = `${Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
+          SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio)}px`;
+    }
+    //console.log('resize', this.placeHolder.style.height);
   }
 
   calculateOperandRealValue(arr: Array<number>): number {
@@ -754,10 +730,45 @@ class CanvasPIXI extends Component<void, PropsType, void> {
   textures: { string: window.PIXI.Texture };
   spritePool: SpritePool;
   renderer: window.PIXI.renderer;
+  bound_onResize: Function;
+  placeHolder: HTMLDivElement;
+  canvasDiv: HTMLImageElement;
 
   render(): React$Element<*> {
     return (
-      <canvas ref={(canvas: HTMLElement) => { this.canvas = canvas; }} />
+      <div>
+        <VisibilitySensor
+          onChange={this.onVisibilityChange.bind(this)}
+          partialVisibility={true}
+          scrollCheck={true}
+          scrollDelay={250}
+          intervalCheck={true}
+          intervalDelay={8000}
+        >
+          <div>
+            <div
+              ref={(canvasDiv) => { this.canvasDiv = canvasDiv; }}
+              style={{
+                visibility:'hidden',
+                height: '1px',
+                overflow: 'hidden',
+              }}
+            >
+            <canvas
+              ref={(canvas) => { this.canvas = canvas; }}
+            />
+            </div>
+            <img
+              ref={(placeholder) => { this.placeHolder = placeholder; }}
+              src={img}
+              role="presentation"
+              style={{
+                width: '100%',
+                height: '1px',
+              }} />
+          </div>
+        </VisibilitySensor>
+      </div>
     );
   }
 }

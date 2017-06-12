@@ -21,6 +21,8 @@ export class PowerZone extends window.PIXI.Container {
   negativeDots = {};
   positiveDotNotDisplayed = {};
   negativeDotNotDisplayed = {};
+  positiveDotCount: number;
+  negativeDotCount: number;
   positiveDivisionValue: string;
   negativeDivisionValue: string;
   positiveDotsContainer: window.PIXI.Container;
@@ -45,6 +47,9 @@ export class PowerZone extends window.PIXI.Container {
   spritePool: SpritePool;
   bgBox: window.PIXI.Sprite;
   bgBoxTextures = [];
+  positiveDivideCounter: window.PIXI.Sprite;
+  negativeDivideCounter: window.PIXI.Sprite;
+  placeValueText: window.PIXI.Text;
   placeValueExponent: window.PIXI.Text | undefined;
   textures: Object;
 
@@ -75,8 +80,6 @@ export class PowerZone extends window.PIXI.Container {
     this.totalZoneCount = totalZoneCount;
     this.spritePool = spritePool;
     this.greyFilter.greyscale(0.3, true);
-    this.redFilter.night(2);
-    this.greenFilter.kodachrome(1);
     this.maxDotsByZone = negativePresent ? MAX_DOT.MIX : MAX_DOT.ONLY_POSITIVE;
     this.eventEmitter = new EventEmitter();
     this.dotsCounterContainer = new DotCounter(
@@ -292,7 +295,7 @@ export class PowerZone extends window.PIXI.Container {
   }
 
   createDot(e: window.PIXI.interaction.InteractionEvent) {
-    // console.log('createDot', this.zonePosition);
+    console.log('createDot', this.zonePosition);
     const hitArea = e.target.hitArea;
     const clickPos = e.data.getLocalPosition(e.target);
     const clickModifiedPos = [];
