@@ -51,7 +51,9 @@ type PropsType = {
     positiveDivider: Array<number>, // eslint-disable-line react/no-unused-prop-types
     negativeDivider: Array<number> // eslint-disable-line react/no-unused-prop-types
   },
-  title: string
+  title: string,
+  guideFeedback: string,
+  guideReminder: string
 };
 
 class CanvasPIXI extends Component<void, PropsType, void> {
@@ -118,7 +120,9 @@ class CanvasPIXI extends Component<void, PropsType, void> {
             this.props.setDivisionResult,
             this.props.displayUserMessage,
             this.soundManager,
-            this.props.wantedResult
+            this.props.wantedResult,
+            this.props.guideReminder,
+            this.props.guideFeedback
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof window.PIXI.WebGLRenderer;

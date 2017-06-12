@@ -16,7 +16,7 @@ import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 // http://stackoverflow.com/a/34015469/988941
 try {
   injectTapEventPlugin();
-} catch(e){
+} catch (e) {
   // Preventing error if injectTapEventPlugin() is already call.
 }
 
@@ -55,7 +55,15 @@ class ExplodingDots extends Component {
     errorMessage: PropTypes.string,
     userMessage: PropTypes.string,
     muted: PropTypes.bool,
-    wantedResult: PropTypes.JSON,
+    wantedResult: PropTypes.objectOf(
+      React.PropTypes.shape({
+        positiveDots: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+        negativeDots: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+        positiveDivider: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+        negativeDivider: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
+      })),
+    guideReminder: PropTypes.string,
+    guideFeedback: PropTypes.string,
   };
 
   static defaultProps = {
@@ -87,6 +95,8 @@ class ExplodingDots extends Component {
       positiveDivider: [],
       negativeDivider: [],
     },
+    guideReminder: 'Reminder',
+    guideFeedback: 'Feedback',
   };
 
   constructor(props) {

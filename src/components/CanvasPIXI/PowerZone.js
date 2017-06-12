@@ -317,7 +317,7 @@ export class PowerZone extends window.PIXI.Container {
     this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target, clickModifiedPos, SPRITE_COLOR.RED);
   }
 
-  checkTextAndAlpha(doCheck: boolean) {
+  checkTextAndAlpha(doCheck: boolean): boolean {
     if (doCheck) {
       let positiveZoneIsEmpty = this.getZoneTextAndAlphaStatus(
         this.positiveDots,
@@ -368,7 +368,10 @@ export class PowerZone extends window.PIXI.Container {
     return false;
   }
 
-  getZoneTextAndAlphaStatus(dots: Object, counter: window.PIXI.Container, populate: boolean, isPositive: boolean) {
+  getZoneTextAndAlphaStatus(dots: Object,
+                            counter: window.PIXI.Container,
+                            populate: boolean,
+                            isPositive: boolean): boolean {
     // eslint-disable-next-line max-len
     // console.log('getZoneTextAndAlphaStatus', this.zonePosition, counter === this.dotsCounterContainer, populate, isPositive);
     let zoneAreEmpty = false;
@@ -388,7 +391,7 @@ export class PowerZone extends window.PIXI.Container {
   }
 
     // to show or hide divider text based on other divider
-  checkDivideResultText(doCheck: boolean) {
+  checkDivideResultText(doCheck: boolean): boolean{
         // console.log('checkDivideResultText', doCheck, this.zonePosition);
     if (this.positiveDividerText != null && this.negativeDividerText != null) {
       if (doCheck) {
@@ -421,7 +424,7 @@ export class PowerZone extends window.PIXI.Container {
     return false;
   }
 
-  getDividerTextStatus(dividerText: window.PIXI.Text, populate: boolean) {
+  getDividerTextStatus(dividerText: window.PIXI.Text, populate: boolean): boolean {
         // console.log('getDividerTextStatus', dividerText.text, populate);
     let zoneAreEmpty = false;
     if (dividerText.text === '0' || dividerText.text === '-0') {
@@ -432,9 +435,9 @@ export class PowerZone extends window.PIXI.Container {
     return zoneAreEmpty;
   }
 
-  addDot(dot: DotVO) {
+  addDot(dot: DotVO): window.PIXI.Sprite {
     // console.log('addDot', this.zonePosition);
-    let dotSprite;
+    let dotSprite: window.PIXI.Sprite;
     if (dot.isPositive) {
       dotSprite = this.doAddDot(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
       if (dotSprite) {
@@ -452,8 +455,8 @@ export class PowerZone extends window.PIXI.Container {
     return dotSprite;
   }
 
-  doAddDot(dot: DotVO, container: window.PIXI.Container, notDisplayed: Object) {
-    let dotSprite;
+  doAddDot(dot: DotVO, container: window.PIXI.Container, notDisplayed: Object): window.PIXI.Sprite {
+    let dotSprite: window.PIXI.Sprite;
     if (container.children.length < this.maxDotsByZone) {
       dotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
       container.addChild(dotSprite);

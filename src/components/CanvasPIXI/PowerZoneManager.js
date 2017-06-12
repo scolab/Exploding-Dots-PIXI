@@ -7,6 +7,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
+import { FeedbackDisplay } from './FeedbackDisplay';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
 import DotVO from '../../VO/DotVO';
@@ -47,7 +48,10 @@ export class PowerZoneManager extends window.PIXI.Container {
     displayUserMessage: (message: string) => void,
     soundManager: SoundManager,
     // eslint-disable-next-line max-len
-    wantedResult: {positiveDots: Array<number>, negativeDots: Array<number>, positiveDivider: Array<number>, negativeDivider: Array<number>}) {
+    wantedResult: {positiveDots: Array<number>, negativeDots: Array<number>, positiveDivider: Array<number>, negativeDivider: Array<number>},
+    guideReminder: string,
+    guideFeedback: string
+    ) {
     super();
     this.addDot = addDot;
     this.removeDot = removeDot;
@@ -59,6 +63,10 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.movingDotsContainer = new window.PIXI.Container();
     this.dividerZoneManager = null;
     this.dividerResult = null;
+    this.feedbackDisplay = new FeedbackDisplay(guideReminder, guideFeedback);
+    this.feedbackDisplay.x = 100;
+    this.feedbackDisplay.y = 320;
+    this.addChild(this.feedbackDisplay);
     this.soundManager = soundManager;
     // reverse all the wanted result so they are in the same order as our zone.
     wantedResult.positiveDots.reverse();
@@ -1234,19 +1242,31 @@ export class PowerZoneManager extends window.PIXI.Container {
       for (let i = 0; i < this.allZones.length; i += 1) {
         zone = this.allZones[i];
         zone.precalculateDotsForDivision();
-        if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
-                    this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
-                    this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
-                    this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
-                ) {
+        if (this.operator_mode === OPERATOR_MODE.DIVIDE) {
+          if (
+            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+            this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
+            this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
+            this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
+          ) {
+            zoneSuccess += 1;
+          }
+        } else if (
+            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+            this.wantedResult.negativeDots[i] === zone.negativeDotCount
+          ) {
           zoneSuccess += 1;
         }
       }
+      // console.log('checkResult', zoneSuccess, this.allZones.length);
       if (zoneSuccess === this.allZones.length) {
-        // console.log('SUCCESS!!!');
+        this.feedbackDisplay.showFeedback();
+      } else {
+        this.feedbackDisplay.showReminder();
       }
     }
   }
+
 
   reset() {
     // console.log('PowerZoneManager reset');
