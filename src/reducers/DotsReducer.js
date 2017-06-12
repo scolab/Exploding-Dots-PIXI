@@ -61,7 +61,7 @@ function setDotsCount(state) {
   }
 
   // add all positive value in order to the string
-  for (let i = positiveValue.length; i > 0; i -= 1) {
+  for (let i = positiveValue.length - 1; i >= 0; i -= 1) {
     toReturn += positiveValue[i];
   }
   // remove trailing + sign
@@ -74,7 +74,7 @@ function setDotsCount(state) {
     toReturn += '-';
   }
   // add all negative value in order to the string
-  for (let i = negativeValue.length; i > 0; i -= 1) {
+  for (let i = negativeValue.length - 1; i >= 0; i -= 1) {
     toReturn += negativeValue[i];
   }
         // remove trailing - sign
