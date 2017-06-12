@@ -1,6 +1,7 @@
  // @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import VisibilitySensor from 'react-visibility-sensor';
 import { TweenMax } from 'gsap';
 import { randomFromTo } from '../../utils/MathUtils';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
@@ -10,7 +11,7 @@ import { SpritePool } from '../../utils/SpritePool';
 import { PowerZoneManager } from './PowerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import DotVO from '../../VO/DotVO';
-import VisibilitySensor from 'react-visibility-sensor';
+
 import img from './images/placeholder.gif';
 
 type PropsType = {
@@ -27,8 +28,8 @@ type PropsType = {
   negativePowerZoneDots: Array<DotVO>,
   positiveDividerDots: Array<mixed>,
   negativeDividerDots: Array<mixed>,
-  positiveDividerResult: Array<mixed>,
-  negativeDividerResult: Array<mixed>,
+  positiveDividerResult: Array<number>,
+  negativeDividerResult: Array<number>,
   base: Array<number | string>,
   operator_mode: string,
   usage_mode: string,
@@ -50,7 +51,7 @@ type PropsType = {
     positiveDivider: Array<number>, // eslint-disable-line react/no-unused-prop-types
     negativeDivider: Array<number> // eslint-disable-line react/no-unused-prop-types
   },
-  title: string,
+  title: string
 };
 
 class CanvasPIXI extends Component<void, PropsType, void> {
@@ -121,8 +122,8 @@ class CanvasPIXI extends Component<void, PropsType, void> {
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof window.PIXI.WebGLRenderer;
-    this.bound_onResize = this.resize.bind(this);
-    window.addEventListener('resize', this.bound_onResize);
+    this.boundOnResize = this.resize.bind(this);
+    window.addEventListener('resize', this.boundOnResize);
 
     // Load the spritesheet based on screen size
     this.loaderName = 'machineAssets';
@@ -140,28 +141,6 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     this.loader.once('error', CanvasPIXI.onAssetsError());
     this.loader.load();
     this.resize();
-  }
-
-  onVisibilityChange(isVisible: boolean) {
-    if(this.app) {
-      if (isVisible) {
-        this.app.ticker.start();
-        if(this.renderer) {
-          this.renderer.currentRenderer.start();
-          //this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
-          console.log(`Element ${this.props.title} is visible`);
-        }
-      } else {
-        this.app.ticker.stop();
-        if(this.renderer) {
-          this.renderer.currentRenderer.stop();
-          //this.state.renderer.plugins.interaction.destroy();
-          console.log(`Element ${this.props.title} is hidden`);
-        }
-      }
-    }else if (isVisible === false){
-      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
-    }
   }
 
   shouldComponentUpdate(nextProps: PropsType): boolean {
@@ -212,7 +191,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
     if (this.powerZoneManager) {
       this.powerZoneManager.destroy();
     }
-    if(this.loader) {
+    if (this.loader) {
       this.loader.destroy();
     }
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
@@ -220,13 +199,36 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       this.textures[key].destroy(true);
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    if(window.PIXI.utils.TextureCache[hiddenTextureName]) {
+    if (window.PIXI.utils.TextureCache[hiddenTextureName]) {
       window.PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
     }
-    if(this.app) {
+    if (this.app) {
       this.app.destroy(true);
     }
-    window.removeEventListener('resize', this.bound_onResize);
+    window.removeEventListener('resize', this.boundOnResize);
+  }
+
+  onVisibilityChange(isVisible: boolean) {
+    if (this.app) {
+      if (isVisible) {
+        this.app.ticker.start();
+        if (this.renderer) {
+          this.renderer.currentRenderer.start();
+          // eslint-disable-next-line max-len
+          // this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+          console.log(`Element ${this.props.title} is visible`);
+        }
+      } else {
+        this.app.ticker.stop();
+        if (this.renderer) {
+          this.renderer.currentRenderer.stop();
+          // this.state.renderer.plugins.interaction.destroy();
+          console.log(`Element ${this.props.title} is hidden`);
+        }
+      }
+    } else if (isVisible === false) {
+      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
+    }
   }
 
   onAssetsLoaded(loader: window.PIXI.loader) {
@@ -694,6 +696,7 @@ class CanvasPIXI extends Component<void, PropsType, void> {
   }
 
   resize() {
+    // $FlowIgnore:
     const w = Math.min(window.innerWidth, this.canvas.parentElement.offsetWidth);
     const ratio = w / SETTINGS.GAME_WIDTH;
     this.stage.scale.x = this.stage.scale.y = ratio;
@@ -701,11 +704,11 @@ class CanvasPIXI extends Component<void, PropsType, void> {
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
-    if(this.placeHolder.style.visibility !== 'hidden'){
+    if (this.placeHolder.style.visibility !== 'hidden') {
       this.placeHolder.style.height = `${Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio)}px`;
     }
-    //console.log('resize', this.placeHolder.style.height);
+    // console.log('resize', this.placeHolder.style.height);
   }
 
   calculateOperandRealValue(arr: Array<number>): number {
@@ -729,10 +732,10 @@ class CanvasPIXI extends Component<void, PropsType, void> {
   stage: window.PIXI.stage;
   textures: { string: window.PIXI.Texture };
   spritePool: SpritePool;
+  boundOnResize: () => void;
+  placeHolder: HTMLImageElement;
+  canvasDiv: HTMLDivElement;
   renderer: window.PIXI.renderer;
-  bound_onResize: Function;
-  placeHolder: HTMLDivElement;
-  canvasDiv: HTMLImageElement;
 
   render(): React$Element<*> {
     return (
@@ -747,25 +750,26 @@ class CanvasPIXI extends Component<void, PropsType, void> {
         >
           <div>
             <div
-              ref={(canvasDiv) => { this.canvasDiv = canvasDiv; }}
+              ref={(canvasDiv: HTMLDivElement) => { this.canvasDiv = canvasDiv; }}
               style={{
-                visibility:'hidden',
+                visibility: 'hidden',
                 height: '1px',
                 overflow: 'hidden',
               }}
             >
-            <canvas
-              ref={(canvas) => { this.canvas = canvas; }}
-            />
+              <canvas
+                ref={(canvas: HTMLCanvasElement) => { this.canvas = canvas; }}
+              />
             </div>
             <img
-              ref={(placeholder) => { this.placeHolder = placeholder; }}
+              ref={(placeholder: HTMLImageElement) => { this.placeHolder = placeholder; }}
               src={img}
               role="presentation"
               style={{
                 width: '100%',
                 height: '1px',
-              }} />
+              }}
+            />
           </div>
         </VisibilitySensor>
       </div>

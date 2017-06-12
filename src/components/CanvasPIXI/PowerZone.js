@@ -53,7 +53,7 @@ export class PowerZone extends window.PIXI.Container {
   placeValueExponent: window.PIXI.Text | undefined;
   textures: Object;
 
-  static getDotsFromHash(hash, amount) {
+  static getDotsFromHash(hash, amount): Array<DotVO> {
     const allRemovedDots:Array<DotVO> = [];
     let toRemove = amount - 1;
     while (toRemove >= 0) {
@@ -836,8 +836,8 @@ export class PowerZone extends window.PIXI.Container {
     }
   }
 
-  getDotsForDivision(amount: number, isPositive: boolean) {
-    let dotsRemoved;
+  getDotsForDivision(amount: number, isPositive: boolean): Array<DotVO> {
+    let dotsRemoved: Array<DotVO> = [];
     if (isPositive) {
       if (Object.keys(this.positiveDots).length > amount - 1) {
         dotsRemoved = PowerZone.getDotsFromHash(this.positiveDots, amount);
@@ -848,10 +848,10 @@ export class PowerZone extends window.PIXI.Container {
     return dotsRemoved;
   }
 
-  setDivisionValue(positive: string, negative: string) {
+  setDivisionValue(positive: number | string, negative: number | string) {
         // console.log('setDivisionValue', this.zonePosition, positive);
-    this.positiveDivisionValue = positive;
-    this.negativeDivisionValue = negative;
+    this.positiveDivisionValue = positive.toString();
+    this.negativeDivisionValue = negative.toString();
     if (this.positiveDividerText !== null && this.negativeDividerText !== null) {
       this.positiveDividerText.text = this.positiveDivisionValue;
             // check if division value exceed base

@@ -1,4 +1,7 @@
 // @flow
+
+import { PowerZone } from '../components/CanvasPIXI/PowerZone';
+
 export default class DotVO {
   id: string;
   x: number;
@@ -7,4 +10,5 @@ export default class DotVO {
   isPositive: boolean;
   color: string;
   sprite: window.PIXI.AnimatedSprite;
+  powerZone: number;
 }

@@ -14,6 +14,7 @@ import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
 import redDragJSON from './dot_drag_red.json';
 import blueDragJSON from './dot_drag_blue.json';
+import ZoneUnderCursorVO from '../../VO/ZoneUnderCursorVO';
 
 // eslint-disable-next-line import/prefer-default-export
 export class PowerZoneManager extends window.PIXI.Container {
@@ -21,7 +22,8 @@ export class PowerZoneManager extends window.PIXI.Container {
   addDot: (zoneId: number, position: window.PIXI.Point, isPositive: boolean, color: string) => void;
   allZones: Array<PowerZone>;
   isInteractive: boolean;
-  pendingAction: Array<{function: (dotSprite: window.PIXI.AnimatedSprite, currentZone: number) => void,
+  // eslint-disable-next-line max-len
+  pendingAction: Array<{function: (dotSprite: window.PIXI.AnimatedSprite, currentZone: PowerZone) => void,
   params: Array<window.PIXI.AnimatedSprite | window.PIXI.Container>}>;
   explodeEmitter: Array<ParticleEmitter>;
   implodeEmitter: Array<ParticleEmitter>;
@@ -171,10 +173,12 @@ export class PowerZoneManager extends window.PIXI.Container {
     });
   }
 
-  checkIfDivisionPossible(data: window.PIXI.interaction.InteractionData, allZonesValue: Array<Array<number>>, isDragEnd: boolean = false) {
+  checkIfDivisionPossible(data: window.PIXI.interaction.InteractionData,
+                          allZonesValue: Array<Array<number>>,
+                          isDragEnd: boolean = false) {
         // console.log('checkIfDivisionPossible', allZonesValue);
     if (this.isInteractive) {
-      const zoneOverInfo: zoneUnderCursor = this.getZoneUnderCursor(data);
+      const zoneOverInfo: ZoneUnderCursorVO = this.getZoneUnderCursor(data);
       const droppedOnPowerZone = zoneOverInfo.droppedOnPowerZone;
       const droppedOnPowerZoneIndex = zoneOverInfo.droppedOnPowerZoneIndex;
 
@@ -227,7 +231,7 @@ export class PowerZoneManager extends window.PIXI.Container {
           }
           if (isDragEnd === true) {
             // apply division
-            this.allZones.forEach((zone) => {
+            this.allZones.forEach((zone: PowerZone) => {
               zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
             });
             if (success || antiSuccess) {
@@ -248,7 +252,11 @@ export class PowerZoneManager extends window.PIXI.Container {
     }
   }
 
-  applyDivision(success: boolean, antiSuccess: boolean, allZonesValue: Array<Array<number>>, droppedOnPowerZoneIndex: number, actualZone: PowerZone) {
+  applyDivision(success: boolean,
+                antiSuccess: boolean,
+                allZonesValue: Array<Array<number>>,
+                droppedOnPowerZoneIndex: number,
+                actualZone: PowerZone) {
     this.soundManager.playSound(SoundManager.DIVISION_SUCCESS);
     const dotsRemovedByZone: Array<Array<DotVO>> = [];
     for (let i = 0; i < this.totalZoneCount; i += 1) {
@@ -258,7 +266,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     // let moveToZone = droppedOnPowerZoneIndex;
     for (let i = 0; i < allZonesValue.length; i += 1) {
       let thisZoneDots = [];
-      const affectedZone = this.allZones[droppedOnPowerZoneIndex + i];
+      const affectedZone: PowerZone = this.allZones[droppedOnPowerZoneIndex + i];
       if (success) {
         thisZoneDots = thisZoneDots.concat(
           affectedZone.getDotsForDivision(allZonesValue[i][0],
@@ -282,7 +290,7 @@ export class PowerZoneManager extends window.PIXI.Container {
       dotsRemovedByZone[droppedOnPowerZoneIndex + i] = dotsRemovedByZone[droppedOnPowerZoneIndex + i].concat(thisZoneDots);// eslint-disable-line max-len
     }
     if (dotsToMove.length > 0) {
-      dotsToMove.forEach((dot) => {
+      dotsToMove.forEach((dot: DotVO) => {
         let newPosition = dot.sprite.parent.toGlobal(dot.sprite.position);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
         const movingSprite = this.spritePool.getOne(dot.color, dot.isPositive);
@@ -325,11 +333,13 @@ export class PowerZoneManager extends window.PIXI.Container {
     }
   }
 
-  static removeDotsAfterTween(sprite) {
+  static removeDotsAfterTween(sprite: window.PIXI.Sprite) {
     sprite.destroy();
   }
 
-  processDivisionAfterTween(dotsRemovedByZone: Array<Array<DotVO>>, moveToZone: PowerZone, isPositive: boolean) {
+  processDivisionAfterTween(dotsRemovedByZone: Array<Array<DotVO>>,
+                            moveToZone: PowerZone,
+                            isPositive: boolean) {
     for (let i = 0; i < dotsRemovedByZone.length; i += 1) {
       if (dotsRemovedByZone[i].length > 0) {
         this.removeMultipleDots(i, dotsRemovedByZone[i], false);
@@ -369,7 +379,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     newPosition = this.movingDotsContainer.toLocal(newPosition);
     finalPosition = this.movingDotsContainer.toLocal(finalPosition);
     let delay = 0;
-    allMovingDots.forEach((sprite) => {
+    allMovingDots.forEach((sprite: window.PIXI.Sprite) => {
       sprite.anchor.set(0.5);
       const position = sprite.position;
       position.x = newPosition.x + 15;
@@ -412,7 +422,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.isInteractive = true;
   }
 
-  createDot(target: PowerZone, position: Array<Number>, color: string) {
+  createDot(target: PowerZone, position: Array<number>, color: string) {
         // console.log(target.powerZone);
     if (this.isInteractive) {
       if (this.operator_mode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {
@@ -462,22 +472,6 @@ export class PowerZoneManager extends window.PIXI.Container {
       }
     }
   }
-
-  /*inititalPopulate(dots: Array<DotVO>, isPositive: boolean) {
-    dots.forEach((zoneArray) => {
-      Object.keys(zoneArray).forEach((key) => {
-        const dotSprite = this.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
-        if (dotSprite) {
-          this.addDotSpriteProperty(zoneArray[key], dotSprite);
-          if (isPositive) {
-            this.allZones[zoneArray[key].powerZone].positiveProximityManager.addItem(dotSprite);
-          } else {
-            this.allZones[zoneArray[key].powerZone].negativeProximityManager.addItem(dotSprite);
-          }
-        }
-      });
-    });
-  }*/
 
   addDotSpriteProperty(dot: DotVO, dotSprite: window.PIXI.Sprite) {
     dotSprite.anchor.set(0.5);
@@ -568,10 +562,11 @@ export class PowerZoneManager extends window.PIXI.Container {
     e.stopPropagation();
   }
 
-  verifyDroppedOnZone(dotSprite: window.PIXI.Sprite, data: window.PIXI.interaction.InteractionData) {
+  verifyDroppedOnZone(dotSprite: window.PIXI.Sprite,
+                      data: window.PIXI.interaction.InteractionData) {
         // console.log('verifyDroppedOnZone', dotSprite, data);
     const originalZoneIndex = dotSprite.dot.powerZone;
-    const zoneOverInfo = this.getZoneUnderCursor(data);
+    const zoneOverInfo: ZoneUnderCursorVO = this.getZoneUnderCursor(data);
     const droppedOnPowerZone = zoneOverInfo.droppedOnPowerZone;
     const droppedOnPowerZoneIndex = zoneOverInfo.droppedOnPowerZoneIndex;
     // console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
@@ -805,16 +800,20 @@ export class PowerZoneManager extends window.PIXI.Container {
     }
   }
 
-  getZoneUnderCursor(data: window.PIXI.interaction.InteractionData): zoneUnderCursor {
-    let droppedOnPowerZone: PowerZone;
+  // eslint-disable-next-line max-len
+  getZoneUnderCursor(data: window.PIXI.interaction.InteractionData): ZoneUnderCursorVO {
+    let droppedOnPowerZone: PowerZone = this.leftMostZone;
     let droppedOnPowerZoneIndex: number = -1;
-    let actualZone: PowerZone;
+    let actualZone: PowerZone | null = null;
         // verify dropped on left test zone
     let dataLocalZone = data.getLocalPosition(this.leftMostZone);
     if (isPointInRectangle(dataLocalZone, this.leftMostZone.hitArea)) {
-      droppedOnPowerZone = this.leftMostZone;
-
-      return new zoneUnderCursor(null, droppedOnPowerZone, droppedOnPowerZoneIndex);
+      // droppedOnPowerZone = this.leftMostZone;
+      const zoneUnderCursorVO: ZoneUnderCursorVO = new ZoneUnderCursorVO();
+      // zoneUnderCursorVO.actualZone = null;
+      zoneUnderCursorVO.droppedOnPowerZone = droppedOnPowerZone;
+      zoneUnderCursorVO.droppedOnPowerZoneIndex = droppedOnPowerZoneIndex;
+      return zoneUnderCursorVO;
     }
     this.allZones.forEach((zone: PowerZone) => {
       dataLocalZone = data.getLocalPosition(zone.positiveDotsContainer);
@@ -832,7 +831,13 @@ export class PowerZoneManager extends window.PIXI.Container {
         }
       }
     });
-    return new zoneUnderCursor(actualZone, droppedOnPowerZone, droppedOnPowerZoneIndex);
+    const zoneUnderCursorVO: ZoneUnderCursorVO = new ZoneUnderCursorVO();
+    zoneUnderCursorVO.actualZone = actualZone;
+    zoneUnderCursorVO.droppedOnPowerZone = droppedOnPowerZone;
+    zoneUnderCursorVO.droppedOnPowerZoneIndex = droppedOnPowerZoneIndex;
+    return zoneUnderCursorVO;
+    // return new ZoneUnderCursorVO(actualZone, droppedOnPowerZone, droppedOnPowerZoneIndex);
+    // return { actualZone, droppedOnPowerZone, droppedOnPowerZoneIndex };
   }
 
   backIntoPlace(dotSprite: window.PIXI.Sprite, currentZone: PowerZone) {
@@ -858,7 +863,10 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.isInteractive = true;
   }
 
-  addDraggedToNewZone(dotSprite: window.PIXI.Sprite, newZone: PowerZone, positionToBeMovedTo: window.PIXI.Point, updateValue: boolean) {
+  addDraggedToNewZone(dotSprite: window.PIXI.Sprite,
+                      newZone: PowerZone,
+                      positionToBeMovedTo: window.PIXI.Point,
+                      updateValue: boolean) {
         // console.log('addDraggedToNewZone', newZone.powerZone);
     newZone.addChild(dotSprite);
     const position = dotSprite.position;
@@ -1021,13 +1029,13 @@ export class PowerZoneManager extends window.PIXI.Container {
 
   doBaseChange(base: Array<number | string>, placeValueOn: boolean) {
     this.base = base;
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       zone.baseChange(base, placeValueOn);
     });
   }
 
   setValueTextAlpha(placeValueOn: boolean) {
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       zone.setValueTextAlpha(placeValueOn ? 1 : 0);
     });
   }
@@ -1085,7 +1093,8 @@ export class PowerZoneManager extends window.PIXI.Container {
     }
   }
 
-  removeDotsFromStateChange(positivePowerZoneDots: Array<DotVO>, negativePowerZoneDots: Array<DotVO>) {
+  removeDotsFromStateChange(positivePowerZoneDots: Array<DotVO>,
+                            negativePowerZoneDots: Array<DotVO>) {
     // console.log('removeDotsFromStateChange');
     for (let i = 0; i < this.allZones.length; i += 1) {
       /* console.log('removeDotsFromStateChange',
@@ -1096,7 +1105,7 @@ export class PowerZoneManager extends window.PIXI.Container {
         if (dotVO.sprite) {
           this.removeDotSpriteListeners(dotVO.sprite);
           this.spritePool.dispose(dotVO.sprite, dotVO.isPositive, dotVO.color);
-          dotVO.sprite = null;
+          dotVO.sprite = null; // eslint-disable-line no-param-reassign
         }
       });
       removedDots = this.allZones[i].removeDotsIfNeeded(negativePowerZoneDots[i], false);
@@ -1111,10 +1120,10 @@ export class PowerZoneManager extends window.PIXI.Container {
 
   checkIfNotDisplayedSpriteCanBe() {
     let addedDots = [];
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       addedDots = addedDots.concat(zone.checkIfNotDisplayedSpriteCanBe());
     });
-    addedDots.forEach((dot) => {
+    addedDots.forEach((dot: DotVO) => {
       this.addDotSpriteProperty(dot, dot.sprite);
     });
   }
@@ -1128,7 +1137,7 @@ export class PowerZoneManager extends window.PIXI.Container {
           positivePowerZoneDots[i],
           negativePowerZoneDots[i]));
     }
-    allDots.forEach((dot) => {
+    allDots.forEach((dot: DotVO) => {
       if (dot.sprite) {
         this.addDotSpriteProperty(dot, dot.sprite);
         if (dot.isPositive) {
@@ -1140,16 +1149,17 @@ export class PowerZoneManager extends window.PIXI.Container {
     });
   }
 
-  adjustDividerDotFromStateChange(positiveDividerDots: Array<mixed>, negativeDividerDots: Array<mixed>) {
+  adjustDividerDotFromStateChange(positiveDividerDots: Array<mixed>,
+                                  negativeDividerDots: Array<mixed>) {
     this.dividerZoneManager.removeDots(positiveDividerDots, negativeDividerDots);
     this.dividerZoneManager.addDots(positiveDividerDots, negativeDividerDots);
   }
 
-  populateDivideResult(positiveDividerResult: Array<mixed>, negativeDividerResult: Array<mixed>) {
-        // console.log('populateDivideResult', positiveDividerResult, negativeDividerResult);
+  populateDivideResult(positiveDividerResult: Array<number>, negativeDividerResult: Array<number>) {
+    // console.log('populateDivideResult', positiveDividerResult, negativeDividerResult);
     const positiveDots = [];
     const negativeDots = [];
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       positiveDots.push(Object.keys(zone.positiveDots).length);
       negativeDots.push(Object.keys(zone.negativeDots).length);
       zone.setDivisionValue(
@@ -1181,7 +1191,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     let overloadExist = false;
     let isSignInstability;
     let instabilityExist = false;
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       isOverload = zone.checkOvercrowding();
       if (overloadExist === false) {
         overloadExist = isOverload;
@@ -1207,7 +1217,7 @@ export class PowerZoneManager extends window.PIXI.Container {
 
   animationCallback() {
     // requestAnimationFrame(this.animationCallback.bind(this));
-    this.allZones.forEach((zone) => {
+    this.allZones.forEach((zone: PowerZone) => {
       zone.update();
     });
   }
@@ -1241,15 +1251,15 @@ export class PowerZoneManager extends window.PIXI.Container {
   reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    if(this.allZones) {
-      this.allZones.forEach((zone) => {
+    if (this.allZones) {
+      this.allZones.forEach((zone: PowerZone) => {
         zone.reset();
       });
     }
     if (this.dividerZoneManager) {
       this.dividerZoneManager.reset();
     }
-    if(this.soundManager) {
+    if (this.soundManager) {
       this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
       this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
     }
@@ -1260,7 +1270,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.ticker.stop();
     let key;
     if (this.allZones) {
-      this.allZones.forEach((zone) => {
+      this.allZones.forEach((zone: PowerZone) => {
         // eslint-disable-next-line no-restricted-syntax
         for (key in zone.positiveDots) {
           if (zone.positiveDots[key].sprite) {
@@ -1291,11 +1301,4 @@ export class PowerZoneManager extends window.PIXI.Container {
         this);
     }
   }
-}
-
-
-export class zoneUnderCursor {
-  droppedOnPowerZone: PowerZone;
-  droppedOnPowerZoneIndex: number;
-  actualZone: PowerZone;
 }
