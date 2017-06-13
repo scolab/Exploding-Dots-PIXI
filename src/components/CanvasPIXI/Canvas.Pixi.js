@@ -92,6 +92,7 @@ class CanvasPIXI extends Component {
 
   constructor(props) {
     super(props);
+    // console.log('constructor Canvas PIXI', this.props.title, props.operandA);
     this.state = {};
     this.state.isWebGL = false;
     this.state.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -104,7 +105,7 @@ class CanvasPIXI extends Component {
   }
 
   componentDidMount() {
-        // console.log('componentDidMount', this.state, this.props);
+    // console.log('componentDidMount', this.props.title, this.props.operandA);
     const options = {
       view: this.canvas,
       transparent: true,
@@ -180,7 +181,7 @@ class CanvasPIXI extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    // console.log('shouldComponentUpdate', nextProps);
+    // console.log('shouldComponentUpdate', this.props.title, nextProps.operandA, nextProps.startActivity);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
     }
@@ -243,6 +244,7 @@ class CanvasPIXI extends Component {
   }
 
   onAssetsLoaded(loader) {
+    // console.log('onAssetsLoaded', this.props.title, this.props.operandA);
     if (loader.resources.machineAssets.error === null) {
       this.textures = loader.resources.machineAssets.textures;
       this.spritePool = new SpritePool(this.textures);
@@ -259,8 +261,6 @@ class CanvasPIXI extends Component {
       this.powerZoneManager.createZones();
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
-      this.powerZoneManager.inititalPopulate(this.props.positivePowerZoneDots, true);
-      this.powerZoneManager.inititalPopulate(this.props.negativePowerZoneDots, false);
       this.powerZoneManager.start();
       this.canvasDiv.style.visibility = 'visible';
       this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
@@ -306,6 +306,7 @@ class CanvasPIXI extends Component {
        document.body.appendChild(img);*/
       this.props.activateMagicWand(false);
     } else if (this.props.startActivity) {
+      // console.log('Start Activity', this.props.title);
       // ************************************
       // ACTIVITY START
       // ************************************
@@ -555,6 +556,7 @@ class CanvasPIXI extends Component {
   }
 
   createDisplayDots(dotsPerZoneA) {
+    // console.log('createDisplayDots', dotsPerZoneA);
     let totalDot = 0;
     const dotsPos = [];
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {

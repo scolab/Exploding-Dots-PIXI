@@ -84,15 +84,17 @@ function setDotsCount(state) {
   return toReturn;
 }
 
-function setInitialState() {
-    // let dots = [];
+function setInitialState(title) {
+  if(initialMachineState[title] === undefined){
+    initialMachineState[title] = {};
+  }
   const positivePowerZoneDots = [];
   const negativePowerZoneDots = [];
   const positiveDividerDots = [];
   const negativeDividerDots = [];
   const positiveDividerResult = [];
   const negativeDividerResult = [];
-  for (let i = 0; i < (initialMachineState.zones || 0); i += 1) {
+  for (let i = 0; i < (initialMachineState[title].zones || 0); i += 1) {
     positivePowerZoneDots.push({});
     negativePowerZoneDots.push({});
     positiveDividerDots.push({});
@@ -108,25 +110,25 @@ function setInitialState() {
     negativeDividerDots,
     positiveDividerResult,
     negativeDividerResult,
-    machineState: initialMachineState,
+    machineState: initialMachineState[title],
   };
 }
 
 const dotsReducer = (state = null, action) => {
   if (state === null) {
-    return setInitialState();
+    return setInitialState('default');
   }
 
   let stateCopy;
     // console.log('dotsReducer', action.type);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
-      // console.log(ACTIONS.START_ACTIVITY);
+      // console.log(ACTIONS.START_ACTIVITY, state.machineState.title, state);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = true;
       return stateCopy;
     case ACTIONS.START_ACTIVITY_DONE:
-      // console.log(ACTIONS.START_ACTIVITY_DONE);
+      // console.log(ACTIONS.START_ACTIVITY_DONE, state.machineState.title, action.dotsInfo);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = true;
@@ -361,9 +363,10 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     }
     case ACTIONS.RESET:
-      // console.log(ACTIONS.RESET, action.machineState, setMachineState);
-      initialMachineState.operandA = '';
-      initialMachineState.operandB = '';
+      // console.log(ACTIONS.RESET, action.machineState.title, setMachineState);
+      initialMachineState[action.machineState.title] = {};
+      initialMachineState[action.machineState.title].operandA = '';
+      initialMachineState[action.machineState.title].operandB = '';
       if (action.machineState) { // we are at the start of an activity
                 // This is a hack for receiving the bases in a string format.
                 // Must be done here, before the props are read only
@@ -373,15 +376,15 @@ const dotsReducer = (state = null, action) => {
           action.machineState.allBases = BASE[action.machineState.allBases];
         }
         setMachineState = { ...action.machineState };
-        initialMachineState = { ...setMachineState };
+        initialMachineState[action.machineState.title] = { ...setMachineState };
       } else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE) {
         // reset button in Exercise mode, repopulate with starting value
-        initialMachineState = { ...setMachineState };
-        initialMachineState.startActivity = true;
+        initialMachineState[action.machineState.title] = { ...setMachineState };
+        initialMachineState[action.machineState.title].startActivity = true;
       }
-      initialMachineState.activityStarted = false;
-      initialMachineState.errorMessage = '';
-      return setInitialState();
+      initialMachineState[action.machineState.title].activityStarted = false;
+      initialMachineState[action.machineState.title].errorMessage = '';
+      return setInitialState(action.machineState.title);
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };

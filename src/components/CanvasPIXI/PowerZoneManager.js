@@ -434,22 +434,6 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  inititalPopulate(dots, isPositive) {
-    dots.forEach((zoneArray) => {
-      Object.keys(zoneArray).forEach((key) => {
-        const dotSprite = this.allZones[zoneArray[key].powerZone].addDot(zoneArray[key]);
-        if (dotSprite) {
-          this.addDotSpriteProperty(zoneArray[key], dotSprite);
-          if (isPositive) {
-            this.allZones[zoneArray[key].powerZone].positiveProximityManager.addItem(dotSprite);
-          } else {
-            this.allZones[zoneArray[key].powerZone].negativeProximityManager.addItem(dotSprite);
-          }
-        }
-      });
-    });
-  }
-
   addDotSpriteProperty(dot, dotSprite) {
     dotSprite.anchor.set(0.5);
     dotSprite.x = dot.x;// eslint-disable-line no-param-reassign
@@ -1091,7 +1075,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   addDotsFromStateChange(positivePowerZoneDots, negativePowerZoneDots) {
-        // console.log('addDotsFromStateChange1');
+    // console.log('addDotsFromStateChange', positivePowerZoneDots);
     let allDots = [];
     for (let i = 0; i < this.allZones.length; i += 1) {
       allDots = allDots.concat(
