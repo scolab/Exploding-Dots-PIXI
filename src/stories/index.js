@@ -48,7 +48,7 @@ storiesOf('Exploding Dots', module)
         usage_mode={USAGE_MODE.EXERCISE}
         allBases={BASE.MECHANIA}
         base={BASE.MECHANIA[5]}
-        operandA={"0|0|0|0|273"}
+        operandA={"1|0|273"}
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
