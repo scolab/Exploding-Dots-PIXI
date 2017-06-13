@@ -1,6 +1,6 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.0.49",
+  "version": "0.0.60",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -8,6 +8,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "flow": "flow",
     "lint": "eslint src",
     "lintfix": "eslint src --fix",
     "testonly": "mocha --require .scripts/mocha_runner src/**/tests/**/*.js",
@@ -27,6 +28,7 @@
     "babel-plugin-transform-inline-environment-variables": "^0.1.1",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-polyfill": "^6.13.0",
+    "babel-preset-flow": "^6.23.0",
     "babel-preset-react-app": "^0.2.1",
     "chai": "^3.5.0",
     "enzyme": "^2.2.0",
@@ -36,6 +38,7 @@
     "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.2",
     "eslint-plugin-react": "^6.3.0",
+    "flow-bin": "^0.48.0",
     "git-url-parse": "^6.0.1",
     "jsdom": "^9.5.0",
     "mocha": "^3.0.2",

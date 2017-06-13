@@ -50,7 +50,7 @@ export class PowerZone extends window.PIXI.Container {
   positiveDivideCounter: window.PIXI.Sprite;
   negativeDivideCounter: window.PIXI.Sprite;
   placeValueText: window.PIXI.Text;
-  placeValueExponent: window.PIXI.Text | undefined;
+  placeValueExponent: window.PIXI.Text | null;
   textures: Object;
 
   static getDotsFromHash(hash, amount): Array<DotVO> {

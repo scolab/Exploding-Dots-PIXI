@@ -100,7 +100,7 @@ class ExplodingDots extends Component {
   };
 
   constructor(props) {
-    console.log('DotsMachine constructor', props);
+    // console.log('DotsMachine constructor', props);
     super(props);
     this.store = createStore(rootReducer,
       window.__REDUX_DEVTOOLS_EXTENSION__ &&

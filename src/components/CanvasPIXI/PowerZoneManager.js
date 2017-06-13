@@ -168,8 +168,9 @@ export class PowerZoneManager extends window.PIXI.Container {
   }
 
   start() {
+    // eslint-disable-next-line no-unused-vars
     this.ticker.add((deltaTime: number) => {
-      this.animationCallback(deltaTime);
+      this.animationCallback();
     });
     this.ticker.start();
     // requestAnimationFrame(this.animationCallback.bind(this));
@@ -1035,10 +1036,10 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
   }
 
-  doBaseChange(base: Array<number | string>, placeValueOn: boolean) {
+  doBaseChange(base: Array<number | string>) {
     this.base = base;
     this.allZones.forEach((zone: PowerZone) => {
-      zone.baseChange(base, placeValueOn);
+      zone.baseChange(base);
     });
   }
 
@@ -1258,7 +1259,6 @@ export class PowerZoneManager extends window.PIXI.Container {
           zoneSuccess += 1;
         }
       }
-      // console.log('checkResult', zoneSuccess, this.allZones.length);
       if (zoneSuccess === this.allZones.length) {
         this.feedbackDisplay.showFeedback();
       } else {
@@ -1266,7 +1266,6 @@ export class PowerZoneManager extends window.PIXI.Container {
       }
     }
   }
-
 
   reset() {
     // console.log('PowerZoneManager reset');
