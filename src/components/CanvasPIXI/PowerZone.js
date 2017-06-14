@@ -23,8 +23,8 @@ export class PowerZone extends window.PIXI.Container {
   negativeDotNotDisplayed = {};
   positiveDotCount: number;
   negativeDotCount: number;
-  positiveDivisionValue: string;
-  negativeDivisionValue: string;
+  positiveDivisionValue: number;
+  negativeDivisionValue: number;
   positiveDotsContainer: window.PIXI.Container;
   negativeDotsContainer: window.PIXI.Container;
   positiveDividerText: window.PIXI.Text;
@@ -851,14 +851,15 @@ export class PowerZone extends window.PIXI.Container {
     return dotsRemoved;
   }
 
-  setDivisionValue(positive: number | string, negative: number | string) {
-        // console.log('setDivisionValue', this.zonePosition, positive);
-    this.positiveDivisionValue = positive.toString();
-    this.negativeDivisionValue = negative.toString();
+  setDivisionValue(positive: number, negative: number) {
+    // console.log('setDivisionValue', this.zonePosition, positive);
+    this.positiveDivisionValue = positive;
+    this.negativeDivisionValue = negative;
     if (this.positiveDividerText !== null && this.negativeDividerText !== null) {
       this.positiveDividerText.text = this.positiveDivisionValue;
             // check if division value exceed base
-      if (this.base[1] !== BASE.BASE_X && this.positiveDivisionValue >= this.base[1]) {
+      if (this.base[1] !== BASE.BASE_X &&
+          parseInt(this.positiveDivisionValue, 10) >= this.base[1]) {
         if (this.zonePosition !== this.totalZoneCount - 1) {
                     // do animate if not the leftmost box
           this.positiveDivideCounter.texture = this.textures['dot_div_value_r.png'];
@@ -871,7 +872,7 @@ export class PowerZone extends window.PIXI.Container {
           this.positiveDividerText.style.fill = 0xff0000;
         }
       }
-      if (this.negativeDivisionValue !== 0) {
+      if (parseInt(this.negativeDivisionValue, 10) !== 0) {
         this.negativeDividerText.text = `-${this.negativeDivisionValue}`;
       } else {
         this.negativeDividerText.text = this.negativeDivisionValue;
