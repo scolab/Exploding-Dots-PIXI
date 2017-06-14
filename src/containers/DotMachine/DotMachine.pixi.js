@@ -27,6 +27,7 @@ const DotsMachine = (props) => {
       <ErrorDisplay
         errorMessage={props.dotsMachine.machineState.errorMessage}
         onClose={props.resetMachine}
+        title={props.dotsMachine.machineState.title}
       />
       <MessageDisplay
         userMessage={props.dotsMachine.machineState.userMessage}
@@ -51,7 +52,7 @@ const DotsMachine = (props) => {
                     }
         {props.dotsMachine.machineState.resetVisible === true &&
           <ResetButton
-            onClick={() => props.resetMachine()}
+            onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
           />
                     }
       </TopMenuItem>
@@ -127,6 +128,8 @@ const DotsMachine = (props) => {
         muted={props.dotsMachine.machineState.muted}
         wantedResult={props.dotsMachine.machineState.wantedResult}
         setDivisionResult={props.setDivisionResult}
+        guideReminder={props.dotsMachine.machineState.guideReminder}
+        guideFeedback={props.dotsMachine.machineState.guideFeedback}
       />
     </div>
   );
@@ -214,6 +217,8 @@ DotsMachine.propTypes = {
       userMessage: PropTypes.string.isRequired,
       muted: PropTypes.bool.isRequired,
       wantedResult: PropTypes.object.isRequired,
+      guideReminder: PropTypes.string,
+      guideFeedback: PropTypes.string,
     }),
   }),
 };

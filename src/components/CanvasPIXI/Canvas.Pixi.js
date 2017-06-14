@@ -73,6 +73,8 @@ class CanvasPIXI extends Component {
     userMessage: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
     muted: PropTypes.bool.isRequired,
     wantedResult: PropTypes.object.isRequired,
+    guideFeedback: PropTypes.string.isRequired,
+    guideReminder: PropTypes.string.isRequired,
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -135,12 +137,14 @@ class CanvasPIXI extends Component {
             this.props.setDivisionResult,
             this.props.displayUserMessage,
             this.soundManager,
-            this.props.wantedResult
+            this.props.wantedResult,
+            this.props.guideReminder,
+            this.props.guideFeedback
         );
     this.state.stage.addChild(this.powerZoneManager);
     this.state.isWebGL = this.state.renderer instanceof PIXI.WebGLRenderer;
-    this.bound_onResize = this.resize.bind(this);
-    window.addEventListener('resize', this.bound_onResize);
+    this.boundOnResize = this.resize.bind(this);
+    window.addEventListener('resize', this.boundOnResize);
     this.loaderName = 'machineAssets';
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
@@ -158,24 +162,24 @@ class CanvasPIXI extends Component {
     this.resize();
   }
 
-  onVisibilityChange(isVisible) {
-    if(this.state.app) {
+  onVisibilityChange (isVisible) {
+    if (this.state.app) {
       if (isVisible) {
         this.state.app.ticker.start();
-        if(this.state.renderer) {
+        if (this.state.renderer) {
           this.state.renderer.currentRenderer.start();
-          //this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
+          // this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
           // console.log(`Element ${this.props.title} is visible`);
         }
       } else {
         this.state.app.ticker.stop();
-        if(this.state.renderer) {
+        if (this.state.renderer) {
           this.state.renderer.currentRenderer.stop();
           //this.state.renderer.plugins.interaction.destroy();
           // console.log(`Element ${this.props.title} is hidden`);
         }
       }
-    }else if (isVisible === false){
+    } else if (isVisible === false) {
       setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
     }
   }
@@ -226,7 +230,7 @@ class CanvasPIXI extends Component {
       this.powerZoneManager.destroy();
     }
     this.powerZoneManager = null;
-    if(this.loader) {
+    if (this.loader) {
       this.loader.destroy();
     }
     // eslint-disable-next-line guard-for-in, no-restricted-syntax
@@ -234,13 +238,13 @@ class CanvasPIXI extends Component {
       this.textures[key].destroy(true);
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    if(PIXI.utils.TextureCache[hiddenTextureName]) {
+    if (PIXI.utils.TextureCache[hiddenTextureName]) {
       PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
     }
-    if(this.state.app) {
+    if (this.state.app) {
       this.state.app.destroy(true);
     }
-    window.removeEventListener('resize', this.bound_onResize);
+    window.removeEventListener('resize', this.boundOnResize);
   }
 
   onAssetsLoaded(loader) {

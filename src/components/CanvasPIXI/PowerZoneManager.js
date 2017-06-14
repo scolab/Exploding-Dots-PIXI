@@ -6,6 +6,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
+import { FeedbackDisplay } from './FeedbackDisplay';
 import { SoundManager } from '../../utils/SoundManager';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
@@ -22,7 +23,10 @@ export class PowerZoneManager extends PIXI.Container {
               setDivisionResult,
               displayUserMessage,
               soundManager,
-              wantedResult) {
+              wantedResult,
+              guideReminder,
+              guideFeedback
+    ) {
     super();
     this.addDot = addDot;
     this.removeDot = removeDot;
@@ -34,6 +38,10 @@ export class PowerZoneManager extends PIXI.Container {
     this.movingDotsContainer = new PIXI.Container();
     this.dividerZoneManager = null;
     this.dividerResult = null;
+    this.feedbackDisplay = new FeedbackDisplay(guideReminder, guideFeedback);
+    this.feedbackDisplay.x = 100;
+    this.feedbackDisplay.y = 350;
+    this.addChild(this.feedbackDisplay);
     this.soundManager = soundManager;
     // reverse all the wanted result so they are in the same order as our zone.
     wantedResult.positiveDots.reverse();
@@ -988,7 +996,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   checkPendingAction(nextProps) {
     // console.log('checkPendingAction', nextProps, nextProps.userMessage);
-    if (nextProps.userMessage === '') {
+    if (nextProps.userMessage === '' && this.pendingAction) {
       while (this.pendingAction.length > 0) {
         const action = this.pendingAction.shift();
         action.function.apply(this, action.params);
@@ -1127,7 +1135,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.dividerZoneManager.start();
 
     this.dividerResult.x = 100;
-    this.dividerResult.y = 375;
+    this.dividerResult.y = 400;
     this.addChild(this.dividerResult);
   }
 
@@ -1187,8 +1195,11 @@ export class PowerZoneManager extends PIXI.Container {
           zoneSuccess += 1;
         }
       }
+      console.log(zoneSuccess);
       if (zoneSuccess === this.allZones.length) {
-        // console.log('SUCCESS!!!');
+        this.feedbackDisplay.showFeedback();
+      } else {
+        this.feedbackDisplay.showReminder();
       }
     }
   }

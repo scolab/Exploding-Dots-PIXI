@@ -121,10 +121,6 @@ export default class Operand extends Component {
 
   render() {
 
-    const OperationDiv = styled.div`
-      ${operationItem}
-    `;
-
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
@@ -184,3 +180,6 @@ export default class Operand extends Component {
     return null;
   }
 }
+const OperationDiv = styled.div`
+      ${operationItem}
+    `;

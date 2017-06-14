@@ -4,8 +4,7 @@ import { ACTIONS } from '../actions/StoreConstants';
 import { OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE } from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 
-let initialMachineState = {};
-let setMachineState = null;
+const initialMachineState = {};
 
 function setDotsCount(state) {
   // console.log('setDotsCount');
@@ -85,16 +84,17 @@ function setDotsCount(state) {
 }
 
 function setInitialState(title) {
-  if(initialMachineState[title] === undefined){
+  if (initialMachineState[title] === undefined) {
     initialMachineState[title] = {};
   }
+  const machineStateCopy = { ...initialMachineState[title] };
   const positivePowerZoneDots = [];
   const negativePowerZoneDots = [];
   const positiveDividerDots = [];
   const negativeDividerDots = [];
   const positiveDividerResult = [];
   const negativeDividerResult = [];
-  for (let i = 0; i < (initialMachineState[title].zones || 0); i += 1) {
+  for (let i = 0; i < (machineStateCopy.zones || 0); i += 1) {
     positivePowerZoneDots.push({});
     negativePowerZoneDots.push({});
     positiveDividerDots.push({});
@@ -110,7 +110,7 @@ function setInitialState(title) {
     negativeDividerDots,
     positiveDividerResult,
     negativeDividerResult,
-    machineState: initialMachineState[title],
+    machineState: machineStateCopy,
   };
 }
 
@@ -118,7 +118,6 @@ const dotsReducer = (state = null, action) => {
   if (state === null) {
     return setInitialState('default');
   }
-
   let stateCopy;
     // console.log('dotsReducer', action.type);
   switch (action.type) {
@@ -363,10 +362,7 @@ const dotsReducer = (state = null, action) => {
       return stateCopy;
     }
     case ACTIONS.RESET:
-      // console.log(ACTIONS.RESET, action.machineState.title, setMachineState);
-      initialMachineState[action.machineState.title] = {};
-      initialMachineState[action.machineState.title].operandA = '';
-      initialMachineState[action.machineState.title].operandB = '';
+      // console.log(ACTIONS.RESET, action, initialMachineState[action.title]);
       if (action.machineState) { // we are at the start of an activity
                 // This is a hack for receiving the bases in a string format.
                 // Must be done here, before the props are read only
@@ -375,16 +371,17 @@ const dotsReducer = (state = null, action) => {
           // eslint-disable-next-line no-param-reassign
           action.machineState.allBases = BASE[action.machineState.allBases];
         }
-        setMachineState = { ...action.machineState };
-        initialMachineState[action.machineState.title] = { ...setMachineState };
+        initialMachineState[action.machineState.title] = {};
+        // setMachineState = { ...action.machineState };
+        initialMachineState[action.machineState.title] = { ...action.machineState };
       } else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE) {
         // reset button in Exercise mode, repopulate with starting value
-        initialMachineState[action.machineState.title] = { ...setMachineState };
-        initialMachineState[action.machineState.title].startActivity = true;
+        initialMachineState[action.title] = { ...initialMachineState[action.title] };
+        initialMachineState[action.title].startActivity = true;
       }
-      initialMachineState[action.machineState.title].activityStarted = false;
-      initialMachineState[action.machineState.title].errorMessage = '';
-      return setInitialState(action.machineState.title);
+      initialMachineState[action.title].activityStarted = false;
+      initialMachineState[action.title].errorMessage = '';
+      return setInitialState(action.title);
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };

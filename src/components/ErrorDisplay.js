@@ -8,6 +8,7 @@ export default class ErrorDisplay extends Component {
   static propTypes = {
     errorMessage: PropTypes.string,
     onClose: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
   };
 
   render() {
@@ -18,7 +19,7 @@ export default class ErrorDisplay extends Component {
       <FlatButton
         label="OK"
         primary
-        onTouchTap={() => this.props.onClose()}
+        onTouchTap={() => this.props.onClose(null, this.props.title)}
       />,
     ];
     return (
@@ -27,7 +28,7 @@ export default class ErrorDisplay extends Component {
           actions={actions}
           modal={false}
           open
-          onTouchTap={() => this.props.onClose()}
+          onTouchTap={() => this.props.onClose(null, this.props.title)}
         >
           {this.props.errorMessage}
         </Dialog>
