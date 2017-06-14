@@ -13,4 +13,4 @@ NODE_ENV=production ./node_modules/.bin/babel --ignore tests,stories --plugins "
 echo ""
 echo "=> Transpiling completed."
 
-. .scripts/user/prepublish.sh
+.scripts/user/prepublish.sh

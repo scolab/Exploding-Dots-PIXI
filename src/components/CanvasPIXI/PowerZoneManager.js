@@ -65,7 +65,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.dividerResult = null;
     this.feedbackDisplay = new FeedbackDisplay(guideReminder, guideFeedback);
     this.feedbackDisplay.x = 100;
-    this.feedbackDisplay.y = 320;
+    this.feedbackDisplay.y = 350;
     this.addChild(this.feedbackDisplay);
     this.soundManager = soundManager;
     // reverse all the wanted result so they are in the same order as our zone.
@@ -1191,7 +1191,7 @@ export class PowerZoneManager extends window.PIXI.Container {
     this.dividerZoneManager.start();
 
     this.dividerResult.x = 100;
-    this.dividerResult.y = 375;
+    this.dividerResult.y = 400;
     this.addChild(this.dividerResult);
   }
 
