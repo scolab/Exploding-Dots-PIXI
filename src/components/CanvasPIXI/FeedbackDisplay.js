@@ -18,7 +18,6 @@ export class FeedbackDisplay extends PIXI.Text {
   }
 
   showReminder() {
-    // console.log('showReminder');
     this.text = this.guideReminder;
     TweenMax.killTweensOf(this.hideReminder);
     TweenMax.delayedCall(2, this.hideReminder, null, this);
@@ -30,6 +29,7 @@ export class FeedbackDisplay extends PIXI.Text {
   }
 
   showFeedback() {
+    TweenMax.killTweensOf(this.hideReminder);
     this.text = this.guideFeedback;
   }
 

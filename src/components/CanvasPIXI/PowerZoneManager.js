@@ -1187,11 +1187,19 @@ export class PowerZoneManager extends PIXI.Container {
       for (let i = 0; i < this.allZones.length; i += 1) {
         zone = this.allZones[i];
         zone.precalculateDotsForDivision();
-        if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
-                    this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
-                    this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
-                    this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
-                ) {
+        if (this.operator_mode === OPERATOR_MODE.DIVIDE) {
+          if (
+            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+            this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
+            this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText.text) &&
+            this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText.text)
+          ) {
+            zoneSuccess += 1;
+          }
+        } else if (
+            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
+            this.wantedResult.negativeDots[i] === zone.negativeDotCount
+          ) {
           zoneSuccess += 1;
         }
       }
