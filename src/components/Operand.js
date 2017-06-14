@@ -94,7 +94,7 @@ export default class Operand extends Component {
     if (reg.test(stringToTest)) {
       this.props.onChange(this.props.pos, stringToTest);
     }
-  }
+  };
 
   onSubmit = (e) => {
     e.preventDefault();
@@ -103,7 +103,7 @@ export default class Operand extends Component {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  }
+  };
 
   checkIfInputActive() {
     if (this.inputText) {
@@ -120,11 +120,6 @@ export default class Operand extends Component {
   }
 
   render() {
-
-    const OperationDiv = styled.div`
-      ${operationItem}
-    `;
-
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
@@ -184,3 +179,7 @@ export default class Operand extends Component {
     return null;
   }
 }
+
+const OperationDiv = styled.div`
+      ${operationItem}
+    `;

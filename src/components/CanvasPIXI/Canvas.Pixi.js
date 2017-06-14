@@ -220,14 +220,14 @@ class CanvasPIXI extends Component<void, PropsType, void> {
           this.renderer.currentRenderer.start();
           // eslint-disable-next-line max-len
           // this.state.renderer.plugins.interaction = new PIXI.interaction.InteractionManager(this.state.renderer)
-          console.log(`Element ${this.props.title} is visible`);
+          // console.log(`Element ${this.props.title} is visible`);
         }
       } else {
         this.app.ticker.stop();
         if (this.renderer) {
           this.renderer.currentRenderer.stop();
           // this.state.renderer.plugins.interaction.destroy();
-          console.log(`Element ${this.props.title} is hidden`);
+          // console.log(`Element ${this.props.title} is hidden`);
         }
       }
     } else if (isVisible === false) {

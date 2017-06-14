@@ -110,6 +110,7 @@ class ExplodingDots extends Component {
     this.store.dispatch({
       type: 'RESET',
       machineState: Object.assign({}, props),
+      title: props.title,
     });
   }
 

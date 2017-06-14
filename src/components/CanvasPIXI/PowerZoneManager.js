@@ -1051,7 +1051,7 @@ export class PowerZoneManager extends window.PIXI.Container {
 
   checkPendingAction(userMessage: string) {
     // console.log('checkPendingAction', nextProps, nextProps.userMessage);
-    if (userMessage === '') {
+    if (userMessage === '' && this.pendingAction) {
       while (this.pendingAction.length > 0) {
         const action = this.pendingAction.shift();
         action.function.apply(this, action.params);
