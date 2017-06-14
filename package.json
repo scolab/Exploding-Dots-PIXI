@@ -1,5 +1,5 @@
 {
-  "name": "Exploding-Dots",
+  "name": "exploding-dots",
   "version": "0.0.47",
   "description": "Exploding dots component",
   "repository": {
@@ -14,7 +14,8 @@
     "test": "npm run lint && npm run testonly",
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -s ./static -p 9010",
-    "publish-storybook": "bash .scripts/publish_storybook.sh"
+    "publish-storybook": "bash .scripts/publish_storybook.sh",
+    "prepublish": "bash .scripts/prepublish.sh"
   },
   "devDependencies": {
     "@kadira/storybook": "^2.18.1",
