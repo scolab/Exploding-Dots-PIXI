@@ -120,7 +120,6 @@ export default class Operand extends Component {
   }
 
   render() {
-
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>

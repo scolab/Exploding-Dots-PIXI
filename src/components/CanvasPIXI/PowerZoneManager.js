@@ -6,7 +6,6 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
-import { FeedbackDisplay } from './FeedbackDisplay';
 import { SoundManager } from '../../utils/SoundManager';
 import explodeJSON from './dot_explode.json';
 import implodeJSON from './dot_implode.json';
@@ -24,8 +23,8 @@ export class PowerZoneManager extends PIXI.Container {
               displayUserMessage,
               soundManager,
               wantedResult,
-              guideReminder,
-              guideFeedback
+              successAction,
+              title
     ) {
     super();
     this.addDot = addDot;
@@ -38,10 +37,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.movingDotsContainer = new PIXI.Container();
     this.dividerZoneManager = null;
     this.dividerResult = null;
-    this.feedbackDisplay = new FeedbackDisplay(guideReminder, guideFeedback);
-    this.feedbackDisplay.x = 100;
-    this.feedbackDisplay.y = 350;
-    this.addChild(this.feedbackDisplay);
     this.soundManager = soundManager;
     // reverse all the wanted result so they are in the same order as our zone.
     wantedResult.positiveDots.reverse();
@@ -49,6 +44,8 @@ export class PowerZoneManager extends PIXI.Container {
     wantedResult.positiveDivider.reverse();
     wantedResult.negativeDivider.reverse();
     this.wantedResult = wantedResult;
+    this.successAction = successAction;
+    this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
   }
@@ -1205,9 +1202,9 @@ export class PowerZoneManager extends PIXI.Container {
       }
       console.log(zoneSuccess);
       if (zoneSuccess === this.allZones.length) {
-        this.feedbackDisplay.showFeedback();
-      } else {
-        this.feedbackDisplay.showReminder();
+        if (this.successAction) {
+          this.successAction(this.title);
+        }
       }
     }
   }

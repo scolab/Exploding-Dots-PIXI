@@ -31,6 +31,8 @@
     "func-names": 0,
     # propTypes can be object
     "react/forbid-prop-types": 0,
+    # allow react jsx boolean props to be true
+    "react/jsx-boolean-value": 0,
 
     "flowtype/boolean-style": [
         2,

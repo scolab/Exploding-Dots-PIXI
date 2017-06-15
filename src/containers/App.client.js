@@ -62,8 +62,7 @@ class ExplodingDots extends Component {
         positiveDivider: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
         negativeDivider: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
       })),
-    guideReminder: PropTypes.string,
-    guideFeedback: PropTypes.string,
+    successAction: PropTypes.func,
   };
 
   static defaultProps = {
@@ -95,8 +94,7 @@ class ExplodingDots extends Component {
       positiveDivider: [],
       negativeDivider: [],
     },
-    guideReminder: 'Reminder',
-    guideFeedback: 'Feedback',
+    successAction: null,
   };
 
   constructor(props) {
