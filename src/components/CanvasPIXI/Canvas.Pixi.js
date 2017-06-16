@@ -162,29 +162,6 @@ class CanvasPIXI extends Component {
     this.resize();
   }
 
-  onVisibilityChange(isVisible) {
-    if (this.state.app) {
-      if (isVisible) {
-        this.state.app.ticker.start();
-        if (this.state.renderer) {
-          this.state.renderer.currentRenderer.start();
-          // this.state.renderer.plugins.interaction =
-          // new PIXI.interaction.InteractionManager(this.state.renderer)
-          console.log(`Element ${this.props.title} is visible`);
-        }
-      } else {
-        this.state.app.ticker.stop();
-        if (this.state.renderer) {
-          this.state.renderer.currentRenderer.stop();
-          // this.state.renderer.plugins.interaction.destroy();
-          console.log(`Element ${this.props.title} is hidden`);
-        }
-      }
-    } else if (isVisible === false) {
-      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
-    }
-  }
-
   shouldComponentUpdate(nextProps) {
     // console.log('shouldComponentUpdate', this.props.title, nextProps.operandA, nextProps.startActivity);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
@@ -244,6 +221,29 @@ class CanvasPIXI extends Component {
       this.state.app.destroy(true);
     }
     window.removeEventListener('resize', this.boundOnResize);
+  }
+
+  onVisibilityChange(isVisible) {
+    if (this.state.app) {
+      if (isVisible) {
+        this.state.app.ticker.start();
+        if (this.state.renderer) {
+          this.state.renderer.currentRenderer.start();
+          // this.state.renderer.plugins.interaction =
+          // new PIXI.interaction.InteractionManager(this.state.renderer)
+          // console.log(`Element ${this.props.title} is visible`);
+        }
+      } else {
+        this.state.app.ticker.stop();
+        if (this.state.renderer) {
+          this.state.renderer.currentRenderer.stop();
+          // this.state.renderer.plugins.interaction.destroy();
+          // console.log(`Element ${this.props.title} is hidden`);
+        }
+      }
+    } else if (isVisible === false) {
+      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
+    }
   }
 
   onAssetsLoaded(loader) {
@@ -705,7 +705,7 @@ class CanvasPIXI extends Component {
     return (
       <div>
         <VisibilitySensor
-          onChange={this.onVisibilityChange.bind(this)}
+          onChange={this.onVisibilityChange.bind(this)} // eslint-disable-line react/jsx-no-bind
           partialVisibility={true}
           scrollCheck={true}
           scrollDelay={250}
