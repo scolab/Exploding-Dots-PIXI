@@ -26,7 +26,8 @@ const DotsMachine = (props) => {
     <div>
       <ErrorDisplay
         errorMessage={props.dotsMachine.machineState.errorMessage}
-        onClose={props.resetMachine}
+        onClose={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
+        resetAction={props.dotsMachine.machineState.resetAction}
         title={props.dotsMachine.machineState.title}
       />
       <MessageDisplay
@@ -53,6 +54,8 @@ const DotsMachine = (props) => {
         {props.dotsMachine.machineState.resetVisible === true &&
           <ResetButton
             onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
+            resetAction={props.dotsMachine.machineState.resetAction}
+            title={props.dotsMachine.machineState.title}
           />
                     }
       </TopMenuItem>
@@ -217,6 +220,7 @@ DotsMachine.propTypes = {
       muted: PropTypes.bool.isRequired,
       wantedResult: PropTypes.object.isRequired,
       successAction: PropTypes.func,
+      resetAction: PropTypes.func,
     }),
   }),
 };

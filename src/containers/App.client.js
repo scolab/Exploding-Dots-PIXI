@@ -63,6 +63,7 @@ class ExplodingDots extends Component {
         negativeDivider: PropTypes.array, // eslint-disable-line react/no-unused-prop-types
       })),
     successAction: PropTypes.func,
+    resetAction: PropTypes.func,
   };
 
   static defaultProps = {
@@ -95,6 +96,7 @@ class ExplodingDots extends Component {
       negativeDivider: [],
     },
     successAction: null,
+    resetAction: null,
   };
 
   constructor(props) {
