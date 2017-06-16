@@ -40,10 +40,18 @@ export class PowerZoneManager extends PIXI.Container {
     this.soundManager = soundManager;
     this.wantedResult = JSON.parse(JSON.stringify(wantedResult));
     // reverse all the wanted result so they are in the same order as our zone.
-    this.wantedResult.positiveDots.reverse();
-    this.wantedResult.negativeDots.reverse();
-    this.wantedResult.positiveDivider.reverse();
-    this.wantedResult.negativeDivider.reverse();
+    if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+      this.wantedResult.positiveDots.reverse();
+    }
+    if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+      this.wantedResult.negativeDots.reverse();
+    }
+    if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
+      this.wantedResult.positiveDivider.reverse();
+    }
+    if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
+      this.wantedResult.negativeDivider.reverse();
+    }
     this.successAction = successAction;
     this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
@@ -1175,35 +1183,55 @@ export class PowerZoneManager extends PIXI.Container {
   checkResult() {
     // console.log('checkResult', this.wantedResult);
     let zone;
-    if (this.wantedResult.positiveDots.length === this.allZones.length &&
-            this.wantedResult.negativeDots.length === this.allZones.length &&
-            this.wantedResult.positiveDivider.length === this.allZones.length &&
-            this.wantedResult.negativeDivider.length === this.allZones.length
-        ) {
-      let zoneSuccess = 0;
-      for (let i = 0; i < this.allZones.length; i += 1) {
-        zone = this.allZones[i];
-        zone.precalculateDotsForDivision();
-        if (this.operator_mode === OPERATOR_MODE.DIVIDE) {
-          if (
-            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
-            this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
-            this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText.text) &&
-            this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText.text)
-          ) {
-            zoneSuccess += 1;
+    let zoneSuccess = 0;
+    for (let i = 0; i < this.allZones.length; i += 1) {
+      zone = this.allZones[i];
+      zone.precalculateDotsForDivision();
+      if (this.operator_mode === OPERATOR_MODE.DIVIDE) {
+        let success = true;
+        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+            success = false;
           }
-        } else if (
-            this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
-            this.wantedResult.negativeDots[i] === zone.negativeDotCount
-          ) {
+        }
+        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
+          if (this.wantedResult.positiveDivider[i] !== Number(zone.positiveDividerText.text)) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
+          if (this.wantedResult.negativeDivider[i] !== Number(zone.negativeDividerText.text)) {
+            success = false;
+          }
+        }
+        if (success) {
+          zoneSuccess += 1;
+        }
+      } else {
+        let success = true;
+        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+            success = false;
+          }
+        }
+        if (success) {
           zoneSuccess += 1;
         }
       }
-      if (zoneSuccess === this.allZones.length) {
-        if (this.successAction) {
-          this.successAction(this.title);
-        }
+    }
+    if (zoneSuccess === this.allZones.length) {
+      if (this.successAction) {
+        this.successAction(this.title);
       }
     }
   }
@@ -1211,7 +1239,7 @@ export class PowerZoneManager extends PIXI.Container {
   reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    if(this.allZones) {
+    if (this.allZones) {
       this.allZones.forEach((zone) => {
         zone.reset();
       });
@@ -1219,7 +1247,7 @@ export class PowerZoneManager extends PIXI.Container {
     if (this.dividerZoneManager) {
       this.dividerZoneManager.reset();
     }
-    if(this.soundManager) {
+    if (this.soundManager) {
       this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
       this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
     }
