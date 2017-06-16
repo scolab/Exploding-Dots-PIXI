@@ -38,12 +38,12 @@ export class PowerZoneManager extends PIXI.Container {
     this.dividerZoneManager = null;
     this.dividerResult = null;
     this.soundManager = soundManager;
+    this.wantedResult = JSON.parse(JSON.stringify(wantedResult));
     // reverse all the wanted result so they are in the same order as our zone.
-    wantedResult.positiveDots.reverse();
-    wantedResult.negativeDots.reverse();
-    wantedResult.positiveDivider.reverse();
-    wantedResult.negativeDivider.reverse();
-    this.wantedResult = wantedResult;
+    this.wantedResult.positiveDots.reverse();
+    this.wantedResult.negativeDots.reverse();
+    this.wantedResult.positiveDivider.reverse();
+    this.wantedResult.negativeDivider.reverse();
     this.successAction = successAction;
     this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
@@ -1173,7 +1173,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   checkResult() {
-    // console.log('checkResult');
+    // console.log('checkResult', this.wantedResult);
     let zone;
     if (this.wantedResult.positiveDots.length === this.allZones.length &&
             this.wantedResult.negativeDots.length === this.allZones.length &&
@@ -1200,7 +1200,6 @@ export class PowerZoneManager extends PIXI.Container {
           zoneSuccess += 1;
         }
       }
-      console.log(zoneSuccess);
       if (zoneSuccess === this.allZones.length) {
         if (this.successAction) {
           this.successAction(this.title);
