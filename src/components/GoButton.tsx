@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from "styled-components";
+import {gradientBackground} from "./StylesForComponents";
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
@@ -7,28 +9,30 @@ interface IProps {
 }
 
 const GoButton = (props: IProps) => {
+
+  const GradientBackgroundButton = styled.button`
+  ${gradientBackground}
+  `;
+
+  const img = require('./images/arrow-right.gif');
+
   if (props.activityStarted) {
     return (
-      <button
+      <GradientBackgroundButton
         style={{
-          fontWeight: 'bold',
-          fontSize: 20,
-          background: '#efefef', /* For browsers that do not support gradients */
-          borderRadius: '25px',
           width: '47px',
           height: '47px',
           lineHeight: '47px',
           verticalAlign: 'middle',
           marginTop: '-6px',
           marginLeft: '10px',
-          overflow: 'hidden',
           border: 'none',
-          visibility: 'hidden',
+          cursor: 'pointer',
         }}
         type="button"
       >
         <i className="fa fa-arrow-right" />
-      </button>
+      </GradientBackgroundButton>
     );
   }
   return (
@@ -50,7 +54,7 @@ const GoButton = (props: IProps) => {
       type="button"
       onClick={props.onClick}
     >
-      <i className="fa fa-arrow-right" />
+      <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
     </button>
   );
   /* eslint-enable */

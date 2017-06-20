@@ -1,32 +1,46 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import {gradientBackground, topLeftElement} from "./StylesForComponents";
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
+  resetAction: PropTypes.func;
+  title: string;
 }
 
-const ResetButton = (props: IProps) => {
+export default class ResetButton extends Component<IProps, {}> {
 
-  const img = require('./images/refresh.gif');
+  img = require('./images/refresh.gif');
 
-  return (
-    <button
-      className="topRightMenuItem gradientBackground"
-      style={{
-        border: 'none',
-        cursor: 'pointer',
-        height: '47px',
-        marginLeft: '10px',
-        marginTop: '33px',
-        verticalAlign: 'middle',
-        width: '47px',
-      }}
-      type="button"
-      onClick={() => props.onClick(true)}
-    >
-      <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '2px' }} />
-    </button>
-  );
+  private reset(){
+    this.props.onClick(true);
+    if (this.props.resetAction) {
+      this.props.resetAction(this.props.title);
+    }
+  }
+
+  public render() {
+    return (
+      <GradientBackgroundButton
+        style={{
+          width: '47px',
+          height: '47px',
+          verticalAlign: 'middle',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+        type="button"
+        onClick={() => this.reset()}
+      >
+        <img src={this.img} role="presentation" style={{marginTop: '3px', marginLeft: '2px'}}/>
+      </GradientBackgroundButton>
+    );
+  }
 };
 
-export default ResetButton;
+const GradientBackgroundButton = styled.button`
+  ${gradientBackground}
+  ${topLeftElement}
+  `;
+

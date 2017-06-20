@@ -5,27 +5,23 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import React, {Component} from 'react';
-import { createStore } from 'redux';
+import {createStore, Store} from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE, BASE, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
-import '../ExplodingDots.css';
-import '../font-awesome.min.css';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin();
-
-const enhancer = window['devToolsExtension'] ? window['devToolsExtension']()(createStore) : createStore;
-const store = enhancer(rootReducer);
-
-/*const store = createStore(rootReducer,
-    window.__REDUX_DEVTOOLS_EXTENSION__ &&
-    window.__REDUX_DEVTOOLS_EXTENSION__());*/
+try {
+  injectTapEventPlugin();
+} catch (e) {
+  // Preventing error if injectTapEventPlugin() is already call.
+}
 
 const isDev = process.env.NODE_ENV === 'development';
 
 interface IProps {
+  title?: string;
   base?: Array<number | string>;
   allBases?: number[][] | any[][] | string;
   operator_mode?: string;
@@ -48,11 +44,14 @@ interface IProps {
   userMessage?: string;
   muted?: boolean;
   wantedResult?: IWantedResult;
+  successAction?: Function;
+  resetAction?: Function;
 }
 
 class ExplodingDots extends Component<IProps, {}> {
 
   public static defaultProps: Partial<IProps> = {
+    title: 'default title',
     base: BASE.ARITHMOS[0],
     allBases: BASE.ARITHMOS,
     operator_mode: OPERATOR_MODE.DISPLAY,
@@ -80,16 +79,23 @@ class ExplodingDots extends Component<IProps, {}> {
       positiveDivider: [],
       negativeDivider: [],
     },
+    successAction: undefined,
+    resetAction: undefined,
   };
+
+  private store: Store<any>;
 
   constructor(props) {
         // console.log('App constructor', props);
     super(props);
-        // FIXME: find a way to use resetMachine
-        // Initialize the default machineState values
-    store.dispatch({
+    const enhancer = window['devToolsExtension'] ? window['devToolsExtension']()(createStore) : createStore;
+    this.store = enhancer(rootReducer);
+    // FIXME: find a way to use resetMachine
+    // Initialize the default machineState values
+    this.store.dispatch({
       type: 'RESET',
       machineState: Object.assign({}, props),
+      title: props.title,
     });
   }
 
@@ -98,7 +104,7 @@ class ExplodingDots extends Component<IProps, {}> {
       fontFamily: 'Noto sans',
     });
     return (
-      <Provider store={store}>
+      <Provider store={this.store}>
         <MuiThemeProvider muiTheme={theme}>
           <div>
             <DotsMachine id="0" />

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-// import img from './images/magicWand.gif';
+import {gradientBackground, topLeftElement} from "./StylesForComponents";
+import styled from "styled-components";
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
@@ -9,15 +10,17 @@ const MagicWand = (props: IProps) => {
 
   const img = require('./images/magicWand.gif');
 
+  const GradientBackgroundButton = styled.button`
+  ${gradientBackground}
+  ${topLeftElement}
+  `;
+
   return (
-    <button
-      className="topRightMenuItem gradientBackground"
+    <GradientBackgroundButton
       style={{
         border: 'none',
         cursor: 'pointer',
         height: '47px',
-        marginLeft: '10px',
-        marginTop: '33px',
         verticalAlign: 'middle',
         width: '47px',
       }}
@@ -25,9 +28,8 @@ const MagicWand = (props: IProps) => {
       onClick={() => props.onClick(true)}
       >
       <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '4px' }} />
-    </button>
+    </GradientBackgroundButton>
   );
-  /* eslint-enable */
 };
 
 export default MagicWand;

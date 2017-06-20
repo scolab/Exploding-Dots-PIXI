@@ -67,6 +67,8 @@ export class PowerZoneManager extends PIXI.Container {
   private implodeJSON: object;
   private redDragJSON: object;
   private blueDragJSON: object;
+  private successAction: Function;
+  private title:string;
 
   constructor(addDot,
               removeDot,
@@ -76,7 +78,10 @@ export class PowerZoneManager extends PIXI.Container {
               setDivisionResult,
               displayUserMessage,
               soundManager,
-              wantedResult) {
+              wantedResult,
+              successAction,
+              title
+  ) {
     super();
 
     this.explodeJSON = require('./dot_explode.json');
@@ -93,15 +98,24 @@ export class PowerZoneManager extends PIXI.Container {
     this.displayUserMessage = displayUserMessage;
     this.movingDotsContainer = new PIXI.Container();
     this.soundManager = soundManager;
+    this.wantedResult = JSON.parse(JSON.stringify(wantedResult));
     // reverse all the wanted result so they are in the same order as our zone.
-    wantedResult.positiveDots.reverse();
-    wantedResult.negativeDots.reverse();
-    wantedResult.positiveDivider.reverse();
-    wantedResult.negativeDivider.reverse();
-    this.wantedResult = wantedResult;
+    if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+      this.wantedResult.positiveDots.reverse();
+    }
+    if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+      this.wantedResult.negativeDots.reverse();
+    }
+    if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
+      this.wantedResult.positiveDivider.reverse();
+    }
+    if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
+      this.wantedResult.negativeDivider.reverse();
+    }
+    this.successAction = successAction;
+    this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
-
   }
 
   public init(textures,
@@ -125,20 +139,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.pendingAction = new Array<IPendingAction>();
     this.explodeEmitter = new Array<ParticleEmitter>();
     this.implodeEmitter = new Array<ParticleEmitter>();
-    // window.addEventListener('keyup', this.traceValue.bind(this));
   }
-
-  /*private traceValue(e) {
-    if ((e.keyCode || e.which) === 32) {
-      const dotCount = new Array<number>();
-      const childCount = new Array<number>();
-      this.allZones.forEach((zone: PowerZone) => {
-        dotCount.push(Object.keys(zone.positiveDots).length);
-        childCount.push(zone.positiveDotsContainer.children.length);
-      });
-      // console.log(dotCount, childCount, this.movingDotsContainer.children.length);
-    }
-  }*/
 
   public createZones() {
     for (let i = this.totalZoneCount - 1; i >= 0; i -= 1) {
@@ -215,7 +216,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   public checkPendingAction(nextProps) {
     // console.log('checkPendingAction', nextProps, nextProps.userMessage);
-    if (nextProps.userMessage === '') {
+    if (nextProps.userMessage === '' && this.pendingAction) {
       while (this.pendingAction.length > 0) {
         const action = this.pendingAction.shift() as IPendingAction;
         action.function.apply(this, action.params);
@@ -357,7 +358,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.dividerZoneManager.start();
 
     this.dividerResult.x = 100;
-    this.dividerResult.y = 375;
+    this.dividerResult.y = 400;
     this.addChild(this.dividerResult);
   }
 
@@ -391,27 +392,57 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public checkResult() {
-    // console.log('checkResult');
+    // console.log('checkResult', this.wantedResult);
     let zone;
-    if (this.wantedResult.positiveDots.length === this.allZones.length &&
-      this.wantedResult.negativeDots.length === this.allZones.length &&
-      this.wantedResult.positiveDivider.length === this.allZones.length &&
-      this.wantedResult.negativeDivider.length === this.allZones.length
-    ) {
-      let zoneSuccess = 0;
-      for (let i = 0; i < this.allZones.length; i += 1) {
-        zone = this.allZones[i];
-        zone.precalculateDotsForDivision();
-        if (this.wantedResult.positiveDots[i] === zone.positiveDotCount &&
-          this.wantedResult.negativeDots[i] === zone.negativeDotCount &&
-          this.wantedResult.positiveDivider[i] === Number(zone.positiveDividerText) &&
-          this.wantedResult.negativeDivider[i] === Number(zone.negativeDividerText)
-        ) {
+    let zoneSuccess = 0;
+    for (let i = 0; i < this.allZones.length; i += 1) {
+      zone = this.allZones[i];
+      zone.precalculateDotsForDivision();
+      if (this.operatorMode === OPERATOR_MODE.DIVIDE) {
+        let success = true;
+        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
+          if (this.wantedResult.positiveDivider[i] !== Number(zone.positiveDividerText.text)) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
+          if (this.wantedResult.negativeDivider[i] !== Number(zone.negativeDividerText.text)) {
+            success = false;
+          }
+        }
+        if (success) {
+          zoneSuccess += 1;
+        }
+      } else {
+        let success = true;
+        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+            success = false;
+          }
+        }
+        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+            success = false;
+          }
+        }
+        if (success) {
           zoneSuccess += 1;
         }
       }
-      if (zoneSuccess === this.allZones.length) {
-        // console.log('SUCCESS!!!');
+    }
+    if (zoneSuccess === this.allZones.length) {
+      if (this.successAction) {
+        this.successAction(this.title);
       }
     }
   }
@@ -419,47 +450,53 @@ export class PowerZoneManager extends PIXI.Container {
   public reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    this.allZones.forEach((zone) => {
-      zone.reset();
-    });
+    if (this.allZones) {
+      this.allZones.forEach((zone) => {
+        zone.reset();
+      });
+    }
     if (this.dividerZoneManager) {
       this.dividerZoneManager.reset();
     }
-    this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
-    this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    if (this.soundManager) {
+      this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
+      this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
+    }
   }
 
   public destroy() {
     this.reset();
     this.ticker.stop();
     let key: string; // tslint:disable-line prefer-const
-    this.allZones.forEach((zone) => {
-      for (key in zone.positiveDots) {
-        if (zone.positiveDots[key].sprite) {
-          this.removeDotSpriteListeners(zone.positiveDots[key].sprite);
+    if (this.allZones) {
+      this.allZones.forEach((zone) => {
+        for (key in zone.positiveDots) {
+          if (zone.positiveDots[key].sprite) {
+            this.removeDotSpriteListeners(zone.positiveDots[key].sprite);
+          }
         }
-      }
-      for (key in zone.negativeDots) {
-        if (zone.negativeDots[key].sprite) {
-          this.removeDotSpriteListeners(zone.negativeDots[key].sprite);
+        for (key in zone.negativeDots) {
+          if (zone.negativeDots[key].sprite) {
+            this.removeDotSpriteListeners(zone.negativeDots[key].sprite);
+          }
         }
-      }
-      zone.eventEmitter.off(PowerZone.CREATE_DOT, this.createDot, this);
-      zone.eventEmitter.off(PowerZone.DIVIDER_OVERLOAD, this.balanceDivider, this);
-      zone.destroy();
-      if (this.dividerZoneManager) {
-        this.dividerZoneManager.stop();
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.START_DRAG,
-          this.precalculateForDivision,
-          this);
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.MOVED,
-          this.checkIfDivisionPossible,
-          this);
-        this.dividerZoneManager.eventEmitter.off(DividerZoneManager.END_DRAG,
-          this.checkIfDivisionPossible,
-          this);
-      }
-    });
+        zone.eventEmitter.off(PowerZone.CREATE_DOT, this.createDot, this);
+        zone.eventEmitter.off(PowerZone.DIVIDER_OVERLOAD, this.balanceDivider, this);
+        zone.destroy();
+      });
+    }
+    if (this.dividerZoneManager) {
+      this.dividerZoneManager.stop();
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.START_DRAG,
+        this.precalculateForDivision,
+        this);
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.MOVED,
+        this.checkIfDivisionPossible,
+        this);
+      this.dividerZoneManager.eventEmitter.off(DividerZoneManager.END_DRAG,
+        this.checkIfDivisionPossible,
+        this);
+    }
   }
 
   private checkIfDivisionPossible(data, allZonesValue, isDragEnd = false) {
