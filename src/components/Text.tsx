@@ -24,7 +24,6 @@ const Text = (props: IProps) => {
 
   return (
     <OperationDiv
-      className="operationItem"
       style={{
         fontFamily: 'Noto Sans',
         fontSize: 24,

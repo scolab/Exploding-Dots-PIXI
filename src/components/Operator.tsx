@@ -26,7 +26,6 @@ export default class Operator extends Component<IProps, {}> {
         }
         return (
           <OperationDiv
-            className="operationItem"
             style={{
               fontFamily: 'Noto Sans',
               fontSize: 24,
@@ -40,7 +39,6 @@ export default class Operator extends Component<IProps, {}> {
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
             <GradientBackgroundDiv
-              className="operationItem gradientBackground"
               style={{
                 borderRadius: '23px',
                 fontFamily: 'Noto Sans',
@@ -49,40 +47,38 @@ export default class Operator extends Component<IProps, {}> {
                 height: '47px',
                 lineHeight: '47px',
                 marginTop: '-6px',
-                verticalAlign: 'middle',
+                //verticalAlign: 'middle',
                 width: '77px',
               }}
             >&#43;</GradientBackgroundDiv>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
+            <GradientBackgroundDiv>
             <DropDownMenu
-              className="gradientBackground"
-              style={{
-                borderRadius: '23px',
-                height: '47px',
-                marginLeft: '10px',
-                marginTop: '-7px',
-                verticalAlign: 'middle',
-              }}
-              labelStyle={{ fontSize: '32px', lineHeight: '38px', marginBottom: '-8px', marginTop: '5px', padding: '0 40px' }}
-              iconStyle={{ top: '0px', right: '0px' }}
-              menuItemStyle={{ fontSize: '32px', borderRadius: '23px' }}
-              menuStyle={{ borderRadius: '23px' }}
-              value={OPERATOR_MODE.ADD}
-              onChange={this.handleOperandChange}
-              disabled={this.props.activityStarted}
-            >
-              <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
-              <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="&#215;" />
-            </DropDownMenu>
+                style={{
+                  borderRadius: '23px',
+                  height: '47px',
+                  marginLeft: '10px',
+                }}
+                labelStyle={{ fontSize: '32px', lineHeight: '38px', marginBottom: '-8px', marginTop: '5px', padding: '0 40px', height: '47px' }}
+                iconStyle={{ top: '0px', right: '0px' }}
+                menuItemStyle={{ fontSize: '32px', borderRadius: '23px'}}
+                menuStyle={{ borderRadius: '23px' }}
+                value={OPERATOR_MODE.ADD}
+                onChange={this.handleOperandChange}
+                disabled={this.props.activityStarted}
+              >
+                <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
+                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="&#215;" />
+              </DropDownMenu>
+            </GradientBackgroundDiv>
           );
         }
         break;
       case OPERATOR_MODE.SUBTRACT:
         return (
           <GradientBackgroundDiv
-            className="operationItem gradientBackground"
             style={{
               fontFamily: 'Noto Sans',
               fontWeight: 'bold',
@@ -91,7 +87,7 @@ export default class Operator extends Component<IProps, {}> {
               width: '77px',
               height: '47px',
               lineHeight: '47px',
-              verticalAlign: 'middle',
+              //verticalAlign: 'middle',
               marginTop: '-6px',
             }}
           >&#8722;</GradientBackgroundDiv>
@@ -100,7 +96,6 @@ export default class Operator extends Component<IProps, {}> {
         if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
           return (
             <GradientBackgroundDiv
-              className="operationItem gradientBackground"
               style={{
                 fontFamily: 'Noto Sans',
                 fontWeight: 'bold',
@@ -109,41 +104,42 @@ export default class Operator extends Component<IProps, {}> {
                 width: '77px',
                 height: '47px',
                 lineHeight: '47px',
-                verticalAlign: 'middle',
+                //verticalAlign: 'middle',
                 marginTop: '-6px',
               }}
             >
-              <p style={{ marginTop: 3 }}>&#215;</p>
+              <p style={{ marginTop: -1 }}>&#215;</p>
             </GradientBackgroundDiv>
           );
         } else if (this.props.usage_mode === USAGE_MODE.OPERATION) {
           return (
-            <DropDownMenu
-              className="gradientBackground"
+            <GradientBackgroundDiv
               style={{
-                borderRadius: '23px',
-                marginLeft: '10px',
-                height: '47px',
-                verticalAlign: 'middle',
-                marginTop: '-7px',
-              }}
-              labelStyle={{ fontSize: '32px', lineHeight: '38px', marginBottom: '-8px', marginTop: '5px', padding: '0 40px' }}
-              iconStyle={{ top: '0px', right: '0px' }}
-              menuItemStyle={{ fontSize: '32px' }}
-              value={OPERATOR_MODE.MULTIPLY}
-              onChange={this.handleOperandChange}
-              disabled={this.props.activityStarted}
-            >
-              <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
-              <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="&#215;" />
-            </DropDownMenu>
+                //verticalAlign: 'top',
+              }}>
+              <DropDownMenu
+                style={{
+                  borderRadius: '23px',
+                  height: '47px',
+                  marginLeft: '10px',
+                }}
+                labelStyle={{ fontSize: '32px', lineHeight: '38px', marginBottom: '-8px', marginTop: '5px', padding: '0 40px', height: '47px' }}
+                iconStyle={{ top: '0px', right: '0px' }}
+                menuItemStyle={{ fontSize: '32px' }}
+                value={OPERATOR_MODE.MULTIPLY}
+                onChange={this.handleOperandChange}
+                disabled={this.props.activityStarted}
+              >
+                <MenuItem value={OPERATOR_MODE.ADD} primaryText="&#43;" />
+                <MenuItem value={OPERATOR_MODE.MULTIPLY} primaryText="&#215;" />
+              </DropDownMenu>
+            </GradientBackgroundDiv>
           );
         }
         break;
       case OPERATOR_MODE.DIVIDE:
         return (
           <GradientBackgroundDiv
-            className="operationItem gradientBackground"
             style={{
               borderRadius: '23px',
               fontFamily: 'Noto Sans',
@@ -152,7 +148,7 @@ export default class Operator extends Component<IProps, {}> {
               height: '47px',
               lineHeight: '47px',
               marginTop: '-6px',
-              verticalAlign: 'middle',
+              //verticalAlign: 'middle',
               width: '77px',
             }}
           >&#247;</GradientBackgroundDiv>
@@ -171,6 +167,8 @@ export default class Operator extends Component<IProps, {}> {
 
 const GradientBackgroundDiv = styled.div`
       ${gradientBackground}
+      ${operationItem}
+      vertical-align: top;
     `;
 
 const OperationDiv = styled.div`
