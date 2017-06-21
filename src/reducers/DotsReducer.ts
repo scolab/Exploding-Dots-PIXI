@@ -4,7 +4,7 @@ import { ACTIONS } from '../actions/StoreConstants';
 import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, IUSAGE_MODE, IOPERATOR_MODE} from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 import { DotVO } from '../VO/DotVO';
-import any = PIXI.utils.isMobile.any;
+import {MachineStateVO} from "../VO/MachineStateVO";
 
 interface IState {
   dots: Array<{
@@ -21,6 +21,7 @@ interface IState {
   positiveDividerResult: number[];
   negativeDividerResult: number[];
   machineState: {
+    title: string;
     allBases: any[];
     placeValueSwitchVisible: boolean;
     baseSelectorVisible: boolean;
@@ -41,10 +42,12 @@ interface IState {
     userMessage: string;
     muted: boolean;
     wantedResult: IWantedResult;
+    successAction: Function;
+    resetAction: Function;
   };
 }
 
-interface IMachineState {
+export interface IMachineState {
   operandA: string;
   operandB: string;
   startActivity: boolean;
@@ -53,14 +56,11 @@ interface IMachineState {
   zones: number;
 }
 
-let initialMachineState: IMachineState = {
-  activityStarted: false,
-  errorMessage: '',
-  operandA: '',
-  operandB: '',
-  startActivity: false,
-  zones: 0,
-};
+interface HashOfMachineState{
+  [key: string]: IMachineState;
+}
+
+let initialMachineState: HashOfMachineState = {};
 
 let setMachineState: IMachineState = {
   activityStarted: false,
@@ -148,15 +148,18 @@ function setDotsCount(state) {
   return toReturn;
 }
 
-function setInitialState() {
-    // let dots = [];
+function setInitialState(title: string) {
+  if (initialMachineState[title] === undefined) {
+    initialMachineState[title] = new MachineStateVO();
+  }
+  const machineStateCopy: IMachineState = { ...initialMachineState[title] };
   const positivePowerZoneDots: DotVO[][] = new Array<DotVO[]>();
   const negativePowerZoneDots: DotVO[][] = new Array<DotVO[]>();
   const positiveDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();
   const negativeDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();
   const positiveDividerResult: number[] = new Array<number>();
   const negativeDividerResult: number[] = new Array<number>();
-  for (let i = 0; i < (initialMachineState.zones || 0); i += 1) {
+  for (let i = 0; i < (machineStateCopy.zones || 0); i += 1) {
     positivePowerZoneDots.push(new Array<DotVO>());
     negativePowerZoneDots.push(new Array<DotVO>());
     positiveDividerDots.push(new Array<IDividerDot>());
@@ -172,13 +175,13 @@ function setInitialState() {
     negativeDividerDots,
     positiveDividerResult,
     negativeDividerResult,
-    machineState: initialMachineState,
+    machineState: machineStateCopy,
   };
 }
 
 const dotsReducer = (state: IState | null = null, action) => {
   if (state === null) {
-    return setInitialState();
+    return setInitialState('default');
   }
 
   let stateCopy;
@@ -425,26 +428,24 @@ const dotsReducer = (state: IState | null = null, action) => {
       return stateCopy;
     }
     case ACTIONS.RESET:
-      // console.log(ACTIONS.RESET, action.machineState, setMachineState);
-      initialMachineState.operandA = '';
-      initialMachineState.operandB = '';
       if (action.machineState) { // we are at the start of an activity
-                // This is a hack for receiving the bases in a string format.
-                // Must be done here, before the props are read only
-                // TODO find a better way to do this
+        // This is a hack for receiving the bases in a string format.
+        // Must be done here, before the props are read only
+        // TODO find a better way to do this
         if (typeof (action.machineState.allBases) === 'string') {
+          // eslint-disable-next-line no-param-reassign
           action.machineState.allBases = BASE[action.machineState.allBases];
         }
-        setMachineState = { ...action.machineState };
-        initialMachineState = { ...setMachineState };
-      } else if (Object(state).machineState.usage_mode === USAGE_MODE.EXERCISE) {
+        // initialMachineState[action.machineState.title] = {};
+        initialMachineState[action.machineState.title] = { ...action.machineState };
+      } else if (state.machineState.usage_mode === USAGE_MODE.EXERCISE) {
         // reset button in Exercise mode, repopulate with starting value
-        initialMachineState = { ...setMachineState };
-        initialMachineState.startActivity = true;
+        initialMachineState[action.title] = { ...initialMachineState[action.title] };
+        initialMachineState[action.title].startActivity = true;
       }
-      initialMachineState.activityStarted = false;
-      initialMachineState.errorMessage = '';
-      return setInitialState();
+      initialMachineState[action.title].activityStarted = false;
+      initialMachineState[action.title].errorMessage = '';
+      return setInitialState(action.title);
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };

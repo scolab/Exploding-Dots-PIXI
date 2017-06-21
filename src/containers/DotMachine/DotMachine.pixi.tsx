@@ -27,7 +27,9 @@ const DotsMachine = (props: IProps) => {
     <div>
       <ErrorDisplay
         errorMessage={props.dotsMachine.machineState.errorMessage}
-        onClose={props.resetMachine}
+        onClose={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
+        resetAction={props.dotsMachine.machineState.resetAction}
+        title={props.dotsMachine.machineState.title}
       />
       <MessageDisplay
         userMessage={props.dotsMachine.machineState.userMessage}
@@ -52,7 +54,9 @@ const DotsMachine = (props: IProps) => {
                     }
         {props.dotsMachine.machineState.resetVisible === true &&
           <ResetButton
-            onClick={() => props.resetMachine()}
+            onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
+            resetAction={props.dotsMachine.machineState.resetAction}
+            title={props.dotsMachine.machineState.title}
           />
                     }
       </TopMenuItem>
@@ -95,6 +99,7 @@ const DotsMachine = (props: IProps) => {
         }
       </ActivityDescriptor>
       <CanvasPIXI
+        title={props.dotsMachine.machineState.title}
         totalZoneCount={props.dotsMachine.machineState.zones}
         positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
         negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
@@ -126,46 +131,11 @@ const DotsMachine = (props: IProps) => {
         muted={props.dotsMachine.machineState.muted}
         wantedResult={props.dotsMachine.machineState.wantedResult}
         setDivisionResult={props.setDivisionResult}
+        successAction={props.dotsMachine.machineState.successAction}
       />
     </div>
   );
 };
-
-/*
- totalZoneCount={props.dotsMachine.machineState.zones}
- dots={props.dotsMachine.dots}
- positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
- negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
- positiveDividerDots={props.dotsMachine.positiveDividerDots}
- negativeDividerDots={props.dotsMachine.negativeDividerDots}
- positiveDividerResult={props.dotsMachine.positiveDividerResult}
- negativeDividerResult={props.dotsMachine.negativeDividerResult}
- base={props.dotsMachine.machineState.base}
- operator_mode={props.dotsMachine.machineState.operator_mode}
- usage_mode={props.dotsMachine.machineState.usage_mode}
- magicWandIsActive={props.dotsMachine.machineState.magicWandIsActive}
- activateMagicWand={props.activateMagicWand}
- addDot={props.addDot}
- removeDot={props.removeDot}
- rezoneDot={props.rezoneDot}
- addMultipleDots={props.addMultipleDots}
- removeMultipleDots={props.removeMultipleDots}
- placeValueOn={props.dotsMachine.machineState.placeValueOn}
- cdnBaseUrl={props.dotsMachine.machineState.cdnBaseUrl}
- startActivityFunc={props.startActivityFunc}
- startActivity={props.dotsMachine.machineState.startActivity}
- startActivityDoneFunc={props.startActivityDoneFunc}
- activityStarted={props.dotsMachine.machineState.activityStarted}
- operandA={props.dotsMachine.machineState.operandA}
- operandB={props.dotsMachine.machineState.operandB}
- error={props.error}
- displayUserMessage={props.userMessage}
- userMessage={props.dotsMachine.machineState.userMessage}
- muted={props.dotsMachine.machineState.muted}
- wantedResult={props.dotsMachine.machineState.wantedResult}
- setDivisionResult={props.setDivisionResult}
-
- */
 
 interface IProps {
   addDot: PropTypes.func;
@@ -200,6 +170,7 @@ interface IProps {
     positiveDividerResult: number[];
     negativeDividerResult: number[];
     machineState: {
+      title: string;
       placeValueSwitchVisible: boolean;
       baseSelectorVisible: boolean;
       magicWandVisible: boolean;
@@ -219,6 +190,8 @@ interface IProps {
       userMessage: string;
       muted: boolean;
       wantedResult: IWantedResult;
+      successAction: Function;
+      resetAction: Function;
     };
   };
 }

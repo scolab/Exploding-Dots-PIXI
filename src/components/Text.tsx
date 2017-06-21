@@ -1,5 +1,7 @@
 import React from 'react';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
+import {operationItem} from "./StylesForComponents";
+import styled from "styled-components";
 
 interface IProps {
   operator_mode: IOPERATOR_MODE;
@@ -15,16 +17,20 @@ const Text = (props: IProps) => {
       text = TEXT_COPY.PUT;
     }
   }
-  const styles = require('./ExplodingDots.css');
+
+  const OperationDiv = styled.div`
+      ${operationItem}
+    `;
+
   return (
-    <div
-      className={styles.operationItem}
+    <OperationDiv
+      className="operationItem"
       style={{
         fontFamily: 'Noto Sans',
         fontSize: 24,
         fontWeight: 'bold',
       }}
-    >{text}</div>
+    >{text}</OperationDiv>
   );
 };
 

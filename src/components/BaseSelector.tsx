@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+import { gradientBackground, topLeftElement } from './StylesForComponents';
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
@@ -7,29 +9,30 @@ interface IProps {
 }
 
 const BaseSelector = (props: IProps) => {
-  const styles = require('./ExplodingDots.css');
+
+  const GradientBackgroundButton = styled.button`
+      ${gradientBackground}
+      ${topLeftElement}
+      font-family: Noto Sans;
+      font-weight: bold;
+      font-size: 24px;
+      width: 132px;
+      height: 46px;
+      vertical-align: middle;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    `;
+
+  const img = require('./images/longArrowLeft.gif');
+
   return (
-    <div className={styles.topRightMenuItem}>
-      <button
-        style={{
-          backgroundColor: '#efefef',
-          border: 'none',
-          borderRadius: '23px',
-          fontFamily: 'Noto Sans',
-          fontSize: 24,
-          fontWeight: 'bold',
-          height: '46px',
-          textAlign: 'center',
-          textVAlign: 'center',
-          verticalAlign: 'middle',
-          width: '132px',
-        }}
-        type="button"
-        onClick={props.onClick}
-      >
-        {props.base[0]} ⟵ {props.base[1]}
-      </button>
-    </div>
+    <GradientBackgroundButton
+      type="button"
+      onClick={props.onClick}
+    >
+      {props.base[0]} <img src={img} role="presentation" style={{ marginBottom: '1px', marginLeft: '3px', marginRight: '3px' }} /> {props.base[1]}
+    </GradientBackgroundButton>
   );
 };
 

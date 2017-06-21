@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
+import styled from "styled-components";
+import {operationItem} from "./StylesForComponents";
 
 interface IProps {
   value: any;
@@ -27,10 +29,9 @@ export default class Operand extends Component<IProps, {}> {
   }
 
   public render() {
-    const styles = require('./ExplodingDots.css');
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
-        <div className={styles.operationItem}>
+        <OperationDiv>
           <form onSubmit={this.onSubmit}>
             <input
               style={{
@@ -52,13 +53,13 @@ export default class Operand extends Component<IProps, {}> {
               }}
             />
           </form>
-        </div>
+        </OperationDiv>
       );
     } else if (this.props.pos === OPERAND_POS.RIGHT) {
       const visible = this.props.operator_mode !== OPERATOR_MODE.DISPLAY;
       if (visible) {
         return (
-          <div className={styles.operationItem}>
+          <OperationDiv>
             <form onSubmit={this.onSubmit}>
               <input
                 style={{
@@ -80,7 +81,7 @@ export default class Operand extends Component<IProps, {}> {
                 }}
               />
             </form>
-          </div>
+          </OperationDiv>
         );
       }
     }
@@ -149,7 +150,7 @@ export default class Operand extends Component<IProps, {}> {
     if (reg.test(stringToTest)) {
       this.props.onChange(this.props.pos, stringToTest);
     }
-  }
+  };
 
   private onSubmit = (e) => {
     e.preventDefault();
@@ -158,7 +159,7 @@ export default class Operand extends Component<IProps, {}> {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  }
+  };
 
   private checkIfInputActive() {
     if (this.inputText) {
@@ -175,3 +176,7 @@ export default class Operand extends Component<IProps, {}> {
   }
 
 }
+
+const OperationDiv = styled.div`
+      ${operationItem}
+    `;

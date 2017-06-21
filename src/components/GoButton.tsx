@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from "styled-components";
+import {gradientBackground} from "./StylesForComponents";
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
@@ -7,22 +9,23 @@ interface IProps {
 }
 
 const GoButton = (props: IProps) => {
-  const styles = require('./ExplodingDots.css');
+
+  const GradientBackgroundButton = styled.button`
+  ${gradientBackground}
+  `;
+
+  const img = require('./images/arrow-right.gif');
+
   if (props.activityStarted) {
     return (
       <button
         style={{
-          fontWeight: 'bold',
-          fontSize: 20,
-          background: '#efefef', /* For browsers that do not support gradients */
-          borderRadius: '25px',
           width: '47px',
           height: '47px',
           lineHeight: '47px',
           verticalAlign: 'middle',
           marginTop: '-6px',
           marginLeft: '10px',
-          overflow: 'hidden',
           border: 'none',
           visibility: 'hidden',
         }}
@@ -33,13 +36,12 @@ const GoButton = (props: IProps) => {
   }
   return (
     /* eslint-disable no-dupe-keys */
-    <button
-      className={styles.gradientBackground}
+    <GradientBackgroundButton
       style={{
         border: 'none',
         cursor: 'pointer',
-        fontSize: 20,
         fontWeight: 'bold',
+        fontSize: 20,
         width: '47px',
         height: '47px',
         lineHeight: '47px',
@@ -49,8 +51,10 @@ const GoButton = (props: IProps) => {
       }}
       type="button"
       onClick={props.onClick}
+    >
+      <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
     >➔
-    </button>
+    </GradientBackgroundButton>
   );
   /* eslint-enable */
 };

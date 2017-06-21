@@ -1,6 +1,6 @@
 {
-  "name": "exploding-dots",
-  "version": "0.0.47",
+  "name": "@scolab/component-exploding-dots",
+  "version": "0.0.76",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -69,13 +69,15 @@
     "pixi-particles": "^2.1.4",
     "pixi.js": "^4.5.1",
     "prop-types": "^15.5.8",
-    "react-css-modules": "^4.3.0",
     "react-redux": "^5.0.1",
     "react-tap-event-plugin": "^2.0.1",
+    "react-visibility-sensor": "^3.9.0",
     "redux": "^3.6.0",
+    "styled-components": "^2.0.1",
     "victor": "^1.1.0"
   },
-  "main": "dist/index.js",
+  "main": "dist/containers/App.server.js",
+  "browser": "dist/containers/App.client.js",
   "engines": {
     "node": "~6.9.0",
     "npm": "^3.0.0"

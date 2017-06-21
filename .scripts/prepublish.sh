@@ -9,8 +9,11 @@
 echo "=> Transpiling 'src' into ES5 ..."
 echo ""
 rm -rf ./dist
-# NODE_ENV=production ./node_modules/.bin/babel --ignore tests,stories --plugins "transform-runtime" ./src --out-dir ./dist
-NODE_ENV=production ./node_modules/.bin/babel --ignore tests,stories --plugins "transform-runtime,ts-loader" ./src --out-dir ./dist
+rm -rf ./ts-out
+NODE_ENV=production ./node_modules/typescript/bin/tsc --outDir ./ts-out
+NODE_ENV=production ./node_modules/.bin/babel --ignore tests,stories --plugins "transform-runtime,babel-plugin-transform-inline-environment-variables" ./ts-out --out-dir ./dist
+rsync -a -v --include '*/' --include *.{json,png,jpg,gif} --exclude '*' ./src/ ./dist/
+rm -rf ./ts-out
 echo ""
 echo "=> Transpiling completed."
 

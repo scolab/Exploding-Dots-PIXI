@@ -11,6 +11,8 @@ import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { randomFromTo } from '../../utils/MathUtils';
 import { replaceAt, superscriptToNormal } from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
+import VisibilitySensor from 'react-visibility-sensor';
+import WebGLRenderer = PIXI.WebGLRenderer;
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -18,6 +20,7 @@ interface IOperantProcessedArray {
 }
 
 interface IProps {
+  title: string;
   addDot: PropTypes.func.isRequired;
   addMultipleDots: PropTypes.func.isRequired;
   rezoneDot: PropTypes.func.isRequired;
@@ -49,6 +52,7 @@ interface IProps {
   userMessage: string;
   muted: boolean;
   wantedResult: IWantedResult;
+  successAction: Function,
 }
 
 class CanvasPIXI extends Component<IProps, {}> {
@@ -80,6 +84,10 @@ class CanvasPIXI extends Component<IProps, {}> {
   private spritePool: SpritePool;
   private loaderName: string = 'machineAssets';
   private textures: PIXI.loaders.TextureDictionary | undefined;
+  private boundOnResize:EventListenerObject;
+  private canvasDiv: HTMLDivElement;
+  private placeHolder: HTMLImageElement;
+  private placeholderImage = require('./images/placeholder.gif');
 
   constructor(props: IProps) {
     super(props);
@@ -94,7 +102,40 @@ class CanvasPIXI extends Component<IProps, {}> {
 
   public render() {
     return (
-      <canvas ref={(canvas) => { this.canvas = canvas; }} />
+      <div>
+        <VisibilitySensor
+          onChange={this.onVisibilityChange.bind(this)}
+          partialVisibility={true}
+          scrollCheck={true}
+          scrollDelay={250}
+          intervalCheck={true}
+          intervalDelay={8000}
+        >
+        <div>
+          <div
+            ref={(canvasDiv) => { this.canvasDiv = canvasDiv; }}
+            style={{
+              visibility: 'hidden',
+              height: '1px',
+              overflow: 'hidden',
+            }}
+          >
+            <canvas
+              ref={(canvas) => { this.canvas = canvas; }}
+            />
+          </div>
+          <img
+            ref={(placeholder) => { this.placeHolder = placeholder; }}
+            src={this.placeholderImage}
+            role="presentation"
+            style={{
+              width: '100%',
+              height: '1px',
+            }}
+          />
+        </div>
+        </VisibilitySensor>
+      </div>
     );
   }
 
@@ -104,6 +145,7 @@ class CanvasPIXI extends Component<IProps, {}> {
       antialias: true,
       autoResize: true,
       preserveDrawingBuffer: false,
+      clearBeforeRender: true,
       resolution: window.devicePixelRatio,
       transparent: true,
       view: this.canvas,
@@ -129,11 +171,13 @@ class CanvasPIXI extends Component<IProps, {}> {
             this.props.displayUserMessage,
             this.soundManager,
             this.props.wantedResult,
+            this.props.successAction,
+            this.props.title,
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
-    window.addEventListener('resize', this.resize.bind(this));
-
+    this.boundOnResize = this.resize.bind(this);
+    window.addEventListener('resize', this.boundOnResize);
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
     if (window.devicePixelRatio >= 1.50) {
       this.loader.add(this.loaderName, '/images/machine@4x.json');
@@ -147,6 +191,7 @@ class CanvasPIXI extends Component<IProps, {}> {
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError);
     this.loader.load();
+    this.resize();
   }
 
   public shouldComponentUpdate(nextProps: IProps) {
@@ -174,9 +219,7 @@ class CanvasPIXI extends Component<IProps, {}> {
     this.powerZoneManager.checkInstability();
     this.powerZoneManager.setZoneTextAndAlphaStatus();
     this.checkMachineStateValue();
-    if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
-      this.powerZoneManager.checkResult();
-    }
+    this.powerZoneManager.checkResult();
     this.soundManager.muted = this.props.muted;
     return false;
   }
@@ -192,8 +235,9 @@ class CanvasPIXI extends Component<IProps, {}> {
     if (this.powerZoneManager) {
       this.powerZoneManager.destroy();
     }
-    this.loader.destroy();
-    // eslint-disable-next-line guard-for-in, no-restricted-syntax
+    if (this.loader) {
+      this.loader.destroy();
+    }
     if (this.textures) {
       for (const key in this.textures) {
         if (this.textures[key]) {
@@ -202,9 +246,29 @@ class CanvasPIXI extends Component<IProps, {}> {
       }
     }
     const hiddenTextureName = `${this.loaderName}_image`;
-    PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
-    // PIXI.utils.destroyTextureCache();
+    if (PIXI.utils.TextureCache[hiddenTextureName]) {
+      PIXI.utils.TextureCache[hiddenTextureName].destroy(true);
+    }
     this.app.destroy(true);
+    window.removeEventListener('resize', this.boundOnResize);
+  }
+
+  private onVisibilityChange(isVisible) {
+    if (this.app) {
+      if (isVisible) {
+        this.app.ticker.start();
+        if (this.renderer && this.isWebGL) {
+          (this.renderer as PIXI.WebGLRenderer).currentRenderer.start();
+        }
+      } else {
+        this.app.ticker.stop();
+        if (this.renderer && this.isWebGL) {
+          (this.renderer as PIXI.WebGLRenderer).currentRenderer.stop();
+        }
+      }
+    } else if (isVisible === false) {
+      setTimeout(this.onVisibilityChange.bind(this, isVisible), 500);
+    }
   }
 
   private onAssetsLoaded(loader: PIXI.loaders.Loader) {
@@ -225,7 +289,10 @@ class CanvasPIXI extends Component<IProps, {}> {
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
       this.powerZoneManager.start();
-
+      this.canvasDiv.style.visibility = 'visible';
+      this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
+      this.canvasDiv.style.overflow = 'visible';
+      this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
@@ -638,18 +705,22 @@ class CanvasPIXI extends Component<IProps, {}> {
     }
   }
 
-  private resize(): void {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const ratio = Math.min(
-      w / SETTINGS.GAME_WIDTH,
-      h / (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
-        SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT));
+  private resize() {
+    let offset: number = 0;
+    if(this.canvas.parentElement){
+      offset = this.canvas.parentElement.offsetWidth;
+    }
+    const w = Math.min(window.innerWidth, offset);
+    const ratio = w / SETTINGS.GAME_WIDTH;
     this.stage.scale.x = this.stage.scale.y = ratio;
     this.renderer.resize(
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
+    if (this.placeHolder.style.visibility !== 'hidden') {
+      this.placeHolder.style.height = `${Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
+          SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio)}px`;
+    }
   }
 
   private calculateOperandRealValue(arr: string[]): number {

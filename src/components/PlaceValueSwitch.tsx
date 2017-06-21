@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {gradientBackground, topLeftElement} from "./StylesForComponents";
+import styled from "styled-components";
 
 interface IProps {
   onClick: PropTypes.func.isRequired;
@@ -7,25 +9,26 @@ interface IProps {
 
 const PlaceValueSwitch = (props: IProps) => {
   const img = require('./images/place_value.gif');
-  const styles = require('./ExplodingDots.css');
+
+  const GradientBackgroundButton = styled.button`
+  ${gradientBackground}
+  ${topLeftElement}
+  `;
+
   return (
-    <div className={styles.topRightMenuItem}>
-      <button
-        className={styles.gradientBackground}
-        style={{
-          border: 'none',
-          cursor: 'pointer',
-          height: '47px',
-          marginLeft: '10px',
-          verticalAlign: 'middle',
-          width: '47px',
-        }}
-        type="button"
-        onClick={() => props.onClick(true)}
-      >
-        <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '2px' }} />
-      </button>
-    </div>
+    <GradientBackgroundButton
+      style={{
+        width: '47px',
+        height: '47px',
+        verticalAlign: 'middle',
+        border: 'none',
+        cursor: 'pointer',
+      }}
+      type="button"
+      onClick={() => props.onClick(true)}
+    >
+      <img src={img} role="presentation" style={{ marginTop: '3px', marginLeft: '2px' }} />
+    </GradientBackgroundButton>
   );
 };
 
