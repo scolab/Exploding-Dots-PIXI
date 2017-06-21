@@ -52,7 +52,14 @@ const GoButton = (props: IProps) => {
       type="button"
       onClick={props.onClick}
     >
-      <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
+      <img
+        src={img}
+        role="presentation"
+        style={{
+          marginTop: '9px',
+          marginLeft: '2px',
+          verticalAlign: 'top',
+        }} />
     </GradientBackgroundButton>
   );
   /* eslint-enable */

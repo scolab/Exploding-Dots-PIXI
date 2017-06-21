@@ -46,7 +46,7 @@ export default class Operator extends Component<IProps, {}> {
                 fontWeight: 'bold',
                 height: '47px',
                 lineHeight: '47px',
-                marginTop: '-6px',
+                marginTop: '30px',
                 //verticalAlign: 'middle',
                 width: '77px',
               }}
@@ -88,7 +88,7 @@ export default class Operator extends Component<IProps, {}> {
               height: '47px',
               lineHeight: '47px',
               //verticalAlign: 'middle',
-              marginTop: '-6px',
+              marginTop: '30px',
             }}
           >&#8722;</GradientBackgroundDiv>
         );
@@ -105,7 +105,7 @@ export default class Operator extends Component<IProps, {}> {
                 height: '47px',
                 lineHeight: '47px',
                 //verticalAlign: 'middle',
-                marginTop: '-6px',
+                marginTop: '30px',
               }}
             >
               <p style={{ marginTop: -1 }}>&#215;</p>
@@ -147,7 +147,7 @@ export default class Operator extends Component<IProps, {}> {
               fontWeight: 'bold',
               height: '47px',
               lineHeight: '47px',
-              marginTop: '-6px',
+              marginTop: '30px',
               //verticalAlign: 'middle',
               width: '77px',
             }}
