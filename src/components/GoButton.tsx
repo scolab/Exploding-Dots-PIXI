@@ -30,7 +30,7 @@ const GoButton = (props: IProps) => {
           visibility: 'hidden',
         }}
         type="button"
-      >➔
+      >
       </button>
     );
   }
@@ -53,7 +53,6 @@ const GoButton = (props: IProps) => {
       onClick={props.onClick}
     >
       <img src={img} role="presentation" style={{ marginTop: '9px', marginLeft: '2px' }} />
-    >➔
     </GradientBackgroundButton>
   );
   /* eslint-enable */
