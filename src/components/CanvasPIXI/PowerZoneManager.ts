@@ -192,7 +192,6 @@ export class PowerZoneManager extends PIXI.Container {
       this.animationCallback();
     });
     this.ticker.start();
-    // requestAnimationFrame(this.animationCallback.bind(this));
   }
 
   public precalculateForDivision() {
@@ -450,15 +449,15 @@ export class PowerZoneManager extends PIXI.Container {
   public reset() {
     // console.log('PowerZoneManager reset');
     TweenMax.killAll(true);
-    if (this.allZones) {
+    if (this.allZones != null) {
       this.allZones.forEach((zone) => {
         zone.reset();
       });
     }
-    if (this.dividerZoneManager) {
+    if (this.dividerZoneManager != null) {
       this.dividerZoneManager.reset();
     }
-    if (this.soundManager) {
+    if (this.soundManager != null) {
       this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
       this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
     }
