@@ -9,4 +9,5 @@ export class DotVO {
   public color: string;
   public sprite: DotSprite;
   public powerZone: number;
+  public actionType: string;
 }

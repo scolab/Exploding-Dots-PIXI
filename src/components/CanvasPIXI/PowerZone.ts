@@ -1,6 +1,9 @@
-import { TweenMax, RoughEase, Linear } from 'gsap';
+import { TweenMax, RoughEase, Linear, Bounce, Elastic } from 'gsap';
 import { EventEmitter } from 'eventemitter3';
-import { BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT, SPRITE_COLOR } from '../../Constants';
+import {
+  BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT, SPRITE_COLOR,
+  DOT_ACTIONS
+} from '../../Constants';
 import { ProximityManager } from '../../utils/ProximityManager';
 import { convertBase, randomFromTo } from '../../utils/MathUtils';
 import { DotCounter } from './DotCounter';
@@ -855,17 +858,17 @@ export class PowerZone extends PIXI.Container {
     return zoneAreEmpty;
   }
 
-  private addDot(dot) {
+  private addDot(dot: DotVO) {
     // console.log('addDot', this.zonePosition);
     let dotSprite;
     if (dot.isPositive) {
-      dotSprite = this.doAddDot(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
+      dotSprite = this.addDotSprite(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
       if (dotSprite) {
         dot.sprite = dotSprite;
         dotSprite.dot = dot;
       }
     } else {
-      dotSprite = this.doAddDot(dot, this.negativeDotsContainer, this.negativeDotNotDisplayed);
+      dotSprite = this.addDotSprite(dot, this.negativeDotsContainer, this.negativeDotNotDisplayed);
       if (dotSprite) {
         dot.sprite = dotSprite;
         dotSprite.dot = dot;
@@ -875,11 +878,16 @@ export class PowerZone extends PIXI.Container {
     return dotSprite;
   }
 
-  private doAddDot(dot, container, notDisplayed) {
+  private addDotSprite(dot: DotVO, container, notDisplayed) {
     let dotSprite;
     if (container.children.length < this.maxDotsByZone) {
       dotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
       container.addChild(dotSprite);
+      if(dot.actionType === DOT_ACTIONS.NEW_DOT_FROM_CLICK) {
+        dotSprite.scale.x = 0;
+        dotSprite.scale.y = 0;
+        TweenMax.to(dotSprite.scale, 0.3, {ease: Elastic.easeOut.config(1, 0.5), x: 1, y: 1});
+      }
     } else {
       notDisplayed[dot.id] = dot;
     }
@@ -940,6 +948,7 @@ export class PowerZone extends PIXI.Container {
     });
     return addedDots;
   }
+
   private doAddDotsFromStateChange(storeHash, localHash): DotVO[] {
     const addedDots: DotVO[] = new Array<DotVO>();
     Object.keys(storeHash).forEach((key) => {

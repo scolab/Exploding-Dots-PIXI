@@ -249,6 +249,7 @@ const dotsReducer = (state: IState | null = null, action) => {
       dot.id = makeUID();
       dot.isPositive = action.isPositive;
       dot.color = action.color;
+      dot.actionType = action.actionType;
       if (dot.isPositive) {
         stateCopy.positivePowerZoneDots[dot.powerZone][dot.id] = dot;
       } else {

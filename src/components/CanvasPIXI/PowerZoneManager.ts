@@ -4,7 +4,10 @@ import { PowerZone } from './PowerZone';
 import { ParticleEmitter } from './ParticleEmitter';
 import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/MathUtils';
 // tslint:disable-next-line max-line-length
-import { BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE } from '../../Constants';
+import {
+  BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE,
+  IUSAGE_MODE, DOT_ACTIONS
+} from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
@@ -742,7 +745,7 @@ export class PowerZoneManager extends PIXI.Container {
                 // Add a opposite value dot in the same zone for division in base X
         this.soundManager.playSound(SoundManager.ADD_DIVISION_DOT);
         if (target.isPositive) {
-          this.addDot(target.powerZone, position, target.isPositive, color);
+          this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
           const dotPos = [
             randomFromTo(
                 POSITION_INFO.DOT_RAYON,
@@ -751,9 +754,9 @@ export class PowerZoneManager extends PIXI.Container {
                 POSITION_INFO.DOT_RAYON,
                 target.parent.negativeDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON),
           ];
-          this.addDot(target.powerZone, dotPos, !target.isPositive, color);
+          this.addDot(target.powerZone, dotPos, !target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
         } else {
-          this.addDot(target.powerZone, position, target.isPositive, color);
+          this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
           const dotPos = [
             randomFromTo(
                 POSITION_INFO.DOT_RAYON,
@@ -762,12 +765,12 @@ export class PowerZoneManager extends PIXI.Container {
                 POSITION_INFO.DOT_RAYON,
                 target.parent.positiveDotsContainer.hitArea.height - POSITION_INFO.DOT_RAYON),
           ];
-          this.addDot(target.powerZone, dotPos, !target.isPositive, color);
+          this.addDot(target.powerZone, dotPos, !target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
         }
       } else {
-                // console.log('here', target.powerZone, position, target.isPositive, color);
+        // console.log('here', target.powerZone, position, target.isPositive, color);
         this.soundManager.playSound(SoundManager.ADD_DOT);
-        this.addDot(target.powerZone, position, target.isPositive, color);
+        this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_FROM_CLICK);
       }
     }
   }
@@ -783,8 +786,8 @@ export class PowerZoneManager extends PIXI.Container {
     dotSprite.on('pointerup', this.onDragEnd);
     dotSprite.on('pointerupoutside', this.onDragEnd);
     dotSprite.on('pointermove', this.onDragMove);
-    dotSprite.alpha = 0;
-    TweenMax.to(dotSprite, 1, { alpha: 1 });
+    /*dotSprite.alpha = 0;
+    TweenMax.to(dotSprite, 1, { alpha: 1 });*/
   }
 
   private removeDotSpriteListeners(sprite: DotSprite) {
@@ -796,7 +799,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private onDragStart(e: PIXI.interaction.InteractionEvent) {
-    // console.log('onDragStart', this.dot.isPositive);
+    //console.log('onDragStart');
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive) {
       const oldParent = this.parent;
@@ -828,6 +831,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragMove(e: PIXI.interaction.InteractionEvent) {
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
+    //console.log('onDragMove', dotSprite.particleEmitter.start());
     if (dotSprite.world.isInteractive && dotSprite.dragging) {
       const newPosition = dotSprite.data.getLocalPosition(this.parent);
       dotSprite.position.x = newPosition.x;
@@ -840,6 +844,7 @@ export class PowerZoneManager extends PIXI.Container {
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive && dotSprite.dragging) {
       dotSprite.dragging = false;
+      dotSprite.particleEmitter.stop();
       // dotSprite.data = null;
       dotSprite.world.verifyDroppedOnZone(this, e.data);
       // dot may have been remove if dropped outside the boxes in freeplay,
@@ -859,7 +864,6 @@ export class PowerZoneManager extends PIXI.Container {
             dotSprite.world.allZones[dotSprite.dot.powerZone].negativeProximityManager);
         }
       }
-      dotSprite.particleEmitter.stop();
     }
     e.stopPropagation();
   }
@@ -897,29 +901,31 @@ export class PowerZoneManager extends PIXI.Container {
                     // console.log('finalNbOfDots', finalNbOfDots);
           if (finalNbOfDots < 0 || (this.base[0] > 1 && Math.abs(diffZone) > 1)) {
             if (finalNbOfDots < 0) {
-                            // alert("Pas assez de points disponibles pour cette opération");
+              // alert("Pas assez de points disponibles pour cette opération");
               this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
-              this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
+              //this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
             } else if (this.base[0] > 1 && Math.abs(diffZone) > 1) {
               this.soundManager.playSound(SoundManager.INVALID_MOVE);
-              this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
+              //this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
             }
             if (dotSprite.dot.isPositive) {
-              this.pendingAction.push(
+              /*this.pendingAction.push(
                 {
                   function: this.backIntoPlace,
                   params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
                 },
-              );
-              this.isInteractive = false;
+              );*/
+              //this.isInteractive = false;
+              this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
             } else {
-              this.pendingAction.push(
+              /*this.pendingAction.push(
                 {
                   function: this.backIntoPlace,
                   params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
                 },
-              );
-              this.isInteractive = false;
+              );*/
+              //this.isInteractive = false;
+              this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
             }
             return;
           }
@@ -1137,26 +1143,48 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private backIntoPlace(dotSprite: DotSprite, currentZone: DotsContainer) {
-    this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
+    //this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
+
+    if (dotSprite.dot.color === SPRITE_COLOR.RED) {
+      dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
+    } else {
+      dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
+    }
+    const newPosition = dotSprite.data.getLocalPosition(this.parent);
+    dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+    dotSprite.particleEmitter.start();
+    console.log(dotSprite.particleEmitter);
+
+
     TweenMax.to(dotSprite, 1, {
       ease: Quint.easeInOut,
       onComplete: this.backIntoPlaceDone.bind(this),
       onCompleteParams: [dotSprite, currentZone],
+      onUpdate: this.updateParticleEmmiter.bind(this),
+      onUpdateParams: [dotSprite],
       x: dotSprite.originInMovingContainer.x,
       y: dotSprite.originInMovingContainer.y,
     });
-    TweenMax.to(dotSprite, 0.5, {
+    /*TweenMax.to(dotSprite, 0.5, {
       height: dotSprite.height / 2,
       repeat: 1,
       yoyo: true,
-    });
+    });*/
+  }
+
+  private updateParticleEmmiter(dotSprite:DotSprite):void{
+    //console.log(dotSprite.data.getLocalPosition, this.parent);
+    //const newPosition = dotSprite.data.getLocalPosition(this.parent);
+    dotSprite.particleEmitter.updateOwnerPos(dotSprite.x, dotSprite.y);
+    //console.log('updateParticleEmmiter', dotSprite.x, dotSprite.y, newPosition.x, newPosition.y);
   }
 
   private backIntoPlaceDone(dotSprite: DotSprite, currentZone: PowerZone) {
     currentZone.addChild(dotSprite);
     dotSprite.position = dotSprite.origin; // eslint-disable-line no-param-reassign
     this.isInteractive = true;
+    dotSprite.particleEmitter.stop();
   }
 
   private addDraggedToNewZone(dotSprite, newZone, positionToBeMovedTo, updateValue) {

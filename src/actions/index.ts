@@ -1,11 +1,12 @@
 import { ACTIONS } from './StoreConstants';
 
-export const addDot = (zoneId, position, isPositive, color) => ({
+export const addDot = (zoneId, position, isPositive, color, actionType) => ({
   type: ACTIONS.ADD_DOT,
   zoneId,
   position,
   isPositive,
   color,
+  actionType,
 });
 
 export const removeDot = (zoneId, dotId) => ({
