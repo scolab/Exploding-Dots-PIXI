@@ -6,7 +6,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 // tslint:disable-next-line max-line-length
 import {
   BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE,
-  IUSAGE_MODE, DOT_ACTIONS
+  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE
 } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
@@ -17,6 +17,7 @@ import {DotSprite} from "./DotSprite";
 import Rectangle = PIXI.Rectangle;
 import {DotsContainer} from "./DotsContainer";
 import Sprite = PIXI.Sprite;
+import InteractionData = PIXI.interaction.InteractionData;
 
 interface IPendingAction {
   // tslint:disable-next-line ban-types
@@ -276,8 +277,7 @@ export class PowerZoneManager extends PIXI.Container {
        i,
        Object.keys(this.props.positivePowerZoneDots[i]).length);*/
       let removedDots = this.allZones[i].removeDotsIfNeeded(positivePowerZoneDots[i], true);
-      removedDots.forEach((d) => {
-        const dot: DotVO = d;
+      removedDots.forEach((dot:DotVO) => {
         if (dot.sprite) {
           this.removeDotSpriteListeners(dot.sprite);
           this.spritePool.dispose(dot.sprite, dot.isPositive, dot.color);
@@ -511,7 +511,7 @@ export class PowerZoneManager extends PIXI.Container {
       this.allZones.forEach((zone) => {
         zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
       });
-
+      // console.log('droppedOnPowerZone', droppedOnPowerZone);
       if (droppedOnPowerZone !== null) {
         // console.log(droppedOnPowerZoneIndex, allZonesValue.length, this.totalZoneCount);
         if ((this.totalZoneCount - droppedOnPowerZoneIndex >= allZonesValue.length) === false) {
@@ -615,8 +615,8 @@ export class PowerZoneManager extends PIXI.Container {
       dotsToMove.forEach((dot) => {
         let newPosition = dot.sprite.parent.toGlobal(dot.sprite.position as Point);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
-        const movingSprite = this.spritePool.getOne(dot.color, dot.isPositive);
-        movingSprite.anchor.set(0.5);
+        const movingSprite:DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
+        //movingSprite.anchor.set(0.5);
         movingSprite.position.x = newPosition.x;
         movingSprite.position.y = newPosition.y;
         this.movingDotsContainer.addChild(movingSprite);
@@ -776,7 +776,6 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private addDotSpriteProperty(dot: DotVO, dotSprite: DotSprite) {
-    dotSprite.anchor.set(0.5);
     dotSprite.x = dot.x;
     dotSprite.y = dot.y;
     dotSprite.interactive = true;
@@ -786,8 +785,6 @@ export class PowerZoneManager extends PIXI.Container {
     dotSprite.on('pointerup', this.onDragEnd);
     dotSprite.on('pointerupoutside', this.onDragEnd);
     dotSprite.on('pointermove', this.onDragMove);
-    /*dotSprite.alpha = 0;
-    TweenMax.to(dotSprite, 1, { alpha: 1 });*/
   }
 
   private removeDotSpriteListeners(sprite: DotSprite) {
@@ -840,7 +837,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private onDragEnd(e: PIXI.interaction.InteractionEvent) {
+  private onDragEnd(this: DotSprite, e: PIXI.interaction.InteractionEvent) {
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive && dotSprite.dragging) {
       dotSprite.dragging = false;
@@ -848,8 +845,8 @@ export class PowerZoneManager extends PIXI.Container {
       // dotSprite.data = null;
       dotSprite.world.verifyDroppedOnZone(this, e.data);
       // dot may have been remove if dropped outside the boxes in freeplay,
-      // so verify if it's still have a dot
-      if (dotSprite.dot) {
+      // so verify if it's still have a sprite in dotVO
+      if (dotSprite.dot.sprite) {
         if (dotSprite.dot.isPositive) {
           // wait for the sprite to be back in place if dropped on an edge
           TweenMax.delayedCall(
@@ -868,248 +865,253 @@ export class PowerZoneManager extends PIXI.Container {
     e.stopPropagation();
   }
 
-  private verifyDroppedOnZone(dotSprite, data) {
-        // console.log('verifyDroppedOnZone', dotSprite, data);
+  private verifyDroppedOnZone(dotSprite: DotSprite, data: InteractionData) {
+    //console.log('verifyDroppedOnZone', dotSprite, data);
     const originalZoneIndex: number = dotSprite.dot.powerZone;
     const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
     const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
     const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-    // console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
+    //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
+    // has been dropped outside a zone?
     if (droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
-            // has not been dropped outside a zone
+      // impossible to move between different signed value zone (positive to negative)
       if (droppedOnPowerZoneIndex !== originalZoneIndex) {
-        // impossible to move between different positive value zone (positive to negative)
         // impossible to move between powerZone in base X
-        if (droppedOnPowerZone.isPositive === dotSprite.dot.isPositive
-            && this.base[1] !== BASE.BASE_X) {
-          const diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
-          let dotsToRemoveCount = 1;
-          // console.log(originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
-          if (diffZone < 0) {
-            dotsToRemoveCount = Math.pow(Number(this.base[1]), diffZone * -1);
-          } else {
-            dotsToRemoveCount = this.base[0] as number;
-          }
-          // console.log('dotsToRemoveCount', dotsToRemoveCount);
-          // check if possible
-          let finalNbOfDots = -1;
-          if (dotSprite.dot.isPositive) {
-            finalNbOfDots = Object.keys(this.allZones[originalZoneIndex].positiveDots).length - dotsToRemoveCount; // tslint:disable-line max-line-length
-          } else {
-            finalNbOfDots = Object.keys(this.allZones[originalZoneIndex].negativeDots).length - dotsToRemoveCount; // tslint:disable-line max-line-length
-          }
-                    // console.log('finalNbOfDots', finalNbOfDots);
-          if (finalNbOfDots < 0 || (this.base[0] > 1 && Math.abs(diffZone) > 1)) {
-            if (finalNbOfDots < 0) {
-              // alert("Pas assez de points disponibles pour cette opération");
-              this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
-              //this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
-            } else if (this.base[0] > 1 && Math.abs(diffZone) > 1) {
-              this.soundManager.playSound(SoundManager.INVALID_MOVE);
-              //this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
-            }
-            if (dotSprite.dot.isPositive) {
-              /*this.pendingAction.push(
-                {
-                  function: this.backIntoPlace,
-                  params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-                },
-              );*/
-              //this.isInteractive = false;
-              this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
-            } else {
-              /*this.pendingAction.push(
-                {
-                  function: this.backIntoPlace,
-                  params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-                },
-              );*/
-              //this.isInteractive = false;
-              this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
-            }
-            return;
-          }
-          // rezone current dot and thus remove it from the amount to be moved
-          this.addDraggedToNewZone(
-              dotSprite,
-              droppedOnPowerZone,
-              data.getLocalPosition(droppedOnPowerZone),
-              false);
-          dotsToRemoveCount -= 1;
-          // console.log('dotsToRemoveCount', dotsToRemoveCount);
-          // animate zone movement and destroy
-          const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
-          this.tweenDotsToNewZone(
-              originalZoneIndex,
-              droppedOnPowerZone,
-              dotsToRemoveCount,
-              dataLocalZone,
-              dotSprite.dot.isPositive);
-          // Add the new dots
-          const dotsPos: Point[] = new Array<Point>();
-          let newNbOfDots = Math.pow(this.base[1] as number, diffZone);
-          newNbOfDots -= this.base[0] as number;
-                    // console.log('newNbOfDots', newNbOfDots, diffZone);
-          for (let i = 0; i < newNbOfDots; i += 1) {
-            dotsPos.push( new Point(
-              randomFromTo(
-                POSITION_INFO.DOT_RAYON,
-                (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON,
-              ),
-              randomFromTo(
-                POSITION_INFO.DOT_RAYON,
-                (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON,
-              )),
-            );
-          }
-          if (dotsPos.length > 0) {
-            this.soundManager.playSound(SoundManager.DOT_EXPLODE);
-                        // console.log('this.addMultipleDots', dotsPos.length);
-            const implosionEmitter = this.getImplosionEmitter();
-            const originalPos = data.getLocalPosition(this.movingDotsContainer);
-            implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
-            implosionEmitter.start();
-            TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
-            this.addMultipleDots(
-                droppedOnPowerZoneIndex,
-                dotsPos,
-                dotSprite.dot.isPositive,
-                dotSprite.dot.color,
-                false);
-          }
+        if (
+          droppedOnPowerZone.isPositive === dotSprite.dot.isPositive &&
+          this.base[1] !== BASE.BASE_X
+        ){
+          this.moveBetweenZone(dotSprite, data, originalZoneIndex, droppedOnPowerZone, droppedOnPowerZoneIndex);
         } else {
           if (droppedOnPowerZone.isPositive !== dotSprite.dot.isPositive) {
-            this.soundManager.playSound(SoundManager.INVALID_MOVE);
-            this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
-            this.isInteractive = false;
-          } else if (this.base[1] === BASE.BASE_X) {
-            this.soundManager.playSound(SoundManager.INVALID_MOVE);
-            this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
-            this.isInteractive = false;
-          }
-          if (dotSprite.dot.isPositive) {
-            this.pendingAction.push(
-              {
-                function: this.backIntoPlace,
-                params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-              },
-            );
-          } else {
-            this.pendingAction.push(
-              {
-                function: this.backIntoPlace,
-                params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-              },
-            );
+            this.moveImpossible(MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE, dotSprite, originalZoneIndex);
+          }else if (this.base[1] === BASE.BASE_X){
+            this.moveImpossible(MOVE_IMPOSSIBLE.BASE_X, dotSprite, originalZoneIndex);
           }
         }
       } else if (droppedOnPowerZoneIndex === originalZoneIndex) {
         if (dotSprite.dot.isPositive === droppedOnPowerZone.isPositive) {
           // just move the dots into the zone
-          droppedOnPowerZone.addChild(dotSprite);
-          let doTween = false;
-          const newPosition = data.getLocalPosition(droppedOnPowerZone);
-          const modifyPosition = newPosition.clone();
-          if (newPosition.x < POSITION_INFO.DOT_RAYON) {
-            modifyPosition.x = POSITION_INFO.DOT_RAYON;
-            doTween = true;
-          } else if (newPosition.x > (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON) {
-            modifyPosition.x = (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON;
-            doTween = true;
-          }
-          if (newPosition.y < POSITION_INFO.DOT_RAYON) {
-            modifyPosition.y = POSITION_INFO.DOT_RAYON;
-            doTween = true;
-          } else if (newPosition.y > (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON) {
-            modifyPosition.y = (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON;
-            doTween = true;
-          }
-          const position = dotSprite.position;
-          position.x = newPosition.x;
-          position.y = newPosition.y;
-          if (doTween) {
-            TweenMax.to(dotSprite.position, 0.2, { x: modifyPosition.x, y: modifyPosition.y });
-          }
+          this.moveIntoSameZone(dotSprite, data, droppedOnPowerZone);
         } else if (dotSprite.dot.isPositive !== droppedOnPowerZone.isPositive) {
           // check it possible dot / anti dot destruction
-          if (dotSprite.dot.isPositive) {
-            // Positive dot drag into negative zoe
-            if (Object.keys(this.allZones[originalZoneIndex].negativeDots).length > 0) {
-              const allRemovedDots: DotVO[] = new Array<DotVO>();
-              const negativeSprite: DotSprite = this.allZones[originalZoneIndex].negativeDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
-              allRemovedDots.push(negativeSprite.dot);
-              this.removeDotSpriteListeners(negativeSprite);
-              allRemovedDots.push(dotSprite.dot);
-              this.removeDotSpriteListeners(dotSprite);
-              this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
-              this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
-            } else {
-              this.soundManager.playSound(SoundManager.INVALID_MOVE);
-              this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
-              this.pendingAction.push(
-                {
-                  function: this.backIntoPlace,
-                  params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-                },
-              );
-            }
-          } else if (dotSprite.dot.isPositive === false) {
-            // Negative dot drag into positive zoe
-            if (Object.keys(this.allZones[originalZoneIndex].positiveDots).length > 0) {
-              const allRemovedDots: DotVO[] = new Array<DotVO>();
-              const positiveSprite: DotSprite = this.allZones[originalZoneIndex].positiveDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
-              allRemovedDots.push(positiveSprite.dot);
-              this.removeDotSpriteListeners(positiveSprite);
-              allRemovedDots.push(dotSprite.dot);
-              this.removeDotSpriteListeners(dotSprite);
-              this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
-              this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
-            } else {
-              this.soundManager.playSound(SoundManager.INVALID_MOVE);
-              this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
-              this.pendingAction.push(
-                {
-                  function: this.backIntoPlace,
-                  params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-                },
-              );
-            }
-          }
+          this.dotAntidotDestruction(dotSprite, originalZoneIndex);
         }
       }
     } else if (droppedOnPowerZoneIndex === -1 || droppedOnPowerZone === null) {
       // Dropped outside any zone
-      if (droppedOnPowerZone === this.leftMostZone) {
-        // Dropped on the fake zone at the left
-        this.soundManager.playSound(SoundManager.INVALID_MOVE);
-        this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
-        if (dotSprite.dot.isPositive) {
-          this.pendingAction.push(
-            {
-              function: this.backIntoPlace,
-              params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-            },
-          );
-        } else {
-          this.pendingAction.push(
-            {
-              function: this.backIntoPlace,
-              params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-            },
-          );
-        }
-        this.isInteractive = false;
-      } else if (this.usageMode === USAGE_MODE.FREEPLAY) {
-        // Remove dot in freeplay
-        this.soundManager.playSound(SoundManager.DOT_VANISH);
-        this.removeDotSpriteListeners(dotSprite);
-        this.removeDot(originalZoneIndex, dotSprite.dot.id);
-      } else if (dotSprite.dot.isPositive) {
-          // Put back dot in it's original place
+      this.droppedOutsideZone(dotSprite, droppedOnPowerZone, originalZoneIndex);
+    }
+  }
+
+  private moveBetweenZone(dotSprite, data, originalZoneIndex, droppedOnPowerZone, droppedOnPowerZoneIndex){
+    const diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
+    let dotsToRemoveCount = 1;
+    // console.log(originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
+    if (diffZone < 0) {
+      dotsToRemoveCount = Math.pow(Number(this.base[1]), diffZone * -1);
+    } else {
+      dotsToRemoveCount = this.base[0] as number;
+    }
+    // console.log('dotsToRemoveCount', dotsToRemoveCount);
+    // check if possible
+    let finalNbOfDots = -1;
+    if (dotSprite.dot.isPositive) {
+      finalNbOfDots = Object.keys(this.allZones[originalZoneIndex].positiveDots).length - dotsToRemoveCount; // tslint:disable-line max-line-length
+    } else {
+      finalNbOfDots = Object.keys(this.allZones[originalZoneIndex].negativeDots).length - dotsToRemoveCount; // tslint:disable-line max-line-length
+    }
+    // console.log('finalNbOfDots', finalNbOfDots);
+    if (finalNbOfDots < 0 || (this.base[0] > 1 && Math.abs(diffZone) > 1)) {
+      if (finalNbOfDots < 0) {
+        this.moveImpossible(MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS, dotSprite, originalZoneIndex)
+      } else if (this.base[0] > 1 && Math.abs(diffZone) > 1) {
+        this.moveImpossible(MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE, dotSprite, originalZoneIndex)
+      }
+      return;
+    }
+    // rezone current dot and thus remove it from the amount to be moved
+    this.addDraggedToNewZone(
+      dotSprite,
+      droppedOnPowerZone,
+      data.getLocalPosition(droppedOnPowerZone),
+      false);
+    dotsToRemoveCount -= 1;
+    // console.log('dotsToRemoveCount', dotsToRemoveCount);
+
+    // Move dots from higher zone to lower zone
+    if(dotsToRemoveCount > 0) {
+      const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
+      this.tweenDotsToNewZone(
+        originalZoneIndex,
+        droppedOnPowerZone,
+        dotsToRemoveCount,
+        dataLocalZone,
+        dotSprite.dot.isPositive);
+    }
+
+    // Add the new dots
+    let newNbOfDots = Math.pow(this.base[1] as number, diffZone);
+    newNbOfDots -= this.base[0] as number;
+    console.log('newNbOfDots', newNbOfDots, diffZone);
+    if (newNbOfDots > 0) {
+      const dotsPos: Point[] = new Array<Point>();
+      for (let i = 0; i < newNbOfDots; i += 1) {
+        dotsPos.push( new Point(
+          randomFromTo(
+            POSITION_INFO.DOT_RAYON,
+            (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON,
+          ),
+          randomFromTo(
+            POSITION_INFO.DOT_RAYON,
+            (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON,
+          )),
+        );
+      }
+      this.soundManager.playSound(SoundManager.DOT_EXPLODE);
+      //console.log('this.addMultipleDots', dotsPos.length);
+      const implosionEmitter = this.getImplosionEmitter();
+      const originalPos = data.getLocalPosition(this.movingDotsContainer);
+      implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
+      implosionEmitter.start();
+      TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);
+      this.addMultipleDots(
+        droppedOnPowerZoneIndex,
+        dotsPos,
+        dotSprite.dot.isPositive,
+        dotSprite.dot.color,
+        false);
+    }
+  }
+
+  private moveImpossible(type: string, dotSprite: DotSprite, originalZoneIndex: number){
+    console.log('moveImpossible', type);
+    if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
+      this.soundManager.playSound(SoundManager.INVALID_MOVE);
+      this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
+      this.isInteractive = false;
+    } else if (type === MOVE_IMPOSSIBLE.BASE_X) {
+      this.soundManager.playSound(SoundManager.INVALID_MOVE);
+      this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
+      this.isInteractive = false;
+    }else if(type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS){
+      this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
+    }else if(type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE){
+      this.soundManager.playSound(SoundManager.INVALID_MOVE);
+    }
+    if (dotSprite.dot.isPositive) {
+      if (dotSprite.dot.isPositive) {
         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
       } else {
         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
       }
+    }
+  }
+
+  private moveIntoSameZone(dotSprite, data, droppedOnPowerZone):void{
+    droppedOnPowerZone.addChild(dotSprite);
+    let doTween = false;
+    const newPosition = data.getLocalPosition(droppedOnPowerZone);
+    const modifyPosition = newPosition.clone();
+    if (newPosition.x < POSITION_INFO.DOT_RAYON) {
+      modifyPosition.x = POSITION_INFO.DOT_RAYON;
+      doTween = true;
+    } else if (newPosition.x > (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON) {
+      modifyPosition.x = (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON;
+      doTween = true;
+    }
+    if (newPosition.y < POSITION_INFO.DOT_RAYON) {
+      modifyPosition.y = POSITION_INFO.DOT_RAYON;
+      doTween = true;
+    } else if (newPosition.y > (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON) {
+      modifyPosition.y = (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON;
+      doTween = true;
+    }
+    const position = dotSprite.position;
+    position.x = newPosition.x;
+    position.y = newPosition.y;
+    if (doTween) {
+      TweenMax.to(dotSprite.position, 0.2, { x: modifyPosition.x, y: modifyPosition.y });
+    }
+  }
+
+  private dotAntidotDestruction(dotSprite, originalZoneIndex):void {
+    if (dotSprite.dot.isPositive) {
+      // Positive dot drag into negative zoe
+      if (Object.keys(this.allZones[originalZoneIndex].negativeDots).length > 0) {
+        const allRemovedDots: DotVO[] = new Array<DotVO>();
+        const negativeSprite: DotSprite = this.allZones[originalZoneIndex].negativeDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
+        allRemovedDots.push(negativeSprite.dot);
+        this.removeDotSpriteListeners(negativeSprite);
+        allRemovedDots.push(dotSprite.dot);
+        this.removeDotSpriteListeners(dotSprite);
+        this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
+        this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+      } else {
+        this.soundManager.playSound(SoundManager.INVALID_MOVE);
+        this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        this.pendingAction.push(
+          {
+            function: this.backIntoPlace,
+            params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
+          },
+        );
+      }
+    } else if (dotSprite.dot.isPositive === false) {
+      // Negative dot drag into positive zoe
+      if (Object.keys(this.allZones[originalZoneIndex].positiveDots).length > 0) {
+        const allRemovedDots: DotVO[] = new Array<DotVO>();
+        const positiveSprite: DotSprite = this.allZones[originalZoneIndex].positiveDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
+        allRemovedDots.push(positiveSprite.dot);
+        this.removeDotSpriteListeners(positiveSprite);
+        allRemovedDots.push(dotSprite.dot);
+        this.removeDotSpriteListeners(dotSprite);
+        this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
+        this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+      } else {
+        this.soundManager.playSound(SoundManager.INVALID_MOVE);
+        this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        this.pendingAction.push(
+          {
+            function: this.backIntoPlace,
+            params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
+          },
+        );
+      }
+    }
+  }
+
+  private droppedOutsideZone(dotSprite, droppedOnPowerZone, originalZoneIndex):void {
+    if (droppedOnPowerZone === this.leftMostZone) {
+      // Dropped on the fake zone at the left
+      this.soundManager.playSound(SoundManager.INVALID_MOVE);
+      this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
+      if (dotSprite.dot.isPositive) {
+        this.pendingAction.push(
+          {
+            function: this.backIntoPlace,
+            params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
+          },
+        );
+      } else {
+        this.pendingAction.push(
+          {
+            function: this.backIntoPlace,
+            params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
+          },
+        );
+      }
+      this.isInteractive = false;
+    } else if (this.usageMode === USAGE_MODE.FREEPLAY) {
+      // Remove dot in freeplay
+      this.soundManager.playSound(SoundManager.DOT_VANISH);
+      this.removeDotSpriteListeners(dotSprite);
+      this.removeDot(originalZoneIndex, dotSprite.dot.id);
+    } else if (dotSprite.dot.isPositive) {
+      // Put back dot in it's original place
+      this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
+    } else {
+      this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
     }
   }
 
@@ -1146,18 +1148,27 @@ export class PowerZoneManager extends PIXI.Container {
     //this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
 
-    if (dotSprite.dot.color === SPRITE_COLOR.RED) {
-      dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
-    } else {
-      dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
+    const isTrail:boolean = true;
+
+    if(isTrail) {
+
+      if (dotSprite.dot.color === SPRITE_COLOR.RED) {
+        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
+      } else {
+        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
+      }
+      const newPosition = dotSprite.data.getLocalPosition(this.parent);
+      dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+      dotSprite.particleEmitter.start();
+    }else{
+      const newPosition = dotSprite.data.getLocalPosition(this.parent);
+      const ydiff = dotSprite.originInMovingContainer.y - newPosition.y;
+      const xdiff = dotSprite.originInMovingContainer.x - newPosition.x;
+      const angle = Math.atan2(ydiff, xdiff);
+      dotSprite.rotation = angle;
     }
-    const newPosition = dotSprite.data.getLocalPosition(this.parent);
-    dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-    dotSprite.particleEmitter.start();
-    console.log(dotSprite.particleEmitter);
 
-
-    TweenMax.to(dotSprite, 1, {
+    TweenMax.to(dotSprite, 0.6, {
       ease: Quint.easeInOut,
       onComplete: this.backIntoPlaceDone.bind(this),
       onCompleteParams: [dotSprite, currentZone],
@@ -1222,7 +1233,10 @@ export class PowerZoneManager extends PIXI.Container {
         const dotSprite: DotSprite = dotContainer.getChildAt(0) as DotSprite;
         dotSprite.origin = new Point();
         dotSprite.origin.copy(dotSprite.position);
-        const newPosition = this.movingDotsContainer.toLocal(dotSprite.position as Point, dotSprite.parent);
+        const newPosition = this.movingDotsContainer.toLocal(
+          dotSprite.position as Point,
+          dotSprite.parent
+        );
         const adjacentPosition = positionToBeMovedTo.clone();
         const quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea as Rectangle);
         switch (quadrant) {
@@ -1247,13 +1261,16 @@ export class PowerZoneManager extends PIXI.Container {
         }
         const finalPosition = this.movingDotsContainer.toLocal(
           adjacentPosition,
-          droppedOnPowerZone);
-        this.movingDotsContainer.addChild(dotSprite);
+          droppedOnPowerZone
+        );
         dotSprite.position.x = newPosition.x;
         dotSprite.position.y = newPosition.y;
+        this.movingDotsContainer.addChild(dotSprite);
+        console.log('dotSprite.position', dotSprite.position);
         TweenMax.to(dotSprite, 0.5, {
           onComplete: this.addDraggedToNewZone.bind(this),
           onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true],
+          onUpdate: () => {console.log(dotSprite.position)},
           x: finalPosition.x,
           y: finalPosition.y,
         });

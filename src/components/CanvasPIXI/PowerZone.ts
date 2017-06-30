@@ -10,6 +10,7 @@ import { DotCounter } from './DotCounter';
 import { DotVO } from '../../VO/DotVO';
 import { SpritePool } from '../../utils/SpritePool';
 import {DotsContainer} from './DotsContainer';
+import {DotSprite} from "./DotSprite";
 
 // eslint-disable-next-line import/prefer-default-export
 export class PowerZone extends PIXI.Container {
@@ -556,15 +557,13 @@ export class PowerZone extends PIXI.Container {
     let dotOverload = false;
     if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
       this.dotsCounterContainer.setStyle(0xff0000);
-      const frameTotal = (this.positiveDotsContainer.children[0] as PIXI.extras.AnimatedSprite).totalFrames;
-      this.positiveDotsContainer.children.forEach((sprite) => {
-        (sprite as PIXI.extras.AnimatedSprite).animationSpeed = 0.2;
-        (sprite as PIXI.extras.AnimatedSprite).gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
+      this.positiveDotsContainer.children.forEach((dotSprite:DotSprite) => {
+        dotSprite.playOverload();
       });
       dotOverload = true;
     } else {
-      this.positiveDotsContainer.children.forEach((sprite) => {
-        (sprite as PIXI.extras.AnimatedSprite).gotoAndStop(0);
+      this.positiveDotsContainer.children.forEach((dotSprite:DotSprite) => {
+        dotSprite.returnToNormal();
       });
       this.dotsCounterContainer.setStyle(0x444444);
     }
@@ -572,15 +571,13 @@ export class PowerZone extends PIXI.Container {
     if (this.negativePresent) {
       if (Object.keys(this.negativeDots).length > Number(this.base[1]) - 1) {
         this.negativeDotsCounterContainer.setStyle(0xff0000);
-        const frameTotal = (this.negativeDotsContainer.children[0] as PIXI.extras.AnimatedSprite).totalFrames;
-        this.negativeDotsContainer.children.forEach((sprite) => {
-          (sprite as PIXI.extras.AnimatedSprite).animationSpeed = 0.2;
-          (sprite as PIXI.extras.AnimatedSprite).gotoAndPlay(randomFromTo(frameTotal - 15, frameTotal - 1));
+        this.negativeDotsContainer.children.forEach((dotSprite:DotSprite) => {
+          dotSprite.playOverload();
         });
         dotOverload = true;
       } else {
-        this.negativeDotsContainer.children.forEach((sprite) => {
-          (sprite as PIXI.extras.AnimatedSprite).gotoAndStop(0);
+        this.negativeDotsContainer.children.forEach((dotSprite:DotSprite) => {
+          dotSprite.returnToNormal();
         });
         this.negativeDotsCounterContainer.setStyle(0xDDDDDD);
       }
@@ -779,7 +776,9 @@ export class PowerZone extends PIXI.Container {
     if (this.positiveDotsContainer) {
       while (this.positiveDotsContainer.children.length > 0) {
         sprite = this.positiveDotsContainer.removeChildAt(0);
-        sprite.stop();
+        if(sprite instanceof PIXI.extras.AnimatedSprite){
+          sprite.stop();
+        }
       }
       this.positiveDotsContainer.off('pointerup', this.createDot.bind(this));
       this.positiveDotsContainer.destroy();
@@ -791,7 +790,9 @@ export class PowerZone extends PIXI.Container {
       if (this.negativeDotsContainer) {
         while (this.negativeDotsContainer.children.length > 0) {
           sprite = this.negativeDotsContainer.removeChildAt(0);
-          sprite.stop();
+          if(sprite instanceof PIXI.extras.AnimatedSprite) {
+            sprite.stop();
+          }
         }
         this.negativeDotsContainer.off('pointerup', this.createDot.bind(this));
         this.negativeDotsContainer.destroy();

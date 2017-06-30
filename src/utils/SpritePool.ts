@@ -14,22 +14,6 @@ export class SpritePool {
   private negativeDotRedTexture: string = 'red_antidot.png';
   private negativeDotBlueTexture: string = 'blue_antidot.png';
 
-  private positiveDotRedFrameTwo: string = 'dot1.png';
-  private positiveDotRedFrameThree: string = 'dot2.png';
-  private positiveDotRedFrameFour: string = 'dot3.png';
-
-  private positiveDotBlueFrameTwo: string = 'b_dot1.png';
-  private positiveDotBlueFrameThree: string = 'b_dot2.png';
-  private positiveDotBlueFrameFour: string = 'b_dot3.png';
-
-  private negativeDotRedFrameTwo: string = 'antidot1.png';
-  private negativeDotRedFrameThree: string = 'antidot2.png';
-  private negativeDotRedFrameFour: string = 'antidot3.png';
-
-  private negativeDotBlueFrameTwo: string = 'b_antidot1.png';
-  private negativeDotBlueFrameThree: string = 'b_antidot2.png';
-  private negativeDotBlueFrameFour: string = 'b_antidot3.png';
-
   private texturePosOne: PIXI.Texture;
   private texturePosTwo: PIXI.Texture;
   private textureNegOne: PIXI.Texture;
@@ -47,44 +31,40 @@ export class SpritePool {
     this.textureNegOne = textures[this.negativeDotRedTexture];
     this.textureNegTwo = textures[this.negativeDotBlueTexture];
 
-    this.positiveSpriteRedFrames = [this.texturePosOne,
-      textures[this.positiveDotRedFrameTwo],
-      textures[this.positiveDotRedFrameThree],
-      textures[this.positiveDotRedFrameFour],
-    ];
-    let i = 45;
+    this.positiveSpriteRedFrames = [this.texturePosOne];
+    for(let i:number = 1; i <= 24; i++){
+      this.positiveSpriteRedFrames.push(textures[`dot${i}.png`]);
+    }
+    let i = 80;
     while (i > 0) {
       this.positiveSpriteRedFrames.push(this.texturePosOne);
       i -= 1;
     }
 
-    this.positiveSpriteBlueFrames = [this.texturePosTwo,
-      textures[this.positiveDotBlueFrameTwo],
-      textures[this.positiveDotBlueFrameThree],
-      textures[this.positiveDotBlueFrameFour],
-    ];
+    this.positiveSpriteBlueFrames = [this.texturePosTwo];
+    for(let i:number = 1; i <= 3; i++){
+      this.positiveSpriteBlueFrames.push(textures[`b_dot${i}.png`]);
+    }
     i = 45;
     while (i > 0) {
       this.positiveSpriteBlueFrames.push(this.texturePosTwo);
       i -= 1;
     }
 
-    this.negativeSpriteRedFrames = [this.textureNegOne,
-      textures[this.negativeDotRedFrameTwo],
-      textures[this.negativeDotRedFrameThree],
-      textures[this.negativeDotRedFrameFour],
-    ];
+    this.negativeSpriteRedFrames = [this.textureNegOne];
+    for(let i:number = 1; i <= 3; i++){
+      this.negativeSpriteRedFrames.push(textures[`antidot${i}.png`]);
+    }
     i = 45;
     while (i > 0) {
       this.negativeSpriteRedFrames.push(this.textureNegOne);
       i -= 1;
     }
 
-    this.negativeSpriteBlueFrames = [this.textureNegTwo,
-      textures[this.negativeDotBlueFrameTwo],
-      textures[this.negativeDotBlueFrameThree],
-      textures[this.negativeDotBlueFrameFour],
-    ];
+    this.negativeSpriteBlueFrames = [this.textureNegTwo];
+    for(let i:number = 1; i <= 3; i++){
+      this.negativeSpriteBlueFrames.push(textures[`b_antidot${i}.png`]);
+    }
     i = 45;
     while (i > 0) {
       this.negativeSpriteBlueFrames.push(this.textureNegTwo);
@@ -100,23 +80,23 @@ export class SpritePool {
         if (this.poolPositiveRed.length > 0) {
           sprite = this.poolPositiveRed.pop() as DotSprite;
         } else {
-          sprite = new DotSprite(this.positiveSpriteRedFrames);
+          sprite = new DotSprite(this.texturePosOne, this.positiveSpriteRedFrames);
         }
       } else if (this.poolNegativeRed.length > 0) {
         sprite = this.poolNegativeRed.pop() as DotSprite;
       } else {
-        sprite = new DotSprite(this.negativeSpriteRedFrames);
+        sprite = new DotSprite(this.textureNegOne, this.negativeSpriteRedFrames);
       }
     } else if (positive) {
       if (this.poolPositiveBlue.length > 0) {
         sprite = this.poolPositiveBlue.pop() as DotSprite;
       } else {
-        sprite = new DotSprite(this.positiveSpriteBlueFrames);
+        sprite = new DotSprite(this.texturePosTwo, this.positiveSpriteBlueFrames);
       }
     } else if (this.poolNegativeBlue.length > 0) {
       sprite = this.poolNegativeBlue.pop() as DotSprite;
     } else {
-      sprite = new DotSprite(this.negativeSpriteBlueFrames);
+      sprite = new DotSprite(this.textureNegTwo, this.negativeSpriteBlueFrames);
     }
     sprite.alpha = 1;
     return sprite;
@@ -125,7 +105,7 @@ export class SpritePool {
   public dispose(sprite: DotSprite, isPositive: boolean, color: string) {
         // sprite.destroy();
         // console.log('dispose', isPositive, color)
-    sprite.gotoAndStop(0);
+    sprite.returnToNormal();
     sprite.dot = new DotVO();
     if (isPositive) {
       if (color === SPRITE_COLOR.RED) {

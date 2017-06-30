@@ -393,7 +393,7 @@ class CanvasPIXI extends Component<IProps, {}> {
             break;
           case OPERATOR_MODE.SUBTRACT:
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
-              this.createSubtractDots(dotsPerZoneA, dotsPerZoneA);
+              this.createSubtractDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
               this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
