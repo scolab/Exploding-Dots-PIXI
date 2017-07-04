@@ -137,6 +137,7 @@ export class DividerZoneManager extends PIXI.Container {
 
   private onDragMove(e) {
     if (this.dragging) {
+      // console.log('onDragMove');
       const newPosition = this.data.getLocalPosition(this.parent);
       this.position.x = newPosition.x - (this.width / 2);
       this.position.y = newPosition.y - (this.height / 2);

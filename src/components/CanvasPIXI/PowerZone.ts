@@ -390,6 +390,14 @@ export class PowerZone extends PIXI.Container {
     }
   }
 
+  public addToProximityManager(sprite:DotSprite):void{
+    if (sprite.dot.isPositive) {
+      this.positiveProximityManager.addItem(sprite);
+    } else {
+      this.negativeProximityManager.addItem(sprite);
+    }
+  }
+
   public removeNotDisplayedDots(amount, isPositive) {
     let localAmount = amount;
     let key: string; // tslint:disable-line prefer-const

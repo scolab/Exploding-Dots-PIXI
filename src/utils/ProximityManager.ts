@@ -58,8 +58,8 @@ export class ProximityManager {
               this.applyForce(this.movers[i], force);
               allDone = false;
             } else {
-                            /* this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
-                            this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);*/
+              /* this.movers[i].acceleration.multiplyScalar(0.9 + variableAmount);
+              this.movers[i].velocity.multiplyScalar(0.9 + variableAmount);*/
               if (allDone === true) {
                 allDone = this.movers[i].acceleration.length() < 0.001;
               }
