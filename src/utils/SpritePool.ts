@@ -36,10 +36,10 @@ export class SpritePool {
   private negativeWrongRedFrames: PIXI.Texture[];
   private negativeWrongBlueFrames: PIXI.Texture[];
 
-  private positiveMovingRedFrames: PIXI.Texture[];
+  /*private positiveMovingRedFrames: PIXI.Texture[];
   private positiveMovingBlueFrames: PIXI.Texture[];
   private negativeMovingRedFrames: PIXI.Texture[];
-  private negativeMovingBlueFrames: PIXI.Texture[];
+  private negativeMovingBlueFrames: PIXI.Texture[];*/
 
   constructor(textures:TextureDictionary) {
 
@@ -51,7 +51,7 @@ export class SpritePool {
     this.createOverloadAnimations(textures);
     this.createDripAnimations(textures);
     this.createWrongAnimation(textures);
-    this.createMovingAnimation(textures);
+    //this.createMovingAnimation(textures);
   }
 
   private createOverloadAnimations(textures:TextureDictionary):void {
@@ -143,7 +143,7 @@ export class SpritePool {
     }
   }
 
-  private createMovingAnimation(textures:TextureDictionary):void{
+  /*private createMovingAnimation(textures:TextureDictionary):void{
     this.positiveMovingRedFrames = [this.texturePosOne];
     for(let i:number = 1; i <= 3; i++){
       this.positiveMovingRedFrames.push(textures[`dot_drip${i}.png`]);
@@ -163,7 +163,8 @@ export class SpritePool {
     for(let i:number = 1; i <= 3; i++){
       this.negativeMovingBlueFrames.push(textures[`dot_drip${i}.png`]);
     }
-  }
+  }*/
+
   public getOne(color: string, positive: boolean): DotSprite {
         // console.log('getOne', color, positive);
     let sprite: DotSprite;
@@ -176,8 +177,7 @@ export class SpritePool {
             this.texturePosOne,
             this.positiveOverloadRedFrames,
             this.positiveRippleRedFrames,
-            this.positiveWrongRedFrames,
-            this.positiveMovingRedFrames,
+            this.positiveWrongRedFrames
           );
         }
       } else if (this.poolNegativeRed.length > 0) {
@@ -187,8 +187,7 @@ export class SpritePool {
           this.textureNegOne,
           this.negativeOverloadRedFrames,
           this.negativeRippleRedFrames,
-          this.negativeWrongRedFrames,
-          this.positiveMovingRedFrames,
+          this.negativeWrongRedFrames
         );
       }
     } else if (positive) {
@@ -199,8 +198,7 @@ export class SpritePool {
           this.texturePosTwo,
           this.positiveOverloadBlueFrames,
           this.positiveRippleBlueFrames,
-          this.positiveWrongBlueFrames,
-          this.positiveMovingRedFrames,
+          this.positiveWrongBlueFrames
         );
       }
     } else if (this.poolNegativeBlue.length > 0) {
@@ -210,8 +208,7 @@ export class SpritePool {
         this.textureNegTwo,
         this.negativeOverloadBlueFrames,
         this.negativeRippleBlueFrames,
-        this.negativeWrongBlueFrames,
-        this.positiveMovingRedFrames,
+        this.negativeWrongBlueFrames
       );
     }
     sprite.alpha = 1;

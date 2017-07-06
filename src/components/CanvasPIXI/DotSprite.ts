@@ -13,7 +13,7 @@ export class DotSprite extends PIXI.Container{
   public dot: DotVO;
   private normalDot:Sprite;
   private overloadDot:AnimatedSprite;
-  private movingDot:AnimatedSprite;
+  //private movingDot:AnimatedSprite;
   private rippleDot:AnimatedSprite;
   private wrongDot:AnimatedSprite;
 
@@ -32,8 +32,7 @@ export class DotSprite extends PIXI.Container{
   constructor(dotTexture: Texture,
               overloadTextures: Texture[],
               dripTexture: Texture[],
-              wrongTexture: Texture[],
-              movingTexture: Texture[],
+              wrongTexture: Texture[]
   ) {
     super();
     this.normalDot = new Sprite(dotTexture);
@@ -53,10 +52,10 @@ export class DotSprite extends PIXI.Container{
     this.wrongDot.animationSpeed = 0.3;
     this.wrongDot.loop = false;
 
-    this.movingDot = new AnimatedSprite(movingTexture);
+    /*this.movingDot = new AnimatedSprite(movingTexture);
     this.movingDot.anchor.set(0.5);
     this.movingDot.animationSpeed = 0.5;
-    this.movingDot.loop = false;
+    this.movingDot.loop = false;*/
 
     this.addChild(this.normalDot);
   }
@@ -109,16 +108,16 @@ export class DotSprite extends PIXI.Container{
   }
 
   public playMoving():void{
-    while(this.children.length > 0){
+    /*while(this.children.length > 0){
       this.removeChildAt(0);
     }
     this.addChild(this.movingDot);
-    this.movingDot.play();
+    this.movingDot.play();*/
   }
 
   public stopMoving():void{
-    this.movingDot.gotoAndStop(0);
-    this.returnToNormal();
+    /*this.movingDot.gotoAndStop(0);
+    this.returnToNormal();*/
   }
 
   public returnToNormal(force?:boolean):void{

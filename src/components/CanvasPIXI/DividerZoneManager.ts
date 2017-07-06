@@ -2,6 +2,7 @@ import { TweenMax, Quint } from 'gsap';
 import { EventEmitter } from 'eventemitter3';
 import { DividerZone } from './DividerZone';
 import Point = PIXI.Point;
+import {TWEEN_TIME} from "../../Constants";
 
 export class DividerZoneManager extends PIXI.Container {
 
@@ -149,19 +150,23 @@ export class DividerZoneManager extends PIXI.Container {
     if (this.dragging) {
       this.dragging = false;
       this.tweening = true;
-      TweenMax.to(this, 0.3, {
-        ease: Quint.easeOut,
-        onComplete: this.backIntoPlaceDone.bind(this),
-        x: this.origin.x,
-        y: this.origin.y,
-      });
+      TweenMax.to(
+        this,
+        TWEEN_TIME.DIVIDER_BOX_BACK_INTO_PLACE,
+        {
+          ease: Quint.easeOut,
+          onComplete: this.backIntoPlaceDone.bind(this),
+          x: this.origin.x,
+          y: this.origin.y,
+        }
+      );
       this.eventEmitter.emit(DividerZoneManager.END_DRAG, e.data, this.allZonesValue.slice(), true);
     }
     e.stopPropagation();
   }
 
   private backIntoPlaceDone() {
-    TweenMax.delayedCall(0.2, () => { this.tweening = false; });
+    TweenMax.delayedCall(TWEEN_TIME.DIVIDER_BOX_REST_TIME, () => { this.tweening = false; });
   }
 
 }

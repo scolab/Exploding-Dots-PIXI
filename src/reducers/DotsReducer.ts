@@ -1,7 +1,7 @@
 import _array from 'lodash/array';
 import { makeUID } from '../utils/MathUtils';
 import { ACTIONS } from '../actions/StoreConstants';
-import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, IUSAGE_MODE, IOPERATOR_MODE} from '../Constants';
+import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, IUSAGE_MODE, IOPERATOR_MODE, DOT_ACTIONS} from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 import { DotVO } from '../VO/DotVO';
 import {MachineStateVO} from "../VO/MachineStateVO";
@@ -296,18 +296,20 @@ const dotsReducer = (state: IState | null = null, action) => {
         dot.id = makeUID();
         dot.isPositive = action.isPositive;
         dot.color = action.color;
+        dot.actionType = DOT_ACTIONS.NEW_DOT_FROM_MOVE;
+        dot.dropPosition = action.dropPosition;
         if (dot.isPositive) {
           stateCopy.positivePowerZoneDots[action.zoneId][dot.id] = dot;
         } else {
           stateCopy.negativePowerZoneDots[action.zoneId][dot.id] = dot;
         }
       });
-      if (action.updateValue) {
+      /*if (action.updateValue) {
         if (stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY &&
           stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
           stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
         }
-      }
+      }*/
       return stateCopy;
 
     case ACTIONS.REMOVE_MULTIPLE_DOTS:

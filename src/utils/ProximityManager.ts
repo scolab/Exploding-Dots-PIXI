@@ -1,7 +1,7 @@
 import Victor from 'victor';
 import { TweenMax } from 'gsap';
 import { constrain } from './MathUtils';
-import { POSITION_INFO } from '../Constants';
+import {POSITION_INFO, TWEEN_TIME} from '../Constants';
 import Rectangle = PIXI.Rectangle;
 import {DotSprite} from "../components/CanvasPIXI/DotSprite";
 
@@ -31,7 +31,11 @@ export class ProximityManager {
       item.acceleration = new Victor(0, 0);
       /* eslint-enable */
       this.allDone = false;
-      TweenMax.delayedCall(5, () => { this.allDone = true; }, null, this);
+      TweenMax.delayedCall(
+        TWEEN_TIME.PROXIMITY_MANAGER_WORKING_TIME,
+        () => { this.allDone = true; },
+        null,
+        this);
     }
   }
 

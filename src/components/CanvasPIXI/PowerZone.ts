@@ -1,8 +1,8 @@
-import { TweenMax, RoughEase, Linear, Bounce, Elastic } from 'gsap';
+import { TweenMax, RoughEase, Linear, Bounce, Elastic, Power3 } from 'gsap';
 import { EventEmitter } from 'eventemitter3';
 import {
   BASE, OPERATOR_MODE, USAGE_MODE, BOX_INFO, POSITION_INFO, MAX_DOT, SPRITE_COLOR,
-  DOT_ACTIONS
+  DOT_ACTIONS, TWEEN_TIME
 } from '../../Constants';
 import { ProximityManager } from '../../utils/ProximityManager';
 import { convertBase, randomFromTo } from '../../utils/MathUtils';
@@ -16,11 +16,12 @@ import AnimatedSprite = PIXI.extras.AnimatedSprite;
 // eslint-disable-next-line import/prefer-default-export
 export class PowerZone extends PIXI.Container {
 
-  public static BG_NEUTRAL = 'BG_NEUTRAL';
-  public static BG_GREEN = 'BG_GREEN';
-  public static BG_RED = 'BG_RED';
-  public static CREATE_DOT = 'CREATE_DOT';
-  public static DIVIDER_OVERLOAD = 'DIVIDER_OVERLOAD';
+  public static BG_NEUTRAL: string = 'BG_NEUTRAL';
+  public static BG_GREEN: string = 'BG_GREEN';
+  public static BG_RED: string = 'BG_RED';
+  public static CREATE_DOT: string = 'CREATE_DOT';
+  public static DIVIDER_OVERLOAD: string = 'DIVIDER_OVERLOAD';
+  public static ADD_DOT_PROPERTIES: string = 'ADD_DOT_PROPERTIES';
 
   private static getDotsFromHash(hash, amount): DotVO[] {
     const allRemovedDots: DotVO[] = new Array<DotVO>();
@@ -44,9 +45,9 @@ export class PowerZone extends PIXI.Container {
   public zonePosition: number = 0;
   public positiveDivisionValue: number = 0;
   public negativeDivisionValue: number = 0;
-  public positiveProximityManager: ProximityManager;
-  public negativeProximityManager: ProximityManager;
 
+  private positiveProximityManager: ProximityManager;
+  private negativeProximityManager: ProximityManager;
   private positiveDotNotDisplayed: object = {};
   private negativeDotNotDisplayed: object = {};
   private positiveDividerText: PIXI.Text;
@@ -383,7 +384,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   public removeFromProximityManager(sprite) {
-        // console.log('removeFromProximityManager', this.zonePosition);
+    //console.log('removeFromProximityManager', this.zonePosition);
     if (sprite.dot.isPositive) {
       this.positiveProximityManager.removeItem(sprite);
     } else {
@@ -392,6 +393,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   public addToProximityManager(sprite:DotSprite):void{
+    //console.log('addToProximityManager', sprite.dot.isPositive);
     if (sprite.dot.isPositive) {
       this.positiveProximityManager.addItem(sprite);
     } else {
@@ -894,15 +896,33 @@ export class PowerZone extends PIXI.Container {
       container.addChild(dotSprite);
       if(dot.actionType === DOT_ACTIONS.NEW_DOT_FROM_CLICK) {
         dotSprite.playDrip();
-        /*dotSprite.scale.x = 0;
-        dotSprite.scale.y = 0;
-        TweenMax.to(dotSprite.scale, 0.3, {ease: Elastic.easeOut.config(1, 0.5), x: 1, y: 1});*/
+        dot.actionType = '';
+      }else if(dot.actionType === DOT_ACTIONS.NEW_DOT_FROM_MOVE){
+        dotSprite.x = dot.dropPosition.x;
+        dotSprite.y = dot.dropPosition.y;
+        TweenMax.to(
+          dotSprite,
+          TWEEN_TIME.EXPLODE_DOT,
+          {
+            x: dot.x,
+            y: dot.y,
+            ease: Power3.easeOut,
+            onComplete: this.moveDotAfterAddCompleted,
+            onCompleteParams: [dotSprite, dot],
+            onCompleteScope: this,
+          }
+        );
       }
       return dotSprite;
     } else {
       notDisplayed[dot.id] = dot;
     }
     return null;
+  }
+
+  private moveDotAfterAddCompleted(dotSprite: DotSprite, dot: DotVO):void{
+    dot.actionType = '';
+    this.eventEmitter.emit(PowerZone.ADD_DOT_PROPERTIES, dotSprite, dot);
   }
 
   private removeDotsFromArrayStoreChange(localHash, storeHash): DotVO[] {

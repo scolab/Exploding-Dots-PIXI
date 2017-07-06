@@ -15,13 +15,13 @@ export const removeDot = (zoneId, dotId) => ({
   dotId,
 });
 
-export const addMultipleDots = (zoneId, dotsPos, isPositive, color, updateValue) => ({
+export const addMultipleDots = (zoneId, dotsPos, isPositive, color, dropPosition) => ({
   type: ACTIONS.ADD_MULTIPLE_DOTS,
   zoneId,
   dotsPos,
   isPositive,
   color,
-  updateValue,
+  dropPosition,
 });
 
 export const removeMultipleDots = (zoneId, dots, updateValue) => ({

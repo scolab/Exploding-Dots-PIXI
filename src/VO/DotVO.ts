@@ -1,4 +1,5 @@
 import {DotSprite} from '../components/CanvasPIXI/DotSprite';
+import Point = PIXI.Point;
 
 export class DotVO {
   public id: string;
@@ -10,4 +11,5 @@ export class DotVO {
   public sprite: DotSprite;
   public powerZone: number;
   public actionType: string;
+  public dropPosition: Point;
 }
