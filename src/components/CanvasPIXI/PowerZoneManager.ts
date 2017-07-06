@@ -823,6 +823,7 @@ export class PowerZoneManager extends PIXI.Container {
       } else {
         dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
       }
+      dotSprite.particleEmitter.resetPositionTracking();
       dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
       dotSprite.particleEmitter.start();
     }
@@ -1002,11 +1003,11 @@ export class PowerZoneManager extends PIXI.Container {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
     }
     if (dotSprite.dot.isPositive) {
-      if (dotSprite.dot.isPositive) {
-        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
-      } else {
-        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
-      }
+      dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].positiveDotsContainer);
+      //this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
+    } else {
+      dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].negativeDotsContainer);
+      //this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
     }
   }
 
@@ -1149,24 +1150,24 @@ export class PowerZoneManager extends PIXI.Container {
   private backIntoPlace(dotSprite: DotSprite, currentZone: DotsContainer) {
     //this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
-
-    const isTrail:boolean = true;
-
+    const isTrail:boolean = false;
+    dotSprite.stopWrong();
     if(isTrail) {
-
-      if (dotSprite.dot.color === SPRITE_COLOR.RED) {
+      /*if (dotSprite.dot.color === SPRITE_COLOR.RED) {
         dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
       } else {
         dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
       }
       const newPosition = dotSprite.data.getLocalPosition(this.parent);
       dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-      dotSprite.particleEmitter.start();
+      dotSprite.particleEmitter.start();*/
     }else{
+      dotSprite.playMoving();
       const newPosition = dotSprite.data.getLocalPosition(this.parent);
-      const ydiff = dotSprite.originInMovingContainer.y - newPosition.y;
-      const xdiff = dotSprite.originInMovingContainer.x - newPosition.x;
-      const angle = Math.atan2(ydiff, xdiff);
+      const ydiff = newPosition.y - dotSprite.originInMovingContainer.y;
+      const xdiff = newPosition.x - dotSprite.originInMovingContainer.x;
+      let angle = Math.atan2(ydiff, xdiff);
+      angle += Math.PI / 2;
       dotSprite.rotation = angle;
     }
 
@@ -1174,8 +1175,8 @@ export class PowerZoneManager extends PIXI.Container {
       ease: Quint.easeInOut,
       onComplete: this.backIntoPlaceDone.bind(this),
       onCompleteParams: [dotSprite, currentZone],
-      onUpdate: this.updateParticleEmmiter.bind(this),
-      onUpdateParams: [dotSprite],
+      /*onUpdate: this.updateParticleEmmiter.bind(this),
+      onUpdateParams: [dotSprite],*/
       x: dotSprite.originInMovingContainer.x,
       y: dotSprite.originInMovingContainer.y,
     });
@@ -1186,18 +1187,16 @@ export class PowerZoneManager extends PIXI.Container {
     });*/
   }
 
-  private updateParticleEmmiter(dotSprite:DotSprite):void{
-    //console.log(dotSprite.data.getLocalPosition, this.parent);
-    //const newPosition = dotSprite.data.getLocalPosition(this.parent);
+  /*private updateParticleEmmiter(dotSprite:DotSprite):void{
     dotSprite.particleEmitter.updateOwnerPos(dotSprite.x, dotSprite.y);
-    //console.log('updateParticleEmmiter', dotSprite.x, dotSprite.y, newPosition.x, newPosition.y);
-  }
+  }*/
 
   private backIntoPlaceDone(dotSprite: DotSprite, currentZone: PowerZone) {
     currentZone.addChild(dotSprite);
     dotSprite.position = dotSprite.origin; // eslint-disable-line no-param-reassign
     this.isInteractive = true;
     dotSprite.particleEmitter.stop();
+    dotSprite.stopMoving();
   }
 
   private addDraggedToNewZone(dotSprite: DotSprite,
@@ -1213,6 +1212,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.allZones[dotSprite.dot.powerZone].removeDotFromArray(dotSprite.dot);
     this.allZones[newZone.powerZone].addDotToArray(dotSprite.dot);
     this.rezoneDot(newZone.powerZone, dotSprite.dot, updateValue);
+    // this is for 2 > 3 base where an extra dot is moved from zone to zone and need to be reactivated.
     if(addListener){
       this.addDotSpriteProperty(dotSprite);
       this.allZones[newZone.powerZone].addToProximityManager(dotSprite);

@@ -11,6 +11,7 @@ import { DotVO } from '../../VO/DotVO';
 import { SpritePool } from '../../utils/SpritePool';
 import {DotsContainer} from './DotsContainer';
 import {DotSprite} from "./DotSprite";
+import AnimatedSprite = PIXI.extras.AnimatedSprite;
 
 // eslint-disable-next-line import/prefer-default-export
 export class PowerZone extends PIXI.Container {
@@ -784,7 +785,7 @@ export class PowerZone extends PIXI.Container {
     if (this.positiveDotsContainer) {
       while (this.positiveDotsContainer.children.length > 0) {
         sprite = this.positiveDotsContainer.removeChildAt(0);
-        if(sprite instanceof PIXI.extras.AnimatedSprite){
+        if((<AnimatedSprite>sprite).stop){
           sprite.stop();
         }
       }
@@ -798,7 +799,7 @@ export class PowerZone extends PIXI.Container {
       if (this.negativeDotsContainer) {
         while (this.negativeDotsContainer.children.length > 0) {
           sprite = this.negativeDotsContainer.removeChildAt(0);
-          if(sprite instanceof PIXI.extras.AnimatedSprite) {
+          if((<AnimatedSprite>sprite).stop){
             sprite.stop();
           }
         }
@@ -867,9 +868,9 @@ export class PowerZone extends PIXI.Container {
     return zoneAreEmpty;
   }
 
-  private addDot(dot: DotVO) {
+  private addDot(dot: DotVO){
     // console.log('addDot', this.zonePosition);
-    let dotSprite;
+    let dotSprite:DotSprite | null;
     if (dot.isPositive) {
       dotSprite = this.addDotSprite(dot, this.positiveDotsContainer, this.positiveDotNotDisplayed);
       if (dotSprite) {
@@ -884,23 +885,24 @@ export class PowerZone extends PIXI.Container {
       }
     }
     this.addDotToArray(dot);
-    return dotSprite;
   }
 
-  private addDotSprite(dot: DotVO, container, notDisplayed) {
-    let dotSprite;
+  private addDotSprite(dot: DotVO, container, notDisplayed):DotSprite | null {
+    let dotSprite:DotSprite;
     if (container.children.length < this.maxDotsByZone) {
       dotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
       container.addChild(dotSprite);
       if(dot.actionType === DOT_ACTIONS.NEW_DOT_FROM_CLICK) {
-        dotSprite.scale.x = 0;
+        dotSprite.playDrip();
+        /*dotSprite.scale.x = 0;
         dotSprite.scale.y = 0;
-        TweenMax.to(dotSprite.scale, 0.3, {ease: Elastic.easeOut.config(1, 0.5), x: 1, y: 1});
+        TweenMax.to(dotSprite.scale, 0.3, {ease: Elastic.easeOut.config(1, 0.5), x: 1, y: 1});*/
       }
+      return dotSprite;
     } else {
       notDisplayed[dot.id] = dot;
     }
-    return dotSprite;
+    return null;
   }
 
   private removeDotsFromArrayStoreChange(localHash, storeHash): DotVO[] {

@@ -13,6 +13,7 @@ import { replaceAt, superscriptToNormal } from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
 import WebGLRenderer = PIXI.WebGLRenderer;
+import TextureDictionary = PIXI.loaders.TextureDictionary;
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -274,7 +275,7 @@ class CanvasPIXI extends Component<IProps, {}> {
   private onAssetsLoaded(loader: PIXI.loaders.Loader) {
     if (loader.resources.machineAssets.error === null) {
       this.textures = loader.resources.machineAssets.textures;
-      this.spritePool = new SpritePool(this.textures);
+      this.spritePool = new SpritePool(this.textures as TextureDictionary);
       this.powerZoneManager.init(
                 this.textures,
                 this.spritePool,

@@ -41,6 +41,10 @@ export class ParticleEmitter {
     this.emitter.updateOwnerPos(x, y);
   }
 
+  public resetPositionTracking():void{
+    this.emitter.resetPositionTracking();
+  }
+
   public destroy() {
     this.emitter.emit = false;
     this.emitter.destroy();
