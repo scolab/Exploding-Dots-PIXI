@@ -9,15 +9,7 @@ import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {randomFromTo} from "../../utils/MathUtils";
 import {DotsContainer} from "./DotsContainer";
 
-export class DotSprite extends PIXI.Container{
-  public dot: DotVO;
-  private normalDot:Sprite;
-  private overloadDot:AnimatedSprite;
-  //private movingDot:AnimatedSprite;
-  private rippleDot:AnimatedSprite;
-  private wrongDot:AnimatedSprite;
-
-  private shouldPlayOverload:boolean = false;
+export class DotSprite extends PIXI.Container {
 
   public world: PowerZoneManager;
   public origin: Point;
@@ -29,10 +21,23 @@ export class DotSprite extends PIXI.Container{
   public velocity: Victor;
   public acceleration: Victor;
 
+  public dot: DotVO;
+  private normalDot: Sprite;
+  private overloadDot: AnimatedSprite;
+  private outDot: AnimatedSprite;
+  private rippleDot: AnimatedSprite;
+  private wrongDot: AnimatedSprite;
+  private implodeDot: AnimatedSprite;
+  private wiggleDot: AnimatedSprite;
+  private shouldPlayOverload: boolean = false;
+
   constructor(dotTexture: Texture,
               overloadTextures: Texture[],
               dripTexture: Texture[],
-              wrongTexture: Texture[]
+              wrongTexture: Texture[],
+              implodeTexture: Texture[],
+              outTexture: Texture[],
+              wiggleTexture: Texture[],
   ) {
     super();
     this.normalDot = new Sprite(dotTexture);
@@ -52,29 +57,39 @@ export class DotSprite extends PIXI.Container{
     this.wrongDot.animationSpeed = 0.3;
     this.wrongDot.loop = false;
 
-    /*this.movingDot = new AnimatedSprite(movingTexture);
-    this.movingDot.anchor.set(0.5);
-    this.movingDot.animationSpeed = 0.5;
-    this.movingDot.loop = false;*/
+    this.outDot = new AnimatedSprite(outTexture);
+    this.outDot.anchor.set(0.5);
+    this.outDot.animationSpeed = 0.5;
+    this.outDot.loop = false;
+
+    this.implodeDot = new AnimatedSprite(implodeTexture);
+    this.implodeDot.anchor.set(0.5);
+    this.implodeDot.animationSpeed = 0.5;
+    this.implodeDot.loop = false;
+
+    this.wiggleDot = new AnimatedSprite(wiggleTexture);
+    this.wiggleDot.anchor.set(0.5);
+    this.wiggleDot.animationSpeed = 0.5;
+    this.wiggleDot.loop = true;
 
     this.addChild(this.normalDot);
   }
 
-  public playOverload():void{
-    if(this.getChildAt(0) !== this.rippleDot) {
+  public playOverload(): void {
+    if (this.getChildAt(0) !== this.rippleDot) {
       while (this.children.length > 0) {
         this.removeChildAt(0);
       }
       this.overloadDot.gotoAndPlay(randomFromTo(0, this.overloadDot.totalFrames - 1));
       this.addChild(this.overloadDot);
       this.shouldPlayOverload = false;
-    }else{
+    }else {
       this.shouldPlayOverload = true;
     }
   }
 
-  public playDrip():void{
-    while(this.children.length > 0){
+  public playDrip(): void{
+    while (this.children.length > 0) {
       this.removeChildAt(0);
     }
     this.addChild(this.rippleDot);
@@ -82,11 +97,11 @@ export class DotSprite extends PIXI.Container{
     this.rippleDot.play();
   }
 
-  private stopDrip():void{
+  private stopDrip(): void{
     this.rippleDot.gotoAndStop(0);
-    let doPlayOverload:boolean = this.shouldPlayOverload;
+    let doPlayOverload: boolean = this.shouldPlayOverload;
     this.returnToNormal(true);
-    if(doPlayOverload){
+    if (doPlayOverload) {
       this.playOverload();
     }
   }

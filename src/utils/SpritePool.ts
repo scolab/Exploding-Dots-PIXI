@@ -36,12 +36,22 @@ export class SpritePool {
   private negativeWrongRedFrames: PIXI.Texture[];
   private negativeWrongBlueFrames: PIXI.Texture[];
 
-  /*private positiveMovingRedFrames: PIXI.Texture[];
-  private positiveMovingBlueFrames: PIXI.Texture[];
-  private negativeMovingRedFrames: PIXI.Texture[];
-  private negativeMovingBlueFrames: PIXI.Texture[];*/
+  private positiveImplodeRedFrames: PIXI.Texture[];
+  private positiveImplodeBlueFrames: PIXI.Texture[];
+  private negativeImplodeRedFrames: PIXI.Texture[];
+  private negativeImplodeBlueFrames: PIXI.Texture[];
 
-  constructor(textures:TextureDictionary) {
+  private positiveOutRedFrames: PIXI.Texture[];
+  private positiveOutBlueFrames: PIXI.Texture[];
+  private negativeOutRedFrames: PIXI.Texture[];
+  private negativeOutBlueFrames: PIXI.Texture[];
+
+  private positiveWiggleRedFrames: PIXI.Texture[];
+  private positiveWiggleBlueFrames: PIXI.Texture[];
+  private negativeWiggleRedFrames: PIXI.Texture[];
+  private negativeWiggleBlueFrames: PIXI.Texture[];
+
+  constructor(textures: TextureDictionary) {
 
     this.texturePosOne = textures[this.positiveDotRedTexture];
     this.texturePosTwo = textures[this.positiveDotBlueTexture];
@@ -51,122 +61,13 @@ export class SpritePool {
     this.createOverloadAnimations(textures);
     this.createDripAnimations(textures);
     this.createWrongAnimation(textures);
-    //this.createMovingAnimation(textures);
+    this.createImplodeAnimation(textures);
+    this.createOutAnimation(textures);
+    this.createWiggleAnimation(textures);
   }
-
-  private createOverloadAnimations(textures:TextureDictionary):void {
-
-    let normalFramesAdded:number = 80;
-
-    this.positiveOverloadRedFrames = [this.texturePosOne];
-    for(let i:number = 1; i <= 24; i++){
-      this.positiveOverloadRedFrames.push(textures[`dot${i}.png`]);
-    }
-
-    while (normalFramesAdded > 0) {
-      this.positiveOverloadRedFrames.push(this.texturePosOne);
-      normalFramesAdded -= 1;
-    }
-
-    this.positiveOverloadBlueFrames = [this.texturePosTwo];
-    for(let i:number = 1; i <= 3; i++){
-      this.positiveOverloadBlueFrames.push(textures[`b_dot${i}.png`]);
-    }
-    normalFramesAdded = 80;
-    while (normalFramesAdded > 0) {
-      this.positiveOverloadBlueFrames.push(this.texturePosTwo);
-      normalFramesAdded -= 1;
-    }
-
-    this.negativeOverloadRedFrames = [this.textureNegOne];
-    for(let i:number = 1; i <= 3; i++){
-      this.negativeOverloadRedFrames.push(textures[`antidot${i}.png`]);
-    }
-    normalFramesAdded = 80;
-    while (normalFramesAdded > 0) {
-      this.negativeOverloadRedFrames.push(this.textureNegOne);
-      normalFramesAdded -= 1;
-    }
-
-    this.negativeOverloadBlueFrames = [this.textureNegTwo];
-    for(let i:number = 1; i <= 3; i++){
-      this.negativeOverloadBlueFrames.push(textures[`b_antidot${i}.png`]);
-    }
-    normalFramesAdded = 80;
-    while (normalFramesAdded > 0) {
-      this.negativeOverloadBlueFrames.push(this.textureNegTwo);
-      normalFramesAdded -= 1;
-    }
-  }
-
-  private createDripAnimations(textures: TextureDictionary):void {
-    this.positiveRippleRedFrames = [this.texturePosOne];
-    for(let i:number = 1; i <= 5; i++){
-      this.positiveRippleRedFrames.push(textures[`dot_ripple${i}.png`]);
-    }
-
-    this.positiveRippleBlueFrames = [this.texturePosTwo];
-    for(let i:number = 1; i <= 5; i++){
-      this.positiveRippleBlueFrames.push(textures[`dot_ripple${i}.png`]);
-    }
-
-    this.negativeRippleRedFrames = [this.textureNegOne];
-    for(let i:number = 1; i <= 5; i++){
-      this.negativeRippleRedFrames.push(textures[`dot_ripple${i}.png`]);
-    }
-
-    this.negativeRippleBlueFrames = [this.textureNegTwo];
-    for(let i:number = 1; i <= 5; i++){
-      this.negativeRippleBlueFrames.push(textures[`dot_ripple${i}.png`]);
-    }
-  }
-
-  private createWrongAnimation(textures: TextureDictionary):void{
-    this.positiveWrongRedFrames = [this.texturePosOne];
-    for(let i:number = 1; i <= 10; i++){
-      this.positiveWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
-    }
-
-    this.positiveWrongBlueFrames = [this.texturePosTwo];
-    for(let i:number = 1; i <= 10; i++){
-      this.positiveWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
-    }
-
-    this.negativeWrongRedFrames = [this.textureNegOne];
-    for(let i:number = 1; i <= 10; i++){
-      this.negativeWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
-    }
-
-    this.negativeWrongBlueFrames = [this.textureNegTwo];
-    for(let i:number = 1; i <= 10; i++){
-      this.negativeWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
-    }
-  }
-
-  /*private createMovingAnimation(textures:TextureDictionary):void{
-    this.positiveMovingRedFrames = [this.texturePosOne];
-    for(let i:number = 1; i <= 3; i++){
-      this.positiveMovingRedFrames.push(textures[`dot_drip${i}.png`]);
-    }
-
-    this.positiveMovingBlueFrames = [this.texturePosTwo];
-    for(let i:number = 1; i <= 3; i++){
-      this.positiveMovingBlueFrames.push(textures[`dot_drip${i}.png`]);
-    }
-
-    this.negativeMovingRedFrames = [this.textureNegOne];
-    for(let i:number = 1; i <= 3; i++){
-      this.negativeMovingRedFrames.push(textures[`dot_drip${i}.png`]);
-    }
-
-    this.negativeMovingBlueFrames = [this.textureNegTwo];
-    for(let i:number = 1; i <= 3; i++){
-      this.negativeMovingBlueFrames.push(textures[`dot_drip${i}.png`]);
-    }
-  }*/
 
   public getOne(color: string, positive: boolean): DotSprite {
-        // console.log('getOne', color, positive);
+    // console.log('getOne', color, positive);
     let sprite: DotSprite;
     if (color === SPRITE_COLOR.RED) {
       if (positive) {
@@ -177,7 +78,10 @@ export class SpritePool {
             this.texturePosOne,
             this.positiveOverloadRedFrames,
             this.positiveRippleRedFrames,
-            this.positiveWrongRedFrames
+            this.positiveWrongRedFrames,
+            this.positiveImplodeRedFrames,
+            this.positiveOutRedFrames,
+            this.positiveWiggleRedFrames,
           );
         }
       } else if (this.poolNegativeRed.length > 0) {
@@ -187,7 +91,10 @@ export class SpritePool {
           this.textureNegOne,
           this.negativeOverloadRedFrames,
           this.negativeRippleRedFrames,
-          this.negativeWrongRedFrames
+          this.negativeWrongRedFrames,
+          this.negativeImplodeRedFrames,
+          this.negativeOutRedFrames,
+          this.negativeWiggleRedFrames,
         );
       }
     } else if (positive) {
@@ -198,7 +105,10 @@ export class SpritePool {
           this.texturePosTwo,
           this.positiveOverloadBlueFrames,
           this.positiveRippleBlueFrames,
-          this.positiveWrongBlueFrames
+          this.positiveWrongBlueFrames,
+          this.positiveImplodeBlueFrames,
+          this.positiveOutBlueFrames,
+          this.positiveWiggleBlueFrames,
         );
       }
     } else if (this.poolNegativeBlue.length > 0) {
@@ -208,7 +118,10 @@ export class SpritePool {
         this.textureNegTwo,
         this.negativeOverloadBlueFrames,
         this.negativeRippleBlueFrames,
-        this.negativeWrongBlueFrames
+        this.negativeWrongBlueFrames,
+        this.negativeImplodeBlueFrames,
+        this.negativeOutBlueFrames,
+        this.negativeWiggleBlueFrames,
       );
     }
     sprite.alpha = 1;
@@ -216,8 +129,8 @@ export class SpritePool {
   }
 
   public dispose(sprite: DotSprite, isPositive: boolean, color: string) {
-        // sprite.destroy();
-        // console.log('dispose', isPositive, color)
+    // sprite.destroy();
+    // console.log('dispose', isPositive, color)
     sprite.returnToNormal(true);
     sprite.dot = new DotVO();
     if (isPositive) {
@@ -258,6 +171,164 @@ export class SpritePool {
     this.negativeOverloadBlueFrames.forEach((texture) => {
       texture.destroy();
     });
+  }
+
+  private createOverloadAnimations(textures: TextureDictionary): void {
+
+    let normalFramesAdded: number = 80;
+
+    this.positiveOverloadRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= 24; i++) {
+      this.positiveOverloadRedFrames.push(textures[`dot${i}.png`]);
+    }
+
+    while (normalFramesAdded > 0) {
+      this.positiveOverloadRedFrames.push(this.texturePosOne);
+      normalFramesAdded -= 1;
+    }
+
+    this.positiveOverloadBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= 3; i++) {
+      this.positiveOverloadBlueFrames.push(textures[`b_dot${i}.png`]);
+    }
+    normalFramesAdded = 80;
+    while (normalFramesAdded > 0) {
+      this.positiveOverloadBlueFrames.push(this.texturePosTwo);
+      normalFramesAdded -= 1;
+    }
+
+    this.negativeOverloadRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= 3; i++) {
+      this.negativeOverloadRedFrames.push(textures[`antidot${i}.png`]);
+    }
+    normalFramesAdded = 80;
+    while (normalFramesAdded > 0) {
+      this.negativeOverloadRedFrames.push(this.textureNegOne);
+      normalFramesAdded -= 1;
+    }
+
+    this.negativeOverloadBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= 3; i++) {
+      this.negativeOverloadBlueFrames.push(textures[`b_antidot${i}.png`]);
+    }
+    normalFramesAdded = 80;
+    while (normalFramesAdded > 0) {
+      this.negativeOverloadBlueFrames.push(this.textureNegTwo);
+      normalFramesAdded -= 1;
+    }
+  }
+
+  private createDripAnimations(textures: TextureDictionary): void {
+    this.positiveRippleRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= 5; i++) {
+      this.positiveRippleRedFrames.push(textures[`dot_ripple${i}.png`]);
+    }
+
+    this.positiveRippleBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= 5; i++) {
+      this.positiveRippleBlueFrames.push(textures[`dot_ripple${i}.png`]);
+    }
+
+    this.negativeRippleRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= 5; i++) {
+      this.negativeRippleRedFrames.push(textures[`dot_ripple${i}.png`]);
+    }
+
+    this.negativeRippleBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= 5; i++) {
+      this.negativeRippleBlueFrames.push(textures[`dot_ripple${i}.png`]);
+    }
+  }
+
+  private createWrongAnimation(textures: TextureDictionary): void {
+    this.positiveWrongRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= 10; i++) {
+      this.positiveWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
+    }
+
+    this.positiveWrongBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= 10; i++) {
+      this.positiveWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
+    }
+
+    this.negativeWrongRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= 10; i++) {
+      this.negativeWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
+    }
+
+    this.negativeWrongBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= 10; i++) {
+      this.negativeWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
+    }
+  }
+
+  private createImplodeAnimation(textures: TextureDictionary): void {
+    const numFrame: number = 10;
+    this.positiveImplodeRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveImplodeRedFrames.push(textures[`dot_implode${i}.png`]);
+    }
+
+    this.positiveImplodeBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveImplodeBlueFrames.push(textures[`dot_implode${i}.png`]);
+    }
+
+    this.negativeImplodeRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeImplodeRedFrames.push(textures[`dot_implode${i}.png`]);
+    }
+
+    this.negativeImplodeBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeImplodeBlueFrames.push(textures[`dot_implode${i}.png`]);
+    }
+  }
+
+  private createOutAnimation(textures: TextureDictionary): void {
+    const numFrame: number = 8;
+    this.positiveOutRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveOutRedFrames.push(textures[`dot_out${i}.png`]);
+    }
+
+    this.positiveOutBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveOutBlueFrames.push(textures[`dot_out${i}.png`]);
+    }
+
+    this.negativeOutRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeOutRedFrames.push(textures[`dot_out${i}.png`]);
+    }
+
+    this.negativeOutBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeOutBlueFrames.push(textures[`dot_out${i}.png`]);
+    }
+  }
+
+  private createWiggleAnimation(textures: TextureDictionary): void {
+    const numFrame: number = 13;
+    this.positiveWiggleRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveWiggleRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+
+    this.positiveWiggleBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveWiggleBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+
+    this.negativeWiggleRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeWiggleRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+
+    this.negativeWiggleBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeWiggleBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
   }
 
 }
