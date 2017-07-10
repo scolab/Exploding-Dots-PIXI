@@ -47,3 +47,12 @@ export const superscriptToNormal = (text: string): string => {
   }
   return txt;
 };
+
+export const removeLeadingZero = (text: string): string => {
+  if (text.length > 1) {
+    while (text.charAt(0) === '0') {
+      text = text.slice(1);
+    }
+  }
+  return text;
+};

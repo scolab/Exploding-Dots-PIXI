@@ -9,7 +9,7 @@ import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { randomFromTo } from '../../utils/MathUtils';
-import { replaceAt, superscriptToNormal } from '../../utils/StringUtils';
+import {removeLeadingZero, replaceAt, superscriptToNormal} from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
 import WebGLRenderer = PIXI.WebGLRenderer;
@@ -385,6 +385,14 @@ class CanvasPIXI extends Component<IProps, {}> {
           // Has I build the algebra array just above, they are already in the right order
           dotsPerZoneA.reverse();
           dotsPerZoneB.reverse();
+        }else {
+          // remove leading zeroes in the string in Base X
+          for (let i: number = 0; i < dotsPerZoneA.length; i++) {
+            dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
+          }
+          for (let i: number = 0; i < dotsPerZoneB.length; i++) {
+            dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
+          }
         }
         // Create dots and send info to the store
         switch (this.props.operator_mode) {
