@@ -14,6 +14,7 @@ import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
 import WebGLRenderer = PIXI.WebGLRenderer;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
+import {DividerDotVO} from "../../VO/DividerDotVO";
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -31,10 +32,10 @@ interface IProps {
   activateMagicWand: PropTypes.func.isRequired;
   startActivityFunc: PropTypes.func.isRequired;
   startActivityDoneFunc: PropTypes.func.isRequired;
-  positivePowerZoneDots: DotVO[];
-  negativePowerZoneDots: DotVO[];
-  positiveDividerDots: IDividerDot[];
-  negativeDividerDots: IDividerDot[];
+  positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
+  negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
   positiveDividerResult: number[];
   negativeDividerResult: number[];
   base: Array<number | string>;

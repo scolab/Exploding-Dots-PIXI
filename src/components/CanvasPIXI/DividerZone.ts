@@ -1,13 +1,14 @@
 import {DotVO} from "../../VO/DotVO";
 import Texture = PIXI.Texture;
 import Text = PIXI.Text;
+import {DividerDotVO} from "../../VO/DividerDotVO";
 export class DividerZone extends PIXI.Container {
 
   public positiveValue: number;
   public negativeValue: number;
 
-  private positiveDots: DotVO[][];
-  private negativeDots: DotVO[][];
+  private positiveDots: DividerDotVO[][];
+  private negativeDots: DividerDotVO[][];
   private positiveText: Text;
   private negativeText: Text;
   private bg: PIXI.Sprite;
@@ -16,11 +17,11 @@ export class DividerZone extends PIXI.Container {
 
   constructor() {
     super();
-    this.positiveDots = new Array<DotVO[]>();
-    this.negativeDots = new Array<DotVO[]>();
+    this.positiveDots = new Array<DividerDotVO[]>();
+    this.negativeDots = new Array<DividerDotVO[]>();
     for (let i = 0; i < 3; i += 1) {
-      this.positiveDots[i] = new Array<DotVO>();
-      this.negativeDots[i] = new Array<DotVO>();
+      this.positiveDots[i] = new Array<DividerDotVO>();
+      this.negativeDots[i] = new Array<DividerDotVO>();
     }
     this.positiveValue = 0;
     this.negativeValue = 0;
@@ -33,12 +34,12 @@ export class DividerZone extends PIXI.Container {
     this.addChild(this.bg);
   }
 
-  public addDots(positiveDots: object, negativeDots: object) {
+  public addDots(positiveDots: IDividerDotVOHash<DividerDotVO>, negativeDots: IDividerDotVOHash<DividerDotVO>) {
     this.positiveValue = Object.keys(positiveDots).length;
     this.negativeValue = Object.keys(negativeDots).length;
     if (this.positiveValue < 10 && this.negativeValue < 10) {
       Object.keys(positiveDots).forEach((key) => {
-        const dot = positiveDots[key];
+        const dot: DividerDotVO = positiveDots[key];
         const dotSprite = this.getDot(dot);
         dot.sprite = dotSprite;
         this.addDotToArray(dot);
@@ -81,7 +82,24 @@ export class DividerZone extends PIXI.Container {
     }
   }
 
-  public getDot(dot: DotVO) {
+  public destroy() {
+    this.positiveDots = new Array<DividerDotVO[]>();
+    this.negativeDots = new Array<DividerDotVO[]>();
+    while (this.children.length > 0) {
+      const child = this.getChildAt(0);
+      this.removeChild(child);
+      child.destroy();
+    }
+    if (this.positiveText !== undefined) {
+      this.positiveText.destroy();
+    }
+    if (this.negativeText !== undefined) {
+      this.negativeText.destroy();
+    }
+    super.destroy();
+  }
+
+  private getDot(dot: DividerDotVO) {
     let dotSprite;
     if (dot.isPositive) {
       dotSprite = new PIXI.Sprite(this.positiveTexture);
@@ -92,7 +110,7 @@ export class DividerZone extends PIXI.Container {
     return dotSprite;
   }
 
-  public addDotToArray(dot) {
+  private addDotToArray(dot: DividerDotVO) {
     if (dot.isPositive) {
       for (let i = 0; i < this.positiveDots.length; i++) {
         if (this.positiveDots[i].length < 3) {
@@ -112,23 +130,6 @@ export class DividerZone extends PIXI.Container {
         }
       }
     }
-  }
-
-  public destroy() {
-    this.positiveDots = new Array<DotVO[]>();
-    this.negativeDots = new Array<DotVO[]>();
-    while (this.children.length > 0) {
-      const child = this.getChildAt(0);
-      this.removeChild(child);
-      child.destroy();
-    }
-    if (this.positiveText !== undefined) {
-      this.positiveText.destroy();
-    }
-    if (this.negativeText !== undefined) {
-      this.negativeText.destroy();
-    }
-    super.destroy();
   }
 
 }

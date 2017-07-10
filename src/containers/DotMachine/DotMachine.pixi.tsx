@@ -21,6 +21,7 @@ import ErrorDisplay from '../../components/ErrorDisplay';
 import MessageDisplay from '../../components/MessageDisplay';
 import {USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE} from '../../Constants';
 import {DotVO} from "../../VO/DotVO";
+import {DividerDotVO} from "../../VO/DividerDotVO";
 
 const DotsMachine = (props: IProps) => {
   return (
@@ -163,10 +164,10 @@ interface IProps {
       id: string,
       isPositive: boolean,
     }>,
-    positivePowerZoneDots: DotVO[];
-    negativePowerZoneDots: DotVO[];
-    positiveDividerDots: IDividerDot[];
-    negativeDividerDots: IDividerDot[];
+    positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
+    negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
+    positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
+    negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
     positiveDividerResult: number[];
     negativeDividerResult: number[];
     machineState: {

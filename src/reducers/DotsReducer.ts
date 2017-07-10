@@ -5,6 +5,7 @@ import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, IUSAGE_MODE, IOPERATOR_MOD
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 import { DotVO } from '../VO/DotVO';
 import {MachineStateVO} from "../VO/MachineStateVO";
+import {DividerDotVO} from "../VO/DividerDotVO";
 
 interface IState {
   dots: Array<{
@@ -14,10 +15,10 @@ interface IState {
     id: string,
     isPositive: boolean,
   }>;
-  positivePowerZoneDots: DotVO[];
-  negativePowerZoneDots: DotVO[];
-  positiveDividerDots: IDividerDot[];
-  negativeDividerDots: IDividerDot[];
+  positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
+  negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
   positiveDividerResult: number[];
   negativeDividerResult: number[];
   machineState: {
@@ -153,17 +154,25 @@ function setInitialState(title: string) {
     initialMachineState[title] = new MachineStateVO();
   }
   const machineStateCopy: IMachineState = { ...initialMachineState[title] };
-  const positivePowerZoneDots: DotVO[][] = new Array<DotVO[]>();
-  const negativePowerZoneDots: DotVO[][] = new Array<DotVO[]>();
-  const positiveDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();
-  const negativeDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();
+  // const positivePowerZoneDots: DotVO[][] = new Array<DotVO[]>();
+  const positivePowerZoneDots: Array<IDotVOHash<DotVO>> = new Array<IDotVOHash<DotVO>>();
+  const negativePowerZoneDots: Array<IDotVOHash<DotVO>> = new Array<IDotVOHash<DotVO>>();
+  /*const positiveDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();
+  const negativeDividerDots: IDividerDot[][] = new Array<IDividerDot[]>();*/
+  const positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>> = new Array<IDividerDotVOHash<DividerDotVO>>();
+  const negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>> = new Array<IDividerDotVOHash<DividerDotVO>>();
   const positiveDividerResult: number[] = new Array<number>();
   const negativeDividerResult: number[] = new Array<number>();
   for (let i = 0; i < (machineStateCopy.zones || 0); i += 1) {
-    positivePowerZoneDots.push(new Array<DotVO>());
-    negativePowerZoneDots.push(new Array<DotVO>());
-    positiveDividerDots.push(new Array<IDividerDot>());
-    negativeDividerDots.push(new Array<IDividerDot>());
+    // positivePowerZoneDots.push(new Array<DotVO>());
+    const positiveDotVOHash: IDotVOHash<DotVO> = {};
+    positivePowerZoneDots.push(positiveDotVOHash);
+    const negativeDotVOHash: IDotVOHash<DotVO> = {};
+    negativePowerZoneDots.push(negativeDotVOHash);
+    const positiveDividerDotVOHash: IDividerDotVOHash<DividerDotVO> = {};
+    positiveDividerDots.push(positiveDividerDotVOHash);
+    const negativeDividerDotVOHash: IDividerDotVOHash<DividerDotVO> = {};
+    negativeDividerDots.push(negativeDividerDotVOHash);
     positiveDividerResult.push(0);
     negativeDividerResult.push(0);
   }

@@ -18,6 +18,8 @@ import Rectangle = PIXI.Rectangle;
 import {DotsContainer} from "./DotsContainer";
 import Sprite = PIXI.Sprite;
 import InteractionData = PIXI.interaction.InteractionData;
+import InteractionEvent = PIXI.interaction.InteractionEvent;
+import {DividerDotVO} from "../../VO/DividerDotVO";
 
 interface IPendingAction {
   // tslint:disable-next-line ban-types
@@ -146,7 +148,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public createZones() {
-    for (let i = this.totalZoneCount - 1; i >= 0; i -= 1) {
+    for (let i: number = this.totalZoneCount - 1; i >= 0; i -= 1) {
       const powerZone: PowerZone = new PowerZone(i,
                 this.textures,
                 this.base,
@@ -271,8 +273,9 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  public removeDotsFromStateChange(positivePowerZoneDots: DotVO[], negativePowerZoneDots: DotVO[]) {
-    // console.log('removeDotsFromStateChange');
+  public removeDotsFromStateChange(positivePowerZoneDots: Array<IDotVOHash<DotVO>>,
+                                   negativePowerZoneDots: Array<IDotVOHash<DotVO>>) {
+    // console.log('removeDotsFromStateChange', positivePowerZoneDots[0]);
     for (let i = 0; i < this.allZones.length; i += 1) {
       /* console.log('removeDotsFromStateChange',
        i,
@@ -327,7 +330,8 @@ export class PowerZoneManager extends PIXI.Container {
     });
   }
 
-  public adjustDividerDotFromStateChange(positiveDividerDots, negativeDividerDots) {
+  public adjustDividerDotFromStateChange(positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>,
+                                         negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>) {
     this.dividerZoneManager.removeDots(positiveDividerDots, negativeDividerDots);
     this.dividerZoneManager.addDots(positiveDividerDots, negativeDividerDots);
   }
@@ -505,7 +509,9 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private checkIfDivisionPossible(data, allZonesValue, isDragEnd = false) {
+  private checkIfDivisionPossible(data: InteractionData,
+                                  allZonesValue: number[][],
+                                  isDragEnd = false) {
         // console.log('checkIfDivisionPossible', allZonesValue);
     if (this.isInteractive) {
       const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
@@ -530,8 +536,8 @@ export class PowerZoneManager extends PIXI.Container {
             (droppedOnPowerZone.parent as PowerZone).setBackgroundColor(PowerZone.BG_NEUTRAL);
           }
         } else {
-          let success = false;
-          let antiSuccess = false;
+          let success: boolean = false;
+          let antiSuccess: boolean = false;
           for (let i = 0; i < allZonesValue.length; i += 1) {
             const affectedZone = this.allZones[droppedOnPowerZoneIndex + i];
             if (allZonesValue[i][0] <= affectedZone.positiveDotCount &&
@@ -570,7 +576,7 @@ export class PowerZoneManager extends PIXI.Container {
                 antiSuccess,
                 allZonesValue,
                 droppedOnPowerZoneIndex,
-                zoneOverInfo.actualZone);
+                zoneOverInfo.actualZone as PowerZone);
             } else {
               this.soundManager.playSound(SoundManager.DIVISION_IMPOSSIBLE);
             }
@@ -582,7 +588,11 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private applyDivision(success, antiSuccess, allZonesValue, droppedOnPowerZoneIndex, actualZone) {
+  private applyDivision(success: boolean,
+                        antiSuccess: boolean,
+                        allZonesValue: number[][],
+                        droppedOnPowerZoneIndex: number,
+                        actualZone: PowerZone) {
     this.soundManager.playSound(SoundManager.DIVISION_SUCCESS);
     const dotsRemovedByZone: DotVO[][] = new Array<DotVO[]>();
     for (let i = 0; i < this.totalZoneCount; i += 1) {
@@ -668,7 +678,9 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private processDivisionAfterTween(dotsRemovedByZone, moveToZone, isPositive) {
+  private processDivisionAfterTween(dotsRemovedByZone: DotVO[][],
+                                    moveToZone: PowerZone,
+                                    isPositive: boolean) {
     for (let i = 0; i < dotsRemovedByZone.length; i += 1) {
       if (dotsRemovedByZone[i].length > 0) {
         this.removeMultipleDots(i, dotsRemovedByZone[i], false);
@@ -687,7 +699,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private balanceDivider(zonePos, isPositive) {
+  private balanceDivider(zonePos: number, isPositive: boolean) {
     this.isInteractive = false;
     let newPosition;
     let finalPosition;
@@ -815,7 +827,8 @@ export class PowerZoneManager extends PIXI.Container {
     this.allZones[sprite.dot.powerZone].removeFromProximityManager(sprite);
   }
 
-  private onDragStart(e: PIXI.interaction.InteractionEvent) {
+  private onDragStart(this: DotSprite,
+                      e: InteractionEvent) {
     console.log('onDragStart');
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive) {
@@ -847,7 +860,8 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private onDragMove(e: PIXI.interaction.InteractionEvent) {
+  private onDragMove(this: DotSprite,
+                     e: InteractionEvent) {
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     // console.log('onDragMove', dotSprite.dot.id);
     if (dotSprite.world.isInteractive && dotSprite.dragging) {
@@ -880,7 +894,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private onDragEnd(this: DotSprite, e: PIXI.interaction.InteractionEvent) {
+  private onDragEnd(this: DotSprite, e: InteractionEvent) {
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive && dotSprite.dragging) {
       dotSprite.dragging = false;
@@ -1152,17 +1166,18 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private moveAndDestructPositiveNegative(
-    dotSprite: DotSprite,
-    otherSprite: DotSprite,
-    originalZoneIndex: number,
-    allRemovedDots: DotVO[]): void {
+  private moveAndDestructPositiveNegative(dotSprite: DotSprite,
+                                          otherSprite: DotSprite,
+                                          originalZoneIndex: number,
+                                          allRemovedDots: DotVO[]): void {
     // currentZone.addChild(dotSprite);
     otherSprite.playOut();
     dotSprite.playOut(this.removeDotAntidotAfterAnim.bind(this), originalZoneIndex, allRemovedDots);
   }
 
-  private removeDotAntidotAfterAnim(originalZoneIndex, allRemovedDots, dotSprite: DotSprite): void {
+  private removeDotAntidotAfterAnim(originalZoneIndex: number,
+                                    allRemovedDots: DotVO[],
+                                    dotSprite: DotSprite): void {
     dotSprite.stopOut();
     if (dotSprite.shakingDotForAnnihilation) {
       dotSprite.shakingDotForAnnihilation.stopOut();
@@ -1172,7 +1187,9 @@ export class PowerZoneManager extends PIXI.Container {
     this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
   }
 
-  private droppedOutsideZone(dotSprite: DotSprite, droppedOnPowerZone: DotsContainer, originalZoneIndex: number): void {
+  private droppedOutsideZone(dotSprite: DotSprite,
+                             droppedOnPowerZone: DotsContainer,
+                             originalZoneIndex: number): void {
     if (droppedOnPowerZone === this.leftMostZone) {
       // Dropped on the fake zone at the left
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
