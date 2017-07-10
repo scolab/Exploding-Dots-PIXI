@@ -53,7 +53,7 @@ interface IProps {
   userMessage: string;
   muted: boolean;
   wantedResult: IWantedResult;
-  successAction: Function,
+  successAction: Function; // tslint:disable-line ban-types
 }
 
 class CanvasPIXI extends Component<IProps, {}> {
@@ -85,7 +85,7 @@ class CanvasPIXI extends Component<IProps, {}> {
   private spritePool: SpritePool;
   private loaderName: string = 'machineAssets';
   private textures: PIXI.loaders.TextureDictionary | undefined;
-  private boundOnResize:EventListenerObject;
+  private boundOnResize: EventListenerObject;
   private canvasDiv: HTMLDivElement;
   private placeHolder: HTMLImageElement;
   private placeholderImage = require('./images/placeholder.gif');
@@ -291,7 +291,11 @@ class CanvasPIXI extends Component<IProps, {}> {
       this.resize();
       this.powerZoneManager.start();
       this.canvasDiv.style.visibility = 'visible';
-      this.canvasDiv.style.height = this.props.operator_mode === OPERATOR_MODE.DIVIDE ? `${SETTINGS.GAME_HEIGHT_DIVIDE}px` : `${SETTINGS.GAME_HEIGHT}px`;
+      this.canvasDiv.style.height = this.props.operator_mode ===
+        OPERATOR_MODE.DIVIDE ?
+          `${SETTINGS.GAME_HEIGHT_DIVIDE}px`
+          :
+          `${SETTINGS.GAME_HEIGHT}px`;
       this.canvasDiv.style.overflow = 'visible';
       this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
@@ -708,7 +712,7 @@ class CanvasPIXI extends Component<IProps, {}> {
 
   private resize() {
     let offset: number = 0;
-    if(this.canvas.parentElement){
+    if (this.canvas.parentElement) {
       offset = this.canvas.parentElement.offsetWidth;
     }
     const w = Math.min(window.innerWidth, offset);

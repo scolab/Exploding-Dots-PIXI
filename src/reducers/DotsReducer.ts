@@ -42,8 +42,8 @@ interface IState {
     userMessage: string;
     muted: boolean;
     wantedResult: IWantedResult;
-    successAction: Function;
-    resetAction: Function;
+    successAction: Function; // tslint:disable-line ban-types
+    resetAction: Function; // tslint:disable-line ban-types
   };
 }
 
@@ -56,13 +56,13 @@ export interface IMachineState {
   zones: number;
 }
 
-interface HashOfMachineState{
+interface IHashOfMachineState {
   [key: string]: IMachineState;
 }
 
-let initialMachineState: HashOfMachineState = {};
+const initialMachineState: IHashOfMachineState = {};
 
-let setMachineState: IMachineState = {
+const setMachineState: IMachineState = {
   activityStarted: false,
   errorMessage: '',
   operandA: '',

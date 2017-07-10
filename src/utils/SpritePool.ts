@@ -31,10 +31,10 @@ export class SpritePool {
   private negativeRippleRedFrames: PIXI.Texture[];
   private negativeRippleBlueFrames: PIXI.Texture[];
 
-  private positiveWrongRedFrames: PIXI.Texture[];
+  /*private positiveWrongRedFrames: PIXI.Texture[];
   private positiveWrongBlueFrames: PIXI.Texture[];
   private negativeWrongRedFrames: PIXI.Texture[];
-  private negativeWrongBlueFrames: PIXI.Texture[];
+  private negativeWrongBlueFrames: PIXI.Texture[];*/
 
   private positiveImplodeRedFrames: PIXI.Texture[];
   private positiveImplodeBlueFrames: PIXI.Texture[];
@@ -51,6 +51,11 @@ export class SpritePool {
   private negativeWiggleRedFrames: PIXI.Texture[];
   private negativeWiggleBlueFrames: PIXI.Texture[];
 
+  private positiveWiggleUnstableRedFrames: PIXI.Texture[];
+  private positiveWiggleUnstableBlueFrames: PIXI.Texture[];
+  private negativeWiggleUnstableRedFrames: PIXI.Texture[];
+  private negativeWiggleUnstableBlueFrames: PIXI.Texture[];
+
   constructor(textures: TextureDictionary) {
 
     this.texturePosOne = textures[this.positiveDotRedTexture];
@@ -60,10 +65,11 @@ export class SpritePool {
 
     this.createOverloadAnimations(textures);
     this.createDripAnimations(textures);
-    this.createWrongAnimation(textures);
+    // this.createWrongAnimation(textures);
     this.createImplodeAnimation(textures);
     this.createOutAnimation(textures);
     this.createWiggleAnimation(textures);
+    this.createWiggleUnstableAnimation(textures);
   }
 
   public getOne(color: string, positive: boolean): DotSprite {
@@ -78,10 +84,10 @@ export class SpritePool {
             this.texturePosOne,
             this.positiveOverloadRedFrames,
             this.positiveRippleRedFrames,
-            this.positiveWrongRedFrames,
             this.positiveImplodeRedFrames,
             this.positiveOutRedFrames,
             this.positiveWiggleRedFrames,
+            this.positiveWiggleUnstableRedFrames,
           );
         }
       } else if (this.poolNegativeRed.length > 0) {
@@ -91,10 +97,10 @@ export class SpritePool {
           this.textureNegOne,
           this.negativeOverloadRedFrames,
           this.negativeRippleRedFrames,
-          this.negativeWrongRedFrames,
           this.negativeImplodeRedFrames,
           this.negativeOutRedFrames,
           this.negativeWiggleRedFrames,
+          this.negativeWiggleUnstableRedFrames,
         );
       }
     } else if (positive) {
@@ -105,10 +111,10 @@ export class SpritePool {
           this.texturePosTwo,
           this.positiveOverloadBlueFrames,
           this.positiveRippleBlueFrames,
-          this.positiveWrongBlueFrames,
           this.positiveImplodeBlueFrames,
           this.positiveOutBlueFrames,
           this.positiveWiggleBlueFrames,
+          this.positiveWiggleUnstableBlueFrames,
         );
       }
     } else if (this.poolNegativeBlue.length > 0) {
@@ -118,10 +124,10 @@ export class SpritePool {
         this.textureNegTwo,
         this.negativeOverloadBlueFrames,
         this.negativeRippleBlueFrames,
-        this.negativeWrongBlueFrames,
         this.negativeImplodeBlueFrames,
         this.negativeOutBlueFrames,
         this.negativeWiggleBlueFrames,
+        this.negativeWiggleUnstableBlueFrames,
       );
     }
     sprite.alpha = 1;
@@ -240,7 +246,7 @@ export class SpritePool {
     }
   }
 
-  private createWrongAnimation(textures: TextureDictionary): void {
+  /*private createWrongAnimation(textures: TextureDictionary): void {
     this.positiveWrongRedFrames = [this.texturePosOne];
     for (let i: number = 1; i <= 10; i++) {
       this.positiveWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
@@ -260,7 +266,7 @@ export class SpritePool {
     for (let i: number = 1; i <= 10; i++) {
       this.negativeWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
     }
-  }
+  }*/
 
   private createImplodeAnimation(textures: TextureDictionary): void {
     const numFrame: number = 10;
@@ -286,7 +292,7 @@ export class SpritePool {
   }
 
   private createOutAnimation(textures: TextureDictionary): void {
-    const numFrame: number = 8;
+    const numFrame: number = 7;
     this.positiveOutRedFrames = [this.texturePosOne];
     for (let i: number = 1; i <= numFrame; i++) {
       this.positiveOutRedFrames.push(textures[`dot_out${i}.png`]);
@@ -331,4 +337,47 @@ export class SpritePool {
     }
   }
 
+  private createWiggleUnstableAnimation(textures: TextureDictionary): void {
+    const numFrame: number = 13;
+    let normalFramesAdded: number = 80;
+
+    this.positiveWiggleUnstableRedFrames = [this.texturePosOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveWiggleUnstableRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+    while (normalFramesAdded > 0) {
+      this.positiveWiggleUnstableRedFrames.push(this.texturePosOne);
+      normalFramesAdded -= 1;
+    }
+
+    normalFramesAdded = 80;
+    this.positiveWiggleUnstableBlueFrames = [this.texturePosTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.positiveWiggleUnstableBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+    while (normalFramesAdded > 0) {
+      this.positiveWiggleUnstableBlueFrames.push(this.texturePosTwo);
+      normalFramesAdded -= 1;
+    }
+
+    normalFramesAdded = 80;
+    this.negativeWiggleUnstableRedFrames = [this.textureNegOne];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeWiggleUnstableRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+    while (normalFramesAdded > 0) {
+      this.negativeWiggleUnstableRedFrames.push(this.textureNegOne);
+      normalFramesAdded -= 1;
+    }
+
+    normalFramesAdded = 80;
+    this.negativeWiggleUnstableBlueFrames = [this.textureNegTwo];
+    for (let i: number = 1; i <= numFrame; i++) {
+      this.negativeWiggleUnstableBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    }
+    while (normalFramesAdded > 0) {
+      this.negativeWiggleUnstableBlueFrames.push(this.textureNegTwo);
+      normalFramesAdded -= 1;
+    }
+  }
 }

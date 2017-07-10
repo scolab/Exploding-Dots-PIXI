@@ -1,7 +1,7 @@
 
 import { IMachineState} from '../reducers/DotsReducer';
 
-export class MachineStateVO implements IMachineState{
+export class MachineStateVO implements IMachineState {
   public operandA: string;
   public operandB: string;
   public startActivity: boolean;

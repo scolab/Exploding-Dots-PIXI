@@ -6,7 +6,7 @@ export class ParticleEmitter {
   private emitter: Emitter;
   private elapsed: number;
   private ticker: PIXI.ticker.Ticker;
-  private bindUpdateFunction:(deltaTime: number) => void;
+  private bindUpdateFunction: (deltaTime: number) => void;
 
   constructor(container, texture, params) {
     // console.log(container, texture, params, this.emitter);
@@ -41,7 +41,7 @@ export class ParticleEmitter {
     this.emitter.updateOwnerPos(x, y);
   }
 
-  public resetPositionTracking():void{
+  public resetPositionTracking(): void {
     this.emitter.resetPositionTracking();
   }
 

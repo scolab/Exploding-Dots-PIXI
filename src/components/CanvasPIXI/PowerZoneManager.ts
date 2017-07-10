@@ -6,7 +6,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 // tslint:disable-next-line max-line-length
 import {
   BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE,
-  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME
+  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME,
 } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
@@ -71,8 +71,8 @@ export class PowerZoneManager extends PIXI.Container {
   private implodeJSON: object;*/
   private redDragJSON: object;
   private blueDragJSON: object;
-  private successAction: Function;
-  private title:string;
+  private successAction: Function; // tslint:disable-line ban-types
+  private title: string;
 
   constructor(addDot,
               removeDot,
@@ -84,7 +84,7 @@ export class PowerZoneManager extends PIXI.Container {
               soundManager,
               wantedResult,
               successAction,
-              title
+              title,
   ) {
     super();
 
@@ -278,7 +278,7 @@ export class PowerZoneManager extends PIXI.Container {
        i,
        Object.keys(this.props.positivePowerZoneDots[i]).length);*/
       let removedDots = this.allZones[i].removeDotsIfNeeded(positivePowerZoneDots[i], true);
-      removedDots.forEach((dot:DotVO) => {
+      removedDots.forEach((dot: DotVO) => {
         if (dot.sprite) {
           this.removeDotSpriteListeners(dot.sprite);
           this.spritePool.dispose(dot.sprite, dot.isPositive, dot.color);
@@ -320,7 +320,7 @@ export class PowerZoneManager extends PIXI.Container {
     allDots.forEach((dot) => {
       if (dot.sprite) {
         // When the dot need to move after being add, I can't set their properties right away.
-        if(dot.actionType !== DOT_ACTIONS.NEW_DOT_FROM_MOVE) {
+        if (dot.actionType !== DOT_ACTIONS.NEW_DOT_FROM_MOVE) {
           this.addDotSpriteProperty(dot.sprite, dot);
         }
       }
@@ -446,6 +446,11 @@ export class PowerZoneManager extends PIXI.Container {
         this.successAction(this.title);
       }
     }
+  }
+
+  public removeOutDotAfterAnim(originalZoneIndex: number, dotSprite: DotSprite): void {
+    dotSprite.stopOut();
+    this.removeDot(originalZoneIndex, dotSprite.dot.id);
   }
 
   public reset() {
@@ -614,8 +619,8 @@ export class PowerZoneManager extends PIXI.Container {
       dotsToMove.forEach((dot) => {
         let newPosition = dot.sprite.parent.toGlobal(dot.sprite.position as Point);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
-        const movingSprite:DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
-        //movingSprite.anchor.set(0.5);
+        const movingSprite: DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
+        // movingSprite.anchor.set(0.5);
         movingSprite.position.x = newPosition.x;
         movingSprite.position.y = newPosition.y;
         this.movingDotsContainer.addChild(movingSprite);
@@ -641,7 +646,7 @@ export class PowerZoneManager extends PIXI.Container {
             x: 1.5,
             y: 1.5,
             yoyo: true,
-          }
+          },
         );
         TweenMax.to(
           movingSprite,
@@ -653,7 +658,7 @@ export class PowerZoneManager extends PIXI.Container {
             onCompleteParams: [movingSprite],
             x: finalPosition.x + 15,
             y: finalPosition.y + (success ? 15 : 25),
-          }
+          },
         );
       });
       TweenMax.delayedCall(
@@ -719,7 +724,7 @@ export class PowerZoneManager extends PIXI.Container {
           onCompleteParams: [sprite],
           x: finalPosition.x + 15,
           y: finalPosition.y + 15,
-        }
+        },
       );
       delay += 0.1;
     });
@@ -788,7 +793,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private addDotSpriteProperty(dotSprite: DotSprite, dot?: DotVO) {
-    if(dot) {
+    if (dot) {
       dotSprite.x = dot.x;
       dotSprite.y = dot.y;
       this.allZones[dot.powerZone].addToProximityManager(dotSprite);
@@ -850,6 +855,28 @@ export class PowerZoneManager extends PIXI.Container {
       dotSprite.position.x = newPosition.x;
       dotSprite.position.y = newPosition.y;
       dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+      if (dotSprite.world.negativePresent) {
+        const zoneOverInfo: IZoneUnderCursor = dotSprite.world.getZoneUnderCursor(e.data) as IZoneUnderCursor;
+        const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
+        const originalZoneIndex: number = dotSprite.dot.powerZone;
+        if (originalZoneIndex === droppedOnPowerZoneIndex) {
+          const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
+          if (dotSprite.dot.isPositive !== droppedOnPowerZone.isPositive) {
+            // Select dot / anti dot for shaking
+            dotSprite.world.dotAntidotSelect(dotSprite, originalZoneIndex);
+          }else {
+            if (dotSprite.shakingDotForAnnihilation !== null) {
+              dotSprite.shakingDotForAnnihilation.stopWiggle();
+              dotSprite.shakingDotForAnnihilation = null;
+            }
+          }
+        }else {
+          if (dotSprite.shakingDotForAnnihilation !== null) {
+            dotSprite.shakingDotForAnnihilation.stopWiggle();
+            dotSprite.shakingDotForAnnihilation = null;
+          }
+        }
+      }
     }
   }
 
@@ -869,7 +896,7 @@ export class PowerZoneManager extends PIXI.Container {
           TWEEN_TIME.MOVE_FROM_EDGE_INTO_BOX + 0.01,
           dotSprite.world.allZones[dotSprite.dot.powerZone].addToProximityManager,
           [dotSprite],
-          dotSprite.world.allZones[dotSprite.dot.powerZone]
+          dotSprite.world.allZones[dotSprite.dot.powerZone],
         );
       }
     }
@@ -877,12 +904,12 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private verifyDroppedOnZone(dotSprite: DotSprite, data: InteractionData) {
-    //console.log('verifyDroppedOnZone', dotSprite, data);
+    // console.log('verifyDroppedOnZone', dotSprite, data);
     const originalZoneIndex: number = dotSprite.dot.powerZone;
     const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
     const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
     const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-    //console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
+    // console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
     // has been dropped outside a zone?
     if (droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
       // impossible to move between different signed value zone (positive to negative)
@@ -891,12 +918,12 @@ export class PowerZoneManager extends PIXI.Container {
         if (
           droppedOnPowerZone.isPositive === dotSprite.dot.isPositive &&
           this.base[1] !== BASE.BASE_X
-        ){
+        ) {
           this.moveBetweenZone(dotSprite, data, originalZoneIndex, droppedOnPowerZone, droppedOnPowerZoneIndex);
         } else {
           if (droppedOnPowerZone.isPositive !== dotSprite.dot.isPositive) {
             this.moveImpossible(MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE, dotSprite, originalZoneIndex);
-          }else if (this.base[1] === BASE.BASE_X){
+          }else if (this.base[1] === BASE.BASE_X) {
             this.moveImpossible(MOVE_IMPOSSIBLE.BASE_X, dotSprite, originalZoneIndex);
           }
         }
@@ -913,9 +940,10 @@ export class PowerZoneManager extends PIXI.Container {
       // Dropped outside any zone
       this.droppedOutsideZone(dotSprite, droppedOnPowerZone, originalZoneIndex);
     }
+    this.checkInstability();
   }
 
-  private moveBetweenZone(dotSprite, data, originalZoneIndex, droppedOnPowerZone, droppedOnPowerZoneIndex){
+  private moveBetweenZone(dotSprite, data, originalZoneIndex, droppedOnPowerZone, droppedOnPowerZoneIndex) {
     const diffZone = originalZoneIndex - droppedOnPowerZoneIndex;
     let dotsToRemoveCount = 1;
     // console.log(originalZoneIndex, droppedOnPowerZoneIndex, diffZone);
@@ -935,9 +963,9 @@ export class PowerZoneManager extends PIXI.Container {
     // console.log('finalNbOfDots', finalNbOfDots);
     if (finalNbOfDots < 0 || (this.base[0] > 1 && Math.abs(diffZone) > 1)) {
       if (finalNbOfDots < 0) {
-        this.moveImpossible(MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS, dotSprite, originalZoneIndex)
+        this.moveImpossible(MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS, dotSprite, originalZoneIndex);
       } else if (this.base[0] > 1 && Math.abs(diffZone) > 1) {
-        this.moveImpossible(MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE, dotSprite, originalZoneIndex)
+        this.moveImpossible(MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE, dotSprite, originalZoneIndex);
       }
       return;
     }
@@ -951,7 +979,7 @@ export class PowerZoneManager extends PIXI.Container {
     // console.log('dotsToRemoveCount', dotsToRemoveCount);
 
     // Move dots from higher zone to lower zone
-    if(dotsToRemoveCount > 0) {
+    if (dotsToRemoveCount > 0) {
       const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
       this.tweenDotsToNewZone(
         originalZoneIndex,
@@ -994,7 +1022,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private moveImpossible(type: string, dotSprite: DotSprite, originalZoneIndex: number){
+  private moveImpossible(type: string, dotSprite: DotSprite, originalZoneIndex: number) {
     console.log('moveImpossible', type);
     if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
@@ -1004,21 +1032,21 @@ export class PowerZoneManager extends PIXI.Container {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
       this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
       this.isInteractive = false;
-    }else if(type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS){
+    }else if (type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS) {
       this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
-    }else if(type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE){
+    }else if (type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
     }
     if (dotSprite.dot.isPositive) {
-      dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].positiveDotsContainer);
-      //this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
+      // dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].positiveDotsContainer);
+      this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
     } else {
-      dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].negativeDotsContainer);
-      //this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
+      // dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].negativeDotsContainer);
+      this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
     }
   }
 
-  private moveIntoSameZone(dotSprite: DotSprite, data: InteractionData, droppedOnPowerZone: DotsContainer):void{
+  private moveIntoSameZone(dotSprite: DotSprite, data: InteractionData, droppedOnPowerZone: DotsContainer): void {
     droppedOnPowerZone.addChild(dotSprite);
     let doTween = false;
     const newPosition = data.getLocalPosition(droppedOnPowerZone);
@@ -1051,23 +1079,43 @@ export class PowerZoneManager extends PIXI.Container {
         onComplete: this.allZones[droppedOnPowerZone.powerZone].addToProximityManager,
         onCompleteParams: [dotSprite],
         onCompleteScope: this.allZones[droppedOnPowerZone.powerZone],
-        }
+        },
       );
     }
   }
 
-  private dotAntidotDestruction(dotSprite, originalZoneIndex):void {
+  private dotAntidotSelect(dotSprite: DotSprite, originalZoneIndex: number): void {
+    // console.log('dotAntidotSelect', this);
     if (dotSprite.dot.isPositive) {
       // Positive dot drag into negative zoe
       if (Object.keys(this.allZones[originalZoneIndex].negativeDots).length > 0) {
-        const allRemovedDots: DotVO[] = new Array<DotVO>();
         const negativeSprite: DotSprite = this.allZones[originalZoneIndex].negativeDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
-        allRemovedDots.push(negativeSprite.dot);
-        this.removeDotSpriteListeners(negativeSprite);
-        allRemovedDots.push(dotSprite.dot);
-        this.removeDotSpriteListeners(dotSprite);
-        this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
-        this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+        negativeSprite.playWiggle();
+        dotSprite.shakingDotForAnnihilation = negativeSprite;
+      }
+    }else {
+      if (Object.keys(this.allZones[originalZoneIndex].positiveDots).length > 0) {
+        const positiveSprite: DotSprite = this.allZones[originalZoneIndex].positiveDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
+        positiveSprite.playWiggle();
+        dotSprite.shakingDotForAnnihilation = positiveSprite;
+      }
+    }
+  }
+
+  private dotAntidotDestruction(dotSprite: DotSprite, originalZoneIndex: number): void {
+    if (dotSprite.dot.isPositive) {
+      // Positive dot drag into negative zoe
+      if (Object.keys(this.allZones[originalZoneIndex].negativeDots).length > 0) {
+        if (dotSprite.shakingDotForAnnihilation !== null) {
+          const negativeSprite: DotSprite = dotSprite.shakingDotForAnnihilation;
+          negativeSprite.stopWiggle();
+          const allRemovedDots: DotVO[] = new Array<DotVO>();
+          allRemovedDots.push(negativeSprite.dot);
+          this.removeDotSpriteListeners(negativeSprite);
+          allRemovedDots.push(dotSprite.dot);
+          this.removeDotSpriteListeners(dotSprite);
+          this.moveAndDestructPositiveNegative(dotSprite, negativeSprite, originalZoneIndex, allRemovedDots);
+        }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
         this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
@@ -1081,14 +1129,16 @@ export class PowerZoneManager extends PIXI.Container {
     } else if (dotSprite.dot.isPositive === false) {
       // Negative dot drag into positive zoe
       if (Object.keys(this.allZones[originalZoneIndex].positiveDots).length > 0) {
-        const allRemovedDots: DotVO[] = new Array<DotVO>();
-        const positiveSprite: DotSprite = this.allZones[originalZoneIndex].positiveDotsContainer.getChildAt(0) as DotSprite; // tslint:disable-line max-line-length
-        allRemovedDots.push(positiveSprite.dot);
-        this.removeDotSpriteListeners(positiveSprite);
-        allRemovedDots.push(dotSprite.dot);
-        this.removeDotSpriteListeners(dotSprite);
-        this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
-        this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+        if (dotSprite.shakingDotForAnnihilation !== null) {
+          const positiveSprite: DotSprite = dotSprite.shakingDotForAnnihilation;
+          positiveSprite.stopWiggle();
+          const allRemovedDots: DotVO[] = new Array<DotVO>();
+          allRemovedDots.push(positiveSprite.dot);
+          this.removeDotSpriteListeners(positiveSprite);
+          allRemovedDots.push(dotSprite.dot);
+          this.removeDotSpriteListeners(dotSprite);
+          this.moveAndDestructPositiveNegative(dotSprite, positiveSprite, originalZoneIndex, allRemovedDots);
+        }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
         this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
@@ -1102,7 +1152,27 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private droppedOutsideZone(dotSprite, droppedOnPowerZone, originalZoneIndex):void {
+  private moveAndDestructPositiveNegative(
+    dotSprite: DotSprite,
+    otherSprite: DotSprite,
+    originalZoneIndex: number,
+    allRemovedDots: DotVO[]): void {
+    // currentZone.addChild(dotSprite);
+    otherSprite.playOut();
+    dotSprite.playOut(this.removeDotAntidotAfterAnim.bind(this), originalZoneIndex, allRemovedDots);
+  }
+
+  private removeDotAntidotAfterAnim(originalZoneIndex, allRemovedDots, dotSprite: DotSprite): void {
+    dotSprite.stopOut();
+    if (dotSprite.shakingDotForAnnihilation) {
+      dotSprite.shakingDotForAnnihilation.stopOut();
+    }
+    dotSprite.shakingDotForAnnihilation = null;
+    this.soundManager.playSound(SoundManager.DOT_ANNIHILATION);
+    this.removeMultipleDots(originalZoneIndex, allRemovedDots, true);
+  }
+
+  private droppedOutsideZone(dotSprite: DotSprite, droppedOnPowerZone: DotsContainer, originalZoneIndex: number): void {
     if (droppedOnPowerZone === this.leftMostZone) {
       // Dropped on the fake zone at the left
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
@@ -1127,7 +1197,7 @@ export class PowerZoneManager extends PIXI.Container {
       // Remove dot in freeplay
       this.soundManager.playSound(SoundManager.DOT_VANISH);
       this.removeDotSpriteListeners(dotSprite);
-      this.removeDot(originalZoneIndex, dotSprite.dot.id);
+      dotSprite.playOut(this.removeOutDotAfterAnim.bind(this), originalZoneIndex);
     } else if (dotSprite.dot.isPositive) {
       // Put back dot in it's original place
       this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
@@ -1166,28 +1236,27 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private backIntoPlace(dotSprite: DotSprite, currentZone: DotsContainer) {
-    //this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
+    this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
-    const isTrail:boolean = false;
-    dotSprite.stopWrong();
-    if(isTrail) {
-      /*if (dotSprite.dot.color === SPRITE_COLOR.RED) {
+    // const isTrail: boolean = false;
+    // dotSprite.stopWrong();
+    /*if (isTrail) {
+      /!*if (dotSprite.dot.color === SPRITE_COLOR.RED) {
         dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
       } else {
         dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
       }
       const newPosition = dotSprite.data.getLocalPosition(this.parent);
       dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-      dotSprite.particleEmitter.start();*/
-    }else{
-      dotSprite.playMoving();
+      dotSprite.particleEmitter.start();*!/
+    } else {
       const newPosition = dotSprite.data.getLocalPosition(this.parent);
       const ydiff = newPosition.y - dotSprite.originInMovingContainer.y;
       const xdiff = newPosition.x - dotSprite.originInMovingContainer.x;
       let angle = Math.atan2(ydiff, xdiff);
       angle += Math.PI / 2;
       dotSprite.rotation = angle;
-    }
+    }*/
 
     TweenMax.to(
       dotSprite,
@@ -1200,7 +1269,7 @@ export class PowerZoneManager extends PIXI.Container {
         onUpdateParams: [dotSprite],*/
         x: dotSprite.originInMovingContainer.x,
         y: dotSprite.originInMovingContainer.y,
-      }
+      },
     );
     /*TweenMax.to(dotSprite, 0.5, {
       height: dotSprite.height / 2,
@@ -1218,14 +1287,13 @@ export class PowerZoneManager extends PIXI.Container {
     dotSprite.position = dotSprite.origin; // eslint-disable-line no-param-reassign
     this.isInteractive = true;
     dotSprite.particleEmitter.stop();
-    dotSprite.stopMoving();
   }
 
   private addDraggedToNewZone(dotSprite: DotSprite,
-                              newZone:DotsContainer,
-                              positionToBeMovedTo:Point,
-                              updateValue:boolean,
-                              addListener?:boolean) {
+                              newZone: DotsContainer,
+                              positionToBeMovedTo: Point,
+                              updateValue: boolean,
+                              addListener?: boolean) {
     newZone.addChild(dotSprite);
     const position = dotSprite.position;
     position.x = positionToBeMovedTo.x;
@@ -1235,7 +1303,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.allZones[newZone.powerZone].addDotToArray(dotSprite.dot);
     this.rezoneDot(newZone.powerZone, dotSprite.dot, updateValue);
     // this is for 2 > 3 base where an extra dot is moved from zone to zone and need to be reactivated.
-    if(addListener){
+    if (addListener) {
       this.addDotSpriteProperty(dotSprite, dotSprite.dot);
     }
   }
@@ -1265,7 +1333,7 @@ export class PowerZoneManager extends PIXI.Container {
         dotSprite.origin.copy(dotSprite.position);
         const newPosition = this.movingDotsContainer.toLocal(
           dotSprite.position as Point,
-          dotSprite.parent
+          dotSprite.parent,
         );
         const adjacentPosition = positionToBeMovedTo.clone();
         const quadrant = findQuadrant(adjacentPosition, droppedOnPowerZone.hitArea as Rectangle);
@@ -1291,7 +1359,7 @@ export class PowerZoneManager extends PIXI.Container {
         }
         const finalPosition = this.movingDotsContainer.toLocal(
           adjacentPosition,
-          droppedOnPowerZone
+          droppedOnPowerZone,
         );
         dotSprite.position.x = newPosition.x;
         dotSprite.position.y = newPosition.y;
@@ -1306,7 +1374,7 @@ export class PowerZoneManager extends PIXI.Container {
             onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true, true],
             x: finalPosition.x,
             y: finalPosition.y,
-          }
+          },
         );
       }
       // this.checkIfNotDisplayedSpriteCanBe();
@@ -1345,7 +1413,7 @@ export class PowerZoneManager extends PIXI.Container {
             onCompleteParams: [dotSprite, dragDotSprite],
             x: finalPosition.x,
             y: finalPosition.y,
-          }
+          },
         );
         allRemovedDots.push(dot);
         this.allZones[dot.powerZone].removeDotFromArray(dot);
@@ -1387,10 +1455,10 @@ export class PowerZoneManager extends PIXI.Container {
     this.implodeEmitter.push(implosionEmitter);
   }*/
 
-  private tweenDotsToNewZoneDone(dotSprite:DotSprite, dragDotSprite:DotSprite) {
+  private tweenDotsToNewZoneDone(dotSprite: DotSprite, dragDotSprite: DotSprite) {
     dotSprite.parent.removeChild(dotSprite);
     this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
-    dragDotSprite.playDrip();
+    dragDotSprite.playImplode();
     /*TweenMax.to(
       dotSprite,
       0.3,

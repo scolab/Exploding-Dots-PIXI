@@ -190,8 +190,8 @@ interface IProps {
       userMessage: string;
       muted: boolean;
       wantedResult: IWantedResult;
-      successAction: Function;
-      resetAction: Function;
+      successAction: Function;  // tslint:disable-line ban-types
+      resetAction: Function; // tslint:disable-line ban-types
     };
   };
 }

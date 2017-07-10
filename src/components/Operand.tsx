@@ -150,7 +150,7 @@ export default class Operand extends Component<IProps, {}> {
     if (reg.test(stringToTest)) {
       this.props.onChange(this.props.pos, stringToTest);
     }
-  };
+  }
 
   private onSubmit = (e) => {
     e.preventDefault();
@@ -159,7 +159,7 @@ export default class Operand extends Component<IProps, {}> {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  };
+  }
 
   private checkIfInputActive() {
     if (this.inputText) {
