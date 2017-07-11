@@ -515,8 +515,8 @@ export class PowerZoneManager extends PIXI.Container {
         // console.log('checkIfDivisionPossible', allZonesValue);
     if (this.isInteractive) {
       const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
-      const droppedOnPowerZone = zoneOverInfo.droppedOnPowerZone;
-      const droppedOnPowerZoneIndex = zoneOverInfo.droppedOnPowerZoneIndex;
+      const droppedOnPowerZone: PIXI.Container | null = zoneOverInfo.droppedOnPowerZone;
+      const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
 
       this.allZones.forEach((zone) => {
         zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
@@ -538,25 +538,20 @@ export class PowerZoneManager extends PIXI.Container {
         } else {
           let success: boolean = false;
           let antiSuccess: boolean = false;
-          for (let i = 0; i < allZonesValue.length; i += 1) {
-            const affectedZone = this.allZones[droppedOnPowerZoneIndex + i];
-            if (allZonesValue[i][0] <= affectedZone.positiveDotCount &&
-                allZonesValue[i][1] <= affectedZone.negativeDotCount) {
-              success = true;
-            } else {
-              success = false;
-              if (allZonesValue[i][1] <= affectedZone.positiveDotCount &&
-                  allZonesValue[i][0] <= affectedZone.negativeDotCount) {
-                antiSuccess = true;
-              } else {
-                antiSuccess = false;
-              }
-            }
-            if (success === false && antiSuccess === false) {
-              break;
-            }
+          if (this.base[1] === BASE.BASE_X) {
+            const divisionSuccess: boolean[] = this.testAlgebraDivisionSuccess(
+              allZonesValue,
+              droppedOnPowerZoneIndex);
+            success = divisionSuccess[0];
+            antiSuccess = divisionSuccess[1];
+          }else {
+            const divisionSuccess: boolean[] = this.testNormalDivisionSuccess(
+              allZonesValue,
+              droppedOnPowerZoneIndex);
+            success = divisionSuccess[0];
+            antiSuccess = divisionSuccess[1];
           }
-
+          // console.log(success, antiSuccess);
           for (let i = 0; i < allZonesValue.length; i += 1) {
             const affectedZone = this.allZones[droppedOnPowerZoneIndex + i];
             if ((success || antiSuccess) && isDragEnd === false) {
@@ -586,6 +581,54 @@ export class PowerZoneManager extends PIXI.Container {
         this.soundManager.playSound(SoundManager.DIVISION_BACKINTOPLACE);
       }
     }
+  }
+
+  private testNormalDivisionSuccess(allZonesValue: number[][],
+                                    droppedOnPowerZoneIndex: number): boolean[] {
+    const success: boolean[] = [false, false];
+    for (let i = 0; i < allZonesValue.length; i += 1) {
+      const affectedZone = this.allZones[droppedOnPowerZoneIndex + i];
+      if (allZonesValue[i][0] <= affectedZone.positiveDotCount &&
+        allZonesValue[i][1] <= affectedZone.negativeDotCount) {
+        success[0] = true;
+      } else {
+        success[0] = false;
+        if (allZonesValue[i][1] <= affectedZone.positiveDotCount &&
+          allZonesValue[i][0] <= affectedZone.negativeDotCount) {
+          success[1] = true;
+        } else {
+          success[1] = false;
+        }
+      }
+      if (success[0] === false && success[1] === false) {
+        break;
+      }
+    }
+    return success;
+  }
+
+  private testAlgebraDivisionSuccess(allZonesValue: number[][],
+                                     droppedOnPowerZoneIndex: number): boolean[] {
+    const success: boolean[] = [];
+    const antiSuccess: boolean[] = [];
+    for (let i = 0; i < allZonesValue.length; i += 1) {
+      const affectedZone: PowerZone = this.allZones[droppedOnPowerZoneIndex + i];
+      if (allZonesValue[i][0] <= affectedZone.positiveDotCount &&
+        allZonesValue[i][1] <= affectedZone.negativeDotCount) {
+        success[i] = true;
+      }else {
+        success[i] = false;
+      }
+      if (allZonesValue[i][1] <= affectedZone.positiveDotCount &&
+        allZonesValue[i][0] <= affectedZone.negativeDotCount) {
+        antiSuccess[i] = true;
+      } else {
+        antiSuccess[i] = false;
+      }
+    }
+    // console.log(success, antiSuccess);
+    // return a success only when all the value are true in a test array
+    return [success.indexOf(false) === -1, antiSuccess.indexOf(false) === -1];
   }
 
   private applyDivision(success: boolean,
