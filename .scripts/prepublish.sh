@@ -17,4 +17,4 @@ rm -rf ./ts-out
 echo ""
 echo "=> Transpiling completed."
 
-.scripts/user/prepublish.sh
+. .scripts/user/prepublish.sh
