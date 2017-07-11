@@ -385,14 +385,6 @@ class CanvasPIXI extends Component<IProps, {}> {
           // Has I build the algebra array just above, they are already in the right order
           dotsPerZoneA.reverse();
           dotsPerZoneB.reverse();
-        }else {
-          // remove leading zeroes in the string in Base X
-          for (let i: number = 0; i < dotsPerZoneA.length; i++) {
-            dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
-          }
-          for (let i: number = 0; i < dotsPerZoneB.length; i++) {
-            dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
-          }
         }
         // Create dots and send info to the store
         switch (this.props.operator_mode) {
@@ -596,6 +588,13 @@ class CanvasPIXI extends Component<IProps, {}> {
         }
       }
     });
+    // remove leading zeroes in the string in Base X
+    for (let i: number = 0; i < dotsPerZoneA.length; i++) {
+      dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
+    }
+    for (let i: number = 0; i < dotsPerZoneB.length; i++) {
+      dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
+    }
     return { dotsPerZoneA, dotsPerZoneB };
   }
 

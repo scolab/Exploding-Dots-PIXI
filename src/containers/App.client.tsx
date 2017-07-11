@@ -44,8 +44,8 @@ interface IProps {
   userMessage?: string;
   muted?: boolean;
   wantedResult?: IWantedResult;
-  successAction?: Function;
-  resetAction?: Function;
+  successAction?: Function; // tslint:disable-line ban-types
+  resetAction?: Function; // tslint:disable-line ban-types
 }
 
 class ExplodingDots extends Component<IProps, {}> {
@@ -88,6 +88,7 @@ class ExplodingDots extends Component<IProps, {}> {
   constructor(props) {
         // console.log('App constructor', props);
     super(props);
+    // tslint:disable-next-line no-string-literal
     const enhancer = window['devToolsExtension'] ? window['devToolsExtension']()(createStore) : createStore;
     this.store = enhancer(rootReducer);
     // FIXME: find a way to use resetMachine

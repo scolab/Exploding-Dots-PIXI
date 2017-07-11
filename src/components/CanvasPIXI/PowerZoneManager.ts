@@ -829,7 +829,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragStart(this: DotSprite,
                       e: InteractionEvent) {
-    console.log('onDragStart');
+    // console.log('onDragStart');
     const dotSprite: DotSprite = e.currentTarget as DotSprite;
     if (dotSprite.world.isInteractive) {
       const oldParent = this.parent;
@@ -1006,7 +1006,7 @@ export class PowerZoneManager extends PIXI.Container {
     // Add the new dots
     let newNbOfDots = Math.pow(this.base[1] as number, diffZone);
     newNbOfDots -= this.base[0] as number;
-    console.log('newNbOfDots', newNbOfDots, diffZone);
+    // console.log('newNbOfDots', newNbOfDots, diffZone);
     if (newNbOfDots > 0) {
       const dotsPos: Point[] = new Array<Point>();
       for (let i = 0; i < newNbOfDots; i += 1) {
@@ -1037,7 +1037,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private moveImpossible(type: string, dotSprite: DotSprite, originalZoneIndex: number) {
-    console.log('moveImpossible', type);
+    // console.log('moveImpossible', type);
     if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
       this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);

@@ -52,20 +52,20 @@ export class DividerZoneManager extends PIXI.Container {
   public addDots(positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>,
                  negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>) {
     // console.log('DividerZoneManager addDot', positiveDividerDots, negativeDividerDots);
-    let i;
-    let positiveZoneMaxPosition = 0;
-    let negativeZoneMaxPosition = 0;
-    for (i = 0; i < positiveDividerDots.length; i += 1) {
-      if (Object.keys(positiveDividerDots[i]).length > 0) {
-        positiveZoneMaxPosition = i + 1;
+    if (this.totalZoneCount === 0) {
+      let i;
+      let positiveZoneMaxPosition = 0;
+      let negativeZoneMaxPosition = 0;
+      for (i = 0; i < positiveDividerDots.length; i += 1) {
+        if (Object.keys(positiveDividerDots[i]).length > 0) {
+          positiveZoneMaxPosition = i + 1;
+        }
       }
-    }
-    for (i = 0; i < negativeDividerDots.length; i += 1) {
-      if (Object.keys(negativeDividerDots[i]).length > 0) {
-        negativeZoneMaxPosition = i + 1;
+      for (i = 0; i < negativeDividerDots.length; i += 1) {
+        if (Object.keys(negativeDividerDots[i]).length > 0) {
+          negativeZoneMaxPosition = i + 1;
+        }
       }
-    }
-    if (this.totalZoneCount !== Math.max(positiveZoneMaxPosition, negativeZoneMaxPosition)) {
       this.totalZoneCount = Math.max(positiveZoneMaxPosition, negativeZoneMaxPosition);
       this.createZones();
       for (i = 0; i < this.totalZoneCount; i += 1) {
