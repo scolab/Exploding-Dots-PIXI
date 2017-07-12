@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE,
-  MAX_DOT, OPERATOR_MODE, POSITION_INFO, SETTINGS, SPRITE_COLOR, USAGE_MODE} from '../../Constants';
+import {
+  BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE,
+  MAX_DOT, OPERATOR_MODE, POSITION_INFO, SETTINGS, SPRITE_COLOR, USAGE_MODE,
+} from '../../Constants';
 import { Component } from 'react';
 import { DotVO } from '../../VO/DotVO';
 import { PowerZoneManager } from './PowerZoneManager';
@@ -21,17 +23,17 @@ interface IOperantProcessedArray {
   dotsPerZoneB: string[];
 }
 
-interface IProps {
+export interface ICanvasPixiProps {
   title: string;
-  addDot: PropTypes.func.isRequired;
-  addMultipleDots: PropTypes.func.isRequired;
-  rezoneDot: PropTypes.func.isRequired;
-  removeDot: PropTypes.func.isRequired;
-  removeMultipleDots: PropTypes.func.isRequired;
-  setDivisionResult: PropTypes.func.isRequired;
-  activateMagicWand: PropTypes.func.isRequired;
-  startActivityFunc: PropTypes.func.isRequired;
-  startActivityDoneFunc: PropTypes.func.isRequired;
+  addDot: Function; // tslint:disable-line ban-types
+  addMultipleDots: Function; // tslint:disable-line ban-types
+  rezoneDot: Function; // tslint:disable-line ban-types
+  removeDot: Function; // tslint:disable-line ban-types
+  removeMultipleDots: Function; // tslint:disable-line ban-types
+  setDivisionResult: Function; // tslint:disable-line ban-types
+  activateMagicWand: Function; // tslint:disable-line ban-types
+  startActivityFunc: Function; // tslint:disable-line ban-types
+  startActivityDoneFunc: Function; // tslint:disable-line ban-types
   positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
   positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
@@ -57,7 +59,7 @@ interface IProps {
   successAction: Function; // tslint:disable-line ban-types
 }
 
-class CanvasPIXI extends Component<IProps, {}> {
+class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   // eslint-disable-next-line no-unused-vars
   private static onAssetsError(loader?) {
     // TODO Do something
@@ -91,7 +93,7 @@ class CanvasPIXI extends Component<IProps, {}> {
   private placeHolder: HTMLImageElement;
   private placeholderImage = require('./images/placeholder.gif');
 
-  constructor(props: IProps) {
+  constructor(props: ICanvasPixiProps) {
     super(props);
     this.isWebGL = false;
     this.negativePresent = (props.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -196,7 +198,7 @@ class CanvasPIXI extends Component<IProps, {}> {
     this.resize();
   }
 
-  public shouldComponentUpdate(nextProps: IProps) {
+  public shouldComponentUpdate(nextProps: ICanvasPixiProps) {
     // console.log('shouldComponentUpdate', nextProps);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
@@ -278,7 +280,7 @@ class CanvasPIXI extends Component<IProps, {}> {
       this.textures = loader.resources.machineAssets.textures;
       this.spritePool = new SpritePool(this.textures as TextureDictionary);
       this.powerZoneManager.init(
-                this.textures,
+                this.textures as TextureDictionary,
                 this.spritePool,
                 this.props.base,
                 this.props.usage_mode,
@@ -305,7 +307,9 @@ class CanvasPIXI extends Component<IProps, {}> {
     }
   }
 
-  private getDot(zone: number, isPositive: boolean, color = SPRITE_COLOR.RED): DotVO {
+  private getDot(zone: number,
+                 isPositive: boolean,
+                 color: string = SPRITE_COLOR.RED): DotVO {
         // console.log('getDot', zone, isPositive, color);
     const dot: DotVO = new DotVO();
     dot.x = randomFromTo(
@@ -712,7 +716,7 @@ class CanvasPIXI extends Component<IProps, {}> {
     }
   }
 
-  private checkBaseChange(nextProps: IProps): void {
+  private checkBaseChange(nextProps: ICanvasPixiProps): void {
     if (this.props.base !== nextProps.base) {
       this.powerZoneManager.doBaseChange(nextProps.base); // , nextProps.placeValueOn);
     }

@@ -29,6 +29,8 @@ export const SETTINGS = {
   GAME_HEIGHT_DIVIDE: 500,
 };
 
+export type IOPERAND_POS  = 'RIGHT' | 'LEFT';
+
 export const OPERAND_POS = {
   RIGHT: 'RIGHT',
   LEFT: 'LEFT',

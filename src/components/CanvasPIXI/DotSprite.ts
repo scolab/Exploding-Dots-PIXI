@@ -7,7 +7,6 @@ import Victor from 'victor';
 import Sprite = PIXI.Sprite;
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import {randomFromTo} from "../../utils/MathUtils";
-import {DotsContainer} from "./DotsContainer";
 
 export class DotSprite extends PIXI.Container {
 
@@ -128,10 +127,9 @@ export class DotSprite extends PIXI.Container {
     this.outDot.play();
   }*/
 
-  public playOut(
-    callback?: (...args) => any,
-    removeOutDotAfterAnim?: number,
-    removedDot?: DotVO[]): void {
+  public playOut(callback?: (...args) => any,
+                 removeOutDotAfterAnim?: number,
+                 removedDot?: DotVO[]): void {
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }

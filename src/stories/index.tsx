@@ -191,7 +191,7 @@ storiesOf('Exploding Dots', module)
         wantedResult={{
           positiveDots: [0, 0, 0, 0, 2],
           negativeDots: [0, 0, 0, 0, 0],
-          positiveDivider: [0, 0, 0, 2, 0],
+          positiveDivider: [0, 2, 0, 2, 0],
           negativeDivider: [0, 0, 0, 0, 0],
         }}
       />

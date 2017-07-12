@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE, IOPERAND_POS} from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
 import styled from "styled-components";
 import {operationItem} from "./StylesForComponents";
@@ -88,10 +88,10 @@ export default class Operand extends Component<IProps, {}> {
     return null;
   }
 
-  private onChange = (e) => {
+  private onChange = (e: React.FormEvent<HTMLInputElement>) => {
     // console.log('onChange');
     e.preventDefault();
-    let stringToTest = e.target.value;
+    let stringToTest: string = (e.target as HTMLInputElement).value;
     let reg = new RegExp('^$|^[0-9]+$');
     if (this.props.usage_mode === USAGE_MODE.OPERATION) {
       if (this.props.operator_mode === OPERATOR_MODE.MULTIPLY &&

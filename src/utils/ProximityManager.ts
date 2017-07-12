@@ -21,7 +21,7 @@ export class ProximityManager {
     this.allDone = true;
   }
 
-  public addItem(item: DotSprite) {
+  public addItem(item: DotSprite): void {
     // console.log('addItem');
     if (this.movers.indexOf(item) === -1) {
       this.movers.push(item);
@@ -39,25 +39,25 @@ export class ProximityManager {
     }
   }
 
-  public removeItem(item) {
+  public removeItem(item: DotSprite): void {
         // console.log('removeItem');
     if (this.movers.indexOf(item) !== -1) {
       this.movers.splice(this.movers.indexOf(item), 1);
       /* eslint-disable no-param-reassign */
-      item.velocity = null;
-      item.acceleration = null;
+      item.velocity = new Victor(0, 0);
+      item.acceleration = new Victor(0, 0);
       /* eslint-enable */
     }
   }
 
-  public draw() {
+  public draw(): void {
     if (this.allDone === false) {
-      let allDone = true;
+      let allDone: boolean = true;
             // let variableAmount = Number((Math.min(this.movers.length, 99) / 1000).toFixed(3));
-      for (let i = 0; i < this.movers.length; i += 1) {
-        for (let j = 0; j < this.movers.length; j += 1) {
+      for (let i: number = 0; i < this.movers.length; i += 1) {
+        for (let j: number = 0; j < this.movers.length; j += 1) {
           if (i !== j) {
-            const force = this.calculateRepulsion(this.movers[j], this.movers[i]);
+            const force: Victor = this.calculateRepulsion(this.movers[j], this.movers[i]);
             if (force.length() > 0.001) {
               this.applyForce(this.movers[i], force);
               allDone = false;
@@ -80,16 +80,17 @@ export class ProximityManager {
     }
   }
 
-  public destroy() {
+  public destroy(): void {
     this.movers = new Array<DotSprite>();
   }
 
-  private applyForce(item: DotSprite, force: Victor) {
+  private applyForce(item: DotSprite,
+                     force: Victor): void {
     const f = force.divideScalar(this.mass);
     item.acceleration.add(f);
   }
 
-  private update(item: DotSprite) {
+  private update(item: DotSprite): void {
     // console.log(item.acceleration, item.velocity);
     item.velocity.add(item.acceleration);
     item.vPosition.add(item.velocity);
@@ -106,7 +107,8 @@ export class ProximityManager {
     }
   }
 
-  private calculateRepulsion(m1: DotSprite, m2: DotSprite): Victor {
+  private calculateRepulsion(m1: DotSprite,
+                             m2: DotSprite): Victor {
     // console.log('calculateRepulsion');
     let force: Victor = new Victor(m1.vPosition.x, m1.vPosition.y);
     force = force.subtract(m2.vPosition);

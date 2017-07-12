@@ -1,7 +1,4 @@
-// import DropDownMenu from 'material-ui/DropDownMenu'; // http://www.material-ui.com/
-// import MenuItem from 'material-ui/MenuItem'; // http://www.material-ui.com/
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
 import styled from "styled-components";
 import {gradientBackground, operationItem} from "./StylesForComponents";
@@ -9,7 +6,6 @@ import {gradientBackground, operationItem} from "./StylesForComponents";
 interface IProps {
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
-  onChange: PropTypes.func;
   activityStarted: boolean;
 }
 
@@ -165,9 +161,9 @@ export default class Operator extends Component<IProps, {}> {
     // return null;
   }
 
-  private handleOperandChange = (event, index, value) => {
+  /*private handleOperandChange = (event, index, value) => {
     this.props.onChange(value);
-  }
+  }*/
 
 }
 

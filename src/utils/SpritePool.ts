@@ -72,7 +72,8 @@ export class SpritePool {
     this.createWiggleUnstableAnimation(textures);
   }
 
-  public getOne(color: string, positive: boolean): DotSprite {
+  public getOne(color: string,
+                positive: boolean): DotSprite {
     // console.log('getOne', color, positive);
     let sprite: DotSprite;
     if (color === SPRITE_COLOR.RED) {
@@ -134,7 +135,9 @@ export class SpritePool {
     return sprite;
   }
 
-  public dispose(sprite: DotSprite, isPositive: boolean, color: string) {
+  public dispose(sprite: DotSprite,
+                 isPositive: boolean,
+                 color: string): void {
     // sprite.destroy();
     // console.log('dispose', isPositive, color)
     sprite.returnToNormal(true);
@@ -152,7 +155,7 @@ export class SpritePool {
     }
   }
 
-  public destroy() {
+  public destroy(): void {
     this.poolPositiveRed.forEach((sprite) => {
       sprite.destroy();
     });

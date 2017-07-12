@@ -188,7 +188,8 @@ function setInitialState(title: string) {
   };
 }
 
-const dotsReducer = (state: IState | null = null, action) => {
+const dotsReducer = (state: IState | null = null,
+                     action: any) => {
   if (state === null) {
     return setInitialState('default');
   }

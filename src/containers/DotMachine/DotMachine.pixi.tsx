@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase,
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
-    startActivity, startActivityDone, operatorChanged, error, userMessage,
+    startActivity, startActivityDone, error, userMessage,
     resetUserMessage, setDivisionResult } from '../../actions/';
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
@@ -80,7 +80,6 @@ const DotsMachine = (props: IProps) => {
           operator_mode={props.dotsMachine.machineState.operator_mode}
           usage_mode={props.dotsMachine.machineState.usage_mode}
           activityStarted={props.dotsMachine.machineState.activityStarted}
-          onChange={props.operatorChanged}
         />
         <Operand
           value={props.dotsMachine.machineState.operandB}
@@ -150,7 +149,6 @@ interface IProps {
   showHidePlaceValue: PropTypes.func;
   activateMagicWand: PropTypes.func;
   operandChanged: PropTypes.func;
-  operatorChanged: PropTypes.func;
   startActivityFunc: PropTypes.func;
   startActivityDoneFunc: PropTypes.func;
   error: PropTypes.func;
@@ -215,7 +213,6 @@ const mapDispatchToProps = (dispatch) => {
     showHidePlaceValue,
     activateMagicWand,
     operandChanged,
-    operatorChanged,
     startActivityFunc: startActivity,
     startActivityDoneFunc: startActivityDone,
     error,
