@@ -820,7 +820,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private createDot(target: DotsContainer,
                     position: number[],
-                    color: string): void {
+                    color: ISPRITE_COLOR): void {
         // console.log(target.powerZone);
     if (this.isInteractive) {
       if (this.operatorMode === OPERATOR_MODE.DIVIDE && this.base[1] === BASE.BASE_X) {

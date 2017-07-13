@@ -1004,7 +1004,7 @@ export class PowerZone extends PIXI.Container {
         }
       }
     }
-    addedDots.forEach((dot) => {
+    addedDots.forEach((dot: DotVO) => {
       this.removeDotFromNotDisplayedArray(dot);
       let dotSprite: DotSprite;
       if (dot.color !== SPRITE_COLOR.BLUE) {

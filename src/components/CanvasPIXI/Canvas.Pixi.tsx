@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import {
-  BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, IUSAGE_MODE,
+  BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, ISPRITE_COLOR, IUSAGE_MODE,
   MAX_DOT, OPERATOR_MODE, POSITION_INFO, SETTINGS, SPRITE_COLOR, USAGE_MODE,
 } from '../../Constants';
 import { Component } from 'react';
@@ -309,7 +309,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 
   private getDot(zone: number,
                  isPositive: boolean,
-                 color: string = SPRITE_COLOR.RED): DotVO {
+                 color: ISPRITE_COLOR = SPRITE_COLOR.RED): DotVO {
         // console.log('getDot', zone, isPositive, color);
     const dot: DotVO = new DotVO();
     dot.x = randomFromTo(
