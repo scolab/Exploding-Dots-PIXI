@@ -117,7 +117,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         >
         <div>
           <div
-            ref={(canvasDiv) => { this.canvasDiv = canvasDiv; }}
+            ref={(canvasDiv) => { this.canvasDiv = canvasDiv as HTMLDivElement; }}
             style={{
               visibility: 'hidden',
               height: '1px',
@@ -125,11 +125,11 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             }}
           >
             <canvas
-              ref={(canvas) => { this.canvas = canvas; }}
+              ref={(canvas) => { this.canvas = canvas as HTMLCanvasElement; }}
             />
           </div>
           <img
-            ref={(placeholder) => { this.placeHolder = placeholder; }}
+            ref={(placeholder) => { this.placeHolder = placeholder as HTMLImageElement; }}
             src={this.placeholderImage}
             role="presentation"
             style={{

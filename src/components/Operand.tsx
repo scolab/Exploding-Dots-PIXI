@@ -49,7 +49,7 @@ export default class Operand extends Component<IProps, {}> {
               onChange={this.onChange}
               value={this.props.value}
               ref={(inputText) => {
-                this.inputText = inputText;
+                this.inputText = inputText as HTMLInputElement;
               }}
             />
           </form>
@@ -77,7 +77,7 @@ export default class Operand extends Component<IProps, {}> {
                 onChange={this.onChange}
                 value={this.props.value}
                 ref={(inputText) => {
-                  this.inputText = inputText;
+                  this.inputText = inputText as HTMLInputElement;
                 }}
               />
             </form>

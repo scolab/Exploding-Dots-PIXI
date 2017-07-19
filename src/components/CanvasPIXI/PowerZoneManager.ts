@@ -1113,7 +1113,7 @@ export class PowerZoneManager extends PIXI.Container {
       this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
       this.isInteractive = false;
     }else if (type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS) {
-      this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
+      // this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
     }else if (type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
     }

@@ -139,6 +139,7 @@ export class SoundManager {
   }
 
   public playSound(id: string) {
+    console.log('play sound', id);
     if (!this.muted) {
       if (id === SoundManager.BOX_OVERLOAD) {
         TweenMax.delayedCall(1, this.playLoopOne, [id], this);

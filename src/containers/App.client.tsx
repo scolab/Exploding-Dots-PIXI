@@ -71,7 +71,7 @@ class ExplodingDots extends Component<IProps, {}> {
     cdnBaseUrl: isDev ? '' : 'https://exploding-dots.s3.ca-central-1.amazonaws.com',
     errorMessage: '',
     userMessage: '',
-    muted: true,
+    muted: false,
     wantedResult: {
       positiveDots: [],
       negativeDots: [],
