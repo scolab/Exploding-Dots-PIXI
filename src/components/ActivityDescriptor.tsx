@@ -1,20 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 interface IProps {
-  children: PropTypes.node;
+  children: any;
 }
 const ActivityDescriptor = (props: IProps) => {
   return (
-    <div
-      style={{
-        clear: 'right',
-        textAlign: 'center',
-      }}
-    >
+    <ActivityDescriptorDiv>
       {props.children}
-    </div>
+    </ActivityDescriptorDiv>
   );
 };
+
+const ActivityDescriptorDiv = styled.div`
+  clear: right;
+  text-align: center;
+  `;
 
 export default ActivityDescriptor;

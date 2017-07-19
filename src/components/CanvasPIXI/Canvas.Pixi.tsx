@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import * as React from 'react';
 import {
   BASE, BOX_INFO, ERROR_MESSAGE, IOPERATOR_MODE, ISPRITE_COLOR, IUSAGE_MODE,
@@ -14,9 +13,12 @@ import { randomFromTo } from '../../utils/MathUtils';
 import {removeLeadingZero, replaceAt, superscriptToNormal} from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
-import WebGLRenderer = PIXI.WebGLRenderer;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import {DividerDotVO} from "../../VO/DividerDotVO";
+import Point = PIXI.Point;
+import ObservablePoint = PIXI.ObservablePoint;
+import styled from 'styled-components';
+import ApplicationOptions = PIXI.ApplicationOptions;
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -24,16 +26,36 @@ interface IOperantProcessedArray {
 }
 
 export interface ICanvasPixiProps {
-  title: string;
-  addDot: Function; // tslint:disable-line ban-types
-  addMultipleDots: Function; // tslint:disable-line ban-types
-  rezoneDot: Function; // tslint:disable-line ban-types
-  removeDot: Function; // tslint:disable-line ban-types
-  removeMultipleDots: Function; // tslint:disable-line ban-types
-  setDivisionResult: Function; // tslint:disable-line ban-types
-  activateMagicWand: Function; // tslint:disable-line ban-types
-  startActivityFunc: Function; // tslint:disable-line ban-types
-  startActivityDoneFunc: Function; // tslint:disable-line ban-types
+  readonly title: string;
+  readonly addDot: (zoneId: number,
+                    position: number[],
+                    isPositive: boolean,
+                    color?: string,
+                    actionType?: string) => any;
+  readonly removeDot: (zoneId: number,
+                       dotId: string) => any;
+  readonly removeMultipleDots: (zoneId: number,
+                                dots: DotVO[],
+                                updateValue: boolean) => any;
+  readonly rezoneDot: (zoneId: number,
+                       dot: DotVO,
+                       updateValue: boolean) => any;
+  readonly addMultipleDots: (zoneId: number,
+                             dotsPos: Point[],
+                             isPositive: boolean,
+                             color: string,
+                             dropPosition: Point | ObservablePoint) => any;
+  readonly setDivisionResult: (zoneId: number,
+                               divisionValue: number,
+                               isPositive: boolean) => any;
+  readonly activateMagicWand: (active: boolean) => any;
+  readonly startActivityFunc: () => any;
+  readonly startActivityDoneFunc: (dotsInfo: DotVO[],
+                                   totalA: number,
+                                   totalB?: number,
+                                   divider?: DotVO[]) => any;
+  readonly error: (errorMessage: string) => any;
+  readonly displayUserMessage: (message: string) => any;
   positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
   positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
@@ -51,8 +73,6 @@ export interface ICanvasPixiProps {
   activityStarted: boolean;
   operandA: string;
   operandB: string;
-  error: PropTypes.func.isRequired;
-  displayUserMessage: PropTypes.func.isRequired;
   userMessage: string;
   muted: boolean;
   wantedResult: IWantedResult;
@@ -104,7 +124,19 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
   }
 
-  public render() {
+  public render(): JSX.Element {
+
+    const PlaceHolderImg = styled.img`
+      width: 100%;
+      height: 1px;
+     `;
+
+    const CanvasDivStyled = styled.div`
+      visibility: hidden;
+      height: 1px;
+      overflow: hidden;
+     `;
+
     return (
       <div>
         <VisibilitySensor
@@ -145,7 +177,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 
   public componentDidMount() {
         // console.log('componentDidMount', this.state, this.props);
-    const options: object = {
+    const options: ApplicationOptions = {
       antialias: true,
       autoResize: true,
       preserveDrawingBuffer: false,
@@ -635,10 +667,10 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
       // remove last char in the operand if it's a - or a +
-      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10));
     }
   }
 
@@ -652,14 +684,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue);
     } else {
       // remove last char in the operand if it's a - or a +
-      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, operandAValue);
+      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10));
     }
   }
 
@@ -676,16 +708,16 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue: number = this.calculateOperandRealValue(dotsPerZoneB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
       // remove last char in the operand if it's a - or a +
-      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
+      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10));
     }
   }
 
@@ -703,16 +735,16 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue: number = this.calculateOperandRealValue(dotsPerZoneB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     } else {
       // remove last char in the operand if it's a - or a +
-      const operandAValue = CanvasPIXI.removeTrailingSign(this.props.operandA);
-      const operandBValue = CanvasPIXI.removeTrailingSign(this.props.operandB);
+      const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
+      const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
+      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10), dividePos);
     }
   }
 

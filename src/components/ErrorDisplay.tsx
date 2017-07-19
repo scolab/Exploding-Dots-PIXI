@@ -5,21 +5,14 @@ import FlatButton from 'material-ui/FlatButton';
 
 interface IProps {
   errorMessage: string;
-  onClose: PropTypes.func;
+  onClose: () => any;
   resetAction: PropTypes.func;
   title: string;
 }
 
 export default class ErrorDisplay extends Component<IProps, {}> {
 
-  private reset() {
-    this.props.onClose(true);
-    if (this.props.resetAction) {
-      this.props.resetAction(this.props.title);
-    }
-  }
-
-  public render() {
+  public render(): JSX.Element | null {
     if (this.props.errorMessage === '') {
       return null;
     }
@@ -42,5 +35,12 @@ export default class ErrorDisplay extends Component<IProps, {}> {
         </Dialog>
       </div>
     );
+  }
+
+  private reset(): void {
+    this.props.onClose();
+    if (this.props.resetAction) {
+      this.props.resetAction(this.props.title);
+    }
   }
 }

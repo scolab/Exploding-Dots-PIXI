@@ -20,16 +20,13 @@ const Text = (props: IProps) => {
 
   const OperationDiv = styled.div`
       ${operationItem}
+      font-family: Noto Sans;
+      font-size: 24px;
+      font-weight: bold;
     `;
 
   return (
-    <OperationDiv
-      style={{
-        fontFamily: 'Noto Sans',
-        fontSize: 24,
-        fontWeight: 'bold',
-      }}
-    >{text}</OperationDiv>
+    <OperationDiv>{text}</OperationDiv>
   );
 };
 

@@ -1,16 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 interface IProps {
-  children: PropTypes.node;
+  readonly children: any;
 }
 
 const TopMenuItem = (props: IProps) => {
   return (
-    <div style={{ marginRight: 33 }}>
+    <TopMenuItemDiv>
       {props.children}
-    </div>
+    </TopMenuItemDiv>
   );
 };
+
+const TopMenuItemDiv = styled.div`
+  margin-right: 33px;
+  `;
 
 export default TopMenuItem;

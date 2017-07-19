@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE, IOPERAND_POS} from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
 import styled from "styled-components";
@@ -9,11 +8,12 @@ interface IProps {
   value: any;
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
-  onChange: PropTypes.func;
+  onChange: (operandPos: string,
+             value: string) => any;
   pos: string;
   activityStarted: boolean;
   base: Array<number | string>;
-  onEnter: PropTypes.func;
+  onEnter: () => any;
 }
 
 export default class Operand extends Component<IProps, {}> {
@@ -159,7 +159,7 @@ export default class Operand extends Component<IProps, {}> {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  }
+  };
 
   private checkIfInputActive() {
     if (this.inputText) {

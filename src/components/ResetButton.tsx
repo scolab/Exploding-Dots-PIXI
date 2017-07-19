@@ -4,43 +4,48 @@ import styled from 'styled-components';
 import {gradientBackground, topLeftElement} from "./StylesForComponents";
 
 interface IProps {
-  onClick: PropTypes.func.isRequired;
+  onClick: () => any;
   resetAction: PropTypes.func;
   title: string;
 }
 
 export default class ResetButton extends Component<IProps, {}> {
 
-  img = require('./images/refresh.gif');
+  private img: any = require('./images/refresh.gif');
 
-  private reset(){
-    this.props.onClick(true);
+  public render(): JSX.Element {
+    return (
+      <GradientBackgroundButton
+        type="button"
+        onClick={() => this.reset()}
+      >
+        <GradientBackgroundImg
+          src={this.img}
+          role="presentation"
+        />
+      </GradientBackgroundButton>
+    );
+  }
+
+  private reset() {
+    this.props.onClick();
     if (this.props.resetAction) {
       this.props.resetAction(this.props.title);
     }
   }
-
-  public render() {
-    return (
-      <GradientBackgroundButton
-        style={{
-          width: '47px',
-          height: '47px',
-          verticalAlign: 'middle',
-          border: 'none',
-          cursor: 'pointer',
-        }}
-        type="button"
-        onClick={() => this.reset()}
-      >
-        <img src={this.img} role="presentation" style={{marginTop: '3px', marginLeft: '2px'}}/>
-      </GradientBackgroundButton>
-    );
-  }
-};
+}
 
 const GradientBackgroundButton = styled.button`
   ${gradientBackground}
   ${topLeftElement}
-  `;
+  width: 47px;
+  height: 47px;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer;
+`;
 
+const GradientBackgroundImg = styled.img`
+   margin-top: 3px;
+   margin-left: 2px;
+`;

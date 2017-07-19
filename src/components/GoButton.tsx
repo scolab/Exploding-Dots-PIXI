@@ -1,68 +1,66 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from "styled-components";
 import {gradientBackground} from "./StylesForComponents";
 
 interface IProps {
-  onClick: PropTypes.func.isRequired;
+  onClick: () => any;
   activityStarted: boolean;
 }
 
 const GoButton = (props: IProps) => {
 
   const GradientBackgroundButton = styled.button`
-  ${gradientBackground}
+    ${gradientBackground}
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    width: 47px;
+    height: 47px;
+    line-height: 47px;
+    vertical-align: middle;
+    margin-top: -6px;
+    margin-left: 10px;
+  `;
+
+  const InvisibleButton = styled.button`
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    width: 47px;
+    height: 47px;
+    line-height: 47px;
+    vertical-align: middle;
+    margin-top: -6px;
+    margin-left: 10px;
+    visibility: hidden;
+  `;
+
+  const ImgStyled = styled.img`
+     margin-top: 9px;
+     margin-left: 2px;
+     vertical-align: top;
   `;
 
   const img = require('./images/arrow-right.gif');
 
   if (props.activityStarted) {
     return (
-      <button
-        style={{
-          width: '47px',
-          height: '47px',
-          lineHeight: '47px',
-          verticalAlign: 'middle',
-          marginTop: '-6px',
-          marginLeft: '10px',
-          border: 'none',
-          visibility: 'hidden',
-        }}
-        type="button"
-      >
-      </button>
+      <InvisibleButton/>
     );
   }
   return (
-    /* eslint-disable no-dupe-keys */
     <GradientBackgroundButton
-      style={{
-        border: 'none',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        fontSize: 20,
-        width: '47px',
-        height: '47px',
-        lineHeight: '47px',
-        verticalAlign: 'middle',
-        marginTop: '-6px',
-        marginLeft: '10px',
-      }}
       type="button"
       onClick={props.onClick}
     >
-      <img
+      <ImgStyled
         src={img}
         role="presentation"
-        style={{
-          marginTop: '9px',
-          marginLeft: '2px',
-          verticalAlign: 'top',
-        }} />
+      />
     </GradientBackgroundButton>
   );
-  /* eslint-enable */
 };
 
 export default GoButton;

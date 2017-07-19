@@ -27,7 +27,8 @@ import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
 
 interface IPendingAction {
   // tslint:disable-next-line ban-types
-  function: Function;
+  function: (dotSprite: DotSprite,
+             currentZone: DotsContainer) => void;
   params: Array<PIXI.Sprite | PIXI.Container>;
 }
 
@@ -45,13 +46,28 @@ export class PowerZoneManager extends PIXI.Container {
 
   public isInteractive: boolean;
 
-  private addDot: Function; // tslint:disable-line ban-types
-  private removeDot: Function; // tslint:disable-line ban-types
-  private addMultipleDots: Function; // tslint:disable-line ban-types
-  private removeMultipleDots: Function; // tslint:disable-line ban-types
-  private rezoneDot: Function; // tslint:disable-line ban-types
-  private setDivisionResult: Function; // tslint:disable-line ban-types
-  private displayUserMessage: Function; // tslint:disable-line ban-types
+  private addDot: (zoneId: number,
+                   position: number[],
+                   isPositive: boolean,
+                   color?: string,
+                   actionType?: string) => any;
+  private removeDot: (zoneId: number,
+                      dotId: string) => any;
+  private addMultipleDots: (zoneId: number,
+                            dotsPos: Point[],
+                            isPositive: boolean,
+                            color: string,
+                            dropPosition: Point | ObservablePoint) => any;
+  private removeMultipleDots: (zoneId: number,
+                               dots: DotVO[],
+                               updateValue: boolean) => any;
+  private rezoneDot: (zoneId: number,
+                      dot: DotVO,
+                      updateValue: boolean) => any;
+  private setDivisionResult: (zoneId: number,
+                              divisionValue: number,
+                              isPositive: boolean) => any;
+  private displayUserMessage: (message: string) => any;
   private movingDotsContainer: PIXI.Container;
   private dividerZoneManager: DividerZoneManager;
   private dividerResult: DividerResult;
@@ -68,25 +84,36 @@ export class PowerZoneManager extends PIXI.Container {
   private negativePresent: boolean;
   private allZones: PowerZone[];
   private pendingAction: IPendingAction[];
-  /*private explodeEmitter: ParticleEmitter[];
-  private implodeEmitter: ParticleEmitter[];*/
   private dragParticleEmitterRed: ParticleEmitter;
   private dragParticleEmitterBlue: ParticleEmitter;
   private leftMostZone: PIXI.Container;
-  /*private explodeJSON: object;
-  private implodeJSON: object;*/
   private redDragJSON: object;
   private blueDragJSON: object;
   private successAction: Function; // tslint:disable-line ban-types
   private title: string;
 
-  constructor(addDot: Function, // tslint:disable-line ban-types
-              removeDot: Function, // tslint:disable-line ban-types
-              addMultipleDots: Function, // tslint:disable-line ban-types
-              removeMultipleDots: Function, // tslint:disable-line ban-types
-              rezoneDot: Function, // tslint:disable-line ban-types
-              setDivisionResult: Function, // tslint:disable-line ban-types
-              displayUserMessage: Function, // tslint:disable-line ban-types
+  constructor(addDot: (zoneId: number,
+                       position: number[],
+                       isPositive: boolean,
+                       color?: string,
+                       actionType?: string) => any,
+              removeDot: (zoneId: number,
+                          dotId: string) => any,
+              addMultipleDots: (zoneId: number,
+                                dotsPos: Point[],
+                                isPositive: boolean,
+                                color: string,
+                                dropPosition: Point | ObservablePoint) => any,
+              removeMultipleDots: (zoneId: number,
+                                   dots: DotVO[],
+                                   updateValue: boolean) => any,
+              rezoneDot: (zoneId: number,
+                          dot: DotVO,
+                          updateValue: boolean) => any,
+              setDivisionResult: (zoneId: number,
+                                  divisionValue: number,
+                                  isPositive: boolean) => any,
+              displayUserMessage: (message: string) => any,
               soundManager: SoundManager,
               wantedResult: IWantedResult,
               successAction: Function, // tslint:disable-line ban-types
@@ -1564,7 +1591,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
   }*/
 
-  private checkIfNotDisplayedSpriteCanBe():void {
+  private checkIfNotDisplayedSpriteCanBe(): void {
     let addedDots: DotVO[] = new Array<DotVO>();
     this.allZones.forEach((zone) => {
       addedDots = addedDots.concat(zone.checkIfNotDisplayedSpriteCanBe());

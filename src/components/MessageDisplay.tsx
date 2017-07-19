@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
 interface IProps {
   userMessage: string;
-  onClose: PropTypes.func.isRequired;
+  onClose: () => any;
 }
 
 export default class MessageDisplay extends Component<IProps, {}> {

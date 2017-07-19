@@ -1,14 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { gradientBackground, topLeftElement } from './StylesForComponents';
 
 interface IProps {
-  onClick: PropTypes.func.isRequired;
-  base: PropTypes.array.isRequired;
+  onClick: () => any;
+  base: Array<number | string>;
 }
 
-const BaseSelector = (props: IProps) => {
+const BaseSelector = (props: IProps): JSX.Element => {
 
   const GradientBackgroundButton = styled.button`
       ${gradientBackground}
@@ -24,6 +23,10 @@ const BaseSelector = (props: IProps) => {
       cursor: pointer;
     `;
 
+  const ArrowImg = styled.img`
+    margin: 0, 3px, 1px, 3px;
+  `;
+
   const img = require('./images/longArrowLeft.gif');
 
   return (
@@ -31,7 +34,11 @@ const BaseSelector = (props: IProps) => {
       type="button"
       onClick={props.onClick}
     >
-      {props.base[0]} <img src={img} role="presentation" style={{ marginBottom: '1px', marginLeft: '3px', marginRight: '3px' }} /> {props.base[1]}
+      {props.base[0]}
+      <ArrowImg
+        src={img}
+        role="presentation"
+    /> {props.base[1]}
     </GradientBackgroundButton>
   );
 };
