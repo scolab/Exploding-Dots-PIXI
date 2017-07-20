@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from "styled-components";
-import {gradientBackground} from "./StylesForComponents";
+import styled from 'styled-components';
+import {gradientBackground} from './StylesForComponents';
 
 interface IProps {
   onClick: () => any;
@@ -52,12 +52,12 @@ const GoButton = (props: IProps) => {
   }
   return (
     <GradientBackgroundButton
-      type="button"
+      type='button'
       onClick={props.onClick}
     >
       <ImgStyled
         src={img}
-        role="presentation"
+        role='presentation'
       />
     </GradientBackgroundButton>
   );

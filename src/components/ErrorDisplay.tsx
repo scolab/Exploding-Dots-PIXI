@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
 interface IProps {
   errorMessage: string;
   onClose: () => any;
-  resetAction: PropTypes.func;
+  resetAction: (name: string) => any;
   title: string;
 }
 
@@ -18,7 +17,7 @@ export default class ErrorDisplay extends Component<IProps, {}> {
     }
     const actions = [
       <FlatButton
-        label="OK"
+        label='OK'
         primary
         onTouchTap={() => this.reset()}
       />,

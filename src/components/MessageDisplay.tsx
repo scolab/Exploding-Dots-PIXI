@@ -9,13 +9,13 @@ interface IProps {
 
 export default class MessageDisplay extends Component<IProps, {}> {
 
-  public render() {
+  public render(): JSX.Element | null {
     if (this.props.userMessage === '') {
       return null;
     }
     const actions = [
       <FlatButton
-        label="OK"
+        label='OK'
         primary
         onTouchTap={this.props.onClose}
       />,

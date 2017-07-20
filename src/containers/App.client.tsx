@@ -5,7 +5,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import React, {Component} from 'react';
-import {createStore, Store} from 'redux';
+import {createStore, Store, StoreCreator} from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
@@ -18,7 +18,7 @@ try {
   // Preventing error if injectTapEventPlugin() is already call.
 }
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev: boolean = process.env.NODE_ENV === 'development';
 
 interface IProps {
   title?: string;
@@ -44,8 +44,8 @@ interface IProps {
   userMessage?: string;
   muted?: boolean;
   wantedResult?: IWantedResult;
-  successAction?: Function; // tslint:disable-line ban-types
-  resetAction?: Function; // tslint:disable-line ban-types
+  successAction?: (name: string) => any;
+  resetAction?: (name: string) => any;
 }
 
 class ExplodingDots extends Component<IProps, {}> {
@@ -88,7 +88,8 @@ class ExplodingDots extends Component<IProps, {}> {
         // console.log('App constructor', props);
     super(props);
     // tslint:disable-next-line no-string-literal
-    const enhancer = window['devToolsExtension'] ? window['devToolsExtension']()(createStore) : createStore;
+    const enhancer: StoreCreator = window['devToolsExtension'] ?
+      window['devToolsExtension']()(createStore) : createStore; // tslint:disable-line no-string-literal
     this.store = enhancer(rootReducer);
     // FIXME: find a way to use resetMachine
     // Initialize the default machineState values
@@ -99,7 +100,7 @@ class ExplodingDots extends Component<IProps, {}> {
     });
   }
 
-  public render() {
+  public render(): JSX.Element {
     const theme = getMuiTheme({
       fontFamily: 'Noto sans',
     });
@@ -107,7 +108,7 @@ class ExplodingDots extends Component<IProps, {}> {
       <Provider store={this.store}>
         <MuiThemeProvider muiTheme={theme}>
           <div>
-            <DotsMachine id="0" />
+            <DotsMachine id='0' />
           </div>
         </MuiThemeProvider>
       </Provider>

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE, IOPERAND_POS} from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
-import styled from "styled-components";
-import {operationItem} from "./StylesForComponents";
+import styled from 'styled-components';
+import {operationItem} from './StylesForComponents';
 
 interface IProps {
   value: any;
@@ -20,35 +20,24 @@ export default class Operand extends Component<IProps, {}> {
 
   private inputText: HTMLInputElement;
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     this.checkIfInputActive();
   }
 
-  public componentDidUpdate() {
+  public componentDidUpdate(): void {
     this.checkIfInputActive();
   }
 
-  public render() {
+  public render(): JSX.Element | null {
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
-            <input
-              style={{
-                backgroundColor: '#efefef',
-                border: 'none',
-                borderRadius: '23px',
-                fontFamily: 'Noto Sans',
-                fontSize: 24,
-                fontWeight: 'bold',
-                height: '45px',
-                textAlign: 'center',
-                width: '252px',
-                }}
-              type="text"
+            <OperationInput
+              type='text'
               onChange={this.onChange}
               value={this.props.value}
-              ref={(inputText) => {
+              innerRef={(inputText) => {
                 this.inputText = inputText as HTMLInputElement;
               }}
             />
@@ -61,22 +50,11 @@ export default class Operand extends Component<IProps, {}> {
         return (
           <OperationDiv>
             <form onSubmit={this.onSubmit}>
-              <input
-                style={{
-                  backgroundColor: '#efefef',
-                  border: 'none',
-                  borderRadius: '23px',
-                  fontFamily: 'Noto Sans',
-                  fontSize: 24,
-                  fontWeight: 'bold',
-                  height: '45px',
-                  textAlign: 'center',
-                  width: '252px',
-                }}
-                type="text"
+              <OperationInput
+                type='text'
                 onChange={this.onChange}
                 value={this.props.value}
-                ref={(inputText) => {
+                innerRef={(inputText) => {
                   this.inputText = inputText as HTMLInputElement;
                 }}
               />
@@ -92,7 +70,7 @@ export default class Operand extends Component<IProps, {}> {
     // console.log('onChange');
     e.preventDefault();
     let stringToTest: string = (e.target as HTMLInputElement).value;
-    let reg = new RegExp('^$|^[0-9]+$');
+    let reg: RegExp = new RegExp('^$|^[0-9]+$');
     if (this.props.usage_mode === USAGE_MODE.OPERATION) {
       if (this.props.operator_mode === OPERATOR_MODE.MULTIPLY &&
         this.props.pos === OPERAND_POS.RIGHT) {
@@ -152,16 +130,16 @@ export default class Operand extends Component<IProps, {}> {
     }
   }
 
-  private onSubmit = (e) => {
+  private onSubmit = (e): void => {
     e.preventDefault();
     if (this.props.pos === OPERAND_POS.RIGHT) {
       this.props.onEnter();
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  };
+  }
 
-  private checkIfInputActive() {
+  private checkIfInputActive(): void {
     if (this.inputText) {
       if (this.props.usage_mode === USAGE_MODE.EXERCISE ||
         this.props.activityStarted ||
@@ -178,5 +156,17 @@ export default class Operand extends Component<IProps, {}> {
 }
 
 const OperationDiv = styled.div`
-      ${operationItem}
-    `;
+  ${operationItem}
+`;
+
+const OperationInput = styled.input`
+  background-color: #efefef;
+  border: none;
+  border-radius: 23px;
+  font-family: Noto Sans;
+  font-size: 24px;
+  font-weight: bold;
+  height: 45px;
+  text-align: center;
+  width: 252px;
+`;

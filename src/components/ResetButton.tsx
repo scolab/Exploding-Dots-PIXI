@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {gradientBackground, topLeftElement} from "./StylesForComponents";
+import {gradientBackground, topLeftElement} from './StylesForComponents';
 
 interface IProps {
   onClick: () => any;
-  resetAction: PropTypes.func;
+  resetAction: (name: string) => any;
   title: string;
 }
 
@@ -16,18 +15,18 @@ export default class ResetButton extends Component<IProps, {}> {
   public render(): JSX.Element {
     return (
       <GradientBackgroundButton
-        type="button"
+        type='button'
         onClick={() => this.reset()}
       >
         <GradientBackgroundImg
           src={this.img}
-          role="presentation"
+          role='presentation'
         />
       </GradientBackgroundButton>
     );
   }
 
-  private reset() {
+  private reset(): void {
     this.props.onClick();
     if (this.props.resetAction) {
       this.props.resetAction(this.props.title);

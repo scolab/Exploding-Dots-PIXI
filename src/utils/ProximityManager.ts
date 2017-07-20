@@ -3,7 +3,7 @@ import { TweenMax } from 'gsap';
 import { constrain } from './MathUtils';
 import {POSITION_INFO, TWEEN_TIME} from '../Constants';
 import Rectangle = PIXI.Rectangle;
-import {DotSprite} from "../components/CanvasPIXI/DotSprite";
+import {DotSprite} from '../components/CanvasPIXI/DotSprite';
 
 export class ProximityManager {
 

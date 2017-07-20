@@ -1,8 +1,8 @@
 import { ACTIONS } from './StoreConstants';
 import Point = PIXI.Point;
 import ObservablePoint = PIXI.ObservablePoint;
-import {DotVO} from "../VO/DotVO";
-import {IMachineState} from "../reducers/DotsReducer";
+import {DotVO} from '../VO/DotVO';
+import {IMachineState} from '../reducers/DotsReducer';
 
 export const addDot = (zoneId: number,
                        position: number[],
@@ -101,8 +101,8 @@ export const startActivity = () => ({
 });
 
 export const startActivityDone = (dotsInfo: DotVO[],
-                                  totalA: number,
-                                  totalB: number,
+                                  totalA: string,
+                                  totalB: string,
                                   divider: DotVO[]) => ({
   type: ACTIONS.START_ACTIVITY_DONE,
   dotsInfo,

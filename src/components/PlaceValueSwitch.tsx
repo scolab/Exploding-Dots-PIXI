@@ -1,6 +1,6 @@
 import React from 'react';
-import {gradientBackground, topLeftElement} from "./StylesForComponents";
-import styled from "styled-components";
+import {gradientBackground, topLeftElement} from './StylesForComponents';
+import styled from 'styled-components';
 
 interface IProps {
   onClick: () => any;
@@ -26,12 +26,12 @@ const PlaceValueSwitch = (props: IProps): JSX.Element => {
 
   return (
     <GradientBackgroundButton
-      type="button"
+      type='button'
       onClick={() => props.onClick()}
     >
       <GradientBackgroundImg
         src={img}
-        role="presentation"
+        role='presentation'
       />
     </GradientBackgroundButton>
   );

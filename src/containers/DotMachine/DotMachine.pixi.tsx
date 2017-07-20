@@ -170,8 +170,8 @@ interface IProps {
                             value: string) => any;
   readonly startActivityFunc: () => any;
   readonly startActivityDoneFunc: (dotsInfo: DotVO[],
-                                   totalA: number,
-                                   totalB?: number,
+                                   totalA: string,
+                                   totalB?: string,
                                    divider?: DotVO[]) => any;
   readonly error: (errorMessage: string) => any;
   readonly userMessage: (message: string) => any;
@@ -211,8 +211,8 @@ interface IProps {
       userMessage: string;
       muted: boolean;
       wantedResult: IWantedResult;
-      successAction: Function;  // tslint:disable-line ban-types
-      resetAction: Function; // tslint:disable-line ban-types
+      successAction: (name: string) => any;
+      resetAction: (name: string) => any;
     };
   };
 }

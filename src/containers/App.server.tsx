@@ -3,16 +3,14 @@
  */
 import React, {Component} from 'react';
 
-interface IProps {}
-
-class ExplodingDots extends Component<IProps, {}> {
+class ExplodingDots extends Component<{}, {}> {
 
   constructor(props) {
     // console.log('App constructor', props);
     super(props);
   }
 
-  render() {
+  public render(): JSX.Element {
     return (<div></div>);
   }
 }

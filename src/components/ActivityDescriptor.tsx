@@ -15,6 +15,6 @@ const ActivityDescriptor = (props: IProps) => {
 const ActivityDescriptorDiv = styled.div`
   clear: right;
   text-align: center;
-  `;
+`;
 
 export default ActivityDescriptor;

@@ -138,7 +138,7 @@ export class SoundManager {
     this.allLoop = [this.playLoopOne, this.playLoopTwo];
   }
 
-  public playSound(id: string) {
+  public playSound(id: string): void {
     console.log('play sound', id);
     if (!this.muted) {
       if (id === SoundManager.BOX_OVERLOAD) {
@@ -151,7 +151,7 @@ export class SoundManager {
     }
   }
 
-  public stopSound(id: string) {
+  public stopSound(id: string): void {
     if (this[id]) {
       this[id].stop();
     }
@@ -162,7 +162,7 @@ export class SoundManager {
     }
   }
 
-  public stopAllSounds() {
+  public stopAllSounds(): void {
     this.allSounds.forEach((sound) => {
       sound.stop();
     });
@@ -171,21 +171,21 @@ export class SoundManager {
     });
   }
 
-  public destroy() {
+  public destroy(): void {
     this.allSounds.forEach((howl) => {
       howl.unload();
     });
     // Howler.unload();
   }
 
-  private playLoopOne(id: string) {
+  private playLoopOne(id: string): void {
     if (this[id]) {
       this[id].play();
       TweenMax.delayedCall(5, this.playLoopOne, [id], this);
     }
   }
 
-  private playLoopTwo(id: string) {
+  private playLoopTwo(id: string): void {
     if (this[id]) {
       this[id].play();
       TweenMax.delayedCall(5, this.playLoopTwo, [id], this);

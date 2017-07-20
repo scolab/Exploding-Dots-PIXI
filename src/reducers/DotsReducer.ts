@@ -1,59 +1,47 @@
 import _array from 'lodash/array';
 import { makeUID } from '../utils/MathUtils';
 import { ACTIONS } from '../actions/StoreConstants';
-import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, IUSAGE_MODE, IOPERATOR_MODE, DOT_ACTIONS} from '../Constants';
+import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, DOT_ACTIONS} from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 import { DotVO } from '../VO/DotVO';
-import {MachineStateVO} from "../VO/MachineStateVO";
-import {DividerDotVO} from "../VO/DividerDotVO";
+import {MachineStateVO} from '../VO/MachineStateVO';
+import {DividerDotVO} from '../VO/DividerDotVO';
 
 interface IState {
-  dots: Array<{
-    x: number,
-    y: number,
-    powerZone: number,
-    id: string,
-    isPositive: boolean,
-  }>;
+  dots: DotVO[];
   positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
   positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
   negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
   positiveDividerResult: number[];
   negativeDividerResult: number[];
-  machineState: {
-    title: string;
-    allBases: any[];
-    placeValueSwitchVisible: boolean;
-    baseSelectorVisible: boolean;
-    magicWandVisible: boolean;
-    magicWandIsActive: boolean;
-    resetVisible: boolean;
-    base: Array<number | string>;
-    operator_mode: IOPERATOR_MODE;
-    usage_mode: IUSAGE_MODE;
-    zones: number;
-    placeValueOn: boolean;
-    cdnBaseUrl: string;
-    startActivity: boolean;
-    activityStarted: boolean;
-    operandA: string;
-    operandB: string;
-    errorMessage: string;
-    userMessage: string;
-    muted: boolean;
-    wantedResult: IWantedResult;
-    successAction: Function; // tslint:disable-line ban-types
-    resetAction: Function; // tslint:disable-line ban-types
-  };
+  machineState: IMachineState;
 }
 
 export interface IMachineState {
   operandA: string;
   operandB: string;
-  startActivity: boolean;
   activityStarted: boolean;
+  allBases: any[];
+  base: Array<number | string>;
+  baseSelectorVisible: boolean;
+  cdnBaseUrl: string;
   errorMessage: string;
+  loginVisible: boolean;
+  magicWandIsActive: boolean;
+  magicWandVisible: boolean;
+  muted: boolean;
+  operator_mode: string;
+  placeValueOn: boolean;
+  placeValueSwitchVisible: boolean;
+  resetAction: (name) => any;
+  resetVisible: boolean;
+  startActivity: boolean;
+  successAction: (name) => any;
+  title: string;
+  usage_mode: string;
+  userMessage: string;
+  wantedResult: IWantedResult;
   zones: number;
 }
 
@@ -63,31 +51,22 @@ interface IHashOfMachineState {
 
 const initialMachineState: IHashOfMachineState = {};
 
-const setMachineState: IMachineState = {
-  activityStarted: false,
-  errorMessage: '',
-  operandA: '',
-  operandB: '',
-  startActivity: false,
-  zones: 0,
-};
-
-function setDotsCount(state) {
+function setDotsCount(state: IState): string {
   // console.log('setDotsCount');
-  let col = 0;
+  let col: number = 0;
   if (state.machineState.base[1] !== BASE.BASE_X) {
-    let dotsCount = 0;
+    let dotsCount: number = 0;
     for (const zone of state.positivePowerZoneDots) {
       dotsCount += Object.keys(zone).length *
-        Math.pow(state.machineState.base[1] /
-          state.machineState.base[0], col);
+        Math.pow(Number(state.machineState.base[1]) /
+          Number(state.machineState.base[0]), col);
       col += 1;
     }
     return dotsCount.toString();
   }
   const positiveValue: string[] = new Array<string>();
   const negativeValue: string[] = new Array<string>();
-  let toReturn = '';
+  let toReturn: string = '';
 
   for (const zone of state.positivePowerZoneDots) {
     const zoneValue: number = Object.keys(zone).length;
@@ -126,7 +105,7 @@ function setDotsCount(state) {
   }
 
   // add all positive value in order to the string
-  for (let i = positiveValue.length - 1; i >= 0; i -= 1) {
+  for (let i: number = positiveValue.length - 1; i >= 0; i -= 1) {
     toReturn += positiveValue[i];
   }
   // remove trailing + sign
@@ -139,7 +118,7 @@ function setDotsCount(state) {
     toReturn += '-';
   }
   // add all negative value in order to the string
-  for (let i = negativeValue.length - 1; i >= 0; i -= 1) {
+  for (let i: number = negativeValue.length - 1; i >= 0; i -= 1) {
     toReturn += negativeValue[i];
   }
         // remove trailing - sign
@@ -149,7 +128,7 @@ function setDotsCount(state) {
   return toReturn;
 }
 
-function setInitialState(title: string) {
+function setInitialState(title: string): IState {
   if (initialMachineState[title] === undefined) {
     initialMachineState[title] = new MachineStateVO();
   }
@@ -163,8 +142,7 @@ function setInitialState(title: string) {
   const negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>> = new Array<IDividerDotVOHash<DividerDotVO>>();
   const positiveDividerResult: number[] = new Array<number>();
   const negativeDividerResult: number[] = new Array<number>();
-  for (let i = 0; i < (machineStateCopy.zones || 0); i += 1) {
-    // positivePowerZoneDots.push(new Array<DotVO>());
+  for (let i: number = 0; i < (machineStateCopy.zones || 0); i += 1) {
     const positiveDotVOHash: IDotVOHash<DotVO> = {};
     positivePowerZoneDots.push(positiveDotVOHash);
     const negativeDotVOHash: IDotVOHash<DotVO> = {};
@@ -178,6 +156,7 @@ function setInitialState(title: string) {
   }
 
   return {
+    dots: new Array<DotVO>(),
     positivePowerZoneDots,
     negativePowerZoneDots,
     positiveDividerDots,
@@ -189,13 +168,13 @@ function setInitialState(title: string) {
 }
 
 const dotsReducer = (state: IState | null = null,
-                     action: any) => {
+                     action: any): IState => {
   if (state === null) {
     return setInitialState('default');
   }
 
-  let stateCopy;
-    // console.log('dotsReducer', action.type);
+  let stateCopy: IState;
+  // console.log('dotsReducer', state);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
       // console.log(ACTIONS.START_ACTIVITY);
@@ -223,7 +202,7 @@ const dotsReducer = (state: IState | null = null,
       });
       if (action.divider != null) {
         action.divider.forEach((dividerDot) => {
-          const dot = new DotVO();
+          const dot: DividerDotVO = new DividerDotVO();
           dot.powerZone = dividerDot.zoneId;
           dot.id = makeUID();
           dot.isPositive = dividerDot.isPositive;
@@ -236,16 +215,16 @@ const dotsReducer = (state: IState | null = null,
       }
       if (action.totalA != null) {
         if (stateCopy.machineState.base[1] === BASE.BASE_X) {
-          stateCopy.machineState.operandA = addSuperscriptWhereNeeded(action.totalA.toString());
+          stateCopy.machineState.operandA = addSuperscriptWhereNeeded(action.totalA);
         } else {
-          stateCopy.machineState.operandA = action.totalA.toString();
+          stateCopy.machineState.operandA = action.totalA;
         }
       }
       if (action.totalB != null) {
         if (stateCopy.machineState.base[1] === BASE.BASE_X) {
-          stateCopy.machineState.operandB = addSuperscriptWhereNeeded(action.totalB.toString());
+          stateCopy.machineState.operandB = addSuperscriptWhereNeeded(action.totalB);
         } else {
-          stateCopy.machineState.operandB = action.totalB.toString();
+          stateCopy.machineState.operandB = action.totalB;
         }
       }
       return stateCopy;
@@ -326,9 +305,9 @@ const dotsReducer = (state: IState | null = null,
       stateCopy = { ...state };
       // console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId);
       if (action.dots.length > 0) {
-        let i = action.dots.length - 1;
+        let i: number = action.dots.length - 1;
         while (i >= 0) {
-          const dot = action.dots[i];
+          const dot: DotVO = action.dots[i];
           if (dot.isPositive) {
             if (Object.prototype.hasOwnProperty.call(
               stateCopy.positivePowerZoneDots[action.zoneId],
@@ -355,7 +334,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.REZONE_DOT:
       stateCopy = { ...state };
       if (action.dot.isPositive) {
-        let i = stateCopy.positivePowerZoneDots.length - 1;
+        let i: number = stateCopy.positivePowerZoneDots.length - 1;
         while (i >= 0) {
           if (stateCopy.positivePowerZoneDots[i][action.dot.id] !== undefined) {
             stateCopy.positivePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
@@ -366,7 +345,7 @@ const dotsReducer = (state: IState | null = null,
           i -= 1;
         }
       } else {
-        let i = stateCopy.negativePowerZoneDots.length - 1;
+        let i: number = stateCopy.negativePowerZoneDots.length - 1;
         while (i >= 0) {
           if (stateCopy.negativePowerZoneDots[i][action.dot.id] !== undefined) {
             stateCopy.negativePowerZoneDots[i][action.dot.id].powerZone = action.zoneId;
@@ -427,7 +406,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.BASE_CHANGED: {
       // console.log(ACTIONS.BASE_CHANGED);
       stateCopy = { ...state };
-      let index = _array.indexOf(state.machineState.allBases, state.machineState.base);
+      let index: number = _array.indexOf(state.machineState.allBases, state.machineState.base);
       if (index < state.machineState.allBases.length - 1) {
         index += 1;
       } else {

@@ -5,9 +5,9 @@ export const degToRad = (deg: number): number => {
 };
 
 export const makeUID = (): string => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0; // tslint:disable-line no-bitwise
-    const v = c === 'x' ? r : (r & 0x3 | 0x8); // tslint:disable-line no-bitwise
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: string) => {
+    const r: number = Math.random() * 16 | 0; // tslint:disable-line no-bitwise
+    const v: number = c === 'x' ? r : (r & 0x3 | 0x8); // tslint:disable-line no-bitwise
     return v.toString(16);
   });
 };
@@ -17,18 +17,18 @@ export const randomFromTo = (min: number, max: number): number => {
 };
 
 export const convertBase = (value: string, fromBase: number, toBase: number): string => {
-  const range = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
-  const fromRange = range.slice(0, fromBase);
-  const toRange = range.slice(0, toBase);
+  const range: string[] = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
+  const fromRange: string[] = range.slice(0, fromBase);
+  const toRange: string[] = range.slice(0, toBase);
 
-  let decValue = value.split('').reverse().reduce((carry, digit, index) => {
+  let decValue: number = value.split('').reverse().reduce((carry, digit, index) => {
     if (fromRange.indexOf(digit) === -1) {
       throw new Error(`Invalid digit \`${digit}\` for base ${fromBase}.`);
     }
     return carry + (fromRange.indexOf(digit) * (Math.pow(fromBase, index)));
   }, 0);
 
-  let newValue = '';
+  let newValue: string = '';
   while (decValue > 0) {
     newValue = toRange[decValue % toBase] + newValue;
     decValue = (decValue - (decValue % toBase)) / toBase;
@@ -37,8 +37,8 @@ export const convertBase = (value: string, fromBase: number, toBase: number): st
 };
 
 export const findQuadrant = (point: Point, rect: Rectangle): number => {
-  const midHeight = rect.height / 2;
-  const midWidth = rect.width / 2;
+  const midHeight: number = rect.height / 2;
+  const midWidth: number = rect.width / 2;
 
   if (point.x <= midWidth && point.y <= midHeight) {
     return 0;

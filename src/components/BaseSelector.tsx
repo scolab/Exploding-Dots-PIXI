@@ -31,13 +31,13 @@ const BaseSelector = (props: IProps): JSX.Element => {
 
   return (
     <GradientBackgroundButton
-      type="button"
+      type='button'
       onClick={props.onClick}
     >
       {props.base[0]}
       <ArrowImg
         src={img}
-        role="presentation"
+        role='presentation'
     /> {props.base[1]}
     </GradientBackgroundButton>
   );

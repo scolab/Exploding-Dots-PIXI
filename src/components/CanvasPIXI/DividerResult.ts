@@ -13,10 +13,10 @@ export class DividerResult extends PIXI.Text {
   public update(positiveDividerValue: number[],
                 negativeDividerValue: number[],
                 positiveDots: number[],
-                negativeDots: number[]) {
-    let dotValue = '';
+                negativeDots: number[]): void {
+    let dotValue: string = '';
 
-    for (let i = 0; i < positiveDividerValue.length; i += 1) {
+    for (let i: number = 0; i < positiveDividerValue.length; i += 1) {
       dotValue += positiveDividerValue[i] - negativeDividerValue[i];
       dotValue += '|';
     }
@@ -24,7 +24,7 @@ export class DividerResult extends PIXI.Text {
 
     dotValue += ' r ';
 
-    for (let i = 0; i < positiveDots.length; i += 1) {
+    for (let i: number = 0; i < positiveDots.length; i += 1) {
       dotValue += positiveDots[i] - negativeDots[i];
       dotValue += '|';
     }

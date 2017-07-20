@@ -14,7 +14,7 @@ import {removeLeadingZero, replaceAt, superscriptToNormal} from '../../utils/Str
 import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
-import {DividerDotVO} from "../../VO/DividerDotVO";
+import {DividerDotVO} from '../../VO/DividerDotVO';
 import Point = PIXI.Point;
 import ObservablePoint = PIXI.ObservablePoint;
 import styled from 'styled-components';
@@ -51,8 +51,8 @@ export interface ICanvasPixiProps {
   readonly activateMagicWand: (active: boolean) => any;
   readonly startActivityFunc: () => any;
   readonly startActivityDoneFunc: (dotsInfo: DotVO[],
-                                   totalA: number,
-                                   totalB?: number,
+                                   totalA: string,
+                                   totalB?: string,
                                    divider?: DotVO[]) => any;
   readonly error: (errorMessage: string) => any;
   readonly displayUserMessage: (message: string) => any;
@@ -76,18 +76,18 @@ export interface ICanvasPixiProps {
   userMessage: string;
   muted: boolean;
   wantedResult: IWantedResult;
-  successAction: Function; // tslint:disable-line ban-types
+  successAction: (name: string) => any;
 }
 
 class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   // eslint-disable-next-line no-unused-vars
-  private static onAssetsError(loader?) {
+  private static onAssetsError(loader?): void {
     // TODO Do something
     // console.log('onAssetsError', loader);
     // loader.onStart = null;
   }
 
-  private static removeTrailingSign(str: string) {
+  private static removeTrailingSign(str: string): string {
     let aString: string = str;
     if (aString.lastIndexOf('-') === aString.length - 1 || aString.lastIndexOf('+') === aString.length - 1) {
       aString = aString.substring(0, aString.length - 1);
@@ -148,26 +148,17 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           intervalDelay={8000}
         >
         <div>
-          <div
-            ref={(canvasDiv) => { this.canvasDiv = canvasDiv as HTMLDivElement; }}
-            style={{
-              visibility: 'hidden',
-              height: '1px',
-              overflow: 'hidden',
-            }}
+          <CanvasDivStyled
+            innerRef={(canvasDiv) => { this.canvasDiv = canvasDiv as HTMLDivElement; }}
           >
             <canvas
               ref={(canvas) => { this.canvas = canvas as HTMLCanvasElement; }}
             />
-          </div>
-          <img
-            ref={(placeholder) => { this.placeHolder = placeholder as HTMLImageElement; }}
+          </CanvasDivStyled>
+          <PlaceHolderImg
+            innerRef={(placeholder) => { this.placeHolder = placeholder as HTMLImageElement; }}
             src={this.placeholderImage}
-            role="presentation"
-            style={{
-              width: '100%',
-              height: '1px',
-            }}
+            role='presentation'
           />
         </div>
         </VisibilitySensor>
@@ -175,7 +166,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     );
   }
 
-  public componentDidMount() {
+  public componentDidMount(): void {
         // console.log('componentDidMount', this.state, this.props);
     const options: ApplicationOptions = {
       antialias: true,
@@ -230,7 +221,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     this.resize();
   }
 
-  public shouldComponentUpdate(nextProps: ICanvasPixiProps) {
+  public shouldComponentUpdate(nextProps: ICanvasPixiProps): boolean {
     // console.log('shouldComponentUpdate', nextProps);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
@@ -260,7 +251,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     return false;
   }
 
-  public componentWillUnmount() {
+  public componentWillUnmount(): void {
     TweenMax.killAll(false, true, true, true);
     if (this.soundManager) {
       this.soundManager.destroy();
@@ -289,7 +280,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     window.removeEventListener('resize', this.boundOnResize);
   }
 
-  private onVisibilityChange(isVisible) {
+  private onVisibilityChange(isVisible): void {
     if (this.app) {
       if (isVisible) {
         this.app.ticker.start();
@@ -307,7 +298,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
   }
 
-  private onAssetsLoaded(loader: PIXI.loaders.Loader) {
+  private onAssetsLoaded(loader: PIXI.loaders.Loader): void {
     if (loader.resources.machineAssets.error === null) {
       this.textures = loader.resources.machineAssets.textures;
       this.spritePool = new SpritePool(this.textures as TextureDictionary);
@@ -645,7 +636,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     this.soundManager.playSound(SoundManager.GO_SUCCESS);
-    this.props.startActivityDoneFunc(dotsPos, totalDot);
+    this.props.startActivityDoneFunc(dotsPos, totalDot.toString());
   }
 
   private createAddDots(dotsPerZoneA: string[], dotsPerZoneB: string[]): void {
@@ -661,8 +652,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue = this.calculateOperandRealValue(dotsPerZoneA);
-      const operandBValue = this.calculateOperandRealValue(dotsPerZoneB);
+      const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
@@ -670,7 +661,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10));
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     }
   }
 
@@ -684,14 +675,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue);
     } else {
       // remove last char in the operand if it's a - or a +
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10));
+      this.props.startActivityDoneFunc(dotsPos, operandAValue);
     }
   }
 
@@ -708,8 +699,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
-      const operandBValue: number = this.calculateOperandRealValue(dotsPerZoneB);
+      const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
@@ -717,7 +708,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10));
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     }
   }
 
@@ -735,8 +726,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
     }
     if (this.props.base[1] !== BASE.BASE_X) {
-      const operandAValue: number = this.calculateOperandRealValue(dotsPerZoneA);
-      const operandBValue: number = this.calculateOperandRealValue(dotsPerZoneB);
+      const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
+      const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     } else {
@@ -744,7 +735,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      this.props.startActivityDoneFunc(dotsPos, parseInt(operandAValue, 10), parseInt(operandBValue, 10), dividePos);
+      console.log(operandAValue, operandBValue);
+      this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     }
   }
 
@@ -754,7 +746,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
   }
 
-  private resize() {
+  private resize(): void {
     let offset: number = 0;
     if (this.canvas.parentElement) {
       offset = this.canvas.parentElement.offsetWidth;
@@ -772,13 +764,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
   }
 
-  private calculateOperandRealValue(arr: string[]): number {
+  private calculateOperandRealValue(arr: string[]): string {
     let value: number = 0;
     for (let i = 0; i < arr.length; i += 1) {
       // tslint:disable-next-line
       value += Number(arr[i]) * Math.pow(Number(this.props.base[1]), i);
     }
-    return value;
+    return value.toString();
   }
 }
 

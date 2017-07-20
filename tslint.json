@@ -5,16 +5,33 @@
     ],
     "jsRules": {},
     "rules": {
-      "quotemark": [true, "any", "avoid-escape"],
-      "ordered-imports": [
-        true,
-        {
-          "import-sources-order": "any",
-          "named-imports-order": "any"
-        }
-      ],
+      "quotemark": [true, "single", "avoid-escape"],
+      "no-console": false,
+
+      "import-name": false,
+      "variable-name": false,
+      "ordered-imports": false,
       "object-literal-sort-keys": false,
-      "no-console": false
+      "jsx-boolean-value": false,
+      "max-line-length": 120,
+
+      //// tslint-immutable
+      // Recommended built-in rules
+      "no-var-keyword": true,
+      "typedef": [true, "call-signature"],
+
+      // Immutability rules
+      "readonly-keyword": true,
+      "readonly-array": true,
+      "no-let": false,
+
+      // Functional style rules
+      "no-this": false,
+      "no-class": false,
+      "no-new": false,
+      "no-mixed-interface": false,
+      "no-expression-statement": false
+      ////
     },
     "rulesDirectory": []
 }

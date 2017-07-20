@@ -1,4 +1,4 @@
-export const BASE = {
+export const BASE: any = {
   MECHANIA: [[1, 2], [1, 3], [1, 4], [1, 5], [1, 9], [1, 10], [1, 12], [2, 3]],
   ARITHMOS: [[1, 10]],
   ALGEBRA: [[1, 'X']],
@@ -56,8 +56,8 @@ export enum MAX_DOT {
 
 export enum ERROR_MESSAGE {
   INVALID_ENTRY = 'Invalid entry in the operand',
-  NO_ENOUGH_DOTS = 'Pas assez de points disponibles pour cette opération',
-  ONE_BOX_AT_A_TIME = 'Une case à la fois pour les base avec un dénominateur autre que 1',
+/*  NO_ENOUGH_DOTS = 'Pas assez de points disponibles pour cette opération',
+  ONE_BOX_AT_A_TIME = 'Une case à la fois pour les base avec un dénominateur autre que 1',*/
   POSITIVE_NEGATIVE_DRAG = 'Impossible de déplacer un point entre les zone positive et négative',
   BASE_X_DRAG = 'Base inconnue, on ne peut pas déplacer des points entre les zones',
   NO_OPPOSITE_DOTS = 'Aucun point à annuler',
@@ -69,7 +69,7 @@ export enum TEXT_COPY {
   PUT = 'Put',
   IS = 'is',
   DOTS_COUNT = 'dots in the machine',
-};
+}
 
 export type ISPRITE_COLOR = 'RED' | 'BLUE';
 

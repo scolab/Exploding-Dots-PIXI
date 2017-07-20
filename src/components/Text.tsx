@@ -1,7 +1,7 @@
 import React from 'react';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
-import {operationItem} from "./StylesForComponents";
-import styled from "styled-components";
+import {operationItem} from './StylesForComponents';
+import styled from 'styled-components';
 
 interface IProps {
   operator_mode: IOPERATOR_MODE;

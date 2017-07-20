@@ -10,7 +10,7 @@ import { DotCounter } from './DotCounter';
 import { DotVO } from '../../VO/DotVO';
 import { SpritePool } from '../../utils/SpritePool';
 import {DotsContainer} from './DotsContainer';
-import {DotSprite} from "./DotSprite";
+import {DotSprite} from './DotSprite';
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import Sprite = PIXI.Sprite;
@@ -365,7 +365,7 @@ export class PowerZone extends PIXI.Container {
       if (doCheck) {
         // check before populate
         let dividerIsEmpty: boolean = this.getDividerTextStatus(this.positiveDividerText, false);
-        const negativeDividerIsEmpty = this.getDividerTextStatus(
+        const negativeDividerIsEmpty: boolean = this.getDividerTextStatus(
           this.negativeDividerText,
           !dividerIsEmpty,
         );
@@ -972,7 +972,7 @@ export class PowerZone extends PIXI.Container {
         const dot: DotVO = localHash[key];
         this.removeDotFromArray(dot);
         if (dot.sprite) {
-          const dotSprite = dot.sprite;
+          const dotSprite: DotSprite = dot.sprite;
           dotSprite.parent.removeChild(dotSprite);
           if (dotSprite.particleEmitter) {
             dotSprite.particleEmitter.stop();

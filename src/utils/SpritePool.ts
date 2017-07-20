@@ -1,6 +1,6 @@
 import {SPRITE_COLOR} from '../Constants';
 import {DotSprite} from '../components/CanvasPIXI/DotSprite';
-import {DotVO} from "../VO/DotVO";
+import {DotVO} from '../VO/DotVO';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import Texture = PIXI.Texture;
 

@@ -12,17 +12,17 @@ import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
-import {DotVO} from "../../VO/DotVO";
-import {DotSprite} from "./DotSprite";
+import {DotVO} from '../../VO/DotVO';
+import {DotSprite} from './DotSprite';
 import Rectangle = PIXI.Rectangle;
-import {DotsContainer} from "./DotsContainer";
+import {DotsContainer} from './DotsContainer';
 import Sprite = PIXI.Sprite;
 import InteractionData = PIXI.interaction.InteractionData;
 import InteractionEvent = PIXI.interaction.InteractionEvent;
-import {DividerDotVO} from "../../VO/DividerDotVO";
+import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
-import {ICanvasPixiProps} from "./Canvas.Pixi";
+import {ICanvasPixiProps} from './Canvas.Pixi';
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
 
 interface IPendingAction {
@@ -89,7 +89,7 @@ export class PowerZoneManager extends PIXI.Container {
   private leftMostZone: PIXI.Container;
   private redDragJSON: object;
   private blueDragJSON: object;
-  private successAction: Function; // tslint:disable-line ban-types
+  private successAction: (name: string) => any;
   private title: string;
 
   constructor(addDot: (zoneId: number,
@@ -116,7 +116,7 @@ export class PowerZoneManager extends PIXI.Container {
               displayUserMessage: (message: string) => any,
               soundManager: SoundManager,
               wantedResult: IWantedResult,
-              successAction: Function, // tslint:disable-line ban-types
+              successAction: (name: string) => any,
               title: string) {
     super();
 
@@ -1409,7 +1409,7 @@ export class PowerZoneManager extends PIXI.Container {
                               newZone: DotsContainer,
                               positionToBeMovedTo: Point,
                               updateValue: boolean,
-                              addListener?: boolean) {
+                              addListener?: boolean): void {
     newZone.addChild(dotSprite);
     const position: Point | ObservablePoint = dotSprite.position;
     position.x = positionToBeMovedTo.x;
@@ -1472,7 +1472,7 @@ export class PowerZoneManager extends PIXI.Container {
           default:
             break;
         }
-        const finalPosition: Point = this.movingDotsContainer.toLocal(
+        const gotoPosition: Point = this.movingDotsContainer.toLocal(
           adjacentPosition,
           droppedOnPowerZone,
         );
@@ -1487,8 +1487,8 @@ export class PowerZoneManager extends PIXI.Container {
             ease: Power3.easeIn,
             onComplete: this.addDraggedToNewZone.bind(this),
             onCompleteParams: [dotSprite, droppedOnPowerZone, adjacentPosition, true, true],
-            x: finalPosition.x,
-            y: finalPosition.y,
+            x: gotoPosition.x,
+            y: gotoPosition.y,
           },
         );
       }

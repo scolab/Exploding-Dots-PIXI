@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
-import styled from "styled-components";
-import {gradientBackground, operationItem} from "./StylesForComponents";
+import styled from 'styled-components';
+import {gradientBackground, operationItem} from './StylesForComponents';
 
 interface IProps {
   operator_mode: IOPERATOR_MODE;
@@ -11,8 +11,8 @@ interface IProps {
 
 export default class Operator extends Component<IProps, {}> {
 
-  public render() {
-    let text = '';
+  public render(): JSX.Element | null {
+    let text: string = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
         if (this.props.usage_mode === USAGE_MODE.FREEPLAY) {

@@ -22,7 +22,7 @@ export class ParticleEmitter {
     this.bindUpdateFunction = this.update.bind(this);
   }
 
-  public start() {
+  public start(): void {
     this.elapsed = Date.now();
     // Start emitting
     this.emitter.emit = true;
@@ -31,13 +31,13 @@ export class ParticleEmitter {
     this.ticker.start();
   }
 
-  public stop() {
+  public stop(): void {
     this.emitter.emit = false;
     this.emitter.cleanup();
     this.ticker.remove(this.bindUpdateFunction);
   }
 
-  public updateOwnerPos(x, y) {
+  public updateOwnerPos(x, y): void {
     this.emitter.updateOwnerPos(x, y);
   }
 
@@ -45,12 +45,12 @@ export class ParticleEmitter {
     this.emitter.resetPositionTracking();
   }
 
-  public destroy() {
+  public destroy(): void {
     this.emitter.emit = false;
     this.emitter.destroy();
   }
 
-  private update(deltaTime: number) {
+  private update(deltaTime: number): void {
     // Update the next frame
     if (this.emitter && this.emitter.emit) {
       // The emitter requires the elapsed
