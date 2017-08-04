@@ -418,14 +418,14 @@ export class PowerZoneManager extends PIXI.Container {
         // instabilityExist === false ? instabilityExist = isSignInstability : false;
       }
     });
-    if (overloadExist) {
+    /*if (overloadExist) {
       this.soundManager.playSound(SoundManager.BOX_OVERLOAD);
     } else if (instabilityExist) {
       this.soundManager.playSound(SoundManager.BOX_POSITIVE_NEGATIVE);
     } else {
       this.soundManager.stopSound(SoundManager.BOX_OVERLOAD);
       this.soundManager.stopSound(SoundManager.BOX_POSITIVE_NEGATIVE);
-    }
+    }*/
   }
 
   public checkResult(): void {
@@ -881,8 +881,8 @@ export class PowerZoneManager extends PIXI.Container {
           this.addDot(target.powerZone, dotPos, !target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
         }
       } else {
-        // console.log('here', target.powerZone, position, target.isPositive, color);
-        this.soundManager.playSound(SoundManager.ADD_DOT);
+        console.log('here', target.powerZone, position, target.isPositive, color);
+        this.soundManager.playSound(`${SoundManager.ADD_DOT}_${target.powerZone + 1}`);
         this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_FROM_CLICK);
       }
     }
