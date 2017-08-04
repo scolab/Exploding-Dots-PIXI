@@ -66,27 +66,27 @@ export class SoundManager {
     this.allSounds.push(this.GO_INVALID);
 
     this.ADD_DOT_1 = new Howl({
-      src: [`${this.baseURL}pop_05.mp3`],
+      src: [`${this.baseURL}Pop_05.mp3`],
     });
     this.allSounds.push(this.ADD_DOT_1);
 
     this.ADD_DOT_2 = new Howl({
-      src: [`${this.baseURL}pop_04.mp3`],
+      src: [`${this.baseURL}Pop_04.mp3`],
     });
     this.allSounds.push(this.ADD_DOT_2);
 
     this.ADD_DOT_3 = new Howl({
-      src: [`${this.baseURL}pop_03.mp3`],
+      src: [`${this.baseURL}Pop_03.mp3`],
     });
     this.allSounds.push(this.ADD_DOT_3);
 
     this.ADD_DOT_4 = new Howl({
-      src: [`${this.baseURL}pop_02.mp3`],
+      src: [`${this.baseURL}Pop_02.mp3`],
     });
     this.allSounds.push(this.ADD_DOT_4);
 
     this.ADD_DOT_5 = new Howl({
-      src: [`${this.baseURL}pop_01.mp3`],
+      src: [`${this.baseURL}Pop_01.mp3`],
     });
     this.allSounds.push(this.ADD_DOT_5);
 
@@ -111,7 +111,7 @@ export class SoundManager {
     this.allSounds.push(this.DOT_EXPLODE);
 
     this.DOT_IMPLODE = new Howl({
-      src: [`${this.baseURL}wrong_01.mp3`],
+      src: [`${this.baseURL}Wrong_01.mp3`],
     });
     this.allSounds.push(this.DOT_IMPLODE);
 
