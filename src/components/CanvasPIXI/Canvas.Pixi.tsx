@@ -54,29 +54,28 @@ export interface ICanvasPixiProps {
                                    totalA: string,
                                    totalB?: string,
                                    divider?: DotVO[]) => any;
-  readonly error: (errorMessage: string) => any;
+  readonly error: () => any;
   readonly displayUserMessage: (message: string) => any;
-  positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
-  negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
-  positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
-  negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
-  positiveDividerResult: number[];
-  negativeDividerResult: number[];
-  base: Array<number | string>;
-  operator_mode: IOPERATOR_MODE;
-  usage_mode: IUSAGE_MODE;
-  placeValueOn: boolean;
-  cdnBaseUrl: string;
-  totalZoneCount: number;
-  magicWandIsActive: boolean;
-  startActivity: boolean;
-  activityStarted: boolean;
-  operandA: string;
-  operandB: string;
-  userMessage: string;
-  muted: boolean;
-  wantedResult: IWantedResult;
-  successAction: (name: string) => any;
+  readonly positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  readonly negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
+  readonly positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
+  readonly negativeDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
+  readonly positiveDividerResult: number[];
+  readonly negativeDividerResult: number[];
+  readonly base: Array<number | string>;
+  readonly operator_mode: IOPERATOR_MODE;
+  readonly usage_mode: IUSAGE_MODE;
+  readonly placeValueOn: boolean;
+  readonly cdnBaseUrl: string;
+  readonly totalZoneCount: number;
+  readonly magicWandIsActive: boolean;
+  readonly startActivity: boolean;
+  readonly activityStarted: boolean;
+  readonly operandA: string;
+  readonly operandB: string;
+  readonly muted: boolean;
+  readonly wantedResult: IWantedResult;
+  readonly successAction: (name: string) => any;
 }
 
 class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
@@ -167,7 +166,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   }
 
   public componentDidMount(): void {
-        // console.log('componentDidMount', this.state, this.props);
+    console.log('componentDidMount', this.state, this.props);
     const options: ApplicationOptions = {
       antialias: true,
       autoResize: true,
@@ -226,7 +225,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
     }
-    this.powerZoneManager.checkPendingAction(nextProps);
     this.checkBaseChange(nextProps);
     this.props = nextProps;
     this.powerZoneManager.removeDotsFromStateChange(
@@ -378,7 +376,10 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         if (this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
           this.props.operandB.length === 0) {
           this.soundManager.playSound(SoundManager.GO_INVALID);
-          this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+          if (this.props.displayUserMessage) {
+            this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+          }
+          this.props.error();
           return;
         }
         if (this.props.operandA.indexOf('|') !== -1 || this.props.operandB.indexOf('|') !== -1) {
@@ -393,18 +394,27 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
         } else {
           // Base X parse operand
-          const populatedArrays = this.populateDotPerZoneArrayBaseX();
+          const populatedArrays: IOperantProcessedArray | null = this.populateDotPerZoneArrayBaseX();
+          if (populatedArrays === null) {
+            return;
+          }
           dotsPerZoneA = populatedArrays.dotsPerZoneA;
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
           // validate that the sum of the value isn't 0
           if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
-            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+            if (this.props.displayUserMessage) {
+              this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+            }
+            this.props.error();
             return;
           }
           if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
-            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+            if (this.props.displayUserMessage) {
+              this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+            }
+            this.props.error();
             return;
           }
         }
@@ -429,7 +439,10 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
               this.createSubtractDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
-              this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+              if (this.props.displayUserMessage) {
+                this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+              }
+              this.props.error();
               return;
             }
             break;
@@ -438,7 +451,10 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
               this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
-              this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
+              if (this.props.displayUserMessage) {
+                this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+              }
+              this.props.error();
               return;
             }
             this.powerZoneManager.showDividerAndResult();
@@ -510,7 +526,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     return { dotsPerZoneA, dotsPerZoneB };
   }
 
-  private populateDotPerZoneArrayBaseX(): IOperantProcessedArray {
+  private populateDotPerZoneArrayBaseX(): IOperantProcessedArray | null {
     const dotsPerZoneA: string[] = new Array(this.props.totalZoneCount);
     const dotsPerZoneB: string[] = new Array(this.props.totalZoneCount);
     for (let i = 0; i < this.props.totalZoneCount; i += 1) {
@@ -545,38 +561,40 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     const splitZoneA = cleandedOperandA.split('+');
     const splitZoneB = cleandedOperandB.split('+');
     // console.log(splitZoneA, splitZoneB);
+    let inError: boolean = false;
     splitZoneA.forEach((val: string) => {
-      let value = val;
-      // in case of entries like -2-, where the second - will be split in a zone value
-      if (value === '-' || value === '+') {
-        value = '0';
-      }
-      const xIndex = value.indexOf('x');
-      // No x in the zone value, this is an number only
-      if (xIndex === -1) {
-        dotsPerZoneA[0] += Number(value);
-      } else {
-        let pos: number = 0;
-        if (isNaN(Number(value[xIndex + 1]))) {
-          // x only, no exponent
-          pos = 1;
-        } else {
-          if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
-            // the exponent is higher than the amount of zone
-            this.soundManager.playSound(SoundManager.GO_INVALID);
-            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-            return;
-          }
-          pos = Number(value[xIndex + 1]);
+      if (inError === false) {
+        let value = val;
+        // in case of entries like -2-, where the second - will be split in a zone value
+        if (value === '-' || value === '+') {
+          value = '0';
         }
-        if (xIndex === 0) {
-          // positive x only
-          dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) + 1).toString();
-        } else if (xIndex === 1 && value[0] === '-') {
-          // negative x only
-          dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) - 1).toString();
+        const xIndex = value.indexOf('x');
+        // No x in the zone value, this is an number only
+        if (xIndex === -1) {
+          dotsPerZoneA[0] += Number(value);
         } else {
-          dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
+          let pos: number = 0;
+          if (isNaN(Number(value[xIndex + 1]))) {
+            // x only, no exponent
+            pos = 1;
+          } else {
+            if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
+              // the exponent is higher than the amount of zone
+              inError = true;
+              return null;
+            }
+            pos = Number(value[xIndex + 1]);
+          }
+          if (xIndex === 0) {
+            // positive x only
+            dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) + 1).toString();
+          } else if (xIndex === 1 && value[0] === '-') {
+            // negative x only
+            dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) - 1).toString();
+          } else {
+            dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
+          }
         }
       }
     });
@@ -598,9 +616,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         } else {
           if (Number(value[xIndex + 1]) > this.props.totalZoneCount - 1) {
             // the exponent is higher than the amount of zone
-            this.soundManager.playSound(SoundManager.GO_INVALID);
-            this.props.error(ERROR_MESSAGE.INVALID_ENTRY);
-            return;
+            inError = true;
+            return null;
           }
           pos = Number(value[xIndex + 1]);
         }
@@ -615,14 +632,23 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         }
       }
     });
-    // remove leading zeroes in the string in Base X
-    for (let i: number = 0; i < dotsPerZoneA.length; i++) {
-      dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
+    if (inError === false) {
+      // remove leading zeroes in the string in Base X
+      for (let i: number = 0; i < dotsPerZoneA.length; i++) {
+        dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
+      }
+      for (let i: number = 0; i < dotsPerZoneB.length; i++) {
+        dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
+      }
+      return {dotsPerZoneA, dotsPerZoneB};
+    }else {
+      this.soundManager.playSound(SoundManager.GO_INVALID);
+      if (this.props.displayUserMessage) {
+        this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+      }
+      this.props.error();
     }
-    for (let i: number = 0; i < dotsPerZoneB.length; i++) {
-      dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
-    }
-    return { dotsPerZoneA, dotsPerZoneB };
+    return null;
   }
 
   private createDisplayDots(dotsPerZoneA: string[]): void {

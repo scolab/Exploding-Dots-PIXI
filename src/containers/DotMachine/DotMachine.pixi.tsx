@@ -3,8 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase,
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
-    startActivity, startActivityDone, error, userMessage,
-    resetUserMessage, setDivisionResult } from '../../actions/';
+    startActivity, startActivityDone, error, setDivisionResult } from '../../actions/';
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -16,8 +15,6 @@ import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
 import GoButton from '../../components/GoButton';
-import ErrorDisplay from '../../components/ErrorDisplay';
-import MessageDisplay from '../../components/MessageDisplay';
 import {USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE} from '../../Constants';
 import {DotVO} from '../../VO/DotVO';
 import {DividerDotVO} from '../../VO/DividerDotVO';
@@ -28,16 +25,6 @@ import { IMachineState } from '../../reducers/DotsReducer';
 const DotsMachine = (props: IProps) => {
   return (
     <div>
-      <ErrorDisplay
-        errorMessage={props.dotsMachine.machineState.errorMessage}
-        onClose={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
-        resetAction={props.dotsMachine.machineState.resetAction}
-        title={props.dotsMachine.machineState.title}
-      />
-      <MessageDisplay
-        userMessage={props.dotsMachine.machineState.userMessage}
-        onClose={props.resetUserMessage}
-      />
       <TopMenuItem>
         {props.dotsMachine.machineState.placeValueSwitchVisible === true &&
           <PlaceValueSwitch
@@ -128,8 +115,7 @@ const DotsMachine = (props: IProps) => {
         operandA={props.dotsMachine.machineState.operandA}
         operandB={props.dotsMachine.machineState.operandB}
         error={props.error}
-        displayUserMessage={props.userMessage}
-        userMessage={props.dotsMachine.machineState.userMessage}
+        displayUserMessage={props.dotsMachine.machineState.displayUserMessageAction}
         muted={props.dotsMachine.machineState.muted}
         wantedResult={props.dotsMachine.machineState.wantedResult}
         setDivisionResult={props.setDivisionResult}
@@ -173,9 +159,7 @@ interface IProps {
                                    totalA: string,
                                    totalB?: string,
                                    divider?: DotVO[]) => any;
-  readonly error: (errorMessage: string) => any;
-  readonly userMessage: (message: string) => any;
-  readonly resetUserMessage: () => any;
+  readonly error: () => any;
   dotsMachine: {
     dots: Array<{
       x: number,
@@ -208,11 +192,11 @@ interface IProps {
       operandA: string;
       operandB: string;
       errorMessage: string;
-      userMessage: string;
       muted: boolean;
       wantedResult: IWantedResult;
       successAction: (name: string) => any;
       resetAction: (name: string) => any;
+      displayUserMessageAction: (name: string) => any;
     };
   };
 }
@@ -238,8 +222,6 @@ const mapDispatchToProps = (dispatch) => {
     startActivityFunc: startActivity,
     startActivityDoneFunc: startActivityDone,
     error,
-    userMessage,
-    resetUserMessage,
     setDivisionResult,
   }, dispatch);
 };

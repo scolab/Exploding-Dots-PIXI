@@ -25,13 +25,6 @@ import TextureDictionary = PIXI.loaders.TextureDictionary;
 import {ICanvasPixiProps} from './Canvas.Pixi';
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
 
-interface IPendingAction {
-  // tslint:disable-next-line ban-types
-  function: (dotSprite: DotSprite,
-             currentZone: DotsContainer) => void;
-  params: Array<PIXI.Sprite | PIXI.Container>;
-}
-
 interface IZoneUnderCursor {
   droppedOnPowerZone: PIXI.Container | null;
   droppedOnPowerZoneIndex: number;
@@ -83,7 +76,6 @@ export class PowerZoneManager extends PIXI.Container {
   private placeValueOn: boolean;
   private negativePresent: boolean;
   private allZones: PowerZone[];
-  private pendingAction: IPendingAction[];
   private dragParticleEmitterRed: ParticleEmitter;
   private dragParticleEmitterBlue: ParticleEmitter;
   private leftMostZone: PIXI.Container;
@@ -172,7 +164,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.negativePresent = negativePresent;
     this.allZones = [];
     this.isInteractive = usageMode === USAGE_MODE.FREEPLAY;
-    this.pendingAction = new Array<IPendingAction>();
     /*this.explodeEmitter = new Array<ParticleEmitter>();
     this.implodeEmitter = new Array<ParticleEmitter>();*/
   }
@@ -248,16 +239,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.allZones.forEach((zone) => {
       zone.setValueTextAlpha(placeValueOn ? 1 : 0);
     });
-  }
-
-  public checkPendingAction(nextProps: ICanvasPixiProps): void {
-    // console.log('checkPendingAction', nextProps, nextProps.userMessage);
-    if (nextProps.userMessage === '' && this.pendingAction) {
-      while (this.pendingAction.length > 0) {
-        const action = this.pendingAction.shift() as IPendingAction;
-        action.function.apply(this, action.params);
-      }
-    }
   }
 
   public magicWand(): void {
@@ -488,6 +469,7 @@ export class PowerZoneManager extends PIXI.Container {
                                dotSprite: DotSprite): void {
     dotSprite.stopOut();
     this.removeDot(originalZoneIndex, dotSprite.dot.id);
+    this.removeGhostDot(dotSprite);
   }
 
   public reset(): void {
@@ -881,7 +863,7 @@ export class PowerZoneManager extends PIXI.Container {
           this.addDot(target.powerZone, dotPos, !target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
         }
       } else {
-        console.log('here', target.powerZone, position, target.isPositive, color);
+        // console.log('here', target.powerZone, position, target.isPositive, color);
         this.soundManager.playSound(`${SoundManager.ADD_DOT}_${target.powerZone + 1}`);
         this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_FROM_CLICK);
       }
@@ -914,65 +896,60 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragStart(this: DotSprite,
                       e: InteractionEvent): void {
-    // console.log('onDragStart');
-    const dotSprite: DotSprite = e.currentTarget as DotSprite;
-    if (dotSprite.world.isInteractive) {
+    // console.log('onDragStart', e.currentTarget as DotSprite, this);
+    if (this.world.isInteractive) {
       const oldParent: DisplayObjectContainer = this.parent;
-      if (dotSprite.dot.isPositive) {
-        dotSprite.world.allZones[dotSprite.dot.powerZone].removeFromProximityManager(this);
+      this.world.allZones[this.dot.powerZone].removeFromProximityManager(this);
+      this.origin = new Point(this.x, this.y);
+      this.data = e.data;
+      this.dragging = true;
+      this.world.movingDotsContainer.addChild(this);
+      const newPosition: Point = this.data.getLocalPosition(this.parent);
+      const originDiff: Point = this.data.getLocalPosition(oldParent);
+      this.originInMovingContainer = newPosition;
+      this.originInMovingContainer.x += this.origin.x - originDiff.x;
+      this.originInMovingContainer.y += this.origin.y - originDiff.y;
+      this.position.x = newPosition.x;
+      this.position.y = newPosition.y;
+      this.world.addGhostDot(this);
+      if (this.dot.color === SPRITE_COLOR.RED) {
+        this.particleEmitter = this.world.dragParticleEmitterRed;
       } else {
-        dotSprite.world.allZones[dotSprite.dot.powerZone].removeFromProximityManager(this);
+        this.particleEmitter = this.world.dragParticleEmitterBlue;
       }
-      dotSprite.origin = new Point(this.x, this.y);
-      dotSprite.data = e.data;
-      dotSprite.dragging = true;
-      dotSprite.world.movingDotsContainer.addChild(this);
-      const newPosition: Point = dotSprite.data.getLocalPosition(this.parent);
-      const originDiff: Point = dotSprite.data.getLocalPosition(oldParent);
-      dotSprite.originInMovingContainer = newPosition;
-      dotSprite.originInMovingContainer.x += dotSprite.origin.x - originDiff.x;
-      dotSprite.originInMovingContainer.y += dotSprite.origin.y - originDiff.y;
-      dotSprite.position.x = newPosition.x;
-      dotSprite.position.y = newPosition.y;
-      if (dotSprite.dot.color === SPRITE_COLOR.RED) {
-        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
-      } else {
-        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
-      }
-      dotSprite.particleEmitter.resetPositionTracking();
-      dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-      dotSprite.particleEmitter.start();
+      this.particleEmitter.resetPositionTracking();
+      this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+      this.particleEmitter.start();
     }
   }
 
   private onDragMove(this: DotSprite,
                      e: InteractionEvent): void {
-    const dotSprite: DotSprite = e.currentTarget as DotSprite;
     // console.log('onDragMove', dotSprite.dot.id);
-    if (dotSprite.world.isInteractive && dotSprite.dragging) {
-      const newPosition: Point = dotSprite.data.getLocalPosition(this.parent);
-      dotSprite.position.x = newPosition.x;
-      dotSprite.position.y = newPosition.y;
-      dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-      if (dotSprite.world.negativePresent) {
-        const zoneOverInfo: IZoneUnderCursor = dotSprite.world.getZoneUnderCursor(e.data) as IZoneUnderCursor;
+    if (this.world.isInteractive && this.dragging) {
+      const newPosition: Point = this.data.getLocalPosition(this.parent);
+      this.position.x = newPosition.x;
+      this.position.y = newPosition.y;
+      this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+      if (this.world.negativePresent) {
+        const zoneOverInfo: IZoneUnderCursor = this.world.getZoneUnderCursor(e.data) as IZoneUnderCursor;
         const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-        const originalZoneIndex: number = dotSprite.dot.powerZone;
+        const originalZoneIndex: number = this.dot.powerZone;
         if (originalZoneIndex === droppedOnPowerZoneIndex) {
           const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
-          if (dotSprite.dot.isPositive !== droppedOnPowerZone.isPositive) {
+          if (this.dot.isPositive !== droppedOnPowerZone.isPositive) {
             // Select dot / anti dot for shaking
-            dotSprite.world.dotAntidotSelect(dotSprite, originalZoneIndex);
+            this.world.dotAntidotSelect(this, originalZoneIndex);
           }else {
-            if (dotSprite.shakingDotForAnnihilation !== null) {
-              dotSprite.shakingDotForAnnihilation.stopWiggle();
-              dotSprite.shakingDotForAnnihilation = null;
+            if (this.shakingDotForAnnihilation !== null) {
+              this.shakingDotForAnnihilation.stopWiggle();
+              this.shakingDotForAnnihilation = null;
             }
           }
         }else {
-          if (dotSprite.shakingDotForAnnihilation !== null) {
-            dotSprite.shakingDotForAnnihilation.stopWiggle();
-            dotSprite.shakingDotForAnnihilation = null;
+          if (this.shakingDotForAnnihilation !== null) {
+            this.shakingDotForAnnihilation.stopWiggle();
+            this.shakingDotForAnnihilation = null;
           }
         }
       }
@@ -981,26 +958,57 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragEnd(this: DotSprite,
                     e: InteractionEvent): void {
-    const dotSprite: DotSprite = e.currentTarget as DotSprite;
-    if (dotSprite.world.isInteractive && dotSprite.dragging) {
-      dotSprite.dragging = false;
-      dotSprite.particleEmitter.stop();
+    if (this.world.isInteractive && this.dragging) {
+      this.dragging = false;
+      this.particleEmitter.stop();
       // dotSprite.data = null;
-      dotSprite.world.verifyDroppedOnZone(this, e.data);
+      this.world.verifyDroppedOnZone(this, e.data);
       // dot may have been remove if dropped outside the boxes in freeplay,
       // Or destroyed on other occasions,
       // so verify if it's still have a sprite in dotVO
-      if (dotSprite.dot.sprite) {
+      if (this.dot.sprite) {
         // wait for the sprite to be back in place if dropped on an edge
         TweenMax.delayedCall(
           TWEEN_TIME.MOVE_FROM_EDGE_INTO_BOX + 0.01,
-          dotSprite.world.allZones[dotSprite.dot.powerZone].addToProximityManager,
-          [dotSprite],
-          dotSprite.world.allZones[dotSprite.dot.powerZone],
+          this.world.allZones[this.dot.powerZone].addToProximityManager,
+          [this],
+          this.world.allZones[this.dot.powerZone],
         );
       }
     }
     e.stopPropagation();
+  }
+
+  private addGhostDot(dotSprite: DotSprite): void {
+    const ghostSprite: DotSprite = this.spritePool.getOne(dotSprite.dot.color, dotSprite.dot.isPositive);
+    ghostSprite.alpha = 0.5;
+    ghostSprite.x = dotSprite.x;
+    ghostSprite.y = dotSprite.y;
+    this.movingDotsContainer.addChild(ghostSprite);
+    dotSprite.ghost = ghostSprite;
+  }
+
+  private removeGhostDot(dotSprite: DotSprite): void {
+    if (dotSprite.ghost) {
+      this.movingDotsContainer.removeChild(dotSprite.ghost);
+      dotSprite.ghost.alpha = 1;
+      this.spritePool.dispose(dotSprite.ghost, dotSprite.dot.isPositive, dotSprite.dot.color);
+    }
+    dotSprite.ghost = null;
+  }
+
+  private dragGhostToNewZone(dotSprite: DotSprite, gotoPosition: Point): void {
+    TweenMax.to(
+      dotSprite.ghost,
+      TWEEN_TIME.MOVE_DOT_TO_NEW_ZONE,
+      {
+        ease: Power3.easeIn,
+        onComplete: this.removeGhostDot.bind(this),
+        onCompleteParams: [dotSprite],
+        x: gotoPosition.x,
+        y: gotoPosition.y,
+      },
+    );
   }
 
   private verifyDroppedOnZone(dotSprite: DotSprite,
@@ -1097,8 +1105,8 @@ export class PowerZoneManager extends PIXI.Container {
     // Add the new dots
     let newNbOfDots: number = Math.pow(this.base[1] as number, diffZone);
     newNbOfDots -= this.base[0] as number;
-    // console.log('newNbOfDots', newNbOfDots, diffZone);
     if (newNbOfDots > 0) {
+      this.removeGhostDot(dotSprite);
       const dotsPos: Point[] = new Array<Point>();
       for (let i = 0; i < newNbOfDots; i += 1) {
         dotsPos.push( new Point(
@@ -1133,16 +1141,26 @@ export class PowerZoneManager extends PIXI.Container {
     // console.log('moveImpossible', type);
     if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
+      if (this.displayUserMessage) {
+        this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
+      }
       this.isInteractive = false;
     } else if (type === MOVE_IMPOSSIBLE.BASE_X) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
+      if (this.displayUserMessage) {
+        this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
+      }
       this.isInteractive = false;
     }else if (type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS) {
       // this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
+      if (this.displayUserMessage) {
+        this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
+      }
     }else if (type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
+      if (this.displayUserMessage) {
+        this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
+      }
     }
     if (dotSprite.dot.isPositive) {
       // dotSprite.playWrong(this.backIntoPlace.bind(this), this.allZones[originalZoneIndex].positiveDotsContainer);
@@ -1157,6 +1175,7 @@ export class PowerZoneManager extends PIXI.Container {
                            data: InteractionData,
                            droppedOnPowerZone: DotsContainer): void {
     droppedOnPowerZone.addChild(dotSprite);
+    this.removeGhostDot(dotSprite);
     let doTween: boolean = false;
     const newPosition: Point = data.getLocalPosition(droppedOnPowerZone);
     const modifyPosition: Point = newPosition.clone();
@@ -1229,13 +1248,10 @@ export class PowerZoneManager extends PIXI.Container {
         }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
-        this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
-        this.pendingAction.push(
-          {
-            function: this.backIntoPlace,
-            params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-          },
-        );
+        if (this.displayUserMessage) {
+          this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        }
+        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
       }
     } else if (dotSprite.dot.isPositive === false) {
       // Negative dot drag into positive zoe
@@ -1252,13 +1268,10 @@ export class PowerZoneManager extends PIXI.Container {
         }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
-        this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
-        this.pendingAction.push(
-          {
-            function: this.backIntoPlace,
-            params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-          },
-        );
+        if (this.displayUserMessage) {
+          this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        }
+        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
       }
     }
   }
@@ -1290,21 +1303,13 @@ export class PowerZoneManager extends PIXI.Container {
     if (droppedOnPowerZone === this.leftMostZone) {
       // Dropped on the fake zone at the left
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
+      if (this.displayUserMessage) {
+        this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
+      }
       if (dotSprite.dot.isPositive) {
-        this.pendingAction.push(
-          {
-            function: this.backIntoPlace,
-            params: [dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer],
-          },
-        );
+        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
       } else {
-        this.pendingAction.push(
-          {
-            function: this.backIntoPlace,
-            params: [dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer],
-          },
-        );
+        this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
       }
       this.isInteractive = false;
     } else if (this.usageMode === USAGE_MODE.FREEPLAY) {
@@ -1403,6 +1408,7 @@ export class PowerZoneManager extends PIXI.Container {
     dotSprite.position = dotSprite.origin; // eslint-disable-line no-param-reassign
     this.isInteractive = true;
     dotSprite.particleEmitter.stop();
+    this.movingDotsContainer.removeChild(dotSprite.ghost as DotSprite);
   }
 
   private addDraggedToNewZone(dotSprite: DotSprite,
@@ -1429,7 +1435,7 @@ export class PowerZoneManager extends PIXI.Container {
                              dotsToRemov: number,
                              positionToBeMovedTo: Point,
                              dragDotSprite: DotSprite): void {
-    // console.log('tweenDotsToNewZone', positionToBeMovedTo);
+    console.log('tweenDotsToNewZone', positionToBeMovedTo);
     // get the original on zone
     let dotsToRemove: number = dotsToRemov;
     let dotContainer: DotsContainer;
@@ -1544,6 +1550,7 @@ export class PowerZoneManager extends PIXI.Container {
     if (allRemovedDots.length > 0) {
       this.soundManager.playSound(SoundManager.DOT_IMPLODE);
     }
+    this.dragGhostToNewZone(dragDotSprite, finalPosition);
   }
 
   /*private getExplosionEmitter(): ParticleEmitter {

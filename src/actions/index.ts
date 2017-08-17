@@ -111,16 +111,6 @@ export const startActivityDone = (dotsInfo: DotVO[],
   divider,
 });
 
-export const error = (errorMessage: string) => ({
+export const error = () => ({
   type: ACTIONS.ERROR,
-  errorMessage,
-});
-
-export const userMessage = (message: string) => ({
-  type: ACTIONS.USER_MESSAGE,
-  message,
-});
-
-export const resetUserMessage = () => ({
-  type: ACTIONS.RESET_USER_MESSAGE,
 });

@@ -55,7 +55,7 @@ export class SoundManager {
     this.baseURL += '/sounds/';
     this.allSounds = new Array<Howl>();
 
-    this.GO_SUCCESS = new Howl({
+    /*this.GO_SUCCESS = new Howl({
       src: [`${this.baseURL}GO_SUCCESS.mp3`],
     });
     this.allSounds.push(this.GO_SUCCESS);
@@ -159,11 +159,11 @@ export class SoundManager {
       src: [`${this.baseURL}BOX_POSITIVE_NEGATIVE.mp3`],
     });
     this.allSounds.push(this.BOX_POSITIVE_NEGATIVE);
-    this.allLoop = [this.playLoopOne, this.playLoopTwo];
+    this.allLoop = [this.playLoopOne, this.playLoopTwo];*/
   }
 
   public playSound(id: string): void {
-    console.log('play sound', id);
+    /*// console.log('play sound', id);
     if (!this.muted) {
       if (id === SoundManager.BOX_OVERLOAD) {
         TweenMax.delayedCall(1, this.playLoopOne, [id], this);
@@ -172,18 +172,18 @@ export class SoundManager {
       } else if (this[id]) {
         this[id].play();
       }
-    }
+    }*/
   }
 
   public stopSound(id: string): void {
-    if (this[id]) {
+    /*if (this[id]) {
       this[id].stop();
     }
     if (id === SoundManager.BOX_OVERLOAD) {
       TweenMax.killTweensOf(this.playLoopOne);
     } else if (id === SoundManager.BOX_POSITIVE_NEGATIVE) {
       TweenMax.killTweensOf(this.playLoopTwo);
-    }
+    }*/
   }
 
   public stopAllSounds(): void {

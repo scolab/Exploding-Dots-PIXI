@@ -20,6 +20,7 @@ export class DotSprite extends PIXI.Container {
   public velocity: Victor;
   public acceleration: Victor;
   public dot: DotVO;
+  public ghost: DotSprite | null;
   public shakingDotForAnnihilation: DotSprite | null = null;
 
   private normalDot: Sprite;

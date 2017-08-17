@@ -39,7 +39,7 @@ export default class ErrorDisplay extends Component<IProps, {}> {
   private reset(): void {
     this.props.onClose();
     if (this.props.resetAction) {
-      this.props.resetAction(this.props.title);
+      // this.props.resetAction(this.props.title);
     }
   }
 }

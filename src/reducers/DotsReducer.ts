@@ -40,7 +40,6 @@ export interface IMachineState {
   successAction: (name) => any;
   title: string;
   usage_mode: string;
-  userMessage: string;
   wantedResult: IWantedResult;
   zones: number;
 }
@@ -441,23 +440,12 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };
-      stateCopy.machineState.errorMessage = action.errorMessage;
+      // stateCopy.machineState.errorMessage = action.errorMessage;
       stateCopy.machineState.startActivity = false;
-      stateCopy.machineState.activityStarted = true;
-      return stateCopy;
-    case ACTIONS.USER_MESSAGE:
-      // console.log(ACTIONS.USER_MESSAGE);
-      stateCopy = { ...state };
-      stateCopy.machineState.userMessage = action.message;
-      return stateCopy;
-    case ACTIONS.RESET_USER_MESSAGE:
-      // console.log(ACTIONS.RESET_USER_MESSAGE);
-      stateCopy = { ...state };
-      stateCopy.machineState.userMessage = '';
+      stateCopy.machineState.activityStarted = false;
       return stateCopy;
     default:
       return state;
   }
 };
 export default dotsReducer;
-
