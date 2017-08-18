@@ -55,7 +55,6 @@ export interface ICanvasPixiProps {
                                    totalB?: string,
                                    divider?: DotVO[]) => any;
   readonly error: () => any;
-  readonly displayUserMessage: (message: string) => any;
   readonly positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   readonly negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
   readonly positiveDividerDots: Array<IDividerDotVOHash<DividerDotVO>>;
@@ -76,6 +75,7 @@ export interface ICanvasPixiProps {
   readonly muted: boolean;
   readonly wantedResult: IWantedResult;
   readonly successAction: (name: string) => any;
+  readonly displayUserMessageAction: (message: string) => any;
 }
 
 class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
@@ -194,7 +194,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             this.props.removeMultipleDots,
             this.props.rezoneDot,
             this.props.setDivisionResult,
-            this.props.displayUserMessage,
+            this.props.displayUserMessageAction,
             this.soundManager,
             this.props.wantedResult,
             this.props.successAction,
@@ -376,8 +376,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         if (this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
           this.props.operandB.length === 0) {
           this.soundManager.playSound(SoundManager.GO_INVALID);
-          if (this.props.displayUserMessage) {
-            this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+          if (this.props.displayUserMessageAction) {
+            this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
           }
           this.props.error();
           return;
@@ -403,16 +403,16 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           // validate that the sum of the value isn't 0
           if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
-            if (this.props.displayUserMessage) {
-              this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+            if (this.props.displayUserMessageAction) {
+              this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
             }
             this.props.error();
             return;
           }
           if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
             this.soundManager.playSound(SoundManager.GO_INVALID);
-            if (this.props.displayUserMessage) {
-              this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+            if (this.props.displayUserMessageAction) {
+              this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
             }
             this.props.error();
             return;
@@ -439,8 +439,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
               this.createSubtractDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
-              if (this.props.displayUserMessage) {
-                this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+              if (this.props.displayUserMessageAction) {
+                this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
               }
               this.props.error();
               return;
@@ -451,8 +451,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
               this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
               this.soundManager.playSound(SoundManager.GO_INVALID);
-              if (this.props.displayUserMessage) {
-                this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+              if (this.props.displayUserMessageAction) {
+                this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
               }
               this.props.error();
               return;
@@ -643,8 +643,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       return {dotsPerZoneA, dotsPerZoneB};
     }else {
       this.soundManager.playSound(SoundManager.GO_INVALID);
-      if (this.props.displayUserMessage) {
-        this.props.displayUserMessage(ERROR_MESSAGE.INVALID_ENTRY);
+      if (this.props.displayUserMessageAction) {
+        this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
       }
       this.props.error();
     }

@@ -55,13 +55,13 @@ export enum MAX_DOT {
 }
 
 export enum ERROR_MESSAGE {
-  INVALID_ENTRY = 'Entrée invalide dans les opérands',
-  NO_ENOUGH_DOTS = 'Pas assez de points disponibles pour cette opération',
-  ONE_BOX_AT_A_TIME = 'Une case à la fois pour les base avec un dénominateur autre que 1',
-  POSITIVE_NEGATIVE_DRAG = 'Impossible de déplacer un point entre les zone positive et négative',
-  BASE_X_DRAG = 'Base inconnue, on ne peut pas déplacer des points entre les zones',
-  NO_OPPOSITE_DOTS = 'Aucun point à annuler',
-  NO_GREATER_ZONE = 'La machine ne va pas dans des nombres plus grand',
+  INVALID_ENTRY = 'invalidEntry',
+  NO_ENOUGH_DOTS = 'noEnoughDots',
+  ONE_BOX_AT_A_TIME = 'oneBoxAtATimeMachine',
+  POSITIVE_NEGATIVE_DRAG = 'positiveNegativeDrag',
+  BASE_X_DRAG = 'baseXDrag',
+  NO_OPPOSITE_DOTS = 'noOppositeDots',
+  NO_GREATER_ZONE = 'noGreaterZone',
 }
 
 export enum TEXT_COPY {

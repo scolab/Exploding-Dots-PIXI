@@ -115,7 +115,7 @@ const DotsMachine = (props: IProps) => {
         operandA={props.dotsMachine.machineState.operandA}
         operandB={props.dotsMachine.machineState.operandB}
         error={props.error}
-        displayUserMessage={props.dotsMachine.machineState.displayUserMessageAction}
+        displayUserMessageAction={props.dotsMachine.machineState.displayUserMessageAction}
         muted={props.dotsMachine.machineState.muted}
         wantedResult={props.dotsMachine.machineState.wantedResult}
         setDivisionResult={props.setDivisionResult}
@@ -196,7 +196,7 @@ interface IProps {
       wantedResult: IWantedResult;
       successAction: (name: string) => any;
       resetAction: (name: string) => any;
-      displayUserMessageAction: (name: string) => any;
+      displayUserMessageAction: (message: string) => any;
     };
   };
 }

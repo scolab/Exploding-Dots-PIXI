@@ -60,7 +60,7 @@ export class PowerZoneManager extends PIXI.Container {
   private setDivisionResult: (zoneId: number,
                               divisionValue: number,
                               isPositive: boolean) => any;
-  private displayUserMessage: (message: string) => any;
+  private displayUserMessageAction: (message: string) => any;
   private movingDotsContainer: PIXI.Container;
   private dividerZoneManager: DividerZoneManager;
   private dividerResult: DividerResult;
@@ -105,7 +105,7 @@ export class PowerZoneManager extends PIXI.Container {
               setDivisionResult: (zoneId: number,
                                   divisionValue: number,
                                   isPositive: boolean) => any,
-              displayUserMessage: (message: string) => any,
+              displayUserMessageAction: (message: string) => any,
               soundManager: SoundManager,
               wantedResult: IWantedResult,
               successAction: (name: string) => any,
@@ -116,14 +116,13 @@ export class PowerZoneManager extends PIXI.Container {
     this.implodeJSON = require('./dot_implode.json');*/
     this.redDragJSON = require('./dot_drag_red.json');
     this.blueDragJSON = require('./dot_drag_blue.json');
-
     this.addDot = addDot;
     this.removeDot = removeDot;
     this.addMultipleDots = addMultipleDots;
     this.removeMultipleDots = removeMultipleDots;
     this.rezoneDot = rezoneDot;
     this.setDivisionResult = setDivisionResult;
-    this.displayUserMessage = displayUserMessage;
+    this.displayUserMessageAction = displayUserMessageAction;
     this.movingDotsContainer = new PIXI.Container();
     this.soundManager = soundManager;
     this.wantedResult = JSON.parse(JSON.stringify(wantedResult));
@@ -1138,28 +1137,28 @@ export class PowerZoneManager extends PIXI.Container {
   private moveImpossible(type: string,
                          dotSprite: DotSprite,
                          originalZoneIndex: number): void {
-    // console.log('moveImpossible', type);
+    // console.log('moveImpossible', type, this.displayUserMessageAction);
     if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      if (this.displayUserMessage) {
-        this.displayUserMessage(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
+      if (this.displayUserMessageAction) {
+        this.displayUserMessageAction(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
       }
       this.isInteractive = false;
     } else if (type === MOVE_IMPOSSIBLE.BASE_X) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      if (this.displayUserMessage) {
-        this.displayUserMessage(ERROR_MESSAGE.BASE_X_DRAG);
+      if (this.displayUserMessageAction) {
+        this.displayUserMessageAction(ERROR_MESSAGE.BASE_X_DRAG);
       }
       this.isInteractive = false;
     }else if (type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS) {
       // this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
-      if (this.displayUserMessage) {
-        this.displayUserMessage(ERROR_MESSAGE.NO_ENOUGH_DOTS);
+      if (this.displayUserMessageAction) {
+        this.displayUserMessageAction(ERROR_MESSAGE.NO_ENOUGH_DOTS);
       }
     }else if (type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE) {
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      if (this.displayUserMessage) {
-        this.displayUserMessage(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
+      if (this.displayUserMessageAction) {
+        this.displayUserMessageAction(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
       }
     }
     if (dotSprite.dot.isPositive) {
@@ -1248,8 +1247,8 @@ export class PowerZoneManager extends PIXI.Container {
         }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
-        if (this.displayUserMessage) {
-          this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        if (this.displayUserMessageAction) {
+          this.displayUserMessageAction(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
         }
         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
       }
@@ -1268,8 +1267,8 @@ export class PowerZoneManager extends PIXI.Container {
         }
       } else {
         this.soundManager.playSound(SoundManager.INVALID_MOVE);
-        if (this.displayUserMessage) {
-          this.displayUserMessage(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
+        if (this.displayUserMessageAction) {
+          this.displayUserMessageAction(ERROR_MESSAGE.NO_OPPOSITE_DOTS);
         }
         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].negativeDotsContainer);
       }
@@ -1303,8 +1302,8 @@ export class PowerZoneManager extends PIXI.Container {
     if (droppedOnPowerZone === this.leftMostZone) {
       // Dropped on the fake zone at the left
       this.soundManager.playSound(SoundManager.INVALID_MOVE);
-      if (this.displayUserMessage) {
-        this.displayUserMessage(ERROR_MESSAGE.NO_GREATER_ZONE);
+      if (this.displayUserMessageAction) {
+        this.displayUserMessageAction(ERROR_MESSAGE.NO_GREATER_ZONE);
       }
       if (dotSprite.dot.isPositive) {
         this.backIntoPlace(dotSprite, this.allZones[originalZoneIndex].positiveDotsContainer);
