@@ -37,7 +37,7 @@ export enum OPERAND_POS {
 }
 
 export enum POSITION_INFO {
-  DOT_RAYON = 12,
+  DOT_RAYON = 16,
 }
 
 export enum BOX_INFO {

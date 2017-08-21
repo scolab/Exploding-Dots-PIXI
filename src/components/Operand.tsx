@@ -28,7 +28,7 @@ export default class Operand extends Component<IProps, {}> {
     this.checkIfInputActive();
   }
 
-  public render(): JSX.Element | null {
+  public render(): JSX.Element {
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
@@ -44,26 +44,22 @@ export default class Operand extends Component<IProps, {}> {
           </form>
         </OperationDiv>
       );
-    } else if (this.props.pos === OPERAND_POS.RIGHT) {
-      const visible = this.props.operator_mode !== OPERATOR_MODE.DISPLAY;
-      if (visible) {
-        return (
-          <OperationDiv>
-            <form onSubmit={this.onSubmit}>
-              <OperationInput
-                type='text'
-                onChange={this.onChange}
-                value={this.props.value}
-                innerRef={(inputText) => {
-                  this.inputText = inputText as HTMLInputElement;
-                }}
-              />
-            </form>
-          </OperationDiv>
-        );
-      }
+    } else {
+      return (
+        <OperationDiv>
+          <form onSubmit={this.onSubmit}>
+            <OperationInput
+              type='text'
+              onChange={this.onChange}
+              value={this.props.value}
+              innerRef={(inputText) => {
+                this.inputText = inputText as HTMLInputElement;
+              }}
+            />
+          </form>
+        </OperationDiv>
+      );
     }
-    return null;
   }
 
   private onChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -161,8 +157,7 @@ const OperationDiv = styled.div`
 
 const OperationInput = styled.input`
   background-color: #efefef;
-  border: none;
-  border-radius: 23px;
+  border: 1px solid black;
   font-family: Noto Sans;
   font-size: 24px;
   font-weight: bold;

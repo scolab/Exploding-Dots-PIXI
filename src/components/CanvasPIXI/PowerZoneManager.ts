@@ -924,7 +924,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragMove(this: DotSprite,
                      e: InteractionEvent): void {
-    // console.log('onDragMove', dotSprite.dot.id);
+    // console.log('onDragMove', this.dot.id);
     if (this.world.isInteractive && this.dragging) {
       const newPosition: Point = this.data.getLocalPosition(this.parent);
       this.position.x = newPosition.x;
@@ -957,6 +957,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragEnd(this: DotSprite,
                     e: InteractionEvent): void {
+    // console.log('onDragEnd', this.dot.id);
     if (this.world.isInteractive && this.dragging) {
       this.dragging = false;
       this.particleEmitter.stop();

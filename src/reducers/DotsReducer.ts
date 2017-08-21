@@ -352,8 +352,8 @@ const dotsReducer = (state: IState | null = null,
             delete stateCopy.negativePowerZoneDots[i][action.dot.id];
             break;
           }
+          i -= 1;
         }
-        i -= 1;
       }
       if (action.updateValue) {
         if (stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY &&

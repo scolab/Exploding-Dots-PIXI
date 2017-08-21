@@ -774,7 +774,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 
   private resize(): void {
     let offset: number = 0;
-    if (this.canvas.parentElement) {
+    if (this.canvas && this.canvas.parentElement) {
       offset = this.canvas.parentElement.offsetWidth;
     }
     const w = Math.min(window.innerWidth, offset);

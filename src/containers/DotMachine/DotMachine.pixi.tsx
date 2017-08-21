@@ -14,8 +14,9 @@ import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import Text from '../../components/Text';
+import ValueBoxes from '../../components/ValueBoxes';
 import GoButton from '../../components/GoButton';
-import {USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE} from '../../Constants';
+import { USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE, OPERATOR_MODE, BASE } from '../../Constants';
 import {DotVO} from '../../VO/DotVO';
 import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
@@ -23,6 +24,9 @@ import Point = PIXI.Point;
 import { IMachineState } from '../../reducers/DotsReducer';
 
 const DotsMachine = (props: IProps) => {
+  const negativePresent: boolean = props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
+    || props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE
+    || props.dotsMachine.machineState.base[1] === BASE.BASE_X;
   return (
     <div>
       <TopMenuItem>
@@ -51,10 +55,10 @@ const DotsMachine = (props: IProps) => {
                     }
       </TopMenuItem>
       <ActivityDescriptor>
-        <Text
+        {/*<Text
           operator_mode={props.dotsMachine.machineState.operator_mode}
           usage_mode={props.dotsMachine.machineState.usage_mode}
-        />
+        />*/}
         <Operand
           value={props.dotsMachine.machineState.operandA}
           onChange={props.operandChanged}
@@ -70,6 +74,7 @@ const DotsMachine = (props: IProps) => {
           usage_mode={props.dotsMachine.machineState.usage_mode}
           activityStarted={props.dotsMachine.machineState.activityStarted}
         />
+        {props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
         <Operand
           value={props.dotsMachine.machineState.operandB}
           operator_mode={props.dotsMachine.machineState.operator_mode}
@@ -80,6 +85,16 @@ const DotsMachine = (props: IProps) => {
           base={props.dotsMachine.machineState.base}
           onEnter={props.startActivityFunc}
         />
+        }
+        {props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
+        <ValueBoxes
+          positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
+          negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
+          base={props.dotsMachine.machineState.base}
+          isInline={true}
+          negativePresent={negativePresent}
+        />
+        }
         {props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
         <GoButton
           onClick={props.startActivityFunc}
@@ -87,6 +102,15 @@ const DotsMachine = (props: IProps) => {
         />
         }
       </ActivityDescriptor>
+      {props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+      <ValueBoxes
+        positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
+        negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
+        base={props.dotsMachine.machineState.base}
+        isInline={false}
+        negativePresent={negativePresent}
+      />
+      }
       <CanvasPIXI
         title={props.dotsMachine.machineState.title}
         totalZoneCount={props.dotsMachine.machineState.zones}
