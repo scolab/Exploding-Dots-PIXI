@@ -13,7 +13,6 @@ import TopMenuItem from '../../components/TopMenuItem';
 import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
-import Text from '../../components/Text';
 import ValueBoxes from '../../components/ValueBoxes';
 import GoButton from '../../components/GoButton';
 import { USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE, OPERATOR_MODE, BASE } from '../../Constants';
@@ -22,6 +21,7 @@ import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import Point = PIXI.Point;
 import { IMachineState } from '../../reducers/DotsReducer';
+import styled from 'styled-components';
 
 const DotsMachine = (props: IProps) => {
   const negativePresent: boolean = props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -103,13 +103,15 @@ const DotsMachine = (props: IProps) => {
         }
       </ActivityDescriptor>
       {props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
-      <ValueBoxes
-        positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
-        negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
-        base={props.dotsMachine.machineState.base}
-        isInline={false}
-        negativePresent={negativePresent}
-      />
+        <ValueContainerDiv>
+          <ValueBoxes
+            positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
+            negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
+            base={props.dotsMachine.machineState.base}
+            isInline={false}
+            negativePresent={negativePresent}
+          />
+        </ValueContainerDiv>
       }
       <CanvasPIXI
         title={props.dotsMachine.machineState.title}
@@ -254,3 +256,8 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
 )(DotsMachine);
+
+const ValueContainerDiv = styled.div`
+  text-align: center;
+  margin-top: 20px;
+`;

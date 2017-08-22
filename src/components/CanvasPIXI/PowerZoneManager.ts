@@ -895,8 +895,8 @@ export class PowerZoneManager extends PIXI.Container {
 
   private onDragStart(this: DotSprite,
                       e: InteractionEvent): void {
-    // console.log('onDragStart', e.currentTarget as DotSprite, this);
-    if (this.world.isInteractive) {
+    // console.log('onDragStart', this.dot.id, this.dragging);
+    if (this.world.isInteractive && this.dragging === false) {
       const oldParent: DisplayObjectContainer = this.parent;
       this.world.allZones[this.dot.powerZone].removeFromProximityManager(this);
       this.origin = new Point(this.x, this.y);
@@ -980,6 +980,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private addGhostDot(dotSprite: DotSprite): void {
+    // console.log('addGhostDot', dotSprite.dot.id);
     const ghostSprite: DotSprite = this.spritePool.getOne(dotSprite.dot.color, dotSprite.dot.isPositive);
     ghostSprite.alpha = 0.5;
     ghostSprite.x = dotSprite.x;
@@ -989,6 +990,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private removeGhostDot(dotSprite: DotSprite): void {
+    // console.log('removeGhostDot', dotSprite.dot.id);
     if (dotSprite.ghost) {
       this.movingDotsContainer.removeChild(dotSprite.ghost);
       dotSprite.ghost.alpha = 1;
@@ -998,6 +1000,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private dragGhostToNewZone(dotSprite: DotSprite, gotoPosition: Point): void {
+    // console.log('dragGhostToNewZone', dotSprite.dot.id);
     TweenMax.to(
       dotSprite.ghost,
       TWEEN_TIME.MOVE_DOT_TO_NEW_ZONE,
@@ -1176,40 +1179,49 @@ export class PowerZoneManager extends PIXI.Container {
                            droppedOnPowerZone: DotsContainer): void {
     droppedOnPowerZone.addChild(dotSprite);
     this.removeGhostDot(dotSprite);
-    let doTween: boolean = false;
     const newPosition: Point = data.getLocalPosition(droppedOnPowerZone);
     const modifyPosition: Point = newPosition.clone();
-    if (newPosition.x < POSITION_INFO.DOT_RAYON) {
-      modifyPosition.x = POSITION_INFO.DOT_RAYON;
-      doTween = true;
-    } else if (newPosition.x > (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON) {
-      modifyPosition.x = (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON;
-      doTween = true;
-    }
-    if (newPosition.y < POSITION_INFO.DOT_RAYON) {
-      modifyPosition.y = POSITION_INFO.DOT_RAYON;
-      doTween = true;
-    } else if (newPosition.y > (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON) {
-      modifyPosition.y = (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON;
-      doTween = true;
-    }
+    const doTween: boolean = this.checkIfOnBoxEdge(newPosition, modifyPosition, droppedOnPowerZone);
     const position: Point | ObservablePoint = dotSprite.position;
     position.x = newPosition.x;
     position.y = newPosition.y;
     if (doTween) {
-      TweenMax.to(
-        dotSprite.position,
-        TWEEN_TIME.MOVE_FROM_EDGE_INTO_BOX,
-        {
+      this.moveFromBoxEdge(dotSprite, modifyPosition, droppedOnPowerZone);
+    }
+  }
+
+  private checkIfOnBoxEdge(position: Point, modifyPosition: Point, dotsContainer: DotsContainer): boolean {
+    let needTween: boolean = false;
+    if (position.x < POSITION_INFO.DOT_RAYON) {
+      modifyPosition.x = POSITION_INFO.DOT_RAYON;
+      needTween = true;
+    } else if (position.x > (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON) {
+      modifyPosition.x = (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON;
+      needTween = true;
+    }
+    if (position.y < POSITION_INFO.DOT_RAYON) {
+      modifyPosition.y = POSITION_INFO.DOT_RAYON;
+      needTween = true;
+    } else if (position.y > (dotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON) {
+      modifyPosition.y = (dotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON;
+      needTween = true;
+    }
+    return needTween;
+  }
+
+  private moveFromBoxEdge(dotSprite: DotSprite, modifyPosition: Point, dotsContainer: DotsContainer): void {
+    TweenMax.to(
+      dotSprite.position,
+      TWEEN_TIME.MOVE_FROM_EDGE_INTO_BOX,
+      {
         x: modifyPosition.x,
         y: modifyPosition.y,
         ease: Power3.easeOut,
-        onComplete: this.allZones[droppedOnPowerZone.powerZone].addToProximityManager,
+        onComplete: this.allZones[dotsContainer.powerZone].addToProximityManager,
         onCompleteParams: [dotSprite],
-        onCompleteScope: this.allZones[droppedOnPowerZone.powerZone],
-        },
-      );
-    }
+        onCompleteScope: this.allZones[dotsContainer.powerZone],
+      },
+    );
   }
 
   private dotAntidotSelect(dotSprite: DotSprite,
@@ -1408,7 +1420,8 @@ export class PowerZoneManager extends PIXI.Container {
     dotSprite.position = dotSprite.origin; // eslint-disable-line no-param-reassign
     this.isInteractive = true;
     dotSprite.particleEmitter.stop();
-    this.movingDotsContainer.removeChild(dotSprite.ghost as DotSprite);
+    this.removeGhostDot(dotSprite);
+    // this.movingDotsContainer.removeChild(dotSprite.ghost as DotSprite);
   }
 
   private addDraggedToNewZone(dotSprite: DotSprite,
@@ -1417,10 +1430,17 @@ export class PowerZoneManager extends PIXI.Container {
                               updateValue: boolean,
                               addListener?: boolean): void {
     newZone.addChild(dotSprite);
+
+    const modifyPosition: Point = positionToBeMovedTo.clone();
+    const doTween: boolean = this.checkIfOnBoxEdge(positionToBeMovedTo, modifyPosition, newZone);
     const position: Point | ObservablePoint = dotSprite.position;
     position.x = positionToBeMovedTo.x;
     position.y = positionToBeMovedTo.y;
-        // Set the dot into the array here to have his position right.
+    if (doTween) {
+      this.moveFromBoxEdge(dotSprite, modifyPosition, newZone);
+    }
+
+    // Set the dot into the array here to have his position right.
     this.allZones[dotSprite.dot.powerZone].removeDotFromArray(dotSprite.dot);
     this.allZones[newZone.powerZone].addDotToArray(dotSprite.dot);
     this.rezoneDot(newZone.powerZone, dotSprite.dot, updateValue);
@@ -1435,7 +1455,7 @@ export class PowerZoneManager extends PIXI.Container {
                              dotsToRemov: number,
                              positionToBeMovedTo: Point,
                              dragDotSprite: DotSprite): void {
-    console.log('tweenDotsToNewZone', positionToBeMovedTo);
+    // console.log('tweenDotsToNewZone', positionToBeMovedTo);
     // get the original on zone
     let dotsToRemove: number = dotsToRemov;
     let dotContainer: DotsContainer;

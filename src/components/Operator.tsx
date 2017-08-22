@@ -15,11 +15,7 @@ export default class Operator extends Component<IProps, {}> {
     let text: string = '';
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
-        if (this.props.usage_mode === USAGE_MODE.FREEPLAY) {
-          text = TEXT_COPY.IS;
-        } else {
-          text = TEXT_COPY.DOTS_COUNT;
-        }
+        text = '↔';
         return (
           <OperationDiv>
             {text}
@@ -64,6 +60,7 @@ const GradientBackgroundDiv = styled.div`
 const OperationDiv = styled.div`
       ${operationItem}
       font-family: Noto Sans;
-      font-size: 24px;
+      font-size: 50px;
       font-weight: bold;
+      margin-top: 2px;
     `;

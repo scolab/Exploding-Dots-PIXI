@@ -12,13 +12,12 @@ interface IProps {
 }
 
 interface IBoxProps {
-  textLength: number;
-  negativePresent: boolean;
+  positiveValue: number;
+  negativeValue: number;
+  base: Array<number | string>;
 }
 
-interface IPProps {
-  value: number;
-  base: Array<number | string>;
+interface INumberProps {
   negativePresent: boolean;
 }
 
@@ -38,19 +37,19 @@ export default class ValueBoxes extends Component<IProps, {}> {
     let hasLeftValue: boolean = false;
      // tslint:disable-next-line prefer-for-of
     for (let i = 0; i < boxInOrder.length; i += 1) {
-      const hash: IDotVOHash<DotVO> = boxInOrder[i];
+      const positiveHash: IDotVOHash<DotVO> = boxInOrder[i];
       const negativeHash: IDotVOHash<DotVO> = negativeBoxInOrder[i];
       let positiveText: string;
       let negativeText: string;
       if (this.props.base[1] !== 12) {
-        positiveText = Object.keys(hash).length.toString();
+        positiveText = Object.keys(positiveHash).length.toString();
         negativeText = Object.keys(negativeHash).length.toString();
       } else {
-        positiveText = convertBase(Object.keys(hash).length.toString(), 10, 12);
+        positiveText = convertBase(Object.keys(positiveHash).length.toString(), 10, 12);
         negativeText = convertBase(Object.keys(negativeHash).length.toString(), 10, 12);
       }
       if (i !== boxInOrder.length - 1) {
-        if (Object.keys(hash).length === 0 && hasLeftValue === false) {
+        if (Object.keys(positiveHash).length === 0 && hasLeftValue === false) {
           boxes.push(
             <EmptyDiv
               key={i}
@@ -61,18 +60,17 @@ export default class ValueBoxes extends Component<IProps, {}> {
           boxes.push(
             <NormalDiv
               key={i}
+              positiveValue={Object.keys(positiveHash).length}
+              negativeValue={Object.keys(negativeHash).length}
+              base={this.props.base}
             >
               <NumberDiv
-                value={Object.keys(hash).length}
-                base={this.props.base}
                 negativePresent={this.props.negativePresent}
               >
                 {positiveText}
               </NumberDiv>
               {this.props.negativePresent &&
                 <NumberDiv
-                  value={Object.keys(negativeHash).length}
-                  base={this.props.base}
                   negativePresent={this.props.negativePresent}
                 >
                   {negativeText}
@@ -85,18 +83,17 @@ export default class ValueBoxes extends Component<IProps, {}> {
         boxes.push(
           <NormalDiv
             key={i}
+            positiveValue={Object.keys(positiveHash).length}
+            negativeValue={Object.keys(negativeHash).length}
+            base={this.props.base}
           >
             <NumberDiv
-              value={Object.keys(hash).length}
-              base={this.props.base}
               negativePresent={this.props.negativePresent}
             >
               {positiveText}
             </NumberDiv>
             {this.props.negativePresent &&
             <NumberDiv
-              value={Object.keys(negativeHash).length}
-              base={this.props.base}
               negativePresent={this.props.negativePresent}
             >
               {negativeText}
@@ -119,15 +116,16 @@ export default class ValueBoxes extends Component<IProps, {}> {
 const BoxContainer = styled.div`
   width:auto;
   margin:0 auto;
-  display: ${(props: IBoxContainer) => props.isInline ? 'inline-block' : ''};
+  display: inline-block;
   margin-left: ${(props: IBoxContainer) => props.isInline ? '10px' : '0px'};
+  margin-bottom: -16px;
 `;
 
 const EmptyDiv = styled.div`
-  background-color: #ffffff;
+  background-color: #eeeeee;
   border-style: dotted none dotted dotted;
   border-color: black;
-  border-width: 1px;
+  border-width: 2px;
   font-family: Noto Sans;
   font-size: 24px;
   font-weight: bold;
@@ -139,20 +137,20 @@ const EmptyDiv = styled.div`
 
 const NormalDiv = styled.div`
   background-color: #ffffff;
-  border: 1px solid black;
+  border-style: solid;
+  border-width: 2px;
   height: 45px;
   width: auto;
   min-width: 25px;
   float: left;
+  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '#ff0000' : '#000000'};
 `;
-
-// ${(props: IBoxProps) => (props.textLength * 25)}px;
 
 const NumberDiv = styled.div`
   font-family: Noto Sans;
-  font-size: ${(props: IPProps) => (props.negativePresent ? '15px' : '30px')};
+  font-size: ${(props: INumberProps) => (props.negativePresent ? '15px' : '30px')};
   font-weight: bold;
-  color: ${(props: IPProps) => (props.value > Number(props.base[1]) - 1) ? '#ff0000' : '#000000'};
+  color: #000000;
   text-align: center;
   padding: 0px 5px;
 `;

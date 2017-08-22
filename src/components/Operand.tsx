@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import {operationItem} from './StylesForComponents';
 
 interface IProps {
-  value: any;
+  value: string;
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
   onChange: (operandPos: string,
@@ -14,6 +14,12 @@ interface IProps {
   activityStarted: boolean;
   base: Array<number | string>;
   onEnter: () => any;
+}
+
+interface IInputBox {
+  operator_mode: IOPERATOR_MODE;
+  usage_mode: IUSAGE_MODE;
+  value: string;
 }
 
 export default class Operand extends Component<IProps, {}> {
@@ -29,6 +35,7 @@ export default class Operand extends Component<IProps, {}> {
   }
 
   public render(): JSX.Element {
+    // console.log('render', this.props.value);
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
@@ -40,6 +47,8 @@ export default class Operand extends Component<IProps, {}> {
               innerRef={(inputText) => {
                 this.inputText = inputText as HTMLInputElement;
               }}
+              operator_mode={this.props.operator_mode}
+              usage_mode={this.props.usage_mode}
             />
           </form>
         </OperationDiv>
@@ -55,6 +64,8 @@ export default class Operand extends Component<IProps, {}> {
               innerRef={(inputText) => {
                 this.inputText = inputText as HTMLInputElement;
               }}
+              operator_mode={this.props.operator_mode}
+              usage_mode={this.props.usage_mode}
             />
           </form>
         </OperationDiv>
@@ -124,7 +135,7 @@ export default class Operand extends Component<IProps, {}> {
     if (reg.test(stringToTest)) {
       this.props.onChange(this.props.pos, stringToTest);
     }
-  }
+  };
 
   private onSubmit = (e): void => {
     e.preventDefault();
@@ -133,7 +144,7 @@ export default class Operand extends Component<IProps, {}> {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  }
+  };
 
   private checkIfInputActive(): void {
     if (this.inputText) {
@@ -156,12 +167,12 @@ const OperationDiv = styled.div`
 `;
 
 const OperationInput = styled.input`
-  background-color: #efefef;
-  border: 1px solid black;
+  background-color: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? 'transparent' : '#efefef')};
+  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? '0px' : '1px solid black')};
   font-family: Noto Sans;
   font-size: 24px;
   font-weight: bold;
   height: 45px;
   text-align: center;
-  width: 252px;
+  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? props.value.length * 15 + 'px' : '252px')};
 `;

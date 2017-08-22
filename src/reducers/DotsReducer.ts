@@ -173,7 +173,7 @@ const dotsReducer = (state: IState | null = null,
   }
 
   let stateCopy: IState;
-  // console.log('dotsReducer', state);
+  console.log('dotsReducer', state, action.type);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
       // console.log(ACTIONS.START_ACTIVITY);
@@ -436,7 +436,13 @@ const dotsReducer = (state: IState | null = null,
       }
       initialMachineState[action.title].activityStarted = false;
       initialMachineState[action.title].errorMessage = '';
-      return setInitialState(action.title);
+      const newState: IState = setInitialState(action.title);
+      if (newState.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
+        newState.machineState.usage_mode === USAGE_MODE.FREEPLAY){
+        newState.machineState.operandA = '0';
+      }
+
+      return newState;
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };
