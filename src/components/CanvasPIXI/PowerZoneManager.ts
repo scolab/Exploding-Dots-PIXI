@@ -656,7 +656,6 @@ export class PowerZoneManager extends PIXI.Container {
       dotsRemovedByZone.push(new Array<DotVO>());
     }
     let dotsToMove: DotVO[] = new Array<DotVO>();
-    // let moveToZone = droppedOnPowerZoneIndex;
     for (let i: number = 0; i < allZonesValue.length; i += 1) {
       let thisZoneDots: DotVO[] = new Array<DotVO>();
       const affectedZone: PowerZone = this.allZones[droppedOnPowerZoneIndex + i];
@@ -1019,6 +1018,9 @@ export class PowerZoneManager extends PIXI.Container {
 
   private dragGhostToNewZone(dotSprite: DotSprite, gotoPosition: Point): void {
     // console.log('dragGhostToNewZone', dotSprite.dot.id);
+    if (dotSprite.ghost) {
+      dotSprite.ghost.playExplode();
+    }
     TweenMax.to(
       dotSprite.ghost,
       TWEEN_TIME.MOVE_DOT_TO_NEW_ZONE,
@@ -1562,6 +1564,7 @@ export class PowerZoneManager extends PIXI.Container {
         explosionEmitter.updateOwnerPos(newPosition.x, newPosition.y);
         explosionEmitter.start();
         TweenMax.delayedCall(0.2, this.stopExplosionEmitter, [explosionEmitter], this);*/
+        dotSprite.playExplode();
         // Move the sprite
         TweenMax.to(
           dotSprite,

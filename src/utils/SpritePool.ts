@@ -2,7 +2,6 @@ import {SPRITE_COLOR} from '../Constants';
 import {DotSprite} from '../components/CanvasPIXI/DotSprite';
 import {DotVO} from '../VO/DotVO';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
-import Texture = PIXI.Texture;
 
 export class SpritePool {
 
@@ -31,10 +30,10 @@ export class SpritePool {
   private negativeRippleRedFrames: PIXI.Texture[];
   private negativeRippleBlueFrames: PIXI.Texture[];
 
-  /*private positiveWrongRedFrames: PIXI.Texture[];
-  private positiveWrongBlueFrames: PIXI.Texture[];
-  private negativeWrongRedFrames: PIXI.Texture[];
-  private negativeWrongBlueFrames: PIXI.Texture[];*/
+  private positiveExplodeRedFrames: PIXI.Texture[];
+  private positiveExplodeBlueFrames: PIXI.Texture[];
+  private negativeExplodeRedFrames: PIXI.Texture[];
+  private negativeExplodeBlueFrames: PIXI.Texture[];
 
   private positiveImplodeRedFrames: PIXI.Texture[];
   private positiveImplodeBlueFrames: PIXI.Texture[];
@@ -65,7 +64,7 @@ export class SpritePool {
 
     this.createOverloadAnimations(textures);
     this.createDripAnimations(textures);
-    // this.createWrongAnimation(textures);
+    this.createExplodeAnimation(textures);
     this.createImplodeAnimation(textures);
     this.createOutAnimation(textures);
     this.createWiggleAnimation(textures);
@@ -89,6 +88,7 @@ export class SpritePool {
             this.positiveOutRedFrames,
             this.positiveWiggleRedFrames,
             this.positiveWiggleUnstableRedFrames,
+            this.positiveExplodeRedFrames,
           );
         }
       } else if (this.poolNegativeRed.length > 0) {
@@ -102,6 +102,7 @@ export class SpritePool {
           this.negativeOutRedFrames,
           this.negativeWiggleRedFrames,
           this.negativeWiggleUnstableRedFrames,
+          this.positiveExplodeRedFrames,
         );
       }
     } else if (positive) {
@@ -116,6 +117,7 @@ export class SpritePool {
           this.positiveOutBlueFrames,
           this.positiveWiggleBlueFrames,
           this.positiveWiggleUnstableBlueFrames,
+          this.positiveExplodeRedFrames,
         );
       }
     } else if (this.poolNegativeBlue.length > 0) {
@@ -129,6 +131,7 @@ export class SpritePool {
         this.negativeOutBlueFrames,
         this.negativeWiggleBlueFrames,
         this.negativeWiggleUnstableBlueFrames,
+        this.positiveExplodeRedFrames,
       );
     }
     sprite.alpha = 1;
@@ -156,29 +159,176 @@ export class SpritePool {
   }
 
   public destroy(): void {
-    this.poolPositiveRed.forEach((sprite) => {
-      sprite.destroy();
-    });
-    this.poolPositiveBlue.forEach((sprite) => {
-      sprite.destroy();
-    });
-    this.poolNegativeRed.forEach((sprite) => {
-      sprite.destroy();
-    });
-    this.poolNegativeBlue.forEach((sprite) => {
-      sprite.destroy();
-    });
+    console.log('destroy');
+    this.texturePosOne.destroy();
+    this.texturePosTwo.destroy();
+    this.textureNegOne.destroy();
+    this.textureNegTwo.destroy();
     this.positiveOverloadRedFrames.forEach((texture) => {
-      texture.destroy();
+      if (texture) {
+        texture.destroy();
+      }
     });
     this.positiveOverloadBlueFrames.forEach((texture) => {
-      texture.destroy();
+      if (texture) {
+        texture.destroy();
+      }
     });
     this.negativeOverloadRedFrames.forEach((texture) => {
-      texture.destroy();
+      if (texture) {
+        texture.destroy();
+      }
     });
     this.negativeOverloadBlueFrames.forEach((texture) => {
-      texture.destroy();
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveRippleRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveRippleBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeRippleRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeRippleBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveExplodeRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveExplodeBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeExplodeRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeExplodeBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveImplodeRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveImplodeBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeImplodeRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeImplodeBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveOutRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveOutBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeOutRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeOutBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveWiggleRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveWiggleBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeWiggleRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeWiggleBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+
+    this.positiveWiggleUnstableRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.positiveWiggleUnstableBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeWiggleUnstableRedFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.negativeWiggleUnstableBlueFrames.forEach((texture) => {
+      if (texture) {
+        texture.destroy();
+      }
+    });
+    this.poolPositiveRed.forEach((sprite) => {
+      if (sprite) {
+        sprite.destroy();
+      }
+    });
+    this.poolPositiveBlue.forEach((sprite) => {
+      if (sprite) {
+        sprite.destroy();
+      }
+    });
+    this.poolNegativeRed.forEach((sprite) => {
+      if (sprite) {
+        sprite.destroy();
+      }
+    });
+    this.poolNegativeBlue.forEach((sprite) => {
+      if (sprite) {
+        sprite.destroy();
+      }
     });
   }
 
@@ -249,27 +399,27 @@ export class SpritePool {
     }
   }
 
-  /*private createWrongAnimation(textures: TextureDictionary): void {
-    this.positiveWrongRedFrames = [this.texturePosOne];
-    for (let i: number = 1; i <= 10; i++) {
-      this.positiveWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
+  private createExplodeAnimation(textures: TextureDictionary): void {
+    this.positiveExplodeRedFrames = [];
+    for (let i: number = 1; i <= 5; i++) {
+      this.positiveExplodeRedFrames.push(textures[`dot_explode${i}.png`]);
     }
 
-    this.positiveWrongBlueFrames = [this.texturePosTwo];
+    this.positiveExplodeBlueFrames = [this.texturePosTwo];
     for (let i: number = 1; i <= 10; i++) {
-      this.positiveWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
+      this.positiveExplodeBlueFrames.push(textures[`dot_explode${i}.png`]);
     }
 
-    this.negativeWrongRedFrames = [this.textureNegOne];
+    this.negativeExplodeRedFrames = [this.textureNegOne];
     for (let i: number = 1; i <= 10; i++) {
-      this.negativeWrongRedFrames.push(textures[`dot_incorrect${i}.png`]);
+      this.negativeExplodeRedFrames.push(textures[`dot_explode${i}.png`]);
     }
 
-    this.negativeWrongBlueFrames = [this.textureNegTwo];
+    this.negativeExplodeBlueFrames = [this.textureNegTwo];
     for (let i: number = 1; i <= 10; i++) {
-      this.negativeWrongBlueFrames.push(textures[`dot_incorrect${i}.png`]);
+      this.negativeExplodeBlueFrames.push(textures[`dot_explode${i}.png`]);
     }
-  }*/
+  }
 
   private createImplodeAnimation(textures: TextureDictionary): void {
     const numFrame: number = 10;

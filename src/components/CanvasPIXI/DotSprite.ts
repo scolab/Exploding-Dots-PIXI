@@ -31,6 +31,7 @@ export class DotSprite extends PIXI.Container {
   private implodeDot: AnimatedSprite;
   private wiggleDot: AnimatedSprite;
   private wiggleDotUnstable: AnimatedSprite;
+  private explode: AnimatedSprite;
   private shouldPlayOverload: boolean = false;
 
   constructor(dotTexture: Texture,
@@ -40,8 +41,10 @@ export class DotSprite extends PIXI.Container {
               outTexture: Texture[],
               wiggleTexture: Texture[],
               wiggleUnstableTexture: Texture[],
+              explodeTexture: Texture[],
   ) {
     super();
+    this.dragging = false;
     this.normalDot = new Sprite(dotTexture);
     this.normalDot.anchor.set(0.5);
 
@@ -79,6 +82,11 @@ export class DotSprite extends PIXI.Container {
     this.wiggleDotUnstable.animationSpeed = 0.5;
     this.wiggleDotUnstable.loop = true;
 
+    this.explode = new AnimatedSprite(explodeTexture);
+    this.explode.anchor.set(0.5);
+    this.explode.animationSpeed = 0.5;
+    this.explode.loop = false;
+
     this.addChild(this.normalDot);
   }
 
@@ -98,35 +106,21 @@ export class DotSprite extends PIXI.Container {
     }
   }
 
-  /*public playWrong(callback: (DotSprite: DotSprite, DotContainer: DotsContainer) => void,
-                   container: DotsContainer): void {
+  public playExplode(): void {
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
-    this.addChild(this.wrongDot);
-    this.wrongDot.onComplete = () => {
-      callback.call(this, this, container);
+    this.addChild(this.explode);
+    this.explode.onComplete = () => {
+      this.stopExplode();
     };
-    this.wrongDot.play();
+    this.explode.play();
   }
 
-  public stopWrong(): void {
-    this.wrongDot.gotoAndStop(0);
+  public stopExplode(): void {
+    this.explode.gotoAndStop(0);
     this.returnToNormal();
-  }*/
-
-  /*public playOut(
-    callback: (removeOutDotAfterAnim: number, DotSprite: DotSprite) => any,
-    removeOutDotAfterAnim: number): void {
-    while (this.children.length > 0) {
-     this.removeChildAt(0);
-    }
-    this.addChild(this.outDot);
-    this.outDot.onComplete =  () => {
-      callback.call(this, removeOutDotAfterAnim, this);
-    };
-    this.outDot.play();
-  }*/
+  }
 
   public playOut(callback?: (...args) => any,
                  removeOutDotAfterAnim?: number,
