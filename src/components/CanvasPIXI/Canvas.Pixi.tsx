@@ -166,7 +166,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   }
 
   public componentDidMount(): void {
-    console.log('componentDidMount', this.state, this.props);
+    // console.log('componentDidMount', this.state, this.props);
     const options: ApplicationOptions = {
       antialias: true,
       autoResize: true,
@@ -761,7 +761,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
       this.soundManager.playSound(SoundManager.GO_SUCCESS);
-      console.log(operandAValue, operandBValue);
+      // console.log(operandAValue, operandBValue);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     }
   }

@@ -126,11 +126,7 @@ const EmptyDiv = styled.div`
   border-style: dotted none dotted dotted;
   border-color: black;
   border-width: 2px;
-  font-family: Noto Sans;
-  font-size: 24px;
-  font-weight: bold;
   height: 45px;
-  text-align: center;
   width: 25px;
   float: left;
 `;

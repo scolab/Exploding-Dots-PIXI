@@ -1,3 +1,6 @@
+import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
+import _arrayShuffle from 'lodash/_arrayShuffle';
+
 export const BASE: any = {
   MECHANIA: [[1, 2], [1, 3], [1, 4], [1, 5], [1, 9], [1, 10], [1, 12], [2, 3]],
   ARITHMOS: [[1, 10]],
@@ -103,3 +106,49 @@ export enum TWEEN_TIME {
   DIVIDER_BOX_REST_TIME = 0.2,
   PROXIMITY_MANAGER_WORKING_TIME = 5,
 }
+
+const GREEN_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+GREEN_FILTER.matrix = [0, 0, 0, 0, 0,
+                       0, 1, 0, 0, 0,
+                       0, 0, 0, 0, 0,
+                       0, 0, 0, 0.5, 0];
+
+const ORANGE_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+ORANGE_FILTER.matrix = [0.9, 0, 0, 0, 0,
+                      0, .51, 0, 0, 0,
+                      0, 0, 0.07, 0, 0,
+                      0, 0, 0, 0.5, 0];
+
+const PURPLE_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+PURPLE_FILTER.matrix = [1, 0, 0, 0, 0,
+                        0, 0, 0, 0, 0,
+                        0, 0, 1, 0, 0,
+                        0, 0, 0, 0.5, 0];
+
+const YELLOW_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+YELLOW_FILTER.matrix = [1, 0, 0, 0, 0,
+                        0, 1, 0, 0, 0,
+                        0, 0, 0, 0, 0,
+                        0, 0, 0, 0.5, 0];
+
+const ACQUA_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+ACQUA_FILTER.matrix = [.16, 0, 0, 0, 0,
+                       0, .81, 0, 0, 0,
+                       0, 0, .78, 0, 0,
+                       0, 0, 0, 0.5, 0];
+
+let COLOR_FILTERS: ColorMatrixFilter[] = [GREEN_FILTER, ORANGE_FILTER, PURPLE_FILTER, YELLOW_FILTER, ACQUA_FILTER];
+
+export const getAColorFilter = (): ColorMatrixFilter => {
+  /*if (COLOR_FILTERS.length === 0) {
+    COLOR_FILTERS = [GREEN_FILTER, ORANGE_FILTER, PURPLE_FILTER, YELLOW_FILTER, ACQUA_FILTER];
+    COLOR_FILTERS = _arrayShuffle(COLOR_FILTERS);
+  }
+  return COLOR_FILTERS.pop() as ColorMatrixFilter;*/
+  const FILTER: ColorMatrixFilter = new ColorMatrixFilter();
+  FILTER.matrix = [Math.random(), 0, 0, 0, 0,
+                  0, Math.random(), 0, 0, 0,
+                  0, 0, Math.random(), 0, 0,
+                  0, 0, 0, 0.5, 0];
+  return FILTER;
+};

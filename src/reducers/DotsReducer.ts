@@ -173,7 +173,7 @@ const dotsReducer = (state: IState | null = null,
   }
 
   let stateCopy: IState;
-  console.log('dotsReducer', state, action.type);
+  // console.log('dotsReducer', state, action.type);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
       // console.log(ACTIONS.START_ACTIVITY);

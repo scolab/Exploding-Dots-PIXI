@@ -22,6 +22,7 @@ import ObservablePoint = PIXI.ObservablePoint;
 import Point = PIXI.Point;
 import { IMachineState } from '../../reducers/DotsReducer';
 import styled from 'styled-components';
+import { operationItem } from '../../components/StylesForComponents';
 
 const DotsMachine = (props: IProps) => {
   const negativePresent: boolean = props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
@@ -86,7 +87,16 @@ const DotsMachine = (props: IProps) => {
           onEnter={props.startActivityFunc}
         />
         }
-        {props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
+        {((props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE &&
+          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY) &&
+          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
+        <ArrowDiv>
+          ↔
+        </ArrowDiv>
+        }
+        {((props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
+          props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE)
+          && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
         <ValueBoxes
           positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
           negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
@@ -102,7 +112,9 @@ const DotsMachine = (props: IProps) => {
         />
         }
       </ActivityDescriptor>
-      {props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+      {((props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+        props.dotsMachine.machineState.usage_mode !== USAGE_MODE.EXERCISE)
+        && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
         <ValueContainerDiv>
           <ValueBoxes
             positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
@@ -261,3 +273,11 @@ const ValueContainerDiv = styled.div`
   text-align: center;
   margin-top: 20px;
 `;
+
+const ArrowDiv = styled.div`
+      ${operationItem}
+      font-family: Noto Sans;
+      font-size: 50px;
+      font-weight: bold;
+      margin-top: 2px;
+    `;

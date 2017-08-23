@@ -44,6 +44,7 @@ export class PowerZone extends PIXI.Container {
   public negativeDots: IDotVOHash<DotVO> = {};
   public positiveDotsContainer: DotsContainer;
   public negativeDotsContainer: DotsContainer;
+  public divisionGhostContainer: DotsContainer;
   public eventEmitter: EventEmitter;
   public positiveDotCount: number;
   public negativeDotCount: number;
@@ -194,6 +195,11 @@ export class PowerZone extends PIXI.Container {
       this.addChild(this.negativeDividerText);
     }
 
+    this.divisionGhostContainer = new DotsContainer();
+    this.divisionGhostContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
+    this.divisionGhostContainer.y = BOX_INFO.BOX_Y;
+    this.addChild(this.divisionGhostContainer);
+
     if (negativePresent) {
       const separator: Sprite = new Sprite(textures['separator.png']);
       separator.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 5;
@@ -257,7 +263,6 @@ export class PowerZone extends PIXI.Container {
       this.positiveDotsContainer.y = BOX_INFO.BOX_Y;
       this.addChild(this.positiveDotsContainer);
       this.positiveDotsContainer.interactive = true;
-
       this.positiveDotsContainer.hitArea = new PIXI.Rectangle(
         0,
         0,
@@ -304,7 +309,7 @@ export class PowerZone extends PIXI.Container {
         }
       }
       return positiveZoneIsEmpty && negativeZoneIsEmpty;
-    } else if (this.zonePosition !== 0) {
+    } else {
       if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
         this.bgBox.texture = this.bgBoxTextures[4];
       } else {
@@ -536,11 +541,10 @@ export class PowerZone extends PIXI.Container {
   }
 
   public checkOvercrowding(): boolean {
-    console.log('checkOvercrowding');
+    // console.log('checkOvercrowding');
     let dotOverload: boolean = false;
     if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
       this.bgBox.texture = this.bgBoxTextures[4];
-      console.log('checkOvercrowding true');
       this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.playOverload();
       });
@@ -549,13 +553,6 @@ export class PowerZone extends PIXI.Container {
       this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.returnToNormal();
       });
-      if (this.isActive) {
-        console.log(this.zonePosition, 0);
-        this.bgBox.texture = this.bgBoxTextures[0];
-      } else {
-        console.log(this.zonePosition, 3);
-        this.bgBox.texture = this.bgBoxTextures[3];
-      }
     }
 
     if (this.negativePresent) {
@@ -671,7 +668,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   public setBackgroundColor(status: IBG_MODE): void {
-    console.log(this.zonePosition, this.isActive, status);
+    // console.log(this.zonePosition, this.isActive, status);
     if (this.isActive === true) {
       switch (status) {
         case PowerZone.BG_NEUTRAL:
@@ -779,6 +776,11 @@ export class PowerZone extends PIXI.Container {
       this.negativeDividerText.text = '0';
       this.positiveDividerText.style.fill = 0x565656;
       this.negativeDividerText.style.fill = 0x565656;
+    }
+    while (this.divisionGhostContainer.children.length > 0) {
+      const child: DisplayObject = this.divisionGhostContainer.getChildAt(0 );
+      this.divisionGhostContainer.removeChild(child);
+      child.destroy();
     }
   }
 

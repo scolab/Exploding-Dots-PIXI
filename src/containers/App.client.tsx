@@ -117,4 +117,3 @@ class ExplodingDots extends Component<IProps, {}> {
 }
 
 export default ExplodingDots;
-

@@ -167,12 +167,12 @@ const OperationDiv = styled.div`
 `;
 
 const OperationInput = styled.input`
-  background-color: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? 'transparent' : '#efefef')};
-  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? '0px' : '1px solid black')};
+  background-color: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? 'transparent' : '#ffffff')};
+  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0px' : '2px solid blue')};
   font-family: Noto Sans;
-  font-size: 24px;
+  font-size: 30px;
   font-weight: bold;
   height: 45px;
   text-align: center;
-  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? props.value.length * 15 + 'px' : '252px')};
+  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 18 + 'px' : '252px')};
 `;

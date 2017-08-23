@@ -6,7 +6,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 // tslint:disable-next-line max-line-length
 import {
   BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE,
-  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME, ISPRITE_COLOR,
+  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME, ISPRITE_COLOR, getAColorFilter,
 } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { DividerResult } from './DividerResult';
@@ -22,8 +22,8 @@ import InteractionEvent = PIXI.interaction.InteractionEvent;
 import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
-import {ICanvasPixiProps} from './Canvas.Pixi';
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
+import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
 
 interface IZoneUnderCursor {
   droppedOnPowerZone: PIXI.Container | null;
@@ -33,7 +33,7 @@ interface IZoneUnderCursor {
 
 export class PowerZoneManager extends PIXI.Container {
 
-  private static removeDotsAfterTween(sprite: DotSprite): void {
+  private static removeDotsAfterTween(sprite: Sprite): void {
     sprite.destroy();
   }
 
@@ -682,12 +682,25 @@ export class PowerZoneManager extends PIXI.Container {
       dotsToMove = dotsToMove.concat(thisZoneDots);
       dotsRemovedByZone[droppedOnPowerZoneIndex + i] = dotsRemovedByZone[droppedOnPowerZoneIndex + i].concat(thisZoneDots); // tslint:disable-line  max-line-length
     }
+    const colorMatrix: ColorMatrixFilter = getAColorFilter();
     if (dotsToMove.length > 0) {
-      dotsToMove.forEach((dot) => {
+      dotsToMove.forEach((dot: DotVO) => {
         let newPosition: Point = dot.sprite.parent.toGlobal(dot.sprite.position as Point);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
+
+        let groupSprite: Sprite;
+        if (dot.isPositive) {
+          groupSprite = new Sprite(this.textures['grouped_dot.png']);
+        } else {
+          groupSprite = new Sprite(this.textures['grouped_antidot.png']);
+        }
+        groupSprite.anchor.set(0.5);
+        groupSprite.filters = [colorMatrix];
+        groupSprite.position.x = dot.sprite.position.x;
+        groupSprite.position.y = dot.sprite.position.y;
+        this.allZones[dot.powerZone].divisionGhostContainer.addChild(groupSprite);
+
         const movingSprite: DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
-        // movingSprite.anchor.set(0.5);
         movingSprite.position.x = newPosition.x;
         movingSprite.position.y = newPosition.y;
         this.movingDotsContainer.addChild(movingSprite);
@@ -721,8 +734,8 @@ export class PowerZoneManager extends PIXI.Container {
           {
             delay: TWEEN_TIME.DIVISION_DOT_SELECT_SCALE * 4,
             ease: Power4.easeOut,
-            onComplete: PowerZoneManager.removeDotsAfterTween.bind(this),
-            onCompleteParams: [movingSprite],
+            onComplete: this.removeDotsAfterTween.bind(this),
+            onCompleteParams: [movingSprite, dot],
             x: finalPosition.x + 15,
             y: finalPosition.y + (success ? 15 : 25),
           },
@@ -733,6 +746,11 @@ export class PowerZoneManager extends PIXI.Container {
         this.processDivisionAfterTween.bind(this),
         [dotsRemovedByZone, actualZone, success]);
     }
+  }
+
+  private removeDotsAfterTween(sprite: DotSprite, dot: DotVO): void {
+    this.movingDotsContainer.removeChild(sprite);
+    this.spritePool.dispose(sprite, dot.isPositive, dot.color);
   }
 
   private processDivisionAfterTween(dotsRemovedByZone: DotVO[][],
@@ -772,7 +790,7 @@ export class PowerZoneManager extends PIXI.Container {
       newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].negativeDivideCounter.position as Point); // tslint:disable-line max-line-length
       finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].negativeDivideCounter.position as Point); // tslint:disable-line max-line-length
       for (let i = 0; i < this.base[1]; i += 1) {
-        allMovingDots.push(new PIXI.Sprite(this.textures['grouped_antidot.png']));
+        allMovingDots.push(new Sprite(this.textures['grouped_antidot.png']));
       }
     }
     newPosition = this.movingDotsContainer.toLocal(newPosition);
