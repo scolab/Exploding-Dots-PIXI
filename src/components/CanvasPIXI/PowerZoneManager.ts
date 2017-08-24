@@ -999,7 +999,7 @@ export class PowerZoneManager extends PIXI.Container {
   private addGhostDot(dotSprite: DotSprite): void {
     // console.log('addGhostDot', dotSprite.dot.id);
     const ghostSprite: DotSprite = this.spritePool.getOne(dotSprite.dot.color, dotSprite.dot.isPositive);
-    ghostSprite.alpha = 0.5;
+    ghostSprite.alpha = 0.2;
     ghostSprite.x = dotSprite.x;
     ghostSprite.y = dotSprite.y;
     this.movingDotsContainer.addChild(ghostSprite);

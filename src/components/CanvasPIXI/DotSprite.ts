@@ -120,7 +120,7 @@ export class DotSprite extends PIXI.Container {
   public stopExplode(): void {
     this.explode.gotoAndStop(0);
     this.returnToNormal();
-    this.alpha = 0.5;
+    this.alpha = 0.2;
   }
 
   public playOut(callback?: (...args) => any,

@@ -35,7 +35,7 @@ export default class Operand extends Component<IProps, {}> {
   }
 
   public render(): JSX.Element {
-    console.log('render', this.props.value);
+    // console.log('render', this.props.value);
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
