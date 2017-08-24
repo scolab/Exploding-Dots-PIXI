@@ -35,13 +35,13 @@ const DotsMachine = (props: IProps) => {
           <PlaceValueSwitch
             onClick={props.showHidePlaceValue}
           />
-                    }
-        {props.dotsMachine.machineState.baseSelectorVisible === true &&
+        }
+        {props.dotsMachine.machineState.baseSwitchVisible === true &&
           <BaseSelector
             base={props.dotsMachine.machineState.base}
             onClick={props.changeBase}
           />
-                    }
+        }
         {props.dotsMachine.machineState.magicWandVisible === true &&
           <MagicWand
             onClick={props.activateMagicWand}
@@ -56,10 +56,7 @@ const DotsMachine = (props: IProps) => {
                     }
       </TopMenuItem>
       <ActivityDescriptor>
-        {/*<Text
-          operator_mode={props.dotsMachine.machineState.operator_mode}
-          usage_mode={props.dotsMachine.machineState.usage_mode}
-        />*/}
+        {props.dotsMachine.machineState.numberValueVisible === true &&
         <Operand
           value={props.dotsMachine.machineState.operandA}
           onChange={props.operandChanged}
@@ -70,12 +67,16 @@ const DotsMachine = (props: IProps) => {
           base={props.dotsMachine.machineState.base}
           onEnter={props.startActivityFunc}
         />
+        }
+        {props.dotsMachine.machineState.numberValueVisible === true &&
         <Operator
           operator_mode={props.dotsMachine.machineState.operator_mode}
           usage_mode={props.dotsMachine.machineState.usage_mode}
           activityStarted={props.dotsMachine.machineState.activityStarted}
         />
-        {props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+        }
+        {(props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+          props.dotsMachine.machineState.numberValueVisible) &&
         <Operand
           value={props.dotsMachine.machineState.operandB}
           operator_mode={props.dotsMachine.machineState.operator_mode}
@@ -89,14 +90,16 @@ const DotsMachine = (props: IProps) => {
         }
         {((props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE &&
           props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY) &&
-          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
+          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
+          props.dotsMachine.machineState.numberValueVisible) &&
         <ArrowDiv>
           ↔
         </ArrowDiv>
         }
         {((props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
           props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE)
-          && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
+          && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
+          props.dotsMachine.machineState.machineCodeVisible) &&
         <ValueBoxes
           positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
           negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
@@ -215,10 +218,12 @@ interface IProps {
     machineState: {
       title: string;
       placeValueSwitchVisible: boolean;
-      baseSelectorVisible: boolean;
       magicWandVisible: boolean;
       magicWandIsActive: boolean;
       resetVisible: boolean;
+      baseSwitchVisible: boolean;
+      numberValueVisible: boolean;
+      machineCodeVisible: boolean;
       base: Array<number | string>;
       operator_mode: IOPERATOR_MODE;
       usage_mode: IUSAGE_MODE;

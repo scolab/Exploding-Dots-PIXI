@@ -24,10 +24,8 @@ export interface IMachineState {
   activityStarted: boolean;
   allBases: any[];
   base: Array<number | string>;
-  baseSelectorVisible: boolean;
   cdnBaseUrl: string;
   errorMessage: string;
-  loginVisible: boolean;
   magicWandIsActive: boolean;
   magicWandVisible: boolean;
   muted: boolean;
@@ -36,6 +34,9 @@ export interface IMachineState {
   placeValueSwitchVisible: boolean;
   resetAction: (name) => any;
   resetVisible: boolean;
+  baseSwitchVisible: boolean;
+  numberValueVisible: boolean;
+  machineCodeVisible: boolean;
   startActivity: boolean;
   successAction: (name) => any;
   title: string;
@@ -173,12 +174,15 @@ const dotsReducer = (state: IState | null = null,
   }
 
   let stateCopy: IState;
-  // console.log('dotsReducer', state, action.type);
+  // console.log('dotsReducer', action.type);
   switch (action.type) {
     case ACTIONS.START_ACTIVITY:
       // console.log(ACTIONS.START_ACTIVITY);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = true;
+      if (stateCopy.machineState.usage_mode !== USAGE_MODE.EXERCISE) {
+        stateCopy.machineState.resetVisible = true;
+      }
       return stateCopy;
     case ACTIONS.START_ACTIVITY_DONE:
       // console.log(ACTIONS.START_ACTIVITY_DONE);
@@ -230,6 +234,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.ADD_DOT: {
       // console.log('ADD_DOT', action.zoneId, action.isPositive);
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       const dot: DotVO = new DotVO();
       dot.x = action.position[0];
       dot.y = action.position[1];
@@ -252,6 +257,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.REMOVE_DOT:
       // console.log('REMOVE_DOT');
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       if (Object.prototype.hasOwnProperty.call(
         stateCopy.positivePowerZoneDots[action.zoneId],
           action.dotId)) {
@@ -276,6 +282,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.ADD_MULTIPLE_DOTS:
       // console.log('ADD_MULTIPLE_DOTS');
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       action.dotsPos.forEach((newDot) => {
         const dot: DotVO = new DotVO();
         dot.x = newDot.x;
@@ -302,6 +309,7 @@ const dotsReducer = (state: IState | null = null,
 
     case ACTIONS.REMOVE_MULTIPLE_DOTS:
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       // console.log('REMOVE_MULTIPLE_DOTS amount:', action.dots.length, ' zone:', action.zoneId);
       if (action.dots.length > 0) {
         let i: number = action.dots.length - 1;
@@ -332,6 +340,7 @@ const dotsReducer = (state: IState | null = null,
       return stateCopy;
     case ACTIONS.REZONE_DOT:
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       if (action.dot.isPositive) {
         let i: number = stateCopy.positivePowerZoneDots.length - 1;
         while (i >= 0) {
@@ -400,6 +409,7 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.ACTIVATE_MAGIC_WAND:
       // console.log(ACTIONS.ACTIVATE_MAGIC_WAND);
       stateCopy = { ...state };
+      stateCopy.machineState.resetVisible = true;
       stateCopy.machineState.magicWandIsActive = action.active;
       return stateCopy;
     case ACTIONS.BASE_CHANGED: {

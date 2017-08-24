@@ -1007,7 +1007,6 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private removeGhostDot(dotSprite: DotSprite): void {
-    // console.log('removeGhostDot', dotSprite.dot.id);
     if (dotSprite.ghost) {
       this.movingDotsContainer.removeChild(dotSprite.ghost);
       dotSprite.ghost.alpha = 1;
@@ -1312,9 +1311,12 @@ export class PowerZoneManager extends PIXI.Container {
                                           otherSprite: DotSprite,
                                           originalZoneIndex: number,
                                           allRemovedDots: DotVO[]): void {
-    // currentZone.addChild(dotSprite);
-    otherSprite.playOut();
-    dotSprite.playOut(this.removeDotAntidotAfterAnim.bind(this), originalZoneIndex, allRemovedDots);
+    this.removeGhostDot(dotSprite);
+    // Had to wait a frame before starting the animation because checkInstability() is called after this and reset the animations.
+    TweenMax.delayedCall(0.01, () => {
+      otherSprite.playOut();
+      dotSprite.playOut(this.removeDotAntidotAfterAnim.bind(this), originalZoneIndex, allRemovedDots);
+    });
   }
 
   private removeDotAntidotAfterAnim(originalZoneIndex: number,
@@ -1558,12 +1560,6 @@ export class PowerZoneManager extends PIXI.Container {
         this.movingDotsContainer.addChild(dotSprite);
         dotSprite.position.x = newPosition.x;
         dotSprite.position.y = newPosition.y;
-
-        // start the particles explosion effect
-        /*const explosionEmitter = this.getExplosionEmitter();
-        explosionEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-        explosionEmitter.start();
-        TweenMax.delayedCall(0.2, this.stopExplosionEmitter, [explosionEmitter], this);*/
         dotSprite.playExplode();
         // Move the sprite
         TweenMax.to(
@@ -1594,50 +1590,12 @@ export class PowerZoneManager extends PIXI.Container {
     this.dragGhostToNewZone(dragDotSprite, finalPosition);
   }
 
-  /*private getExplosionEmitter(): ParticleEmitter {
-    if (this.explodeEmitter.length > 0) {
-      return this.explodeEmitter.pop() as ParticleEmitter;
-    }
-    return new ParticleEmitter(this.movingDotsContainer, this.textures['red_dot.png'], this.explodeJSON);
-  }*/
-
-  /*private getImplosionEmitter(): ParticleEmitter {
-    if (this.implodeEmitter.length > 0) {
-      return this.implodeEmitter.pop() as ParticleEmitter;
-    }
-    return new ParticleEmitter(this.movingDotsContainer, this.textures['red_dot.png'], this.implodeJSON);
-  }*/
-
-  /*private stopExplosionEmitter(explosionEmitter) {
-    explosionEmitter.stop();
-    this.explodeEmitter.push(explosionEmitter);
-  }
-
-  private stopImplosionEmitter(implosionEmitter) {
-    implosionEmitter.stop();
-    this.implodeEmitter.push(implosionEmitter);
-  }*/
-
   private tweenDotsToNewZoneDone(dotSprite: DotSprite,
                                  dragDotSprite: DotSprite): void {
     dotSprite.parent.removeChild(dotSprite);
     this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
     dragDotSprite.playImplode();
-    /*TweenMax.to(
-      dotSprite,
-      0.3,
-      {
-        alpha: 0,
-        onComplete: this.removeTweenDone.bind(this),
-        onCompleteParams: [dotSprite],
-      },
-    );*/
   }
-
-  /*private removeTweenDone(dotSprite) {
-    dotSprite.parent.removeChild(dotSprite);
-    this.spritePool.dispose(dotSprite, dotSprite.dot.isPositive, dotSprite.dot.color);
-  }*/
 
   private checkIfNotDisplayedSpriteCanBe(): void {
     let addedDots: DotVO[] = new Array<DotVO>();

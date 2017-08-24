@@ -52,6 +52,7 @@ storiesOf('Exploding Dots', module)
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
+        numberValueVisible={false}
       />
     ))
     .add('Insighto Freeplay', () => (
@@ -104,6 +105,8 @@ storiesOf('Exploding Dots', module)
           positiveDivider: [0, 0, 0, 0, 0],
           negativeDivider: [0, 0, 0, 0, 0],
         }}
+        numberValueVisible={false}
+        machineCodeVisible={false}
       />
     ))
     .add('Arythmos multiply Operation', () => (

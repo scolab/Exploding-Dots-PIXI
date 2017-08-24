@@ -7,10 +7,8 @@ export class MachineStateVO implements IMachineState {
   public activityStarted: boolean;
   public allBases: any[];
   public base: Array<number | string>;
-  public baseSelectorVisible: boolean;
   public cdnBaseUrl: string;
   public errorMessage: string;
-  public loginVisible: boolean;
   public magicWandIsActive: boolean;
   public magicWandVisible: boolean;
   public muted: boolean;
@@ -19,6 +17,9 @@ export class MachineStateVO implements IMachineState {
   public placeValueSwitchVisible: boolean;
   public resetAction: (name) => any;
   public resetVisible: boolean;
+  public baseSwitchVisible: boolean;
+  public numberValueVisible: boolean;
+  public machineCodeVisible: boolean;
   public startActivity: boolean;
   public successAction: (name) => any;
   public title: string;

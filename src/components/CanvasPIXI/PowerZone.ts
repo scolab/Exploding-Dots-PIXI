@@ -193,12 +193,12 @@ export class PowerZone extends PIXI.Container {
       this.negativeDividerText.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 15;
       this.negativeDividerText.y = this.negativeDivideCounter.y + 15;
       this.addChild(this.negativeDividerText);
-    }
 
-    this.divisionGhostContainer = new DotsContainer();
-    this.divisionGhostContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-    this.divisionGhostContainer.y = BOX_INFO.BOX_Y;
-    this.addChild(this.divisionGhostContainer);
+      this.divisionGhostContainer = new DotsContainer();
+      this.divisionGhostContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
+      this.divisionGhostContainer.y = BOX_INFO.BOX_Y;
+      this.addChild(this.divisionGhostContainer);
+    }
 
     if (negativePresent) {
       const separator: Sprite = new Sprite(textures['separator.png']);
@@ -777,10 +777,12 @@ export class PowerZone extends PIXI.Container {
       this.positiveDividerText.style.fill = 0x565656;
       this.negativeDividerText.style.fill = 0x565656;
     }
-    while (this.divisionGhostContainer.children.length > 0) {
-      const child: DisplayObject = this.divisionGhostContainer.getChildAt(0 );
-      this.divisionGhostContainer.removeChild(child);
-      child.destroy();
+    if (this.divisionGhostContainer) {
+      while (this.divisionGhostContainer.children.length > 0) {
+        const child: DisplayObject = this.divisionGhostContainer.getChildAt(0);
+        this.divisionGhostContainer.removeChild(child);
+        child.destroy();
+      }
     }
   }
 

@@ -120,23 +120,24 @@ export class DotSprite extends PIXI.Container {
   public stopExplode(): void {
     this.explode.gotoAndStop(0);
     this.returnToNormal();
+    this.alpha = 0.5;
   }
 
   public playOut(callback?: (...args) => any,
-                 removeOutDotAfterAnim?: number,
-                 removedDot?: DotVO[]): void {
+                 zoneIndex?: number,
+                 removedDots?: DotVO[]): void {
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
     this.addChild(this.outDot);
     if (callback) {
-      if (removedDot) {
+      if (removedDots) {
         this.outDot.onComplete = () => {
-          callback.call(this, removeOutDotAfterAnim, removedDot, this);
+          callback.call(this, zoneIndex, removedDots, this);
         };
       }else {
         this.outDot.onComplete = () => {
-          callback.call(this, removeOutDotAfterAnim, this);
+          callback.call(this, zoneIndex, this);
         };
       }
     }
@@ -205,6 +206,7 @@ export class DotSprite extends PIXI.Container {
       }
       this.addChild(this.normalDot);
       this.shouldPlayOverload = false;
+      this.alpha = 1;
     }
   }
 

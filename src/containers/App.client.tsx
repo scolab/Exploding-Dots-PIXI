@@ -27,11 +27,12 @@ interface IProps {
   operator_mode?: string;
   usage_mode?: string;
   magicWandIsActive?: boolean;
-  baseSelectorVisible?: boolean;
   placeValueSwitchVisible?: boolean;
   magicWandVisible?: boolean;
   resetVisible?: boolean;
-  loginVisible?: boolean;
+  baseSwitchVisible?: boolean;
+  numberValueVisible?: boolean;
+  machineCodeVisible?: boolean;
   zones?: number;
   maxViewableDots?: number;
   operandA?: string;
@@ -57,11 +58,12 @@ class ExplodingDots extends Component<IProps, {}> {
     operator_mode: OPERATOR_MODE.DISPLAY,
     usage_mode: USAGE_MODE.FREEPLAY,
     magicWandIsActive: false,
-    baseSelectorVisible: true,
     placeValueSwitchVisible: true,
     magicWandVisible: true,
-    resetVisible: true,
-    loginVisible: true,
+    resetVisible: false,
+    baseSwitchVisible: true,
+    numberValueVisible: true,
+    machineCodeVisible: true,
     zones: 5,
     operandA: '',
     operandB: '',

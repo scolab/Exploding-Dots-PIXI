@@ -35,11 +35,16 @@ export default class Operand extends Component<IProps, {}> {
   }
 
   public render(): JSX.Element {
-    // console.log('render', this.props.value);
+    console.log('render', this.props.value);
     if (this.props.pos === OPERAND_POS.LEFT) {
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
+            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+              this.props.base[1] === BASE.BASE_X &&
+              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
+              <ParenthesisSpan>&#40;</ParenthesisSpan>
+            }
             <OperationInput
               type='text'
               onChange={this.onChange}
@@ -50,6 +55,11 @@ export default class Operand extends Component<IProps, {}> {
               operator_mode={this.props.operator_mode}
               usage_mode={this.props.usage_mode}
             />
+            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+              this.props.base[1] === BASE.BASE_X &&
+              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
+            <ParenthesisSpan>&#41;</ParenthesisSpan>
+            }
           </form>
         </OperationDiv>
       );
@@ -57,6 +67,11 @@ export default class Operand extends Component<IProps, {}> {
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
+            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+              this.props.base[1] === BASE.BASE_X &&
+              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
+            <ParenthesisSpan>&#40;</ParenthesisSpan>
+            }
             <OperationInput
               type='text'
               onChange={this.onChange}
@@ -67,6 +82,11 @@ export default class Operand extends Component<IProps, {}> {
               operator_mode={this.props.operator_mode}
               usage_mode={this.props.usage_mode}
             />
+            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+              this.props.base[1] === BASE.BASE_X &&
+              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
+            <ParenthesisSpan>&#41;</ParenthesisSpan>
+            }
           </form>
         </OperationDiv>
       );
@@ -135,7 +155,7 @@ export default class Operand extends Component<IProps, {}> {
     if (reg.test(stringToTest)) {
       this.props.onChange(this.props.pos, stringToTest);
     }
-  };
+  }
 
   private onSubmit = (e): void => {
     e.preventDefault();
@@ -144,7 +164,7 @@ export default class Operand extends Component<IProps, {}> {
     } else if (this.props.operator_mode === OPERATOR_MODE.DISPLAY) {
       this.props.onEnter();
     }
-  };
+  }
 
   private checkIfInputActive(): void {
     if (this.inputText) {
@@ -174,5 +194,11 @@ const OperationInput = styled.input`
   font-weight: bold;
   height: 45px;
   text-align: center;
-  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 18 + 'px' : '252px')};
+  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 16 + 'px' : '252px')};
+`;
+
+const ParenthesisSpan = styled.span`
+  font-family: Noto Sans;
+  font-size: 30px;
+  font-weight: bold;
 `;

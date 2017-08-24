@@ -18,7 +18,7 @@ interface IBoxProps {
 }
 
 interface INumberProps {
-  negativePresent: boolean;
+  hasTwoRow: boolean;
 }
 
 interface IBoxContainer {
@@ -48,6 +48,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
         positiveText = convertBase(Object.keys(positiveHash).length.toString(), 10, 12);
         negativeText = convertBase(Object.keys(negativeHash).length.toString(), 10, 12);
       }
+      const hasPositiveText: boolean = positiveText !== '0';
+      const hasNegativeText: boolean = negativeText !== '0';
       if (i !== boxInOrder.length - 1) {
         if (Object.keys(positiveHash).length === 0 && hasLeftValue === false) {
           boxes.push(
@@ -64,18 +66,27 @@ export default class ValueBoxes extends Component<IProps, {}> {
               negativeValue={Object.keys(negativeHash).length}
               base={this.props.base}
             >
+              {hasPositiveText &&
               <NumberDiv
-                negativePresent={this.props.negativePresent}
+                hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
               >
                 {positiveText}
               </NumberDiv>
-              {this.props.negativePresent &&
+              }
+              {(this.props.negativePresent && hasNegativeText) &&
                 <NumberDiv
-                  negativePresent={this.props.negativePresent}
+                  hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
                 >
-                  {negativeText}
+                  {negativeText !== '0' ? '-' : ''}{negativeText}
                 </NumberDiv>
               }
+              {hasPositiveText === false && hasNegativeText === false &&
+              <NumberDiv
+                hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+              >
+                0
+              </NumberDiv>
+            }
             </NormalDiv>,
           );
         }
@@ -87,16 +98,18 @@ export default class ValueBoxes extends Component<IProps, {}> {
             negativeValue={Object.keys(negativeHash).length}
             base={this.props.base}
           >
+            {hasPositiveText &&
             <NumberDiv
-              negativePresent={this.props.negativePresent}
+              hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
             >
               {positiveText}
             </NumberDiv>
-            {this.props.negativePresent &&
+            }
+            {(this.props.negativePresent && hasNegativeText) &&
             <NumberDiv
-              negativePresent={this.props.negativePresent}
+              hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
             >
-              {negativeText}
+              {negativeText !== '0' ? '-' : ''}{negativeText}
             </NumberDiv>
             }
           </NormalDiv>,
@@ -137,16 +150,17 @@ const NormalDiv = styled.div`
   border-width: 2px;
   height: 45px;
   width: auto;
-  min-width: 25px;
+  min-width: 32px;
   float: left;
   border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '#ff0000' : '#000000'};
 `;
 
 const NumberDiv = styled.div`
   font-family: Noto Sans;
-  font-size: ${(props: INumberProps) => (props.negativePresent ? '15px' : '30px')};
+  font-size: ${(props: INumberProps) => (props.hasTwoRow ? '15px' : '25px')};
   font-weight: bold;
   color: #000000;
   text-align: center;
-  padding: 0px 5px;
+  padding: ${(props: INumberProps) => (props.hasTwoRow ? '1px 5px;' : '5px 5px;')};
 `;
+
