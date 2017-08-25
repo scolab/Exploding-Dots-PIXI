@@ -19,6 +19,8 @@ try {
 }
 
 const isDev: boolean = process.env.NODE_ENV === 'development';
+// 'https://exploding-dots.s3.ca-central-1.amazonaws.com'
+const awsURL: string = process.env.AWS_URL || 'https://s3.amazonaws.com/exploding-dots-dev';
 
 interface IProps {
   title?: string;
@@ -70,7 +72,7 @@ class ExplodingDots extends Component<IProps, {}> {
     placeValueOn: true,
     startActivity: false,
     activityStarted: false,
-    cdnBaseUrl: isDev ? '' : 'https://exploding-dots.s3.ca-central-1.amazonaws.com',
+    cdnBaseUrl: isDev ? '' : awsURL,
     errorMessage: '',
     userMessage: '',
     muted: false,

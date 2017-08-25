@@ -687,6 +687,7 @@ export class PowerZoneManager extends PIXI.Container {
         let newPosition: Point = dot.sprite.parent.toGlobal(dot.sprite.position as Point);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
 
+        // this is the ghost of dots to show group with specific color
         let groupSprite: Sprite;
         if (dot.isPositive) {
           groupSprite = new Sprite(this.textures['grouped_dot.png']);

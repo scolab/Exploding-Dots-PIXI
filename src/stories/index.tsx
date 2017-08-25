@@ -29,6 +29,9 @@ storiesOf('Exploding Dots', module)
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
+        numberValueVisible={false}
+        machineCodeVisible={false}
+        baseSwitchVisible={false}
       />
     ))
     .add('Mecha Operation', () => (

@@ -140,13 +140,16 @@ const EmptyDiv = styled.div`
   border-color: black;
   border-width: 2px;
   height: 45px;
-  width: 25px;
+  width: 32px;
   float: left;
 `;
 
 const NormalDiv = styled.div`
   background-color: #ffffff;
-  border-style: solid;
+  &:last-child{
+		border-style: solid solid solid solid;
+	}
+  border-style: solid none solid solid;
   border-width: 2px;
   height: 45px;
   width: auto;

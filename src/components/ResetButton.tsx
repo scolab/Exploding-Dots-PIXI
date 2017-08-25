@@ -6,6 +6,7 @@ interface IProps {
   onClick: () => any;
   resetAction: (name: string) => any;
   title: string;
+  visible: boolean;
 }
 
 export default class ResetButton extends Component<IProps, {}> {
@@ -13,16 +14,21 @@ export default class ResetButton extends Component<IProps, {}> {
   private img: any = require('./images/refresh.gif');
 
   public render(): JSX.Element {
+    if (this.props.visible) {
+      return (
+        <GradientBackgroundButton
+          type='button'
+          onClick={() => this.reset()}
+        >
+          <GradientBackgroundImg
+            src={this.img}
+            role='presentation'
+          />
+        </GradientBackgroundButton>
+      );
+    }
     return (
-      <GradientBackgroundButton
-        type='button'
-        onClick={() => this.reset()}
-      >
-        <GradientBackgroundImg
-          src={this.img}
-          role='presentation'
-        />
-      </GradientBackgroundButton>
+      <PlaceHolder />
     );
   }
 
@@ -42,6 +48,13 @@ const GradientBackgroundButton = styled.button`
   vertical-align: middle;
   border: none;
   cursor: pointer;
+`;
+
+const PlaceHolder = styled.div`
+  ${topLeftElement}
+  width: 47px;
+  height: 47px;
+  vertical-align: middle;
 `;
 
 const GradientBackgroundImg = styled.img`

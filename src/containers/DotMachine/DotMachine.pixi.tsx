@@ -46,14 +46,13 @@ const DotsMachine = (props: IProps) => {
           <MagicWand
             onClick={props.activateMagicWand}
           />
-                    }
-        {props.dotsMachine.machineState.resetVisible === true &&
-          <ResetButton
-            onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
-            resetAction={props.dotsMachine.machineState.resetAction}
-            title={props.dotsMachine.machineState.title}
-          />
-                    }
+        }
+        <ResetButton
+          onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
+          resetAction={props.dotsMachine.machineState.resetAction}
+          title={props.dotsMachine.machineState.title}
+          visible={props.dotsMachine.machineState.resetVisible}
+        />
       </TopMenuItem>
       <ActivityDescriptor>
         {props.dotsMachine.machineState.numberValueVisible === true &&
