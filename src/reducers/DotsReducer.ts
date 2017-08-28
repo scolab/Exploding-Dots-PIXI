@@ -373,13 +373,13 @@ const dotsReducer = (state: IState | null = null,
       return stateCopy;
     case ACTIONS.SET_DIVISION_RESULT:
       stateCopy = { ...state };
-            // console.log('SET_DIVISION_RESULT', action.zoneId, action.divisionValue);
+      // console.log('SET_DIVISION_RESULT', action);
       if (action.isPositive) {
         stateCopy.positiveDividerResult[action.zoneId] = action.divisionValue;
       } else {
         stateCopy.negativeDividerResult[action.zoneId] = action.divisionValue;
       }
-            // console.log(stateCopy.positiveDividerResult);
+      // console.log(stateCopy.positiveDividerResult);
       return stateCopy;
     case ACTIONS.SHOW_HIDE_PLACE_VALUE:
       stateCopy = { ...state };

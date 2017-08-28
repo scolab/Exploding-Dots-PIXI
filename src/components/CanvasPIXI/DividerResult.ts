@@ -1,7 +1,7 @@
 export class DividerResult extends PIXI.Text {
 
   constructor() {
-    super('allo', {
+    super('', {
       align: 'center',
       fill: 0xBCBCBC,
       fontFamily: 'Noto Sans',
@@ -14,8 +14,8 @@ export class DividerResult extends PIXI.Text {
                 negativeDividerValue: number[],
                 positiveDots: number[],
                 negativeDots: number[]): void {
+    // console.log(positiveDividerValue, negativeDividerValue, positiveDots, negativeDots);
     let dotValue: string = '';
-
     for (let i: number = 0; i < positiveDividerValue.length; i += 1) {
       dotValue += positiveDividerValue[i] - negativeDividerValue[i];
       dotValue += '|';

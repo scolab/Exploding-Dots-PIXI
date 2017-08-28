@@ -15,6 +15,7 @@ import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
 import ValueBoxes from '../../components/ValueBoxes';
 import GoButton from '../../components/GoButton';
+import DivisionResult from '../../components/DivisionResult';
 import { USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE, OPERATOR_MODE, BASE } from '../../Constants';
 import {DotVO} from '../../VO/DotVO';
 import {DividerDotVO} from '../../VO/DividerDotVO';
@@ -126,6 +127,19 @@ const DotsMachine = (props: IProps) => {
             negativePresent={negativePresent}
           />
         </ValueContainerDiv>
+      }
+      {props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE &&
+      <ValueContainerDiv>
+        <DivisionResult
+          operandA={props.dotsMachine.machineState.operandA}
+          operandB={props.dotsMachine.machineState.operandB}
+          positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
+          negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
+          positiveDividerResult={props.dotsMachine.positiveDividerResult}
+          negativeDividerResult={props.dotsMachine.negativeDividerResult}
+          base={props.dotsMachine.machineState.base}
+        />
+      </ValueContainerDiv>
       }
       <CanvasPIXI
         title={props.dotsMachine.machineState.title}

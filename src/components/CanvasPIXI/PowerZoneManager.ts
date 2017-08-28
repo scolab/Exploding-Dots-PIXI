@@ -63,7 +63,7 @@ export class PowerZoneManager extends PIXI.Container {
   private displayUserMessageAction: (message: string) => any;
   private movingDotsContainer: PIXI.Container;
   private dividerZoneManager: DividerZoneManager;
-  private dividerResult: DividerResult;
+//  private dividerResult: DividerResult;
   private soundManager: SoundManager;
   private wantedResult: IWantedResult;
   private ticker: PIXI.ticker.Ticker;
@@ -202,7 +202,6 @@ export class PowerZoneManager extends PIXI.Container {
       this.dividerZoneManager.eventEmitter.on(DividerZoneManager.END_DRAG,
           this.checkIfDivisionPossible,
           this);
-      this.dividerResult = new DividerResult();
     }
   }
 
@@ -359,13 +358,13 @@ export class PowerZoneManager extends PIXI.Container {
         positiveDividerResult[zone.zonePosition],
         negativeDividerResult[zone.zonePosition]);
     });
-    positiveDots.reverse();
+    /*positiveDots.reverse();
     negativeDots.reverse();
     this.dividerResult.update(
       positiveDividerResult.slice(0).reverse(),
       negativeDividerResult.slice(0).reverse(),
       positiveDots,
-      negativeDots);
+      negativeDots);*/
   }
 
   public showDividerAndResult(): void {
@@ -374,9 +373,9 @@ export class PowerZoneManager extends PIXI.Container {
     this.addChild(this.dividerZoneManager);
     this.dividerZoneManager.start();
 
-    this.dividerResult.x = 100;
+    /*this.dividerResult.x = 100;
     this.dividerResult.y = 400;
-    this.addChild(this.dividerResult);
+    this.addChild(this.dividerResult);*/
   }
 
   public checkInstability(): void {
@@ -707,15 +706,10 @@ export class PowerZoneManager extends PIXI.Container {
         const sprite: DotSprite = dot.sprite;
         sprite.alpha = 0;
         let finalPosition: Point;
-        if (success) {
-          finalPosition = this.allZones[droppedOnPowerZoneIndex].toGlobal(
-            this.allZones[droppedOnPowerZoneIndex].positiveDivideCounter.position as Point,
-          );
-        } else {
-          finalPosition = this.allZones[droppedOnPowerZoneIndex].toGlobal(
-            this.allZones[droppedOnPowerZoneIndex].negativeDivideCounter.position as Point,
-          );
-        }
+        // if (success) {
+        finalPosition = this.allZones[droppedOnPowerZoneIndex].toGlobal(
+          this.allZones[droppedOnPowerZoneIndex].getDivisionTextPosition(),
+        );
         finalPosition = this.movingDotsContainer.toLocal(finalPosition);
         TweenMax.to(
           movingSprite.scale,
@@ -756,6 +750,7 @@ export class PowerZoneManager extends PIXI.Container {
   private processDivisionAfterTween(dotsRemovedByZone: DotVO[][],
                                     moveToZone: PowerZone,
                                     isPositive: boolean): void {
+    // console.log('processDivisionAfterTweenA', moveToZone.positiveDivisionValue);
     for (let i: number = 0; i < dotsRemovedByZone.length; i += 1) {
       if (dotsRemovedByZone[i].length > 0) {
         this.removeMultipleDots(i, dotsRemovedByZone[i], false);
@@ -780,19 +775,18 @@ export class PowerZoneManager extends PIXI.Container {
     let newPosition: Point;
     let finalPosition: Point;
     const allMovingDots: PIXI.Sprite[] = new Array<PIXI.Sprite>();
-    if (isPositive) {
-      newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].positiveDivideCounter.position as Point); // tslint:disable-line max-line-length
-      finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].positiveDivideCounter.position as Point); // tslint:disable-line max-line-length
-      for (let i = 0; i < this.base[1]; i += 1) {
-        allMovingDots.push(new PIXI.Sprite(this.textures['grouped_dot.png']));
-      }
-    } else {
+    newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].getDivisionTextPosition()); // tslint:disable-line max-line-length
+    finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].getDivisionTextPosition()); // tslint:disable-line max-line-length
+    for (let i = 0; i < this.base[1]; i += 1) {
+      allMovingDots.push(new PIXI.Sprite(this.textures['grouped_dot.png']));
+    }
+    /* else {
       newPosition = this.allZones[zonePos].toGlobal(this.allZones[zonePos].negativeDivideCounter.position as Point); // tslint:disable-line max-line-length
       finalPosition = this.allZones[zonePos + 1].toGlobal(this.allZones[zonePos + 1].negativeDivideCounter.position as Point); // tslint:disable-line max-line-length
       for (let i = 0; i < this.base[1]; i += 1) {
         allMovingDots.push(new Sprite(this.textures['grouped_antidot.png']));
       }
-    }
+    }*/
     newPosition = this.movingDotsContainer.toLocal(newPosition);
     finalPosition = this.movingDotsContainer.toLocal(finalPosition);
     let delay: number = 0;
