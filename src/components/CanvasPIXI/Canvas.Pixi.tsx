@@ -593,7 +593,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             // negative x only
             dotsPerZoneA[pos] = (Number(dotsPerZoneA[pos]) - 1).toString();
           } else {
-            dotsPerZoneA[pos] += Number(value.substring(0, xIndex));
+            const zoneValue: number = Number(dotsPerZoneA[pos]);
+            dotsPerZoneA[pos] = (zoneValue + Number(value.substring(0, xIndex))).toString();
           }
         }
       }
@@ -628,7 +629,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           // negative x only
           dotsPerZoneB[pos] = (Number(dotsPerZoneB[pos]) - 1).toString();
         } else {
-          dotsPerZoneB[pos] += Number(value.substring(0, xIndex));
+          const zoneValue: number = Number(dotsPerZoneB[pos]);
+          dotsPerZoneB[pos] = (zoneValue + Number(value.substring(0, xIndex))).toString();
         }
       }
     });
