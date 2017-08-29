@@ -38,6 +38,7 @@ export interface IMachineState {
   numberValueVisible: boolean;
   machineCodeVisible: boolean;
   startActivity: boolean;
+  success: boolean;
   successAction: (name) => any;
   title: string;
   usage_mode: string;
@@ -459,6 +460,11 @@ const dotsReducer = (state: IState | null = null,
       // stateCopy.machineState.errorMessage = action.errorMessage;
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = false;
+      return stateCopy;
+    case ACTIONS.SUCCESS:
+      console.log(ACTIONS.SUCCESS);
+      stateCopy = { ...state };
+      stateCopy.machineState.success = true;
       return stateCopy;
     default:
       return state;

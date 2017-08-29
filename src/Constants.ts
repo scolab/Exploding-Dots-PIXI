@@ -149,6 +149,6 @@ export const getAColorFilter = (): ColorMatrixFilter => {
   FILTER.matrix = [Math.random(), 0, 0, 0, 0,
                   0, Math.random(), 0, 0, 0,
                   0, 0, Math.random(), 0, 0,
-                  0, 0, 0, 0.5, 0];
+                  0, 0, 0, 0.2, 0];
   return FILTER;
 };

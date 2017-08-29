@@ -21,6 +21,7 @@ export class MachineStateVO implements IMachineState {
   public numberValueVisible: boolean;
   public machineCodeVisible: boolean;
   public startActivity: boolean;
+  public success: boolean;
   public successAction: (name) => any;
   public title: string;
   public usage_mode: string;

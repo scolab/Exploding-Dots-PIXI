@@ -8,7 +8,7 @@ module.exports = function (config, env) {
 
 
   config.module = config.module || {};
-  config.module.noParse = [/pixi-particles/];
+  config.module.noParse = [/pixi-particles/, /katex/];
 
   config.module.loaders.push({
     test: /\.tsx$/,

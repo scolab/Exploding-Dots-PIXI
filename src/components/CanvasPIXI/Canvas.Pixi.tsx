@@ -54,6 +54,7 @@ export interface ICanvasPixiProps {
                                    totalA: string,
                                    totalB?: string,
                                    divider?: DotVO[]) => any;
+  readonly activitySuccessFunc: () => any;
   readonly error: () => any;
   readonly positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   readonly negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
@@ -75,6 +76,7 @@ export interface ICanvasPixiProps {
   readonly muted: boolean;
   readonly wantedResult: IWantedResult;
   readonly successAction: (name: string) => any;
+  readonly success: boolean;
   readonly displayUserMessageAction: (message: string) => any;
 }
 
@@ -199,6 +201,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             this.props.wantedResult,
             this.props.successAction,
             this.props.title,
+            this.props.activitySuccessFunc,
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
@@ -221,7 +224,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   }
 
   public shouldComponentUpdate(nextProps: ICanvasPixiProps): boolean {
-    // console.log('shouldComponentUpdate', nextProps);
     if (this.props.activityStarted === true && nextProps.activityStarted === false) {
       this.powerZoneManager.reset();
     }
@@ -244,7 +246,9 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     this.powerZoneManager.checkInstability();
     this.powerZoneManager.setZoneTextAndAlphaStatus();
     this.checkMachineStateValue();
-    this.powerZoneManager.checkResult();
+    if (nextProps.success === false) {
+      this.powerZoneManager.checkResult();
+    }
     this.soundManager.muted = this.props.muted;
     return false;
   }

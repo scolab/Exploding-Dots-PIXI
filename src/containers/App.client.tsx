@@ -47,6 +47,7 @@ interface IProps {
   userMessage?: string;
   muted?: boolean;
   wantedResult?: IWantedResult;
+  success?: boolean;
   successAction?: (name: string) => any;
   resetAction?: (name: string) => any;
 }
@@ -82,6 +83,7 @@ class ExplodingDots extends Component<IProps, {}> {
       positiveDivider: [],
       negativeDivider: [],
     },
+    success: false,
     successAction: undefined,
     resetAction: undefined,
   };

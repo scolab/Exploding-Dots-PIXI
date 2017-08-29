@@ -49,6 +49,18 @@ export const superscriptToNormal = (text: string): string => {
   return txt;
 };
 
+export const superscriptToKatex = (text: string): string => {
+  let txt: string = text.trim();
+  for (let i: number = 0; i < txt.length; i += 1) {
+    const n: number = sup.indexOf(txt[i]);
+    if (n !== -1) {
+      txt = setCharAt(txt, i, chars[n]);
+      txt = txt.substr(0, i) + '^' + txt.substr(i);
+    }
+  }
+  return txt;
+};
+
 export const removeLeadingZero = (text: string): string => {
   if (text.length > 1) {
     while (text.charAt(0) === '0') {

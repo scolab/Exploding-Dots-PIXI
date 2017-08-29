@@ -9,7 +9,6 @@ import {
   IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME, ISPRITE_COLOR, getAColorFilter,
 } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
-import { DividerResult } from './DividerResult';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
 import {DotVO} from '../../VO/DotVO';
@@ -81,6 +80,7 @@ export class PowerZoneManager extends PIXI.Container {
   private leftMostZone: PIXI.Container;
   private redDragJSON: object;
   private blueDragJSON: object;
+  private activitySuccessFunc: () => any;
   private successAction: (name: string) => any;
   private title: string;
 
@@ -109,7 +109,9 @@ export class PowerZoneManager extends PIXI.Container {
               soundManager: SoundManager,
               wantedResult: IWantedResult,
               successAction: (name: string) => any,
-              title: string) {
+              title: string,
+              activitySuccessFunc: () => any,
+          ) {
     super();
 
     /*this.explodeJSON = require('./dot_explode.json');
@@ -140,6 +142,7 @@ export class PowerZoneManager extends PIXI.Container {
       this.wantedResult.negativeDivider.reverse();
     }
     this.successAction = successAction;
+    this.activitySuccessFunc = activitySuccessFunc;
     this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
@@ -460,6 +463,7 @@ export class PowerZoneManager extends PIXI.Container {
       if (this.successAction) {
         this.successAction(this.title);
       }
+      this.activitySuccessFunc();
     }
   }
 
@@ -1387,26 +1391,6 @@ export class PowerZoneManager extends PIXI.Container {
                         currentZone: DotsContainer): void {
     this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
-    // const isTrail: boolean = false;
-    // dotSprite.stopWrong();
-    /*if (isTrail) {
-      /!*if (dotSprite.dot.color === SPRITE_COLOR.RED) {
-        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterRed;
-      } else {
-        dotSprite.particleEmitter = dotSprite.world.dragParticleEmitterBlue;
-      }
-      const newPosition = dotSprite.data.getLocalPosition(this.parent);
-      dotSprite.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
-      dotSprite.particleEmitter.start();*!/
-    } else {
-      const newPosition = dotSprite.data.getLocalPosition(this.parent);
-      const ydiff = newPosition.y - dotSprite.originInMovingContainer.y;
-      const xdiff = newPosition.x - dotSprite.originInMovingContainer.x;
-      let angle = Math.atan2(ydiff, xdiff);
-      angle += Math.PI / 2;
-      dotSprite.rotation = angle;
-    }*/
-
     TweenMax.to(
       dotSprite,
       TWEEN_TIME.DOT_BACK_INTO_PLACE,
@@ -1414,22 +1398,11 @@ export class PowerZoneManager extends PIXI.Container {
         ease: Power3.easeOut,
         onComplete: this.backIntoPlaceDone.bind(this),
         onCompleteParams: [dotSprite, currentZone],
-        /*onUpdate: this.updateParticleEmmiter.bind(this),
-        onUpdateParams: [dotSprite],*/
         x: dotSprite.originInMovingContainer.x,
         y: dotSprite.originInMovingContainer.y,
       },
     );
-    /*TweenMax.to(dotSprite, 0.5, {
-      height: dotSprite.height / 2,
-      repeat: 1,
-      yoyo: true,
-    });*/
   }
-
-  /*private updateParticleEmmiter(dotSprite:DotSprite):void{
-    dotSprite.particleEmitter.updateOwnerPos(dotSprite.x, dotSprite.y);
-  }*/
 
   private backIntoPlaceDone(dotSprite: DotSprite,
                             currentZone: PowerZone): void {
@@ -1438,7 +1411,6 @@ export class PowerZoneManager extends PIXI.Container {
     this.isInteractive = true;
     dotSprite.particleEmitter.stop();
     this.removeGhostDot(dotSprite);
-    // this.movingDotsContainer.removeChild(dotSprite.ghost as DotSprite);
   }
 
   private addDraggedToNewZone(dotSprite: DotSprite,

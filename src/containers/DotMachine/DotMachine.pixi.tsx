@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase,
     resetMachine, showHidePlaceValue, activateMagicWand, operandChanged,
-    startActivity, startActivityDone, error, setDivisionResult } from '../../actions/';
+    startActivity, startActivityDone, error, setDivisionResult, successFunction } from '../../actions/';
 import CanvasPIXI from '../../components/CanvasPIXI/Canvas.Pixi';
 import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
@@ -138,6 +138,9 @@ const DotsMachine = (props: IProps) => {
           positiveDividerResult={props.dotsMachine.positiveDividerResult}
           negativeDividerResult={props.dotsMachine.negativeDividerResult}
           base={props.dotsMachine.machineState.base}
+          usage_mode={props.dotsMachine.machineState.usage_mode}
+          activityStarted={props.dotsMachine.machineState.activityStarted}
+          success={props.dotsMachine.machineState.success}
         />
       </ValueContainerDiv>
       }
@@ -174,6 +177,8 @@ const DotsMachine = (props: IProps) => {
         wantedResult={props.dotsMachine.machineState.wantedResult}
         setDivisionResult={props.setDivisionResult}
         successAction={props.dotsMachine.machineState.successAction}
+        activitySuccessFunc={props.successFunction}
+        success={props.dotsMachine.machineState.success}
       />
     </div>
   );
@@ -213,6 +218,7 @@ interface IProps {
                                    totalA: string,
                                    totalB?: string,
                                    divider?: DotVO[]) => any;
+  readonly successFunction: () => any;
   readonly error: () => any;
   dotsMachine: {
     dots: Array<{
@@ -250,6 +256,7 @@ interface IProps {
       errorMessage: string;
       muted: boolean;
       wantedResult: IWantedResult;
+      success: boolean;
       successAction: (name: string) => any;
       resetAction: (name: string) => any;
       displayUserMessageAction: (message: string) => any;
@@ -279,6 +286,7 @@ const mapDispatchToProps = (dispatch) => {
     startActivityDoneFunc: startActivityDone,
     error,
     setDivisionResult,
+    successFunction,
   }, dispatch);
 };
 

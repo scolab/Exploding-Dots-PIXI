@@ -114,3 +114,7 @@ export const startActivityDone = (dotsInfo: DotVO[],
 export const error = () => ({
   type: ACTIONS.ERROR,
 });
+
+export const successFunction = () => ({
+  type: ACTIONS.SUCCESS,
+});
