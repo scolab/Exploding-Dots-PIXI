@@ -63,7 +63,7 @@ export default class DivisionResult extends Component<IProps, {}> {
         resultValue = this.buildBaseXString(positiveDividerResult, negativeDividerResult);
       }
 
-      if (resultValue.length > 0 && remainder.length > 0) {
+      if (remainder.length > 0) {
         resultValue += ' + ';
         resultValue += `\\dfrac{${remainder}}{${this.props.operandB}}`;
       }
