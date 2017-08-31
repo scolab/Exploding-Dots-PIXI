@@ -3,8 +3,8 @@
  */
 
 export const gradientBackground = `
-  background: #efefef;
-  background: linear-gradient(to right, #f8f8f9, #e7e8e9);
+  background: #ffffff;
+  // background: linear-gradient(to right, #f8f8f9, #e7e8e9);
   border-radius: 25px;
 `;
 

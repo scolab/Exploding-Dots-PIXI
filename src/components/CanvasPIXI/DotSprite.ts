@@ -91,6 +91,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playOverload(): void {
+    // console.log('playOverload');
     const wasAlreadyOverload: boolean = this.getChildAt(0) === this.overloadDot;
     if (this.getChildAt(0) !== this.rippleDot && wasAlreadyOverload === false) {
       while (this.children.length > 0) {
@@ -107,6 +108,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playExplode(): void {
+    // console.log('playExplode');
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
@@ -118,6 +120,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public stopExplode(): void {
+    // console.log('stopExplode', this.explode.currentFrame);
     this.explode.gotoAndStop(0);
     this.returnToNormal();
     this.alpha = 0.2;
@@ -126,6 +129,7 @@ export class DotSprite extends PIXI.Container {
   public playOut(callback?: (...args) => any,
                  zoneIndex?: number,
                  removedDots?: DotVO[]): void {
+    // console.log('playOut');
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
@@ -150,6 +154,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playImplode(): void {
+    // console.log('playImplode');
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
@@ -159,6 +164,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playDrip(): void {
+    // console.log('playDrip');
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
@@ -168,6 +174,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playWiggle(): void {
+    // console.log('playWiggle');
     while (this.children.length > 0) {
       this.removeChildAt(0);
     }
@@ -182,6 +189,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playWiggleInstability(): void {
+    // console.log('playWiggleInstability');
     const wasAlreadyWiggleUnstable: boolean = this.getChildAt(0) === this.wiggleDotUnstable;
     while (this.children.length > 0) {
       if (wasAlreadyWiggleUnstable === false) {
@@ -195,6 +203,7 @@ export class DotSprite extends PIXI.Container {
   }
 
   public returnToNormal(force?: boolean): void {
+    // console.log('returnToNormal', force, this.getChildAt(0) === this.explode);
     if (this.getChildAt(0) !== this.rippleDot || force) {
       while (this.children.length > 0) {
         if (this.getChildAt(0)) {

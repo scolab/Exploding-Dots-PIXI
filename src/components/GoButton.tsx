@@ -9,41 +9,7 @@ interface IProps {
 
 const GoButton = (props: IProps) => {
 
-  const GradientBackgroundButton = styled.button`
-    ${gradientBackground}
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 20px;
-    width: 47px;
-    height: 47px;
-    line-height: 47px;
-    vertical-align: middle;
-    margin-top: -6px;
-    margin-left: 10px;
-  `;
-
-  const InvisibleButton = styled.button`
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 20px;
-    width: 47px;
-    height: 47px;
-    line-height: 47px;
-    vertical-align: middle;
-    margin-top: -6px;
-    margin-left: 10px;
-    visibility: hidden;
-  `;
-
-  const ImgStyled = styled.img`
-     margin-top: 9px;
-     margin-left: 2px;
-     vertical-align: top;
-  `;
-
-  const img = require('./images/arrow-right.gif');
+  const img = require('./images/arrow-right@2x.png');
 
   if (props.activityStarted) {
     return (
@@ -62,5 +28,41 @@ const GoButton = (props: IProps) => {
     </GradientBackgroundButton>
   );
 };
+
+const GradientBackgroundButton = styled.button`
+    ${gradientBackground}
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    width: 47px;
+    height: 47px;
+    line-height: 47px;
+    vertical-align: middle;
+    margin-top: -6px;
+    margin-left: 10px;
+  `;
+
+const InvisibleButton = styled.button`
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    width: 47px;
+    height: 47px;
+    line-height: 47px;
+    vertical-align: middle;
+    margin-top: -6px;
+    margin-left: 10px;
+    visibility: hidden;
+  `;
+
+const ImgStyled = styled.img`
+     margin-top: 9px;
+     margin-left: 2px;
+     vertical-align: top;
+     width: 20px;
+     height: 14px;
+  `;
 
 export default GoButton;

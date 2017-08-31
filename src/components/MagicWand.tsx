@@ -7,22 +7,7 @@ interface IProps {
 }
 const MagicWand = (props: IProps): JSX.Element => {
 
-  const img = require('./images/magicWand.gif');
-
-  const GradientBackgroundButton = styled.button`
-    ${gradientBackground}
-    ${topLeftElement}
-    border: none;
-    cursor: pointer;
-    height: 47px;
-    vertical-align: middle;
-    width: 47px;
-  `;
-
-  const GradientBackgroundImg = styled.img`
-    margin-top: 4px;
-    margin-left: 4px;
-  `;
+  const img = require('./images/magicWand@2x.png');
 
   return (
     <GradientBackgroundButton
@@ -36,5 +21,22 @@ const MagicWand = (props: IProps): JSX.Element => {
     </GradientBackgroundButton>
   );
 };
+
+const GradientBackgroundButton = styled.button`
+    ${gradientBackground}
+    ${topLeftElement}
+    border: none;
+    cursor: pointer;
+    height: 47px;
+    vertical-align: middle;
+    width: 47px;
+  `;
+
+const GradientBackgroundImg = styled.img`
+    margin-top: 4px;
+    margin-left: 4px;
+    width: 26px;
+    height: 26px;
+  `;
 
 export default MagicWand;

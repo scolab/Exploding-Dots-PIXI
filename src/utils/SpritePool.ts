@@ -102,7 +102,7 @@ export class SpritePool {
           this.negativeOutRedFrames,
           this.negativeWiggleRedFrames,
           this.negativeWiggleUnstableRedFrames,
-          this.positiveExplodeRedFrames,
+          this.negativeExplodeRedFrames,
         );
       }
     } else if (positive) {
@@ -117,7 +117,7 @@ export class SpritePool {
           this.positiveOutBlueFrames,
           this.positiveWiggleBlueFrames,
           this.positiveWiggleUnstableBlueFrames,
-          this.positiveExplodeRedFrames,
+          this.positiveExplodeBlueFrames,
         );
       }
     } else if (this.poolNegativeBlue.length > 0) {
@@ -131,7 +131,7 @@ export class SpritePool {
         this.negativeOutBlueFrames,
         this.negativeWiggleBlueFrames,
         this.negativeWiggleUnstableBlueFrames,
-        this.positiveExplodeRedFrames,
+        this.negativeExplodeBlueFrames,
       );
     }
     sprite.alpha = 1;
@@ -347,7 +347,7 @@ export class SpritePool {
     }
 
     this.positiveOverloadBlueFrames = [this.texturePosTwo];
-    for (let i: number = 1; i <= 3; i++) {
+    for (let i: number = 1; i <= 24; i++) {
       this.positiveOverloadBlueFrames.push(textures[`b_dot${i}.png`]);
     }
     normalFramesAdded = 80;
@@ -357,7 +357,7 @@ export class SpritePool {
     }
 
     this.negativeOverloadRedFrames = [this.textureNegOne];
-    for (let i: number = 1; i <= 3; i++) {
+    for (let i: number = 1; i <= 24; i++) {
       this.negativeOverloadRedFrames.push(textures[`antidot${i}.png`]);
     }
     normalFramesAdded = 80;
@@ -367,7 +367,7 @@ export class SpritePool {
     }
 
     this.negativeOverloadBlueFrames = [this.textureNegTwo];
-    for (let i: number = 1; i <= 3; i++) {
+    for (let i: number = 1; i <= 24; i++) {
       this.negativeOverloadBlueFrames.push(textures[`b_antidot${i}.png`]);
     }
     normalFramesAdded = 80;
@@ -390,12 +390,12 @@ export class SpritePool {
 
     this.negativeRippleRedFrames = [this.textureNegOne];
     for (let i: number = 1; i <= 5; i++) {
-      this.negativeRippleRedFrames.push(textures[`dot_ripple${i}.png`]);
+      this.negativeRippleRedFrames.push(textures[`antidot_ripple${i}.png`]);
     }
 
     this.negativeRippleBlueFrames = [this.textureNegTwo];
     for (let i: number = 1; i <= 5; i++) {
-      this.negativeRippleBlueFrames.push(textures[`dot_ripple${i}.png`]);
+      this.negativeRippleBlueFrames.push(textures[`antidot_ripple${i}.png`]);
     }
   }
 
@@ -406,18 +406,18 @@ export class SpritePool {
     }
 
     this.positiveExplodeBlueFrames = [this.texturePosTwo];
-    for (let i: number = 1; i <= 10; i++) {
-      this.positiveExplodeBlueFrames.push(textures[`dot_explode${i}.png`]);
+    for (let i: number = 1; i <= 5; i++) {
+      this.positiveExplodeBlueFrames.push(textures[`b_dot_explode${i}.png`]);
     }
 
     this.negativeExplodeRedFrames = [this.textureNegOne];
-    for (let i: number = 1; i <= 10; i++) {
+    for (let i: number = 1; i <= 5; i++) {
       this.negativeExplodeRedFrames.push(textures[`dot_explode${i}.png`]);
     }
 
     this.negativeExplodeBlueFrames = [this.textureNegTwo];
-    for (let i: number = 1; i <= 10; i++) {
-      this.negativeExplodeBlueFrames.push(textures[`dot_explode${i}.png`]);
+    for (let i: number = 1; i <= 5; i++) {
+      this.negativeExplodeBlueFrames.push(textures[`b_dot_explode${i}.png`]);
     }
   }
 
@@ -430,17 +430,17 @@ export class SpritePool {
 
     this.positiveImplodeBlueFrames = [this.texturePosTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveImplodeBlueFrames.push(textures[`dot_implode${i}.png`]);
+      this.positiveImplodeBlueFrames.push(textures[`b_dot_implode${i}.png`]);
     }
 
     this.negativeImplodeRedFrames = [this.textureNegOne];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeImplodeRedFrames.push(textures[`dot_implode${i}.png`]);
+      this.negativeImplodeRedFrames.push(textures[`antidot_implode1${i}.png`]);
     }
 
     this.negativeImplodeBlueFrames = [this.textureNegTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeImplodeBlueFrames.push(textures[`dot_implode${i}.png`]);
+      this.negativeImplodeBlueFrames.push(textures[`b_antidot_implode${i}.png`]);
     }
   }
 
@@ -453,7 +453,7 @@ export class SpritePool {
 
     this.positiveOutBlueFrames = [this.texturePosTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveOutBlueFrames.push(textures[`dot_out${i}.png`]);
+      this.positiveOutBlueFrames.push(textures[`b_dot_out${i}.png`]);
     }
 
     this.negativeOutRedFrames = [this.textureNegOne];
@@ -463,30 +463,30 @@ export class SpritePool {
 
     this.negativeOutBlueFrames = [this.textureNegTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeOutBlueFrames.push(textures[`dot_out${i}.png`]);
+      this.negativeOutBlueFrames.push(textures[`b_dot_out${i}.png`]);
     }
   }
 
   private createWiggleAnimation(textures: TextureDictionary): void {
-    const numFrame: number = 13;
+    const numFrame: number = 18;
     this.positiveWiggleRedFrames = [this.texturePosOne];
-    for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveWiggleRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    for (let i: number = 5; i <= numFrame; i++) {
+      this.positiveWiggleRedFrames.push(textures[`dot${i}.png`]);
     }
 
     this.positiveWiggleBlueFrames = [this.texturePosTwo];
-    for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveWiggleBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    for (let i: number = 5; i <= numFrame; i++) {
+      this.positiveWiggleBlueFrames.push(textures[`b_dot${i}.png`]);
     }
 
     this.negativeWiggleRedFrames = [this.textureNegOne];
-    for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeWiggleRedFrames.push(textures[`dot_wiggle${i}.png`]);
+    for (let i: number = 5; i <= numFrame; i++) {
+      this.negativeWiggleRedFrames.push(textures[`antidot${i}.png`]);
     }
 
     this.negativeWiggleBlueFrames = [this.textureNegTwo];
-    for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeWiggleBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+    for (let i: number = 5; i <= numFrame; i++) {
+      this.negativeWiggleBlueFrames.push(textures[`b_antidot${i}.png`]);
     }
   }
 
@@ -496,7 +496,7 @@ export class SpritePool {
 
     this.positiveWiggleUnstableRedFrames = [this.texturePosOne];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveWiggleUnstableRedFrames.push(textures[`dot_wiggle${i}.png`]);
+      this.positiveWiggleUnstableRedFrames.push(textures[`dot${i}.png`]);
     }
     while (normalFramesAdded > 0) {
       this.positiveWiggleUnstableRedFrames.push(this.texturePosOne);
@@ -506,7 +506,7 @@ export class SpritePool {
     normalFramesAdded = 80;
     this.positiveWiggleUnstableBlueFrames = [this.texturePosTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.positiveWiggleUnstableBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+      this.positiveWiggleUnstableBlueFrames.push(textures[`b_dot${i}.png`]);
     }
     while (normalFramesAdded > 0) {
       this.positiveWiggleUnstableBlueFrames.push(this.texturePosTwo);
@@ -516,7 +516,7 @@ export class SpritePool {
     normalFramesAdded = 80;
     this.negativeWiggleUnstableRedFrames = [this.textureNegOne];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeWiggleUnstableRedFrames.push(textures[`dot_wiggle${i}.png`]);
+      this.negativeWiggleUnstableRedFrames.push(textures[`antidot${i}.png`]);
     }
     while (normalFramesAdded > 0) {
       this.negativeWiggleUnstableRedFrames.push(this.textureNegOne);
@@ -526,7 +526,7 @@ export class SpritePool {
     normalFramesAdded = 80;
     this.negativeWiggleUnstableBlueFrames = [this.textureNegTwo];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeWiggleUnstableBlueFrames.push(textures[`dot_wiggle${i}.png`]);
+      this.negativeWiggleUnstableBlueFrames.push(textures[`b_antidot${i}.png`]);
     }
     while (normalFramesAdded > 0) {
       this.negativeWiggleUnstableBlueFrames.push(this.textureNegTwo);

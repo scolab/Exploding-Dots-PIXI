@@ -7,22 +7,7 @@ interface IProps {
 }
 
 const PlaceValueSwitch = (props: IProps): JSX.Element => {
-  const img = require('./images/place_value.gif');
-
-  const GradientBackgroundButton = styled.button`
-    ${gradientBackground}
-    ${topLeftElement}
-    width: 47px;
-    height: 47px;
-    vertical-align: middle;
-    border: none;
-    cursor: pointer;
-  `;
-
-  const GradientBackgroundImg = styled.img`
-    margin-top: 3px;
-    margin-left: 2px;
-  `;
+  const img = require('./images/place_value@2x.png');
 
   return (
     <GradientBackgroundButton
@@ -38,3 +23,20 @@ const PlaceValueSwitch = (props: IProps): JSX.Element => {
 };
 
 export default PlaceValueSwitch;
+
+const GradientBackgroundButton = styled.button`
+    ${gradientBackground}
+    ${topLeftElement}
+    width: 47px;
+    height: 47px;
+    vertical-align: middle;
+    border: none;
+    cursor: pointer;
+  `;
+
+const GradientBackgroundImg = styled.img`
+    margin-top: 3px;
+    margin-left: 2px;
+    width: 17px;
+    height: 24px;
+  `;

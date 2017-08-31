@@ -305,7 +305,7 @@ export class PowerZone extends PIXI.Container {
       }
       return positiveZoneIsEmpty && negativeZoneIsEmpty;
     } else {
-      if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
+      if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1 || Object.keys(this.negativeDots).length > Number(this.base[1]) - 1) {
         this.bgBox.texture = this.bgBoxTextures[4];
       } else {
         this.bgBox.texture = this.bgBoxTextures[0];
@@ -536,7 +536,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   public checkOvercrowding(): boolean {
-    // console.log('checkOvercrowding');
+    // console.log('checkOvercrowding', this.zonePosition);
     let dotOverload: boolean = false;
     if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
       this.bgBox.texture = this.bgBoxTextures[4];
@@ -547,6 +547,7 @@ export class PowerZone extends PIXI.Container {
     } else {
       this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.returnToNormal();
+        // console.log('returnToNormal 1', this.zonePosition);
       });
     }
 
@@ -560,58 +561,24 @@ export class PowerZone extends PIXI.Container {
       } else {
         this.negativeDotsContainer.children.forEach((dotSprite: DotSprite) => {
           dotSprite.returnToNormal();
+          // console.log('returnToNormal 2', this.zonePosition);
         });
-        if (this.isActive) {
+        /*if (this.isActive) {
           this.bgBox.texture = this.bgBoxTextures[0];
         } else {
           this.bgBox.texture = this.bgBoxTextures[3];
-        }
+        }*/
       }
     }
+    // console.log('checkOvercrowding', dotOverload, this.zonePosition);
     return dotOverload;
   }
 
   public checkPositiveNegativePresence(isOverload: boolean): boolean {
-    if (this.negativePresent && this.base[1] !== BASE.BASE_X) {
-      if (isOverload === false &&
-        Object.keys(this.positiveDots).length > 0 &&
+    // console.log('checkPositiveNegativePresence', isOverload, this.zonePosition);
+    if (this.negativePresent && this.base[1] !== BASE.BASE_X && isOverload === false) {
+      if (Object.keys(this.positiveDots).length > 0 &&
         Object.keys(this.negativeDots).length > 0) {
-        /*const tween = TweenMax.fromTo(
-                    this.positiveDotsContainer,
-                    0.3,
-                    { y: this.positiveDotsContainer.y - 1 },
-          {
-            clearProps: 'x',
-            ease: RoughEase.ease.config(
-              {
-                points: 20,
-                randomize: false,
-                strength: 8,
-                template: Linear.easeNone,
-              },
-            ),
-            y: '+=1',
-          },
-                );
-        tween.repeat(-1).repeatDelay(2).yoyo(true).play();
-        const tween2 = TweenMax.fromTo(
-                    this.negativeDotsContainer,
-                    0.3,
-                    { y: this.negativeDotsContainer.y - 1 },
-          {
-            clearProps: 'x',
-            ease: RoughEase.ease.config(
-              {
-                points: 20,
-                randomize: false,
-                strength: 8,
-                template: Linear.easeNone,
-              },
-            ),
-            y: '+=1',
-          },
-                );
-        tween2.repeat(-1).repeatDelay(2).yoyo(true).play();*/
         this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
           dotSprite.playWiggleInstability();
         });
@@ -622,9 +589,11 @@ export class PowerZone extends PIXI.Container {
       }
       this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.returnToNormal();
+        // console.log('returnToNormal 3', this.zonePosition);
       });
       this.negativeDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.returnToNormal();
+        // console.log('returnToNormal 4', this.zonePosition);
       });
     }
     return false;

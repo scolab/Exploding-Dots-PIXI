@@ -11,7 +11,7 @@ interface IProps {
 
 export default class ResetButton extends Component<IProps, {}> {
 
-  private img: any = require('./images/refresh.gif');
+  private img: any = require('./images/refresh@2x.png');
 
   public render(): JSX.Element {
     if (this.props.visible) {
@@ -60,4 +60,6 @@ const PlaceHolder = styled.div`
 const GradientBackgroundImg = styled.img`
    margin-top: 3px;
    margin-left: 2px;
+   width: 27px;
+   height: 34px;
 `;

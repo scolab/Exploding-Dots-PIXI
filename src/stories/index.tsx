@@ -5,7 +5,7 @@ import ExplodingDots from '../containers/App.client';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 
 // FIXME : Found a better and more elegant solution
-function handleFullScreenToggle() {
+function handleFullScreenToggle(): void {
   const currentURL = url.parse(window.parent.location.href, true);
   delete currentURL.search;
   currentURL.query.full = currentURL.query.full ? currentURL.query.full * 1 : 0;

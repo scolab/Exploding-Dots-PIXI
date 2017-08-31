@@ -9,25 +9,7 @@ interface IProps {
 
 const BaseSelector = (props: IProps): JSX.Element => {
 
-  const GradientBackgroundButton = styled.button`
-      ${gradientBackground}
-      ${topLeftElement}
-      font-family: Noto Sans;
-      font-weight: bold;
-      font-size: 24px;
-      width: 132px;
-      height: 46px;
-      vertical-align: middle;
-      text-align: center;
-      border: none;
-      cursor: pointer;
-    `;
-
-  const ArrowImg = styled.img`
-    margin: 0, 3px, 1px, 3px;
-  `;
-
-  const img = require('./images/longArrowLeft.gif');
+  const img = require('./images/longArrowLeft@2x.png');
 
   return (
     <GradientBackgroundButton
@@ -44,3 +26,23 @@ const BaseSelector = (props: IProps): JSX.Element => {
 };
 
 export default BaseSelector;
+
+const GradientBackgroundButton = styled.button`
+      ${gradientBackground}
+      ${topLeftElement}
+      font-family: Noto Sans;
+      font-weight: bold;
+      font-size: 24px;
+      width: 132px;
+      height: 46px;
+      vertical-align: middle;
+      text-align: center;
+      border: none;
+      cursor: pointer;
+    `;
+
+const ArrowImg = styled.img`
+    margin: 0, 3px, 1px, 3px;
+    width: 36px;
+    height: 14px;
+  `;
