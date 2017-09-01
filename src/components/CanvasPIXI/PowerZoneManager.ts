@@ -266,7 +266,7 @@ export class PowerZoneManager extends PIXI.Container {
       }
     }
     if (dotsRemoved.length === 0 && this.base[1] !== BASE.BASE_X) {
-      for (let i: number = 0; i < this.allZones.length; i += 1) {
+      for (let i: number = 0; i < this.allZones.length - 1; i += 1) {
         dotsRemoved = this.allZones[i].getOvercrowding(base as number);
         if (dotsRemoved.length > 0) {
           this.removeMultipleDots(i, dotsRemoved, false);
