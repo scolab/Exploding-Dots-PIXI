@@ -50,6 +50,7 @@
     "react": "^15.3.2",
     "react-addons-test-utils": "^15.3.2",
     "react-dom": "^15.3.2",
+    "react-storybook-decorator-background": "^1.0.5",
     "sinon": "^1.17.6",
     "source-map-loader": "^0.2.1",
     "ts-loader": "^2.2.2",
