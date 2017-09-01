@@ -159,7 +159,7 @@ export class SpritePool {
   }
 
   public destroy(): void {
-    console.log('destroy');
+    // console.log('destroy');
     this.texturePosOne.destroy();
     this.texturePosTwo.destroy();
     this.textureNegOne.destroy();

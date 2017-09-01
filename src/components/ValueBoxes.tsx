@@ -91,7 +91,6 @@ export default class ValueBoxes extends Component<IProps, {}> {
           );
         }
       } else {
-        console.log(hasPositiveText, positiveText);
         boxes.push(
           <NormalDiv
             key={i}
