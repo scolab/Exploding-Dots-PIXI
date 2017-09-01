@@ -58,8 +58,8 @@ const PlaceHolder = styled.div`
 `;
 
 const GradientBackgroundImg = styled.img`
-   margin-top: 3px;
-   margin-left: 2px;
+   margin-top: 5px;
+   margin-left: 1px;
    width: 27px;
    height: 34px;
 `;

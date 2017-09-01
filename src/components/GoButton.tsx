@@ -58,8 +58,8 @@ const InvisibleButton = styled.button`
   `;
 
 const ImgStyled = styled.img`
-     margin-top: 9px;
-     margin-left: 2px;
+     margin-top: 15px;
+     margin-left: 1px;
      vertical-align: top;
      width: 20px;
      height: 14px;

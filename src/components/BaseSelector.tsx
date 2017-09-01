@@ -42,7 +42,7 @@ const GradientBackgroundButton = styled.button`
     `;
 
 const ArrowImg = styled.img`
-    margin: 0, 3px, 1px, 3px;
+    margin: 5px 6px 1px 10px;
     width: 36px;
     height: 14px;
   `;
