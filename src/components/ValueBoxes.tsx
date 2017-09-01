@@ -91,6 +91,7 @@ export default class ValueBoxes extends Component<IProps, {}> {
           );
         }
       } else {
+        console.log(hasPositiveText, positiveText);
         boxes.push(
           <NormalDiv
             key={i}
@@ -98,13 +99,11 @@ export default class ValueBoxes extends Component<IProps, {}> {
             negativeValue={Object.keys(negativeHash).length}
             base={this.props.base}
           >
-            {hasPositiveText &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
             >
               {positiveText}
             </NumberDiv>
-            }
             {(this.props.negativePresent && hasNegativeText) &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
