@@ -762,18 +762,18 @@ export class PowerZone extends PIXI.Container {
     const hitArea: Rectangle = e.target.hitArea as Rectangle;
     const clickPos: Point = e.data.getLocalPosition(e.target);
     const clickModifiedPos: number[] = new Array<number>();
-    if (clickPos.x < POSITION_INFO.DOT_RAYON) {
-      clickModifiedPos.push(POSITION_INFO.DOT_RAYON);
-    } else if (clickPos.x > hitArea.width - POSITION_INFO.DOT_RAYON) {
-      clickModifiedPos.push(hitArea.width - POSITION_INFO.DOT_RAYON);
+    if (clickPos.x < POSITION_INFO.DOT_RAYON + 2) {
+      clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
+    } else if (clickPos.x > hitArea.width - POSITION_INFO.DOT_RAYON - 1) {
+      clickModifiedPos.push(hitArea.width - POSITION_INFO.DOT_RAYON - 1);
     } else {
       clickModifiedPos.push(clickPos.x);
     }
 
-    if (clickPos.y < POSITION_INFO.DOT_RAYON) {
-      clickModifiedPos.push(POSITION_INFO.DOT_RAYON);
-    } else if (clickPos.y > hitArea.height - POSITION_INFO.DOT_RAYON) {
-      clickModifiedPos.push(hitArea.height - POSITION_INFO.DOT_RAYON);
+    if (clickPos.y < POSITION_INFO.DOT_RAYON + 2) {
+      clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
+    } else if (clickPos.y > hitArea.height - POSITION_INFO.DOT_RAYON - 2) {
+      clickModifiedPos.push(hitArea.height - POSITION_INFO.DOT_RAYON - 2);
     } else {
       clickModifiedPos.push(clickPos.y);
     }

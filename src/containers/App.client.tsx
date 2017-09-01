@@ -9,7 +9,7 @@ import {createStore, Store, StoreCreator} from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
-import {OPERATOR_MODE, USAGE_MODE, BASE, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
+import {OPERATOR_MODE, USAGE_MODE, BASE} from '../Constants';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 try {
