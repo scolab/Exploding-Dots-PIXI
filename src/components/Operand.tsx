@@ -194,7 +194,8 @@ const OperationInput = styled.input`
   font-weight: bold;
   height: 45px;
   text-align: center;
-  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 16 + 'px' : '252px')};
+  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 20 + 'px' : '252px')};
+  min-width: 30px;
 `;
 
 const ParenthesisSpan = styled.span`
