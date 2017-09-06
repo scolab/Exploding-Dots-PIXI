@@ -274,12 +274,36 @@ export class PowerZoneManager extends PIXI.Container {
           this.removeMultipleDots(i, dotsRemoved, false);
           if (this.negativePresent) {
             if (dotsRemoved[0].isPositive) {
-              this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], true); // tslint:disable-line max-line-length
+              const dotPos: number[] = [
+                randomFromTo(
+                  POSITION_INFO.DOT_RAYON,
+                  (this.allZones[i].positiveDotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON),
+                randomFromTo(
+                  POSITION_INFO.DOT_RAYON,
+                  (this.allZones[i].positiveDotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON),
+              ];
+              this.addDot(i + 1, dotPos, true, SPRITE_COLOR.RED);
             } else {
-              this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.HALF_BOX_HEIGHT)], false); // tslint:disable-line max-line-length
+              const dotPos: number[] = [
+                randomFromTo(
+                  POSITION_INFO.DOT_RAYON,
+                  (this.allZones[i].negativeDotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON),
+                randomFromTo(
+                  POSITION_INFO.DOT_RAYON,
+                  (this.allZones[i].negativeDotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON),
+              ];
+              this.addDot(i + 1, dotPos, false, SPRITE_COLOR.RED);
             }
           } else {
-            this.addDot(i + 1, [randomFromTo(0, BOX_INFO.BOX_WIDTH), randomFromTo(0, BOX_INFO.BOX_HEIGHT)], true); // tslint:disable-line max-line-length
+            const dotPos: number[] = [
+              randomFromTo(
+                POSITION_INFO.DOT_RAYON,
+                (this.allZones[i].positiveDotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON),
+              randomFromTo(
+                POSITION_INFO.DOT_RAYON,
+                (this.allZones[i].positiveDotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON),
+            ];
+            this.addDot(i + 1, dotPos, true, SPRITE_COLOR.RED);
           }
           break;
         }
