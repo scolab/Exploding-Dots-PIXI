@@ -83,6 +83,7 @@ export class PowerZoneManager extends PIXI.Container {
   private activitySuccessFunc: () => any;
   private successAction: (name: string) => any;
   private title: string;
+  private isUserActionComplete: boolean; // Do not validate result in the middle of an operation
 
   constructor(addDot: (zoneId: number,
                        position: number[],
@@ -146,6 +147,7 @@ export class PowerZoneManager extends PIXI.Container {
     this.title = title;
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
+    this.isUserActionComplete = true;
   }
 
   public init(textures: TextureDictionary,
@@ -412,58 +414,60 @@ export class PowerZoneManager extends PIXI.Container {
 
   public checkResult(): void {
     // console.log('checkResult', this.wantedResult);
-    let zone: PowerZone;
-    let zoneSuccess: number = 0;
-    for (let i = 0; i < this.allZones.length; i += 1) {
-      zone = this.allZones[i];
-      zone.precalculateDotsForDivision();
-      if (this.operatorMode === OPERATOR_MODE.DIVIDE) {
-        let success = true;
-        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
-          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
-            success = false;
+    if (this.isUserActionComplete) { // Validate result only when all part of the operation are complete
+      let zone: PowerZone;
+      let zoneSuccess: number = 0;
+      for (let i = 0; i < this.allZones.length; i += 1) {
+        zone = this.allZones[i];
+        zone.precalculateDotsForDivision();
+        if (this.operatorMode === OPERATOR_MODE.DIVIDE) {
+          let success = true;
+          if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+            if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+              success = false;
+            }
           }
-        }
-        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
-          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
-            success = false;
+          if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+            if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+              success = false;
+            }
           }
-        }
-        if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
-          if (this.wantedResult.positiveDivider[i] !== zone.positiveDivisionValue) {
-            success = false;
+          if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
+            if (this.wantedResult.positiveDivider[i] !== zone.positiveDivisionValue) {
+              success = false;
+            }
           }
-        }
-        if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
-          if (this.wantedResult.negativeDivider[i] !== zone.negativeDivisionValue) {
-            success = false;
+          if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
+            if (this.wantedResult.negativeDivider[i] !== zone.negativeDivisionValue) {
+              success = false;
+            }
           }
-        }
-        if (success) {
-          zoneSuccess += 1;
-        }
-      } else {
-        let success = true;
-        if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
-          if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
-            success = false;
+          if (success) {
+            zoneSuccess += 1;
           }
-        }
-        if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
-          if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
-            success = false;
+        } else {
+          let success = true;
+          if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
+            if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+              success = false;
+            }
           }
-        }
-        if (success) {
-          zoneSuccess += 1;
+          if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
+            if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+              success = false;
+            }
+          }
+          if (success) {
+            zoneSuccess += 1;
+          }
         }
       }
-    }
-    if (zoneSuccess === this.allZones.length) {
-      if (this.successAction) {
-        this.successAction(this.title);
+      if (zoneSuccess === this.allZones.length) {
+        if (this.successAction) {
+          this.successAction(this.title);
+        }
+        this.activitySuccessFunc();
       }
-      this.activitySuccessFunc();
     }
   }
 
@@ -476,6 +480,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   public reset(): void {
     // console.log('PowerZoneManager reset');
+    this.isUserActionComplete = true;
     TweenMax.killAll(true);
     if (this.allZones != null) {
       this.allZones.forEach((zone) => {
@@ -1039,7 +1044,6 @@ export class PowerZoneManager extends PIXI.Container {
     const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
     const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
     const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-    // console.log('verifyDroppedOnZone', droppedOnPowerZoneIndex, droppedOnPowerZone);
     // has been dropped outside a zone?
     if (droppedOnPowerZoneIndex !== -1 && droppedOnPowerZone !== null) {
       // impossible to move between different signed value zone (positive to negative)
@@ -1103,29 +1107,31 @@ export class PowerZoneManager extends PIXI.Container {
       }
       return;
     }
-    // rezone current dot and thus remove it from the amount to be moved
+
+    // The current dot will be rezone, thus remove one (1) from the amount to be removed
+    dotsToRemoveCount -= 1;
+
+    let newNbOfDots: number = Math.pow(this.base[1] as number, diffZone);
+    newNbOfDots -= this.base[0] as number;
+
+    if (newNbOfDots === 0 && dotsToRemoveCount === 0) {
+      this.isUserActionComplete = true;
+    } else {
+      this.isUserActionComplete = false;
+    }
+
+    // rezone current dot
     this.addDraggedToNewZone(
       dotSprite,
       droppedOnPowerZone,
       data.getLocalPosition(droppedOnPowerZone),
       false);
-    dotsToRemoveCount -= 1;
-    // console.log('dotsToRemoveCount', dotsToRemoveCount);
 
-    // Move dots from higher zone to lower zone
-    if (dotsToRemoveCount > 0) {
-      const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
-      this.tweenDotsToNewZone(
-        originalZoneIndex,
-        droppedOnPowerZone,
-        dotsToRemoveCount,
-        dataLocalZone,
-        dotSprite);
+    if (newNbOfDots > 0 && dotsToRemoveCount === 0) {
+      this.isUserActionComplete = true;
     }
 
     // Add the new dots
-    let newNbOfDots: number = Math.pow(this.base[1] as number, diffZone);
-    newNbOfDots -= this.base[0] as number;
     if (newNbOfDots > 0) {
       this.removeGhostDot(dotSprite);
       const dotsPos: Point[] = new Array<Point>();
@@ -1142,17 +1148,25 @@ export class PowerZoneManager extends PIXI.Container {
         );
       }
       this.soundManager.playSound(SoundManager.DOT_EXPLODE);
-      /*const implosionEmitter = this.getImplosionEmitter();
-      const originalPos = data.getLocalPosition(this.movingDotsContainer);
-      implosionEmitter.updateOwnerPos(originalPos.x, originalPos.y);
-      implosionEmitter.start();
-      TweenMax.delayedCall(0.25, this.stopImplosionEmitter, [implosionEmitter], this);*/
       this.addMultipleDots(
         droppedOnPowerZoneIndex,
         dotsPos,
         dotSprite.dot.isPositive,
         dotSprite.dot.color,
         dotSprite.position);
+    }
+
+    this.isUserActionComplete = true;
+
+    // Move dots from higher zone to lower zone
+    if (dotsToRemoveCount > 0) {
+      const dataLocalZone: Point = data.getLocalPosition(droppedOnPowerZone);
+      this.tweenDotsToNewZone(
+        originalZoneIndex,
+        droppedOnPowerZone,
+        dotsToRemoveCount,
+        dataLocalZone,
+        dotSprite);
     }
   }
 

@@ -32,6 +32,13 @@ storiesOf('Exploding Dots', module)
         numberValueVisible={false}
         machineCodeVisible={false}
         baseSwitchVisible={false}
+        cdnBaseUrl={''}
+        wantedResult={{
+          positiveDots: [1, 1, 0, 0, 1],
+          negativeDots: [0, 0, 0, 0, 0],
+          positiveDivider: [0, 0, 0, 0, 0],
+          negativeDivider: [0, 0, 0, 0, 0],
+        }}
       />
     ))
     .add('Mecha Operation', () => (

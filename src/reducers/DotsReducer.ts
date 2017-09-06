@@ -53,7 +53,6 @@ interface IHashOfMachineState {
 const initialMachineState: IHashOfMachineState = {};
 
 function setDotsCount(state: IState): string {
-  // console.log('setDotsCount');
   let col: number = 0;
   if (state.machineState.base[1] !== BASE.BASE_X) {
     let dotsCount: number = 0;
