@@ -662,7 +662,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     const dotsPos: DotVO[] = new Array<DotVO>();
     for (let i = 0; i < dotsPerZoneA.length; i += 1) {
       // tslint:disable-next-line
-      totalDot += Number(dotsPerZoneA[i]) * Math.pow(Number(this.props.base[1]), i);
+      totalDot += Number(dotsPerZoneA[i]) * Math.pow(Number(this.props.base[1]) / Number(this.props.base[0]), i);
       for (let j = 0; j < Number(dotsPerZoneA[i]); j += 1) {
         dotsPos.push(this.getDot(i, true));
       }
