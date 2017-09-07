@@ -115,8 +115,6 @@ export class PowerZoneManager extends PIXI.Container {
           ) {
     super();
 
-    /*this.explodeJSON = require('./dot_explode.json');
-    this.implodeJSON = require('./dot_implode.json');*/
     this.redDragJSON = require('./dot_drag_red.json');
     this.blueDragJSON = require('./dot_drag_blue.json');
     this.addDot = addDot;
