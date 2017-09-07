@@ -20,14 +20,33 @@ interface IInputBox {
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
   value: string;
+  textWidth: number;
 }
 
 export default class Operand extends Component<IProps, {}> {
 
   private inputText: HTMLInputElement;
+  private canvas: HTMLCanvasElement;
 
   public componentDidMount(): void {
     this.checkIfInputActive();
+  }
+
+  public getTextWidth(pText: string, pFontSize: number, pFontWeight: string, pFontFamily: string): number {
+    // This is not kosher as I add and remove something in the DOM.  React might not like it...
+    let lDiv: HTMLDivElement | null = document.createElement('div');
+    document.body.appendChild(lDiv);
+    lDiv.style.fontSize = '' + pFontSize + 'px';
+    lDiv.style.fontWeight = pFontWeight;
+    lDiv.style.fontFamily = pFontFamily;
+    lDiv.style.position = 'absolute';
+    lDiv.style.left = '-1000px';
+    lDiv.style.top = '-1000px';
+    lDiv.innerHTML = pText;
+    const calculatedWidth: number = lDiv.clientWidth;
+    document.body.removeChild(lDiv);
+    lDiv = null;
+    return calculatedWidth;
   }
 
   public componentDidUpdate(): void {
@@ -37,6 +56,7 @@ export default class Operand extends Component<IProps, {}> {
   public render(): JSX.Element {
     // console.log('render', this.props.value);
     if (this.props.pos === OPERAND_POS.LEFT) {
+      const textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
@@ -54,6 +74,7 @@ export default class Operand extends Component<IProps, {}> {
               }}
               operator_mode={this.props.operator_mode}
               usage_mode={this.props.usage_mode}
+              textWidth={textWidth}
             />
             {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
               this.props.base[1] === BASE.BASE_X &&
@@ -64,6 +85,7 @@ export default class Operand extends Component<IProps, {}> {
         </OperationDiv>
       );
     } else {
+      const textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
@@ -81,6 +103,7 @@ export default class Operand extends Component<IProps, {}> {
               }}
               operator_mode={this.props.operator_mode}
               usage_mode={this.props.usage_mode}
+              textWidth={textWidth}
             />
             {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
               this.props.base[1] === BASE.BASE_X &&
@@ -194,7 +217,7 @@ const OperationInput = styled.input`
   font-weight: bold;
   height: 45px;
   text-align: center;
-  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.value.length * 20 + 'px' : '252px')};
+  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.textWidth + 'px' : '252px')};
   min-width: 30px;
 `;
 
