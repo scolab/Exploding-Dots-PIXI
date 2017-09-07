@@ -98,11 +98,13 @@ export default class ValueBoxes extends Component<IProps, {}> {
             negativeValue={Object.keys(negativeHash).length}
             base={this.props.base}
           >
+            {(hasPositiveText || !hasNegativeText) &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
             >
               {positiveText}
             </NumberDiv>
+            }
             {(this.props.negativePresent && hasNegativeText) &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
