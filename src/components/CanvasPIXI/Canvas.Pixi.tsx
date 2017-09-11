@@ -78,6 +78,7 @@ export interface ICanvasPixiProps {
   readonly successAction: (name: string) => any;
   readonly success: boolean;
   readonly displayUserMessageAction: (message: string) => any;
+  readonly isReady: () => void;
 }
 
 class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
@@ -111,8 +112,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   private textures: PIXI.loaders.TextureDictionary | undefined;
   private boundOnResize: EventListenerObject;
   private canvasDiv: HTMLDivElement;
-  private placeHolder: HTMLImageElement;
-  private placeholderImage = require('./images/placeholder.gif');
+  /*private placeHolder: HTMLImageElement;
+  private placeholderImage = require('./images/placeholder.gif');*/
 
   constructor(props: ICanvasPixiProps) {
     super(props);
@@ -127,19 +128,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 
   public render(): JSX.Element {
 
-    const PlaceHolderImg = styled.img`
+    /*const PlaceHolderImg = styled.img`
       width: 100%;
       height: 1px;
-     `;
-
-    const CanvasDivStyled = styled.div`
-      visibility: hidden;
-      height: 1px;
-      overflow: hidden;
-     `;
+     `;*/
 
     return (
-      <div>
+      <ContainerDiv>
         <VisibilitySensor
           onChange={this.onVisibilityChange.bind(this)}
           partialVisibility={true}
@@ -156,14 +151,9 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
               ref={(canvas) => { this.canvas = canvas as HTMLCanvasElement; }}
             />
           </CanvasDivStyled>
-          <PlaceHolderImg
-            innerRef={(placeholder) => { this.placeHolder = placeholder as HTMLImageElement; }}
-            src={this.placeholderImage}
-            role='presentation'
-          />
         </div>
         </VisibilitySensor>
-      </div>
+      </ContainerDiv>
     );
   }
 
@@ -318,6 +308,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
       this.powerZoneManager.start();
+      this.props.isReady();
       this.canvasDiv.style.visibility = 'visible';
       this.canvasDiv.style.height = this.props.operator_mode ===
         OPERATOR_MODE.DIVIDE ?
@@ -325,7 +316,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           :
           `${SETTINGS.GAME_HEIGHT}px`;
       this.canvasDiv.style.overflow = 'visible';
-      this.placeHolder.style.display = 'none';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
       }
@@ -790,10 +780,10 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       Math.ceil(SETTINGS.GAME_WIDTH * ratio),
       Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio));
-    if (this.placeHolder.style.visibility !== 'hidden') {
+    /* if (this.placeHolder.style.visibility !== 'hidden') {
       this.placeHolder.style.height = `${Math.ceil((this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
           SETTINGS.GAME_HEIGHT_DIVIDE : SETTINGS.GAME_HEIGHT) * ratio)}px`;
-    }
+    }*/
   }
 
   private calculateOperandRealValue(arr: string[]): string {
@@ -807,3 +797,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 }
 
 export default CanvasPIXI;
+
+const CanvasDivStyled = styled.div`
+  visibility: hidden;
+  height: 1px;
+  overflow: hidden;
+`;
+
+const ContainerDiv = styled.div`
+  display: block;
+  margin-top: -5%;
+`;

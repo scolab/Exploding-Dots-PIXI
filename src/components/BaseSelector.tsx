@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { gradientBackground, topLeftElement } from './StylesForComponents';
+import { gradientBackground, toolMenuElement } from './StylesForComponents';
 
 interface IProps {
   onClick: () => any;
@@ -29,7 +29,7 @@ export default BaseSelector;
 
 const GradientBackgroundButton = styled.button`
       ${gradientBackground}
-      ${topLeftElement}
+      ${toolMenuElement}
       font-family: Noto Sans;
       font-weight: bold;
       font-size: 24px;

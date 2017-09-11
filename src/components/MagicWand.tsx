@@ -1,5 +1,5 @@
 import React from 'react';
-import {gradientBackground, topLeftElement} from './StylesForComponents';
+import {gradientBackground, toolMenuElement} from './StylesForComponents';
 import styled from 'styled-components';
 
 interface IProps {
@@ -24,7 +24,7 @@ const MagicWand = (props: IProps): JSX.Element => {
 
 const GradientBackgroundButton = styled.button`
     ${gradientBackground}
-    ${topLeftElement}
+    ${toolMenuElement}
     border: none;
     cursor: pointer;
     height: 47px;

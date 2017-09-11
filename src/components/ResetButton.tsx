@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import {gradientBackground, topLeftElement} from './StylesForComponents';
+import {gradientBackground, toolMenuElement} from './StylesForComponents';
 
 interface IProps {
   onClick: () => any;
@@ -42,7 +42,7 @@ export default class ResetButton extends Component<IProps, {}> {
 
 const GradientBackgroundButton = styled.button`
   ${gradientBackground}
-  ${topLeftElement}
+  ${toolMenuElement}
   width: 47px;
   height: 47px;
   vertical-align: middle;
@@ -51,7 +51,7 @@ const GradientBackgroundButton = styled.button`
 `;
 
 const PlaceHolder = styled.div`
-  ${topLeftElement}
+  ${toolMenuElement}
   width: 47px;
   height: 47px;
   vertical-align: middle;

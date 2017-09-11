@@ -1,4 +1,5 @@
 import React from 'react';
+import { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { addDot, removeDot, rezoneDot, removeMultipleDots, addMultipleDots, changeBase,
@@ -9,7 +10,7 @@ import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';
 import MagicWand from '../../components/MagicWand';
-import TopMenuItem from '../../components/TopMenuItem';
+import TopMenuItem, { default as ToolMenu } from '../../components/ToolMenu';
 import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
@@ -25,164 +26,199 @@ import { IMachineState } from '../../reducers/DotsReducer';
 import styled from 'styled-components';
 import { operationItem } from '../../components/StylesForComponents';
 
-const DotsMachine = (props: IProps) => {
-  const negativePresent: boolean = props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
-    || props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE
-    || props.dotsMachine.machineState.base[1] === BASE.BASE_X;
-  return (
-    <div>
-      <TopMenuItem>
-        {props.dotsMachine.machineState.placeValueSwitchVisible === true &&
-          <PlaceValueSwitch
-            onClick={props.showHidePlaceValue}
+class DotsMachine extends Component<IProps, {}> {
+
+  private machineDiv: HTMLDivElement;
+  private placeHolder: HTMLDivElement;
+  private placeholderImage = require('./images/loader.gif');
+
+  constructor(props: IProps) {
+    super(props);
+  }
+
+  public onMachineReady(): void {
+    if (this.machineDiv) {
+      this.machineDiv.style.visibility = 'visible';
+      this.machineDiv.style.overflow = 'visible';
+      this.placeHolder.style.display = 'none';
+    }
+  }
+
+  public render(): JSX.Element {
+
+    const negativePresent: boolean = this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
+      || this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE
+      || this.props.dotsMachine.machineState.base[1] === BASE.BASE_X;
+    return (
+      <div>
+        <AllMachineDiv
+          innerRef={(machineDiv) => { this.machineDiv = machineDiv as HTMLDivElement; }}
+        >
+          <ActivityDescriptor>
+            {this.props.dotsMachine.machineState.numberValueVisible === true &&
+            <Operand
+              value={this.props.dotsMachine.machineState.operandA}
+              onChange={this.props.operandChanged}
+              operator_mode={this.props.dotsMachine.machineState.operator_mode}
+              usage_mode={this.props.dotsMachine.machineState.usage_mode}
+              pos={OPERAND_POS.LEFT}
+              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+              base={this.props.dotsMachine.machineState.base}
+              onEnter={this.props.startActivityFunc}
+            />
+            }
+            {this.props.dotsMachine.machineState.numberValueVisible === true &&
+            <Operator
+              operator_mode={this.props.dotsMachine.machineState.operator_mode}
+              usage_mode={this.props.dotsMachine.machineState.usage_mode}
+              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+            />
+            }
+            {(this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+              this.props.dotsMachine.machineState.numberValueVisible) &&
+            <Operand
+              value={this.props.dotsMachine.machineState.operandB}
+              operator_mode={this.props.dotsMachine.machineState.operator_mode}
+              usage_mode={this.props.dotsMachine.machineState.usage_mode}
+              onChange={this.props.operandChanged}
+              pos={OPERAND_POS.RIGHT}
+              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+              base={this.props.dotsMachine.machineState.base}
+              onEnter={this.props.startActivityFunc}
+            />
+            }
+            {((this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE &&
+              this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY) &&
+              this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
+              this.props.dotsMachine.machineState.numberValueVisible) &&
+            <ArrowDiv>
+              ↔
+            </ArrowDiv>
+            }
+            {((this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
+              this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE)
+              && this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
+              this.props.dotsMachine.machineState.machineCodeVisible) &&
+            <ValueBoxes
+              positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
+              negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+              base={this.props.dotsMachine.machineState.base}
+              isInline={true}
+              negativePresent={negativePresent}
+            />
+            }
+            {this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
+            <GoButton
+              onClick={this.props.startActivityFunc}
+              activityStarted={this.props.dotsMachine.machineState.activityStarted}
+            />
+            }
+          </ActivityDescriptor>
+          {((this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
+            this.props.dotsMachine.machineState.usage_mode !== USAGE_MODE.EXERCISE)
+            && this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
+          <ValueContainerDiv>
+            <ValueBoxes
+              positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
+              negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+              base={this.props.dotsMachine.machineState.base}
+              isInline={false}
+              negativePresent={negativePresent}
+            />
+          </ValueContainerDiv>
+          }
+          {this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE &&
+          <DivisionResult
+            operandA={this.props.dotsMachine.machineState.operandA}
+            operandB={this.props.dotsMachine.machineState.operandB}
+            positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
+            negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+            positiveDividerResult={this.props.dotsMachine.positiveDividerResult}
+            negativeDividerResult={this.props.dotsMachine.negativeDividerResult}
+            base={this.props.dotsMachine.machineState.base}
+            usage_mode={this.props.dotsMachine.machineState.usage_mode}
+            activityStarted={this.props.dotsMachine.machineState.activityStarted}
+            success={this.props.dotsMachine.machineState.success}
           />
-        }
-        {props.dotsMachine.machineState.baseSwitchVisible === true &&
-          <BaseSelector
-            base={props.dotsMachine.machineState.base}
-            onClick={props.changeBase}
+          }
+          <CanvasPIXI
+            title={this.props.dotsMachine.machineState.title}
+            totalZoneCount={this.props.dotsMachine.machineState.zones}
+            positivePowerZoneDots={this.props.dotsMachine.positivePowerZoneDots}
+            negativePowerZoneDots={this.props.dotsMachine.negativePowerZoneDots}
+            positiveDividerDots={this.props.dotsMachine.positiveDividerDots}
+            negativeDividerDots={this.props.dotsMachine.negativeDividerDots}
+            positiveDividerResult={this.props.dotsMachine.positiveDividerResult}
+            negativeDividerResult={this.props.dotsMachine.negativeDividerResult}
+            base={this.props.dotsMachine.machineState.base}
+            operator_mode={this.props.dotsMachine.machineState.operator_mode}
+            usage_mode={this.props.dotsMachine.machineState.usage_mode}
+            magicWandIsActive={this.props.dotsMachine.machineState.magicWandIsActive}
+            activateMagicWand={this.props.activateMagicWand}
+            addDot={this.props.addDot}
+            removeDot={this.props.removeDot}
+            rezoneDot={this.props.rezoneDot}
+            addMultipleDots={this.props.addMultipleDots}
+            removeMultipleDots={this.props.removeMultipleDots}
+            placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
+            cdnBaseUrl={this.props.dotsMachine.machineState.cdnBaseUrl}
+            startActivityFunc={this.props.startActivityFunc}
+            startActivity={this.props.dotsMachine.machineState.startActivity}
+            startActivityDoneFunc={this.props.startActivityDoneFunc}
+            activityStarted={this.props.dotsMachine.machineState.activityStarted}
+            operandA={this.props.dotsMachine.machineState.operandA}
+            operandB={this.props.dotsMachine.machineState.operandB}
+            error={this.props.error}
+            displayUserMessageAction={this.props.dotsMachine.machineState.displayUserMessageAction}
+            muted={this.props.dotsMachine.machineState.muted}
+            wantedResult={this.props.dotsMachine.machineState.wantedResult}
+            setDivisionResult={this.props.setDivisionResult}
+            successAction={this.props.dotsMachine.machineState.successAction}
+            activitySuccessFunc={this.props.successFunction}
+            success={this.props.dotsMachine.machineState.success}
+            isReady={this.onMachineReady.bind(this)}
           />
-        }
-        {props.dotsMachine.machineState.magicWandVisible === true &&
-          <MagicWand
-            onClick={props.activateMagicWand}
+          <ToolMenu
+            operatorMode={this.props.dotsMachine.machineState.operator_mode}
+          >
+            {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
+            <PlaceValueSwitch
+              onClick={this.props.showHidePlaceValue}
+            />
+            }
+            {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
+            <BaseSelector
+              base={this.props.dotsMachine.machineState.base}
+              onClick={this.props.changeBase}
+            />
+            }
+            {this.props.dotsMachine.machineState.magicWandVisible === true &&
+            <MagicWand
+              onClick={this.props.activateMagicWand}
+            />
+            }
+            <ResetButton
+              onClick={() => this.props.resetMachine(null, this.props.dotsMachine.machineState.title)}
+              resetAction={this.props.dotsMachine.machineState.resetAction}
+              title={this.props.dotsMachine.machineState.title}
+              visible={this.props.dotsMachine.machineState.resetVisible}
+            />
+          </ToolMenu>
+        </AllMachineDiv>
+        <PlaceHolderDiv
+          innerRef={(placeholder) => {
+            this.placeHolder = placeholder as HTMLDivElement;
+          }}
+        >
+          <PlaceHolderImg
+            src={this.placeholderImage}
+            role='presentation'
           />
-        }
-        <ResetButton
-          onClick={() => props.resetMachine(null, props.dotsMachine.machineState.title)}
-          resetAction={props.dotsMachine.machineState.resetAction}
-          title={props.dotsMachine.machineState.title}
-          visible={props.dotsMachine.machineState.resetVisible}
-        />
-      </TopMenuItem>
-      <ActivityDescriptor>
-        {props.dotsMachine.machineState.numberValueVisible === true &&
-        <Operand
-          value={props.dotsMachine.machineState.operandA}
-          onChange={props.operandChanged}
-          operator_mode={props.dotsMachine.machineState.operator_mode}
-          usage_mode={props.dotsMachine.machineState.usage_mode}
-          pos={OPERAND_POS.LEFT}
-          activityStarted={props.dotsMachine.machineState.activityStarted}
-          base={props.dotsMachine.machineState.base}
-          onEnter={props.startActivityFunc}
-        />
-        }
-        {props.dotsMachine.machineState.numberValueVisible === true &&
-        <Operator
-          operator_mode={props.dotsMachine.machineState.operator_mode}
-          usage_mode={props.dotsMachine.machineState.usage_mode}
-          activityStarted={props.dotsMachine.machineState.activityStarted}
-        />
-        }
-        {(props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
-          props.dotsMachine.machineState.numberValueVisible) &&
-        <Operand
-          value={props.dotsMachine.machineState.operandB}
-          operator_mode={props.dotsMachine.machineState.operator_mode}
-          usage_mode={props.dotsMachine.machineState.usage_mode}
-          onChange={props.operandChanged}
-          pos={OPERAND_POS.RIGHT}
-          activityStarted={props.dotsMachine.machineState.activityStarted}
-          base={props.dotsMachine.machineState.base}
-          onEnter={props.startActivityFunc}
-        />
-        }
-        {((props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE &&
-          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY) &&
-          props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
-          props.dotsMachine.machineState.numberValueVisible) &&
-        <ArrowDiv>
-          ↔
-        </ArrowDiv>
-        }
-        {((props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
-          props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE)
-          && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
-          props.dotsMachine.machineState.machineCodeVisible) &&
-        <ValueBoxes
-          positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
-          negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
-          base={props.dotsMachine.machineState.base}
-          isInline={true}
-          negativePresent={negativePresent}
-        />
-        }
-        {props.dotsMachine.machineState.usage_mode === USAGE_MODE.OPERATION &&
-        <GoButton
-          onClick={props.startActivityFunc}
-          activityStarted={props.dotsMachine.machineState.activityStarted}
-        />
-        }
-      </ActivityDescriptor>
-      {((props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY &&
-        props.dotsMachine.machineState.usage_mode !== USAGE_MODE.EXERCISE)
-        && props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE) &&
-        <ValueContainerDiv>
-          <ValueBoxes
-            positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
-            negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
-            base={props.dotsMachine.machineState.base}
-            isInline={false}
-            negativePresent={negativePresent}
-          />
-        </ValueContainerDiv>
-      }
-      {props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE &&
-      <ValueContainerDiv>
-        <DivisionResult
-          operandA={props.dotsMachine.machineState.operandA}
-          operandB={props.dotsMachine.machineState.operandB}
-          positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
-          negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
-          positiveDividerResult={props.dotsMachine.positiveDividerResult}
-          negativeDividerResult={props.dotsMachine.negativeDividerResult}
-          base={props.dotsMachine.machineState.base}
-          usage_mode={props.dotsMachine.machineState.usage_mode}
-          activityStarted={props.dotsMachine.machineState.activityStarted}
-          success={props.dotsMachine.machineState.success}
-        />
-      </ValueContainerDiv>
-      }
-      <CanvasPIXI
-        title={props.dotsMachine.machineState.title}
-        totalZoneCount={props.dotsMachine.machineState.zones}
-        positivePowerZoneDots={props.dotsMachine.positivePowerZoneDots}
-        negativePowerZoneDots={props.dotsMachine.negativePowerZoneDots}
-        positiveDividerDots={props.dotsMachine.positiveDividerDots}
-        negativeDividerDots={props.dotsMachine.negativeDividerDots}
-        positiveDividerResult={props.dotsMachine.positiveDividerResult}
-        negativeDividerResult={props.dotsMachine.negativeDividerResult}
-        base={props.dotsMachine.machineState.base}
-        operator_mode={props.dotsMachine.machineState.operator_mode}
-        usage_mode={props.dotsMachine.machineState.usage_mode}
-        magicWandIsActive={props.dotsMachine.machineState.magicWandIsActive}
-        activateMagicWand={props.activateMagicWand}
-        addDot={props.addDot}
-        removeDot={props.removeDot}
-        rezoneDot={props.rezoneDot}
-        addMultipleDots={props.addMultipleDots}
-        removeMultipleDots={props.removeMultipleDots}
-        placeValueOn={props.dotsMachine.machineState.placeValueOn}
-        cdnBaseUrl={props.dotsMachine.machineState.cdnBaseUrl}
-        startActivityFunc={props.startActivityFunc}
-        startActivity={props.dotsMachine.machineState.startActivity}
-        startActivityDoneFunc={props.startActivityDoneFunc}
-        activityStarted={props.dotsMachine.machineState.activityStarted}
-        operandA={props.dotsMachine.machineState.operandA}
-        operandB={props.dotsMachine.machineState.operandB}
-        error={props.error}
-        displayUserMessageAction={props.dotsMachine.machineState.displayUserMessageAction}
-        muted={props.dotsMachine.machineState.muted}
-        wantedResult={props.dotsMachine.machineState.wantedResult}
-        setDivisionResult={props.setDivisionResult}
-        successAction={props.dotsMachine.machineState.successAction}
-        activitySuccessFunc={props.successFunction}
-        success={props.dotsMachine.machineState.success}
-      />
-    </div>
-  );
-};
+        </PlaceHolderDiv>
+      </div>
+    );
+  }
+}
 
 interface IProps {
   readonly addDot: (zoneId: number,
@@ -301,9 +337,26 @@ const ValueContainerDiv = styled.div`
 `;
 
 const ArrowDiv = styled.div`
-      ${operationItem}
-      font-family: Noto Sans;
-      font-size: 50px;
-      font-weight: bold;
-      margin-top: 2px;
-    `;
+  ${operationItem}
+  font-family: Noto Sans;
+  font-size: 50px;
+  font-weight: bold;
+  margin-top: 2px;
+`;
+
+const AllMachineDiv = styled.div`
+  visibility: hidden;
+  overflow: hidden;
+`;
+
+const PlaceHolderDiv = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const PlaceHolderImg = styled.img`
+  display: block;
+  margin: auto;
+  width: 20%;
+  height: 20%;
+`;

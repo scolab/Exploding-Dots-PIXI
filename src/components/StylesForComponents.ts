@@ -8,10 +8,9 @@ export const gradientBackground = `
   border-radius: 25px;
 `;
 
-export const topLeftElement = `
+export const toolMenuElement = `
   margin-left: 10px;
   margin-top: 33px;
-  float: right;
 `;
 
 export const operationItem = `

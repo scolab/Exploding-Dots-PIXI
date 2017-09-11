@@ -1,5 +1,5 @@
 import React from 'react';
-import {gradientBackground, topLeftElement} from './StylesForComponents';
+import {gradientBackground, toolMenuElement} from './StylesForComponents';
 import styled from 'styled-components';
 
 interface IProps {
@@ -26,7 +26,7 @@ export default PlaceValueSwitch;
 
 const GradientBackgroundButton = styled.button`
     ${gradientBackground}
-    ${topLeftElement}
+    ${toolMenuElement}
     width: 47px;
     height: 47px;
     vertical-align: middle;

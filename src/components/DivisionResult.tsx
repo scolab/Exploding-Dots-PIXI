@@ -3,6 +3,7 @@ import katex from 'katex';
 import { DotVO } from '../VO/DotVO';
 import { BASE, IUSAGE_MODE, USAGE_MODE } from '../Constants';
 import { addSuperscriptWhereNeeded, superscriptToKatex, superscriptToNormal } from '../utils/StringUtils';
+import styled from 'styled-components';
 
 interface IProps {
   readonly operandA: string;
@@ -70,9 +71,9 @@ export default class DivisionResult extends Component<IProps, {}> {
 
       const resultValueKatex = katex.renderToString(operandValue + resultValue);
       return (
-        <div>
+        <ContainerDiv>
           <div dangerouslySetInnerHTML={{__html: resultValueKatex}}/>
-        </div>
+        </ContainerDiv>
       );
     } else {
       return null;
@@ -118,3 +119,8 @@ export default class DivisionResult extends Component<IProps, {}> {
     return stringToReturn;
   }
 }
+
+const ContainerDiv = styled.div`
+  text-align: center;
+  margin-top: 20px;
+`;
