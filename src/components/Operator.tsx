@@ -50,7 +50,6 @@ const GradientBackgroundDiv = styled.div`
       font-weight: bold;
       height: 47px;
       line-height: 47px;
-      margin-top: 30px;
       width: 40px;
     `;
 
@@ -59,5 +58,4 @@ const OperationDiv = styled.div`
       font-family: Noto Sans;
       font-size: 50px;
       font-weight: bold;
-      margin-top: 2px;
     `;

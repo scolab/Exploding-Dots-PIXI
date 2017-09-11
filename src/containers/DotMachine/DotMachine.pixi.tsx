@@ -341,7 +341,6 @@ const ArrowDiv = styled.div`
   font-family: Noto Sans;
   font-size: 50px;
   font-weight: bold;
-  margin-top: 2px;
 `;
 
 const AllMachineDiv = styled.div`

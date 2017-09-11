@@ -14,7 +14,6 @@ export const toolMenuElement = `
 `;
 
 export const operationItem = `
-  margin-top: 30px;
   margin-left: 10px;
   display: inline-block;
 `;

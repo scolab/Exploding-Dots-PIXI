@@ -112,8 +112,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   private textures: PIXI.loaders.TextureDictionary | undefined;
   private boundOnResize: EventListenerObject;
   private canvasDiv: HTMLDivElement;
-  /*private placeHolder: HTMLImageElement;
-  private placeholderImage = require('./images/placeholder.gif');*/
 
   constructor(props: ICanvasPixiProps) {
     super(props);
@@ -127,11 +125,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   }
 
   public render(): JSX.Element {
-
-    /*const PlaceHolderImg = styled.img`
-      width: 100%;
-      height: 1px;
-     `;*/
 
     return (
       <ContainerDiv>
@@ -310,11 +303,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.powerZoneManager.start();
       this.props.isReady();
       this.canvasDiv.style.visibility = 'visible';
-      this.canvasDiv.style.height = this.props.operator_mode ===
+      /*this.canvasDiv.style.height = this.props.operator_mode ===
         OPERATOR_MODE.DIVIDE ?
           `${SETTINGS.GAME_HEIGHT_DIVIDE}px`
           :
-          `${SETTINGS.GAME_HEIGHT}px`;
+          `${SETTINGS.GAME_HEIGHT}px`;*/
+      this.canvasDiv.style.paddingBottom = this.props.operator_mode ===
+      OPERATOR_MODE.DIVIDE ? '48.8%' :
+        '36.8%';
       this.canvasDiv.style.overflow = 'visible';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
         this.props.startActivityFunc();
@@ -806,5 +802,5 @@ const CanvasDivStyled = styled.div`
 
 const ContainerDiv = styled.div`
   display: block;
-  margin-top: -5%;
+  position: relative;
 `;
