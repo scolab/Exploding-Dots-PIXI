@@ -29,9 +29,9 @@ storiesOf('Exploding Dots', module)
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
-        numberValueVisible={false}
-        machineCodeVisible={false}
-        baseSwitchVisible={false}
+        numberValueVisible={true}
+        machineCodeVisible={true}
+        baseSwitchVisible={true}
         cdnBaseUrl={''}
         wantedResult={{
           positiveDots: [1, 1, 0, 0, 1],
@@ -62,7 +62,7 @@ storiesOf('Exploding Dots', module)
         placeValueSwitchVisible={false}
         placeValueOn={false}
         magicWandVisible={false}
-        numberValueVisible={false}
+        numberValueVisible={true}
       />
     ))
     .add('Insighto Freeplay', () => (

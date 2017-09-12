@@ -135,27 +135,29 @@ const BoxContainer = styled.div`
 `;
 
 const EmptyDiv = styled.div`
-  background-color: #eeeeee;
-  border-style: dotted none dotted dotted;
-  border-color: black;
-  border-width: 2px;
+  background-color: #ffffff;
   height: 45px;
   width: 32px;
   float: left;
+  border-radius: 5px;
+  margin-right: 5px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #ffffff;
+  opacity: 0.5;
 `;
 
 const NormalDiv = styled.div`
   background-color: #ffffff;
-  &:last-child{
-		border-style: solid solid solid solid;
-	}
-  border-style: solid none solid solid;
+  border-radius: 5px;
+  border-style: solid;
   border-width: 2px;
   height: 45px;
   width: auto;
   min-width: 32px;
   float: left;
-  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '#ff0000' : '#000000'};
+  margin-right: 5px;
+  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '#ff0000' : '#ffffff'};
 `;
 
 const NumberDiv = styled.div`

@@ -55,12 +55,16 @@ export default class Operand extends Component<IProps, {}> {
 
   public render(): JSX.Element {
     // console.log('render', this.props.value);
+    const algebraContainsOperator: boolean = this.props.value.indexOf('+') !== -1 || this.props.value.indexOf('-') !== -1;
     if (this.props.pos === OPERAND_POS.LEFT) {
-      const textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
+      let textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
+      if (this.props.operator_mode === OPERATOR_MODE.DISPLAY && this.props.usage_mode === USAGE_MODE.FREEPLAY) {
+        textWidth += 20;
+      }
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
-            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+            {(algebraContainsOperator &&
               this.props.base[1] === BASE.BASE_X &&
               this.props.usage_mode !== USAGE_MODE.OPERATION) &&
               <ParenthesisSpan>&#40;</ParenthesisSpan>
@@ -76,7 +80,7 @@ export default class Operand extends Component<IProps, {}> {
               usage_mode={this.props.usage_mode}
               textWidth={textWidth}
             />
-            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+            {(algebraContainsOperator &&
               this.props.base[1] === BASE.BASE_X &&
               this.props.usage_mode !== USAGE_MODE.OPERATION) &&
             <ParenthesisSpan>&#41;</ParenthesisSpan>
@@ -89,7 +93,7 @@ export default class Operand extends Component<IProps, {}> {
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
-            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+            {(algebraContainsOperator &&
               this.props.base[1] === BASE.BASE_X &&
               this.props.usage_mode !== USAGE_MODE.OPERATION) &&
             <ParenthesisSpan>&#40;</ParenthesisSpan>
@@ -105,7 +109,7 @@ export default class Operand extends Component<IProps, {}> {
               usage_mode={this.props.usage_mode}
               textWidth={textWidth}
             />
-            {(this.props.operator_mode === OPERATOR_MODE.DIVIDE &&
+            {(algebraContainsOperator &&
               this.props.base[1] === BASE.BASE_X &&
               this.props.usage_mode !== USAGE_MODE.OPERATION) &&
             <ParenthesisSpan>&#41;</ParenthesisSpan>
@@ -210,7 +214,8 @@ const OperationDiv = styled.div`
 `;
 
 const OperationInput = styled.input`
-  background-color: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY ? 'transparent' : '#ffffff')};
+  background-color: ${(props: IInputBox) => props.usage_mode === USAGE_MODE.EXERCISE ? 'transparent' : '#ffffff'};
+  border-radius: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '10px' : '0px')};
   border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0px' : '2px solid blue')};
   font-family: Noto Sans;
   font-size: 30px;

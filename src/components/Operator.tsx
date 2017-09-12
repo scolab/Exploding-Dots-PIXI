@@ -12,11 +12,12 @@ interface IProps {
 export default class Operator extends Component<IProps, {}> {
 
   public render(): JSX.Element | null {
+    // ↔
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
         return (
           <OperationDiv>
-            ↔
+            &#60; &#62;
           </OperationDiv>
         );
       case OPERATOR_MODE.ADD:
@@ -56,6 +57,6 @@ const GradientBackgroundDiv = styled.div`
 const OperationDiv = styled.div`
       ${operationItem}
       font-family: Noto Sans;
-      font-size: 50px;
+      font-size: 30px;
       font-weight: bold;
     `;

@@ -10,7 +10,7 @@ import BaseSelector from '../../components/BaseSelector';
 import PlaceValueSwitch from '../../components/PlaceValueSwitch';
 import ResetButton from '../../components/ResetButton';
 import MagicWand from '../../components/MagicWand';
-import TopMenuItem, { default as ToolMenu } from '../../components/ToolMenu';
+import ToolMenu from '../../components/ToolMenu';
 import ActivityDescriptor from '../../components/ActivityDescriptor';
 import Operand from '../../components/Operand';
 import Operator from '../../components/Operator';
@@ -337,10 +337,11 @@ const ValueContainerDiv = styled.div`
 `;
 
 const ArrowDiv = styled.div`
-  ${operationItem}
+ ${operationItem}
   font-family: Noto Sans;
-  font-size: 50px;
+  font-size: 30px;
   font-weight: bold;
+  margin-top: 2px;
 `;
 
 const AllMachineDiv = styled.div`
