@@ -1,6 +1,6 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.1.6",
+  "version": "0.1.72",
   "description": "Exploding dots component",
   "repository": {
     "type": "git",
@@ -65,7 +65,7 @@
     "babel-runtime": "^6.11.6",
     "eventemitter3": "^2.0.2",
     "express": "^4.14.1",
-    "gsap": "^1.19.1",
+    "gsap": "^1.20.2",
     "howler": "^2.0.3",
     "katex": "^0.8.3",
     "lodash": "^4.17.4",

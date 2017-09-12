@@ -51,6 +51,16 @@ class DotsMachine extends Component<IProps, {}> {
       || this.props.dotsMachine.machineState.base[1] === BASE.BASE_X;
     return (
       <div>
+        <PlaceHolderDiv
+          innerRef={(placeholder) => {
+            this.placeHolder = placeholder as HTMLDivElement;
+          }}
+        >
+          <PlaceHolderImg
+            src={this.placeholderImage}
+            role='presentation'
+          />
+        </PlaceHolderDiv>
         <AllMachineDiv
           innerRef={(machineDiv) => { this.machineDiv = machineDiv as HTMLDivElement; }}
         >
@@ -205,16 +215,6 @@ class DotsMachine extends Component<IProps, {}> {
             />
           </ToolMenu>
         </AllMachineDiv>
-        <PlaceHolderDiv
-          innerRef={(placeholder) => {
-            this.placeHolder = placeholder as HTMLDivElement;
-          }}
-        >
-          <PlaceHolderImg
-            src={this.placeholderImage}
-            role='presentation'
-          />
-        </PlaceHolderDiv>
       </div>
     );
   }
@@ -350,13 +350,16 @@ const AllMachineDiv = styled.div`
 `;
 
 const PlaceHolderDiv = styled.div`
+  padding-bottom: 36.8%;
+  position: relative;
   width: 100%;
-  height: 100%;
 `;
-
 const PlaceHolderImg = styled.img`
   display: block;
-  margin: auto;
+  position: absolute;
+  margin: -10% 0 0 -10%;
+  left: 50%;
   width: 20%;
-  height: 20%;
+  height: auto;
+  top: 50%;
 `;

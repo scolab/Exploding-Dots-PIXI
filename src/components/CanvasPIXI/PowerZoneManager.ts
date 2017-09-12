@@ -1037,6 +1037,8 @@ export class PowerZoneManager extends PIXI.Container {
       this.movingDotsContainer.removeChild(dotSprite.ghost);
       dotSprite.ghost.alpha = 1;
       this.spritePool.dispose(dotSprite.ghost, dotSprite.dot.isPositive, dotSprite.dot.color);
+    } else {
+      console.log('NO GHOST!!! NOT GOOD!!!');
     }
     dotSprite.ghost = null;
   }
