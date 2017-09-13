@@ -1,7 +1,4 @@
 import 'pixi.js';
-// http://www.material-ui.com/
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
 import React, {Component} from 'react';
@@ -107,16 +104,11 @@ class ExplodingDots extends Component<IProps, {}> {
   }
 
   public render(): JSX.Element {
-    const theme = getMuiTheme({
-      fontFamily: 'Noto sans',
-    });
     return (
       <Provider store={this.store}>
-        <MuiThemeProvider muiTheme={theme}>
           <div>
             <DotsMachine id='0' />
           </div>
-        </MuiThemeProvider>
       </Provider>
     );
   }

@@ -461,7 +461,6 @@ const dotsReducer = (state: IState | null = null,
       stateCopy.machineState.activityStarted = false;
       return stateCopy;
     case ACTIONS.SUCCESS:
-      console.log(ACTIONS.SUCCESS);
       stateCopy = { ...state };
       stateCopy.machineState.success = true;
       return stateCopy;

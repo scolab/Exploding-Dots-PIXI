@@ -27,8 +27,8 @@ export default PlaceValueSwitch;
 const GradientBackgroundButton = styled.button`
     ${gradientBackground}
     ${toolMenuElement}
-    width: 47px;
-    height: 47px;
+    width: 36px;
+    height: 36px;
     vertical-align: middle;
     border: none;
     cursor: pointer;
@@ -37,6 +37,6 @@ const GradientBackgroundButton = styled.button`
 const GradientBackgroundImg = styled.img`
     margin-top: 3px;
     margin-left: 2px;
-    width: 17px;
-    height: 24px;
+    width: 14px;
+    height: 20px;
   `;

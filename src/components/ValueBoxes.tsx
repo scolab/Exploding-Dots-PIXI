@@ -19,6 +19,8 @@ interface IBoxProps {
 
 interface INumberProps {
   hasTwoRow: boolean;
+  numOfCharacter: number;
+  isNegative: boolean;
 }
 
 interface IBoxContainer {
@@ -69,6 +71,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
               {hasPositiveText &&
               <NumberDiv
                 hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+                numOfCharacter={positiveText.length}
+                isNegative={false}
               >
                 {positiveText}
               </NumberDiv>
@@ -76,6 +80,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
               {(this.props.negativePresent && hasNegativeText) &&
                 <NumberDiv
                   hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+                  numOfCharacter={negativeText !== '0' ? negativeText.length + 1 : negativeText.length}
+                  isNegative={true}
                 >
                   {negativeText !== '0' ? '-' : ''}{negativeText}
                 </NumberDiv>
@@ -83,6 +89,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
               {hasPositiveText === false && hasNegativeText === false &&
               <NumberDiv
                 hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+                numOfCharacter={1}
+                isNegative={false}
               >
                 0
               </NumberDiv>
@@ -101,6 +109,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
             {(hasPositiveText || !hasNegativeText) &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+              numOfCharacter={positiveText.length}
+              isNegative={false}
             >
               {positiveText}
             </NumberDiv>
@@ -108,6 +118,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
             {(this.props.negativePresent && hasNegativeText) &&
             <NumberDiv
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
+              numOfCharacter={negativeText !== '0' ? negativeText.length + 1 : negativeText.length}
+              isNegative={true}
             >
               {negativeText !== '0' ? '-' : ''}{negativeText}
             </NumberDiv>
@@ -130,17 +142,17 @@ const BoxContainer = styled.div`
   width:auto;
   margin:0 auto;
   display: inline-block;
-  margin-left: ${(props: IBoxContainer) => props.isInline ? '10px' : '0px'};
+  margin-left: ${(props: IBoxContainer) => props.isInline ? '12px' : '0px'};
   margin-bottom: -16px;
 `;
 
 const EmptyDiv = styled.div`
-  background-color: #ffffff;
-  height: 45px;
-  width: 32px;
+  background-color: #fcfcfc;
+  height: 44px;
+  width: 36px;
   float: left;
-  border-radius: 5px;
-  margin-right: 5px;
+  border-radius: 4px;
+  margin-right: 6px;
   border-style: solid;
   border-width: 2px;
   border-color: #ffffff;
@@ -148,24 +160,23 @@ const EmptyDiv = styled.div`
 `;
 
 const NormalDiv = styled.div`
-  background-color: #ffffff;
-  border-radius: 5px;
+  background-color: #fcfcfc;
+  border-radius: 4px;
   border-style: solid;
   border-width: 2px;
-  height: 45px;
+  height: 44px;
   width: auto;
-  min-width: 32px;
+  min-width: 36px;
   float: left;
-  margin-right: 5px;
-  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '#ff0000' : '#ffffff'};
+  margin-right: 6px;
+  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? 'rgba(255, 102, 102, 0.6)' : 'rgba(255, 255, 255, 1)'};
 `;
 
 const NumberDiv = styled.div`
-  font-family: Noto Sans;
-  font-size: ${(props: INumberProps) => (props.hasTwoRow ? '15px' : '25px')};
-  font-weight: bold;
-  color: #000000;
-  text-align: center;
-  padding: ${(props: INumberProps) => (props.hasTwoRow ? '1px 5px;' : '5px 5px;')};
+  font-family: Nunito;
+  font-size: 22px;
+  color: #48209c;
+  text-align: right;
+  padding: ${(props: INumberProps) => (props.hasTwoRow ? '1px 11px 1px 4px' : props.numOfCharacter === 1 ? '8px 11px 0px 11px' : '8px 4px 0px 4px')};
+  margin-top: ${(props: INumberProps) => (props.hasTwoRow ? props.isNegative ? '-12px' : '-3px' : '0px')};
 `;
-

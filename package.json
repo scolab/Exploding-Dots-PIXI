@@ -69,7 +69,6 @@
     "howler": "^2.0.3",
     "katex": "^0.8.3",
     "lodash": "^4.17.4",
-    "material-ui": "^0.17.0",
     "pixi-particles": "^2.1.4",
     "pixi.js": "^4.5.1",
     "react-redux": "^5.0.1",

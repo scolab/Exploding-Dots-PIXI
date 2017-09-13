@@ -57,9 +57,8 @@ export class DividerZone extends PIXI.Container {
         this.positiveText = new Text(Object.keys(positiveDots).length.toString(10), {
           align: 'center',
           fill: 0xBCBCBC,
-          fontFamily: 'Noto Sans',
+          fontFamily: 'Nunito',
           fontSize: 34,
-          fontWeight: 'bold',
         });
         this.positiveText.anchor.set(0.5);
         this.positiveText.x = 32;
@@ -70,9 +69,8 @@ export class DividerZone extends PIXI.Container {
         this.negativeText = new Text(Object.keys(negativeDots).length.toString(10), {
           align: 'center',
           fill: 0xFFFF00,
-          fontFamily: 'Noto Sans',
+          fontFamily: 'Nunito',
           fontSize: 34,
-          fontWeight: 'bold',
         });
         this.negativeText.anchor.set(0.5);
         this.negativeText.x = 32;

@@ -102,7 +102,7 @@ class DotsMachine extends Component<IProps, {}> {
               this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
               this.props.dotsMachine.machineState.numberValueVisible) &&
             <ArrowDiv>
-              ↔
+              &#60; &#62;
             </ArrowDiv>
             }
             {((this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
@@ -196,23 +196,23 @@ class DotsMachine extends Component<IProps, {}> {
               onClick={this.props.showHidePlaceValue}
             />
             }
-            {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
-            <BaseSelector
-              base={this.props.dotsMachine.machineState.base}
-              onClick={this.props.changeBase}
-            />
-            }
-            {this.props.dotsMachine.machineState.magicWandVisible === true &&
-            <MagicWand
-              onClick={this.props.activateMagicWand}
-            />
-            }
             <ResetButton
               onClick={() => this.props.resetMachine(null, this.props.dotsMachine.machineState.title)}
               resetAction={this.props.dotsMachine.machineState.resetAction}
               title={this.props.dotsMachine.machineState.title}
               visible={this.props.dotsMachine.machineState.resetVisible}
             />
+            {this.props.dotsMachine.machineState.magicWandVisible === true &&
+            <MagicWand
+              onClick={this.props.activateMagicWand}
+            />
+            }
+            {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
+            <BaseSelector
+              base={this.props.dotsMachine.machineState.base}
+              onClick={this.props.changeBase}
+            />
+            }
           </ToolMenu>
         </AllMachineDiv>
       </div>
@@ -338,9 +338,8 @@ const ValueContainerDiv = styled.div`
 
 const ArrowDiv = styled.div`
  ${operationItem}
-  font-family: Noto Sans;
+  font-family: Nunito;
   font-size: 30px;
-  font-weight: bold;
   margin-top: 2px;
 `;
 

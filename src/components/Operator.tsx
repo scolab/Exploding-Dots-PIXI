@@ -46,9 +46,8 @@ const GradientBackgroundDiv = styled.div`
       ${operationItem}
       vertical-align: top;
       border-radius: 23px;
-      font-family: Noto Sans;
+      font-family: Nunito;
       font-size: 32px;
-      font-weight: bold;
       height: 47px;
       line-height: 47px;
       width: 40px;
@@ -56,7 +55,6 @@ const GradientBackgroundDiv = styled.div`
 
 const OperationDiv = styled.div`
       ${operationItem}
-      font-family: Noto Sans;
+      font-family: Nunito;
       font-size: 30px;
-      font-weight: bold;
     `;

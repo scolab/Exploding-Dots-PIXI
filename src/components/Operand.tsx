@@ -56,23 +56,23 @@ export default class Operand extends Component<IProps, {}> {
   public render(): JSX.Element {
     // console.log('render', this.props.value);
     const algebraContainsOperator: boolean = this.props.value.indexOf('+') !== -1 || this.props.value.indexOf('-') !== -1;
+    let displayText: string = this.props.value;
+    if (algebraContainsOperator &&
+      this.props.base[1] === BASE.BASE_X &&
+      this.props.usage_mode !== USAGE_MODE.OPERATION ||
+      this.props.base[1] === BASE.BASE_X &&
+      this.props.activityStarted) {
+      displayText = '(' + displayText + ')';
+    }
     if (this.props.pos === OPERAND_POS.LEFT) {
-      let textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
-      if (this.props.operator_mode === OPERATOR_MODE.DISPLAY && this.props.usage_mode === USAGE_MODE.FREEPLAY) {
-        textWidth += 20;
-      }
+      const textWidth: number = Math.floor(this.getTextWidth(displayText, 22, '800', 'Nunito')) + 10;
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
-            {(algebraContainsOperator &&
-              this.props.base[1] === BASE.BASE_X &&
-              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
-              <ParenthesisSpan>&#40;</ParenthesisSpan>
-            }
             <OperationInput
               type='text'
               onChange={this.onChange}
-              value={this.props.value}
+              value={displayText}
               innerRef={(inputText) => {
                 this.inputText = inputText as HTMLInputElement;
               }}
@@ -80,28 +80,18 @@ export default class Operand extends Component<IProps, {}> {
               usage_mode={this.props.usage_mode}
               textWidth={textWidth}
             />
-            {(algebraContainsOperator &&
-              this.props.base[1] === BASE.BASE_X &&
-              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
-            <ParenthesisSpan>&#41;</ParenthesisSpan>
-            }
           </form>
         </OperationDiv>
       );
     } else {
-      const textWidth: number = Math.floor(this.getTextWidth(this.props.value, 30, 'bold', 'Noto Sans')) + 1;
+      const textWidth: number = Math.floor(this.getTextWidth(displayText, 22, '800', 'Nunito')) + 10;
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
-            {(algebraContainsOperator &&
-              this.props.base[1] === BASE.BASE_X &&
-              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
-            <ParenthesisSpan>&#40;</ParenthesisSpan>
-            }
             <OperationInput
               type='text'
               onChange={this.onChange}
-              value={this.props.value}
+              value={displayText}
               innerRef={(inputText) => {
                 this.inputText = inputText as HTMLInputElement;
               }}
@@ -109,11 +99,6 @@ export default class Operand extends Component<IProps, {}> {
               usage_mode={this.props.usage_mode}
               textWidth={textWidth}
             />
-            {(algebraContainsOperator &&
-              this.props.base[1] === BASE.BASE_X &&
-              this.props.usage_mode !== USAGE_MODE.OPERATION) &&
-            <ParenthesisSpan>&#41;</ParenthesisSpan>
-            }
           </form>
         </OperationDiv>
       );
@@ -214,20 +199,15 @@ const OperationDiv = styled.div`
 `;
 
 const OperationInput = styled.input`
-  background-color: ${(props: IInputBox) => props.usage_mode === USAGE_MODE.EXERCISE ? 'transparent' : '#ffffff'};
-  border-radius: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '10px' : '0px')};
-  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0px' : '2px solid blue')};
-  font-family: Noto Sans;
-  font-size: 30px;
-  font-weight: bold;
-  height: 45px;
+  background-color: #fcfcfc;
+  border-radius: 4px;
+  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0px' : '1px solid #48209c')};
+  font-family: Nunito;
+  font-size: 22px;
+  color: #48209c;
+  height: 44px;
   text-align: center;
-  width: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? props.textWidth + 'px' : '252px')};
-  min-width: 30px;
+  width: ${(props: IInputBox) => props.textWidth + 'px'};
+  min-width: 82px;
 `;
 
-const ParenthesisSpan = styled.span`
-  font-family: Noto Sans;
-  font-size: 30px;
-  font-weight: bold;
-`;

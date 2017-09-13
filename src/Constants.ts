@@ -44,12 +44,12 @@ export enum POSITION_INFO {
 }
 
 export enum BOX_INFO {
-  BOX_WIDTH = 158,
-  BOX_HEIGHT = 240,
+  BOX_WIDTH = 156,
+  BOX_HEIGHT = 238,
   HALF_BOX_HEIGHT = 115,
   BOX_Y = 72,
   LEFT_GUTTER = 66,
-  GUTTER_WIDTH = 23,
+  GUTTER_WIDTH = 10,
 }
 
 export enum MAX_DOT {

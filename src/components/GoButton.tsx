@@ -21,48 +21,44 @@ const GoButton = (props: IProps) => {
       type='button'
       onClick={props.onClick}
     >
-      <ImgStyled
-        src={img}
-        role='presentation'
-      />
+      <TextStyled>
+      &#62;
+      </TextStyled>
     </GradientBackgroundButton>
   );
 };
 
 const GradientBackgroundButton = styled.button`
-    ${gradientBackground}
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 20px;
-    width: 47px;
-    height: 47px;
-    line-height: 47px;
-    vertical-align: middle;
-    margin-top: -6px;
-    margin-left: 10px;
-  `;
+  font-family: Nunito;
+  font-size: 30px;
+  color: #FCFCFC;
+  background: #48209c;
+  border-radius: 25px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: rgba(200, 200, 200, 1);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  vertical-align: middle;
+  margin-top: -6px;
+  margin-left: 6px;
+  padding: 0px 1px 0px 5px;
+`;
 
 const InvisibleButton = styled.button`
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 20px;
-    width: 47px;
-    height: 47px;
-    line-height: 47px;
-    vertical-align: middle;
-    margin-top: -6px;
-    margin-left: 10px;
-    visibility: hidden;
-  `;
+  border: none;
+  width: 36px;
+  height: 36px;
+  vertical-align: middle;
+  margin-top: -6px;
+  margin-left: 10px;
+  visibility: hidden;
+`;
 
-const ImgStyled = styled.img`
-     margin-top: 15px;
-     margin-left: 1px;
-     vertical-align: top;
-     width: 20px;
-     height: 14px;
-  `;
+const TextStyled = styled.div`
+  position: relative;
+  top: -5px;
+`;
 
 export default GoButton;

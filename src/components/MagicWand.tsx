@@ -27,16 +27,16 @@ const GradientBackgroundButton = styled.button`
     ${toolMenuElement}
     border: none;
     cursor: pointer;
-    height: 47px;
+    width: 36px;
+    height: 36px;
     vertical-align: middle;
-    width: 47px;
   `;
 
 const GradientBackgroundImg = styled.img`
     margin-top: 4px;
     margin-left: 4px;
-    width: 26px;
-    height: 26px;
+    width: 20px;
+    height: 20px;
   `;
 
 export default MagicWand;

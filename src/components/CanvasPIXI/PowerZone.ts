@@ -105,9 +105,8 @@ export class PowerZone extends PIXI.Container {
       this.placeValueText = new PIXI.Text('X', {
         align: 'center',
         fill: 0xBCBCBC,
-        fontFamily: 'Noto Sans',
+        fontFamily: 'Nunito',
         fontSize: 40,
-        fontWeight: 'bold',
       });
       if (this.zonePosition === 0) {
         this.placeValueText.text = '1';
@@ -115,9 +114,8 @@ export class PowerZone extends PIXI.Container {
         this.placeValueExponent = new PIXI.Text(this.zonePosition.toString(), {
           align: 'center',
           fill: 0xBCBCBC,
-          fontFamily: 'Noto Sans',
+          fontFamily: 'Nunito',
           fontSize: 25,
-          fontWeight: 'bold',
         });
       }
     } else {
@@ -130,9 +128,8 @@ export class PowerZone extends PIXI.Container {
       this.placeValueText = new PIXI.Text(text, {
         align: 'center',
         fill: 0xBCBCBC,
-        fontFamily: 'Noto Sans',
+        fontFamily: 'Nunito',
         fontSize: 40,
-        fontWeight: 'bold',
       });
     }
     this.placeValueText.anchor.x = 0.5;
@@ -149,20 +146,11 @@ export class PowerZone extends PIXI.Container {
     }
 
     if (operatorMode === OPERATOR_MODE.DIVIDE) {
-      /*this.positiveDivideCounter = new PIXI.Sprite(textures['dot_div_value.png']);
-      xPos = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-      xPos += BOX_INFO.BOX_WIDTH;
-      xPos -= this.positiveDivideCounter.width;
-      this.positiveDivideCounter.x = xPos;
-      this.positiveDivideCounter.y = BOX_INFO.BOX_Y;
-      this.addChild(this.positiveDivideCounter);*/
-
       this.positiveDividerText = new PIXI.Text('', {
         align: 'center',
         fill: 0x565656,
-        fontFamily: 'Noto Sans',
+        fontFamily: 'Nunito',
         fontSize: 24,
-        fontWeight: 'bold',
       });
       this.positiveDividerText.anchor.x = 0.5;
       xPos = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
@@ -173,26 +161,6 @@ export class PowerZone extends PIXI.Container {
       this.positiveDividerText.y = BOX_INFO.BOX_Y - 30;
       this.addChild(this.positiveDividerText);
 
-      /*this.negativeDivideCounter = new PIXI.Sprite(textures['antidot_div_value.png']);
-      this.negativeDivideCounter.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH));
-      let yPos: number = BOX_INFO.BOX_HEIGHT + BOX_INFO.BOX_Y;
-      yPos -= this.negativeDivideCounter.height;
-      yPos += 1;
-      this.negativeDivideCounter.y = yPos;
-      this.addChild(this.negativeDivideCounter);
-
-      this.negativeDividerText = new PIXI.Text('', {
-        align: 'center',
-        fill: 0x565656,
-        fontFamily: 'Noto Sans',
-        fontSize: 16,
-        fontWeight: 'bold',
-      });
-      this.negativeDividerText.anchor.x = 0.5;
-      this.negativeDividerText.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 15;
-      this.negativeDividerText.y = this.negativeDivideCounter.y + 15;
-      this.addChild(this.negativeDividerText);
-    */
       this.divisionGhostContainer = new DotsContainer();
       this.divisionGhostContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
       this.divisionGhostContainer.y = BOX_INFO.BOX_Y;

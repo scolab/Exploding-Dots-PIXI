@@ -30,19 +30,19 @@ export default BaseSelector;
 const GradientBackgroundButton = styled.button`
       ${gradientBackground}
       ${toolMenuElement}
-      font-family: Noto Sans;
-      font-weight: bold;
+      font-family: Nunito;
       font-size: 24px;
-      width: 132px;
-      height: 46px;
+      width: 100px;
+      height: 36px;
       vertical-align: middle;
       text-align: center;
       border: none;
       cursor: pointer;
+      margin-left: 20px;
     `;
 
 const ArrowImg = styled.img`
-    margin: 5px 6px 1px 10px;
-    width: 36px;
-    height: 14px;
+    margin: 3px 0px 4px 5px;
+    width: 27px;
+    height: 10px;
   `;

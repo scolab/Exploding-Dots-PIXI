@@ -9,26 +9,27 @@ interface IProps {
   visible: boolean;
 }
 
+interface IElemProps {
+  visible: boolean;
+}
+
 export default class ResetButton extends Component<IProps, {}> {
 
   private img: any = require('./images/refresh@2x.png');
 
   public render(): JSX.Element {
-    if (this.props.visible) {
-      return (
-        <GradientBackgroundButton
-          type='button'
-          onClick={() => this.reset()}
-        >
-          <GradientBackgroundImg
-            src={this.img}
-            role='presentation'
-          />
-        </GradientBackgroundButton>
-      );
-    }
     return (
-      <PlaceHolder />
+      <GradientBackgroundButton
+        type='button'
+        onClick={() => this.reset()}
+        visible={this.props.visible}
+        disabled={this.props.visible === false}
+      >
+        <GradientBackgroundImg
+          src={this.img}
+          role='presentation'
+        />
+      </GradientBackgroundButton>
     );
   }
 
@@ -43,23 +44,17 @@ export default class ResetButton extends Component<IProps, {}> {
 const GradientBackgroundButton = styled.button`
   ${gradientBackground}
   ${toolMenuElement}
-  width: 47px;
-  height: 47px;
+  width: 36px;
+  height: 36px;
   vertical-align: middle;
   border: none;
-  cursor: pointer;
-`;
-
-const PlaceHolder = styled.div`
-  ${toolMenuElement}
-  width: 47px;
-  height: 47px;
-  vertical-align: middle;
+  cursor: ${(props: IElemProps) => (props.visible) ? 'pointer' : 'default'};
+  opacity: ${(props: IElemProps) => (props.visible) ? '1' : '0.5'};
 `;
 
 const GradientBackgroundImg = styled.img`
-   margin-top: 5px;
+   margin-top: 3px;
    margin-left: 1px;
-   width: 27px;
-   height: 34px;
+   width: 20px;
+   height: 27px;
 `;
