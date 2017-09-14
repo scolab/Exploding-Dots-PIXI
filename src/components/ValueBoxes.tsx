@@ -21,6 +21,8 @@ interface INumberProps {
   hasTwoRow: boolean;
   numOfCharacter: number;
   isNegative: boolean;
+  value: number;
+  base: Array<number | string>;
 }
 
 interface IBoxContainer {
@@ -73,6 +75,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
                 hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
                 numOfCharacter={positiveText.length}
                 isNegative={false}
+                value={Object.keys(positiveHash).length}
+                base={this.props.base}
               >
                 {positiveText}
               </NumberDiv>
@@ -82,6 +86,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
                   hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
                   numOfCharacter={negativeText !== '0' ? negativeText.length + 1 : negativeText.length}
                   isNegative={true}
+                  value={Object.keys(negativeHash).length}
+                  base={this.props.base}
                 >
                   {negativeText !== '0' ? '-' : ''}{negativeText}
                 </NumberDiv>
@@ -91,6 +97,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
                 hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
                 numOfCharacter={1}
                 isNegative={false}
+                value={0}
+                base={this.props.base}
               >
                 0
               </NumberDiv>
@@ -111,6 +119,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
               numOfCharacter={positiveText.length}
               isNegative={false}
+              value={Object.keys(positiveHash).length}
+              base={this.props.base}
             >
               {positiveText}
             </NumberDiv>
@@ -120,6 +130,8 @@ export default class ValueBoxes extends Component<IProps, {}> {
               hasTwoRow={this.props.negativePresent && hasPositiveText && hasNegativeText}
               numOfCharacter={negativeText !== '0' ? negativeText.length + 1 : negativeText.length}
               isNegative={true}
+              value={Object.keys(negativeHash).length}
+              base={this.props.base}
             >
               {negativeText !== '0' ? '-' : ''}{negativeText}
             </NumberDiv>
@@ -153,29 +165,24 @@ const EmptyDiv = styled.div`
   float: left;
   border-radius: 4px;
   margin-right: 6px;
-  border-style: solid;
-  border-width: 2px;
-  border-color: #ffffff;
   opacity: 0.5;
 `;
 
 const NormalDiv = styled.div`
   background-color: #fcfcfc;
   border-radius: 4px;
-  border-style: solid;
-  border-width: 2px;
   height: 44px;
   width: auto;
   min-width: 36px;
   float: left;
   margin-right: 6px;
-  border-color: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? 'rgba(255, 102, 102, 0.6)' : 'rgba(255, 255, 255, 1)'};
+  box-shadow: ${(props: IBoxProps) => (props.positiveValue > Number(props.base[1]) - 1 || props.negativeValue > Number(props.base[1]) - 1) ? '0 0 0 2px rgba(255, 102, 102, 0.8)' : '0 0 0 0 #ffffff'};
 `;
 
 const NumberDiv = styled.div`
   font-family: Nunito;
   font-size: 22px;
-  color: #48209c;
+  color: ${(props: INumberProps) => (props.value > Number(props.base[1]) - 1) ? '#ff6666' : '#48209c'};
   text-align: right;
   padding: ${(props: INumberProps) => (props.hasTwoRow ? '1px 11px 1px 4px' : props.numOfCharacter === 1 ? '8px 11px 0px 11px' : '8px 4px 0px 4px')};
   margin-top: ${(props: INumberProps) => (props.hasTwoRow ? props.isNegative ? '-12px' : '-3px' : '0px')};

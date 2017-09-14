@@ -19,6 +19,8 @@ import Point = PIXI.Point;
 import ObservablePoint = PIXI.ObservablePoint;
 import styled from 'styled-components';
 import ApplicationOptions = PIXI.ApplicationOptions;
+import Sprite = PIXI.Sprite;
+import Texture = PIXI.Texture;
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -303,11 +305,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.powerZoneManager.start();
       this.props.isReady();
       this.canvasDiv.style.visibility = 'visible';
-      /*this.canvasDiv.style.height = this.props.operator_mode ===
-        OPERATOR_MODE.DIVIDE ?
-          `${SETTINGS.GAME_HEIGHT_DIVIDE}px`
-          :
-          `${SETTINGS.GAME_HEIGHT}px`;*/
+      if (this.textures) {
+        const ico_infinite: Texture = this.textures['ico_infinite.png'];
+        const infiniteDots: Sprite = new Sprite(ico_infinite);
+        infiniteDots.x = 20;
+        infiniteDots.y = SETTINGS.GAME_HEIGHT * 0.5;
+        this.stage.addChild(infiniteDots);
+      }
       this.canvasDiv.style.paddingBottom = this.props.operator_mode ===
       OPERATOR_MODE.DIVIDE ? '48.8%' :
         '36.8%';

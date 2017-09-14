@@ -172,7 +172,8 @@ export class PowerZoneManager extends PIXI.Container {
 
   public createZones(): void {
     for (let i: number = this.totalZoneCount - 1; i >= 0; i -= 1) {
-      const powerZone: PowerZone = new PowerZone(i,
+      const powerZone: PowerZone = new PowerZone(
+                i,
                 this.textures,
                 this.base,
                 this.negativePresent,
@@ -395,8 +396,8 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public showDividerAndResult(): void {
-    this.dividerZoneManager.x = 957;
-    this.dividerZoneManager.y = 375;
+    this.dividerZoneManager.x = 892;
+    this.dividerZoneManager.y = 312;
     this.addChild(this.dividerZoneManager);
     this.dividerZoneManager.start();
 

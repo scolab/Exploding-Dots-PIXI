@@ -41,7 +41,7 @@ export class DividerZoneManager extends PIXI.Container {
     // console.log('DividerZoneManager createZones');
     for (let i: number = this.totalZoneCount; i > 0; i -= 1) {
       const dividerZone: DividerZone = new DividerZone();
-      dividerZone.x = (i * 65) - 65;
+      dividerZone.x = (i * 70) - 70;
       dividerZone.init(this.textures['divider.png'], this.textures['dot_divider.png'], this.textures['antidot_divider.png']); // tslint:disable-line max-line-length
       this.allZones.push(dividerZone);
       this.addChild(dividerZone);

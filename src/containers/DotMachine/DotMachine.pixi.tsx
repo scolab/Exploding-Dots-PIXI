@@ -211,6 +211,7 @@ class DotsMachine extends Component<IProps, {}> {
             <BaseSelector
               base={this.props.dotsMachine.machineState.base}
               onClick={this.props.changeBase}
+              allBase={this.props.dotsMachine.machineState.allBases}
             />
             }
           </ToolMenu>
@@ -271,6 +272,7 @@ interface IProps {
     positiveDividerResult: number[];
     negativeDividerResult: number[];
     machineState: {
+      allBases: any[];
       title: string;
       placeValueSwitchVisible: boolean;
       magicWandVisible: boolean;

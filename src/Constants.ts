@@ -27,9 +27,9 @@ export enum USAGE_MODE {
 }
 
 export enum SETTINGS {
-  GAME_WIDTH = 1024,
-  GAME_HEIGHT = 377,
-  GAME_HEIGHT_DIVIDE = 500,
+  GAME_WIDTH = 950,
+  GAME_HEIGHT = 325,
+  GAME_HEIGHT_DIVIDE = 430,
 }
 
 export type IOPERAND_POS  = 'RIGHT' | 'LEFT';
@@ -47,7 +47,7 @@ export enum BOX_INFO {
   BOX_WIDTH = 156,
   BOX_HEIGHT = 238,
   HALF_BOX_HEIGHT = 115,
-  BOX_Y = 72,
+  BOX_Y = 40,
   LEFT_GUTTER = 66,
   GUTTER_WIDTH = 10,
 }

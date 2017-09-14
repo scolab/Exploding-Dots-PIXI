@@ -201,7 +201,8 @@ const OperationDiv = styled.div`
 const OperationInput = styled.input`
   background-color: #fcfcfc;
   border-radius: 4px;
-  border: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0px' : '1px solid #48209c')};
+  border: none;
+  box-shadow: ${(props: IInputBox) => (props.operator_mode === OPERATOR_MODE.DISPLAY && props.usage_mode === USAGE_MODE.FREEPLAY || props.usage_mode === USAGE_MODE.EXERCISE ? '0 0 0 0 #ffffff' : '0 0 0 1px #48209c')};
   font-family: Nunito;
   font-size: 22px;
   color: #48209c;
@@ -210,4 +211,3 @@ const OperationInput = styled.input`
   width: ${(props: IInputBox) => props.textWidth + 'px'};
   min-width: 82px;
 `;
-

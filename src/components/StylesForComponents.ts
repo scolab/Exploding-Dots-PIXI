@@ -3,14 +3,15 @@
  */
 
 export const gradientBackground = `
-  background: #fcfcfc;
-  // background: linear-gradient(to right, #f8f8f9, #e7e8e9);
+  background: #48209c;
   border-radius: 25px;
 `;
 
 export const toolMenuElement = `
-  margin-left: 14px;
-  margin-top: 33px;
+  margin: 2px 0px 0px 14px;
+  &:hover { box-shadow: 0 0 0 4px rgba(252, 252, 252, 0.5); }
+  &:active { box-shadow: 0 0 0 0}
+  &:focus { outline:0; }
 `;
 
 export const operationItem = `
