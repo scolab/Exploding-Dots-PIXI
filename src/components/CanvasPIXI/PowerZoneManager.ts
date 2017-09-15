@@ -1151,15 +1151,19 @@ export class PowerZoneManager extends PIXI.Container {
       this.removeGhostDot(dotSprite);
       const dotsPos: Point[] = new Array<Point>();
       for (let i = 0; i < newNbOfDots; i += 1) {
-        dotsPos.push( new Point(
-          randomFromTo(
-            POSITION_INFO.DOT_RAYON,
-            (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON,
+        dotsPos.push(
+          new Point(
+            Math.min((droppedOnPowerZone.hitArea as Rectangle).width / 2, randomFromTo(
+              POSITION_INFO.DOT_RAYON,
+              (droppedOnPowerZone.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON - 3,
+              ),
+            ),
+            Math.min((droppedOnPowerZone.hitArea as Rectangle).height / 2, randomFromTo(
+              POSITION_INFO.DOT_RAYON,
+              (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON - 3,
+              ),
+            ),
           ),
-          randomFromTo(
-            POSITION_INFO.DOT_RAYON,
-            (droppedOnPowerZone.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON,
-          )),
         );
       }
       if (newNbOfDots < 4) {
