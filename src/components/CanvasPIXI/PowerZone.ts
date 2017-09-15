@@ -174,16 +174,16 @@ export class PowerZone extends PIXI.Container {
       this.addChild(separator);
 
       this.positiveDotsContainer = new DotsContainer();
-      this.positiveDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-      this.positiveDotsContainer.y = BOX_INFO.BOX_Y;
+      this.positiveDotsContainer.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 5.5;
+      this.positiveDotsContainer.y = BOX_INFO.BOX_Y + 5;
       this.addChild(this.positiveDotsContainer);
       this.positiveDotsContainer.interactive = true;
 
       this.positiveDotsContainer.hitArea = new PIXI.Rectangle(
-        0,
+        2,
         0,
         BOX_INFO.BOX_WIDTH,
-        BOX_INFO.HALF_BOX_HEIGHT,
+        BOX_INFO.HALF_BOX_HEIGHT - 4,
       );
       this.positiveProximityManager = new ProximityManager(this.positiveDotsContainer.hitArea);
       this.positiveDotsContainer.powerZone = totalZoneCount - position - 1;
@@ -197,14 +197,10 @@ export class PowerZone extends PIXI.Container {
       }
 
       this.negativeDotsContainer = new DotsContainer();
-      this.negativeDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-      this.negativeDotsContainer.y = BOX_INFO.BOX_Y + BOX_INFO.HALF_BOX_HEIGHT;
+      this.negativeDotsContainer.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 5.5;
+      this.negativeDotsContainer.y = BOX_INFO.BOX_Y + BOX_INFO.HALF_BOX_HEIGHT + 1;
       this.addChild(this.negativeDotsContainer);
       this.negativeDotsContainer.interactive = true;
-      /*this.originalNegativeBoxPosition = new PIXI.Point(
-        this.negativeDotsContainer.position.x,
-        this.negativeDotsContainer.position.y,
-      );*/
       this.negativeDotsContainer.hitArea = new PIXI.Rectangle(
         0,
         0,
@@ -222,8 +218,8 @@ export class PowerZone extends PIXI.Container {
       }
     } else {
       this.positiveDotsContainer = new DotsContainer();
-      this.positiveDotsContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-      this.positiveDotsContainer.y = BOX_INFO.BOX_Y;
+      this.positiveDotsContainer.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 5.5;
+      this.positiveDotsContainer.y = BOX_INFO.BOX_Y + 5;
       this.addChild(this.positiveDotsContainer);
       this.positiveDotsContainer.interactive = true;
       this.positiveDotsContainer.hitArea = new PIXI.Rectangle(

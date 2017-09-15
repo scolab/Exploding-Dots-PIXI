@@ -95,8 +95,8 @@ export class ProximityManager {
     item.velocity.add(item.acceleration);
     item.vPosition.add(item.velocity);
     item.acceleration.multiplyScalar(0);
-    if (item.vPosition.x > POSITION_INFO.DOT_RAYON + 2 &&
-      item.vPosition.y > POSITION_INFO.DOT_RAYON + 2 &&
+    if (item.vPosition.x > POSITION_INFO.DOT_RAYON &&
+      item.vPosition.y > POSITION_INFO.DOT_RAYON &&
       item.vPosition.x < this.area.width - POSITION_INFO.DOT_RAYON &&
       item.vPosition.y < this.area.height - POSITION_INFO.DOT_RAYON
     ) {

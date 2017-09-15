@@ -1252,15 +1252,15 @@ export class PowerZoneManager extends PIXI.Container {
     if (position.x < POSITION_INFO.DOT_RAYON + 3) {
       modifyPosition.x = POSITION_INFO.DOT_RAYON + 3;
       needTween = true;
-    } else if (position.x > (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON) {
-      modifyPosition.x = (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON;
+    } else if (position.x > (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON - 2) {
+      modifyPosition.x = (dotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON - 2;
       needTween = true;
     }
     if (position.y < POSITION_INFO.DOT_RAYON + 3) {
       modifyPosition.y = POSITION_INFO.DOT_RAYON + 3;
       needTween = true;
     } else if (position.y > (dotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON) {
-      modifyPosition.y = (dotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON;
+      modifyPosition.y = (dotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON - 2;
       needTween = true;
     }
     return needTween;
