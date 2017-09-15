@@ -219,7 +219,7 @@ export class SoundManager {
   }
 
   public playSound(id: string): void {
-    console.log('play sound', id);
+    // console.log('play sound', id);
     if (!this.muted) {
       if (this[id]) {
         this[id].play();

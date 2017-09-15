@@ -1036,21 +1036,20 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private dragGhostToNewZone(dotSprite: DotSprite, gotoPosition: Point): void {
-    // console.log('dragGhostToNewZone', dotSprite.dot.id);
     if (dotSprite.ghost) {
       dotSprite.ghost.playExplode();
+      TweenMax.to(
+        dotSprite.ghost,
+        TWEEN_TIME.MOVE_DOT_TO_NEW_ZONE,
+        {
+          ease: Power3.easeIn,
+          onComplete: this.removeGhostDot.bind(this),
+          onCompleteParams: [dotSprite],
+          x: gotoPosition.x,
+          y: gotoPosition.y,
+        },
+      );
     }
-    TweenMax.to(
-      dotSprite.ghost,
-      TWEEN_TIME.MOVE_DOT_TO_NEW_ZONE,
-      {
-        ease: Power3.easeIn,
-        onComplete: this.removeGhostDot.bind(this),
-        onCompleteParams: [dotSprite],
-        x: gotoPosition.x,
-        y: gotoPosition.y,
-      },
-    );
   }
 
   private verifyDroppedOnZone(dotSprite: DotSprite,

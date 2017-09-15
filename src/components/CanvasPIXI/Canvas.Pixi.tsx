@@ -393,6 +393,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           const populatedArrays = this.populateDotPerZoneArrayNormalMode();
           dotsPerZoneA = populatedArrays.dotsPerZoneA;
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
+          if (dotsPerZoneA.length > 5 || dotsPerZoneA.length > 5) {
+            if (this.props.displayUserMessageAction) {
+              this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
+            }
+            this.props.error();
+            return;
+          }
         } else {
           // Base X parse operand
           const populatedArrays: IOperantProcessedArray | null = this.populateDotPerZoneArrayBaseX();
@@ -403,7 +410,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
           dotsPerZoneB = populatedArrays.dotsPerZoneB;
           // validate that the sum of the value isn't 0
           if (dotsPerZoneA.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
-            this.soundManager.playSound(SoundManager.GO_INVALID);
+            // this.soundManager.playSound(SoundManager.GO_INVALID);
             if (this.props.displayUserMessageAction) {
               this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
             }
@@ -411,7 +418,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             return;
           }
           if (dotsPerZoneB.reduce((acc, val) => acc + Math.abs(Number(val)), 0) === 0) {
-            this.soundManager.playSound(SoundManager.GO_INVALID);
+            // this.soundManager.playSound(SoundManager.GO_INVALID);
             if (this.props.displayUserMessageAction) {
               this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
             }
@@ -439,7 +446,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
               this.createSubtractDots(dotsPerZoneA, dotsPerZoneB);
             } else {
-              this.soundManager.playSound(SoundManager.GO_INVALID);
+              // this.soundManager.playSound(SoundManager.GO_INVALID);
               if (this.props.displayUserMessageAction) {
                 this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
               }
@@ -451,7 +458,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             if (dotsPerZoneA.length !== 0 && dotsPerZoneB.length !== 0) {
               this.createDivideDots(dotsPerZoneA, dotsPerZoneB);
             } else {
-              this.soundManager.playSound(SoundManager.GO_INVALID);
+              // this.soundManager.playSound(SoundManager.GO_INVALID);
               if (this.props.displayUserMessageAction) {
                 this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
               }
@@ -645,7 +652,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       }
       return {dotsPerZoneA, dotsPerZoneB};
     }else {
-      this.soundManager.playSound(SoundManager.GO_INVALID);
+      // this.soundManager.playSound(SoundManager.GO_INVALID);
       if (this.props.displayUserMessageAction) {
         this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
       }
