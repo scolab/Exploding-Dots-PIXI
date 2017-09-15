@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import {gradientBackground, toolMenuElement} from './StylesForComponents';
+import { SoundManager } from '../utils/SoundManager';
 
 interface IProps {
   onClick: () => any;
@@ -35,6 +36,7 @@ export default class ResetButton extends Component<IProps, {}> {
 
   private reset(): void {
     this.props.onClick();
+    SoundManager.instance.playSound(SoundManager.RESET);
     if (this.props.resetAction) {
       this.props.resetAction(this.props.title);
     }

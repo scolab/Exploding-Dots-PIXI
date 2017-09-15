@@ -448,7 +448,7 @@ const dotsReducer = (state: IState | null = null,
       initialMachineState[action.title].errorMessage = '';
       const newState: IState = setInitialState(action.title);
       if (newState.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
-        newState.machineState.usage_mode === USAGE_MODE.FREEPLAY){
+        newState.machineState.usage_mode === USAGE_MODE.FREEPLAY) {
         newState.machineState.operandA = '0';
       }
 

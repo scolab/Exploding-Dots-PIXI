@@ -1,32 +1,41 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
 import {gradientBackground} from './StylesForComponents';
+import { SoundManager } from '../utils/SoundManager';
 
 interface IProps {
   onClick: () => any;
   activityStarted: boolean;
 }
 
-const GoButton = (props: IProps) => {
+export default class GoButton extends Component<IProps, {}> {
 
-  const img = require('./images/arrow-right@2x.png');
+  private img = require('./images/arrow-right@2x.png');
 
-  if (props.activityStarted) {
+  public render(): JSX.Element {
+    if (this.props.activityStarted) {
+      return (
+        <InvisibleButton/>
+      );
+    }
     return (
-      <InvisibleButton/>
+      <GradientBackgroundButton
+        type='button'
+        onClick={() => this.clicked()}
+      >
+        <TextStyled>
+          &#62;
+        </TextStyled>
+      </GradientBackgroundButton>
     );
   }
-  return (
-    <GradientBackgroundButton
-      type='button'
-      onClick={props.onClick}
-    >
-      <TextStyled>
-      &#62;
-      </TextStyled>
-    </GradientBackgroundButton>
-  );
-};
+
+  private clicked(): void {
+    this.props.onClick();
+    SoundManager.instance.playSound(SoundManager.GO);
+  }
+}
+
 
 const GradientBackgroundButton = styled.button`
   font-family: Nunito;
@@ -62,5 +71,3 @@ const TextStyled = styled.div`
   position: relative;
   top: -3px;
 `;
-
-export default GoButton;

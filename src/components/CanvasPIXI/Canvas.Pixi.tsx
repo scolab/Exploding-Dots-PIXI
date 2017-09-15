@@ -173,7 +173,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         preventWebGL);
     this.stage = this.app.stage;
     this.renderer = this.app.renderer;
-    this.soundManager = new SoundManager(this.props.cdnBaseUrl, this.props.muted);
+    this.soundManager = SoundManager.instance;
+    this.soundManager.init(this.props.cdnBaseUrl, this.props.muted);
     this.powerZoneManager = new PowerZoneManager(
             this.props.addDot,
             this.props.removeDot,
@@ -231,7 +232,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     this.powerZoneManager.checkInstability();
     this.powerZoneManager.setZoneTextAndAlphaStatus();
     this.checkMachineStateValue();
-    if (nextProps.success === false) {
+    if (nextProps.success === false &&
+      this.props.activityStarted === true &&
+      (this.props.wantedResult.positiveDots.length > 0 ||
+        this.props.wantedResult.negativeDots.length > 0 ||
+        this.props.wantedResult.positiveDivider.length > 0 ||
+        this.props.wantedResult.negativeDivider.length > 0)
+      ) {
       this.powerZoneManager.checkResult();
     }
     this.soundManager.muted = this.props.muted;
@@ -369,7 +376,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         // (OPERATOR_MODE.DISPLAY hide operand B)
         if (this.props.operator_mode !== OPERATOR_MODE.DISPLAY &&
           this.props.operandB.length === 0) {
-          this.soundManager.playSound(SoundManager.GO_INVALID);
+          // this.soundManager.playSound(SoundManager.GO_INVALID);
           if (this.props.displayUserMessageAction) {
             this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);
           }
@@ -657,7 +664,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         dotsPos.push(this.getDot(i, true));
       }
     }
-    this.soundManager.playSound(SoundManager.GO_SUCCESS);
+    // this.soundManager.playSound(SoundManager.GO_SUCCESS);
     this.props.startActivityDoneFunc(dotsPos, totalDot.toString());
   }
 
@@ -676,13 +683,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     if (this.props.base[1] !== BASE.BASE_X) {
       const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
       const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
       // remove last char in the operand if it's a - or a +
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     }
   }
@@ -698,12 +705,12 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
     if (this.props.base[1] !== BASE.BASE_X) {
       const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue);
     } else {
       // remove last char in the operand if it's a - or a +
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue);
     }
   }
@@ -723,13 +730,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     if (this.props.base[1] !== BASE.BASE_X) {
       const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
       const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     } else {
       // remove last char in the operand if it's a - or a +
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue);
     }
   }
@@ -750,13 +757,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     if (this.props.base[1] !== BASE.BASE_X) {
       const operandAValue: string = this.calculateOperandRealValue(dotsPerZoneA);
       const operandBValue: string = this.calculateOperandRealValue(dotsPerZoneB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     } else {
       // remove last char in the operand if it's a - or a +
       const operandAValue: string = CanvasPIXI.removeTrailingSign(this.props.operandA);
       const operandBValue: string = CanvasPIXI.removeTrailingSign(this.props.operandB);
-      this.soundManager.playSound(SoundManager.GO_SUCCESS);
+      // this.soundManager.playSound(SoundManager.GO_SUCCESS);
       // console.log(operandAValue, operandBValue);
       this.props.startActivityDoneFunc(dotsPos, operandAValue, operandBValue, dividePos);
     }
