@@ -30,7 +30,7 @@ class DotsMachine extends Component<IProps, {}> {
 
   private machineDiv: HTMLDivElement;
   private placeHolder: HTMLDivElement;
-  private placeholderImage = require('./images/loader.gif');
+  private placeholderImage = require('./images/loading.gif');
 
   constructor(props: IProps) {
     super(props);
@@ -45,7 +45,6 @@ class DotsMachine extends Component<IProps, {}> {
   }
 
   public render(): JSX.Element {
-
     const negativePresent: boolean = this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.SUBTRACT
       || this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DIVIDE
       || this.props.dotsMachine.machineState.base[1] === BASE.BASE_X;
