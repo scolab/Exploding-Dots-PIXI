@@ -36,8 +36,8 @@ const GradientBackgroundButton = styled.button`
   `;
 
 const GradientBackgroundImg = styled.img`
-  margin-top: 2px;
-  margin-left: 1px;
+  margin-top: 3px;
+  margin-left: 0px;
   width: 100%;
   height: auto;
 `;

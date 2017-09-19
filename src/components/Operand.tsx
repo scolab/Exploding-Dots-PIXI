@@ -206,8 +206,9 @@ const OperationInput = styled.input`
   font-family: Nunito;
   font-size: 22px;
   color: #48209c;
-  height: 44px;
+  height: 42px;
   text-align: center;
   width: ${(props: IInputBox) => props.textWidth + 'px'};
   min-width: 82px;
+  padding-top: 0px;
 `;

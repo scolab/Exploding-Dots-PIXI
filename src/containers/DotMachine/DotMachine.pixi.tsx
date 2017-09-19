@@ -343,8 +343,8 @@ const ValueContainerDiv = styled.div`
 
 const ArrowImg = styled.img`
  ${operationItem}
-  margin-bottom: -5px;
-  width: 45px;
+  margin-bottom: -2px;
+  width: 30px;
   height: auto;
 `;
 

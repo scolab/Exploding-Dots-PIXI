@@ -23,8 +23,8 @@ const ToolMenu = (props: IProps) => {
 
 const ToolMenuDiv = styled.div`
   display: block;
-  margin-left: 5.5%;
-  margin-top: ${(props: IDivProps) => (props.operatorMode === OPERATOR_MODE.DIVIDE ? '-16%' : '-4%')};
+  margin-left: 6.5%;
+  margin-top: ${(props: IDivProps) => (props.operatorMode === OPERATOR_MODE.DIVIDE ? '-15%' : '-4%')};
   position: relative;
   width: fit-content;
 `;

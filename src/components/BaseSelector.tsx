@@ -79,6 +79,7 @@ const GradientBackgroundDiv = styled.div`
   margin-left: 20px;
   color: #48209c;
   display: inline-block;
+  padding-top: 5px;
 `;
 
 const ArrowImg = styled.img`
