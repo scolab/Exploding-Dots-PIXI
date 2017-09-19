@@ -12,13 +12,16 @@ interface IProps {
 export default class Operator extends Component<IProps, {}> {
 
   public render(): JSX.Element | null {
-    // ↔
+
+    const doubleArrow = require('./images/double_arrows.png');
+
     switch (this.props.operator_mode) {
       case OPERATOR_MODE.DISPLAY:
         return (
-          <OperationDiv>
-            &#60; &#62;
-          </OperationDiv>
+          <ArrowImg
+            src={doubleArrow}
+            role='presentation'
+          />
         );
       case OPERATOR_MODE.ADD:
         return (
@@ -43,18 +46,19 @@ export default class Operator extends Component<IProps, {}> {
 }
 
 const GradientBackgroundDiv = styled.div`
-      ${operationItem}
-      vertical-align: top;
-      border-radius: 23px;
-      font-family: Nunito;
-      font-size: 32px;
-      height: 47px;
-      line-height: 47px;
-      width: 40px;
-    `;
+  ${operationItem}
+  vertical-align: top;
+  border-radius: 23px;
+  font-family: Nunito;
+  font-size: 32px;
+  height: 47px;
+  line-height: 47px;
+  width: 40px;
+`;
 
-const OperationDiv = styled.div`
-      ${operationItem}
-      font-family: Nunito;
-      font-size: 30px;
-    `;
+const ArrowImg = styled.img`
+ ${operationItem}
+  margin-bottom: -5px;
+  width: 45px;
+  height: auto;
+`;

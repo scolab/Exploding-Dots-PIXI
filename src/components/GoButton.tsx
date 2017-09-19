@@ -10,7 +10,7 @@ interface IProps {
 
 export default class GoButton extends Component<IProps, {}> {
 
-  private img = require('./images/arrow-right@2x.png');
+  private img = require('./images/arrow_right.png');
 
   public render(): JSX.Element {
     if (this.props.activityStarted) {
@@ -23,9 +23,10 @@ export default class GoButton extends Component<IProps, {}> {
         type='button'
         onClick={() => this.clicked()}
       >
-        <TextStyled>
-          &#62;
-        </TextStyled>
+        <ImgStyled
+          src={this.img}
+          role='presentation'
+        />
       </GradientBackgroundButton>
     );
   }
@@ -67,7 +68,10 @@ const InvisibleButton = styled.button`
   visibility: hidden;
 `;
 
-const TextStyled = styled.div`
-  position: relative;
-  top: -3px;
+const ImgStyled = styled.img`
+   margin-top: 7px;
+   margin-left: 1px;
+   vertical-align: top;
+   width: 45%;
+   height: auto;
 `;

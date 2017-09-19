@@ -31,6 +31,7 @@ class DotsMachine extends Component<IProps, {}> {
   private machineDiv: HTMLDivElement;
   private placeHolder: HTMLDivElement;
   private placeholderImage = require('./images/loading.gif');
+  private doubleArrow = require('../../components/images/double_arrows.png');
 
   constructor(props: IProps) {
     super(props);
@@ -100,9 +101,10 @@ class DotsMachine extends Component<IProps, {}> {
               this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DISPLAY) &&
               this.props.dotsMachine.machineState.operator_mode !== OPERATOR_MODE.DIVIDE &&
               this.props.dotsMachine.machineState.numberValueVisible) &&
-            <ArrowDiv>
-              &#60; &#62;
-            </ArrowDiv>
+            <ArrowImg
+              src={this.doubleArrow}
+              role='presentation'
+            />
             }
             {((this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
               this.props.dotsMachine.machineState.usage_mode === USAGE_MODE.EXERCISE)
@@ -193,6 +195,7 @@ class DotsMachine extends Component<IProps, {}> {
             {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
             <PlaceValueSwitch
               onClick={this.props.showHidePlaceValue}
+              placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
             />
             }
             <ResetButton
@@ -204,6 +207,7 @@ class DotsMachine extends Component<IProps, {}> {
             {this.props.dotsMachine.machineState.magicWandVisible === true &&
             <MagicWand
               onClick={this.props.activateMagicWand}
+              hidden={this.props.dotsMachine.machineState.success}
             />
             }
             {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
@@ -337,11 +341,11 @@ const ValueContainerDiv = styled.div`
   margin-top: 20px;
 `;
 
-const ArrowDiv = styled.div`
+const ArrowImg = styled.img`
  ${operationItem}
-  font-family: Nunito;
-  font-size: 30px;
-  margin-top: 2px;
+  margin-bottom: -5px;
+  width: 45px;
+  height: auto;
 `;
 
 const AllMachineDiv = styled.div`

@@ -9,8 +9,8 @@ export const gradientBackground = `
 
 export const toolMenuElement = `
   margin: 2px 0px 0px 14px;
-  &:hover { box-shadow: 0 0 0 4px rgba(252, 252, 252, 0.5); }
-  &:active { box-shadow: 0 0 0 0}
+  &:hover:enabled { box-shadow: 0 0 0 4px rgba(252, 252, 252, 0.5); }
+  &:active:enabled { box-shadow: 0 0 0 0}
   &:focus { outline:0; }
 `;
 

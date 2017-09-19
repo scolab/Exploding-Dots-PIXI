@@ -16,7 +16,7 @@ interface IElemProps {
 
 export default class ResetButton extends Component<IProps, {}> {
 
-  private img: any = require('./images/refresh@2x.png');
+  private img: any = require('./images/refresh.png');
 
   public render(): JSX.Element {
     return (
@@ -57,6 +57,6 @@ const GradientBackgroundButton = styled.button`
 const GradientBackgroundImg = styled.img`
    margin-top: 3px;
    margin-left: 1px;
-   width: 20px;
-   height: 27px;
+   width: 80%;
+   height: auto;
 `;

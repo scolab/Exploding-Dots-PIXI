@@ -13,7 +13,7 @@ interface IFakeButton {
 }
 
 const BaseSelector = (props: IProps): JSX.Element => {
-  const img = require('./images/longArrowLeft@2x.png');
+  const img = require('./images/left_arrow.png');
   if (props.allBase.length > 1) {
     return (
       <GradientBackgroundButton
@@ -21,8 +21,11 @@ const BaseSelector = (props: IProps): JSX.Element => {
         onClick={props.onClick}
       >
         {props.base[0]}
-        <ArrowDiv>&#8678;</ArrowDiv>
-        {props.base[1]}
+        <ArrowImg
+          src={img}
+          role='presentation'
+        />
+          {props.base[1]}
       </GradientBackgroundButton>
     );
   } else {
@@ -31,7 +34,10 @@ const BaseSelector = (props: IProps): JSX.Element => {
         numChar={props.base[0].toString().length + props.base[1].toString().length + 1}
       >
         {props.base[0]}
-        <ArrowDiv>&#8678;</ArrowDiv>
+        <ArrowImg
+          src={img}
+          role='presentation'
+        />
         {props.base[1]}
       </GradientBackgroundDiv>
     );
@@ -76,12 +82,7 @@ const GradientBackgroundDiv = styled.div`
 `;
 
 const ArrowImg = styled.img`
-    margin: 3px 0px 4px 5px;
-    width: 27px;
-    height: 10px;
-  `;
-
-const ArrowDiv = styled.div`
-    margin: 2px 7px 0px 6px;
-    display: inline-block;
-  `;
+  margin: 0px 5px;
+  width: 27px;
+  height: auto;
+`;
