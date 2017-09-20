@@ -34,10 +34,10 @@ storiesOf('Exploding Dots', module)
         baseSwitchVisible={true}
         cdnBaseUrl={''}
         wantedResult={{
-          positiveDots: [1, 1, 0, 0, 1],
-          negativeDots: [0, 0, 0, 0, 0],
-          positiveDivider: [0, 0, 0, 0, 0],
-          negativeDivider: [0, 0, 0, 0, 0],
+          positiveDots: [0, 0, 0, 0, 2],
+          negativeDots: [],
+          positiveDivider: [],
+          negativeDivider: [],
         }}
       />
     ))

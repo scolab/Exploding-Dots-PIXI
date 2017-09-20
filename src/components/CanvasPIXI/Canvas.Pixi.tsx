@@ -153,7 +153,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   }
 
   public componentDidMount(): void {
-    // console.log('componentDidMount', this.state, this.props);
+    // console.log('CanvasPIXI componentDidMount', this.props);
     const options: ApplicationOptions = {
       antialias: true,
       autoResize: true,
@@ -323,7 +323,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       OPERATOR_MODE.DIVIDE ? '48.8%' :
         '36.8%';
       this.canvasDiv.style.overflow = 'visible';
-      if (this.props.usage_mode === USAGE_MODE.EXERCISE) {
+      if (this.props.usage_mode === USAGE_MODE.EXERCISE ||
+        this.props.usage_mode === USAGE_MODE.FREEPLAY) {
         this.props.startActivityFunc();
       }
     }
@@ -471,6 +472,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
             break;
         }
         this.powerZoneManager.isInteractive = true;
+      }else {
+        this.props.startActivityDoneFunc(new Array<DotVO>(), '', '');
       }
     }
   }
