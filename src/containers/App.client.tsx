@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE, BASE} from '../Constants';
+import { ACTIONS } from '../actions/StoreConstants';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 try {
@@ -49,7 +50,11 @@ interface IProps {
   resetAction?: (name: string) => any;
 }
 
-class ExplodingDots extends Component<IProps, {}> {
+interface IState {
+  muted: boolean | undefined;
+}
+
+class ExplodingDots extends Component<IProps, IState> {
 
   public static defaultProps: Partial<IProps> = {
     title: 'default title',
@@ -87,9 +92,12 @@ class ExplodingDots extends Component<IProps, {}> {
 
   private store: Store<any>;
 
-  constructor(props) {
-        // console.log('App constructor', props);
+  constructor(props: IProps) {
+    // console.log('App constructor', props);
     super(props);
+    this.state = {
+      muted: props.muted,
+    };
     // tslint:disable-next-line no-string-literal
     const enhancer: StoreCreator = window['devToolsExtension'] ?
       window['devToolsExtension']()(createStore) : createStore; // tslint:disable-line no-string-literal
@@ -97,9 +105,21 @@ class ExplodingDots extends Component<IProps, {}> {
     // FIXME: find a way to use resetMachine
     // Initialize the default machineState values
     this.store.dispatch({
-      type: 'RESET',
+      type: ACTIONS.RESET,
       machineState: Object.assign({}, props),
       title: props.title,
+    });
+  }
+
+  public componentWillReceiveProps(nextProps: IProps): void {
+    if (nextProps.muted !== this.state.muted) {
+      this.store.dispatch({
+        type: ACTIONS.CHANGE_MUTE_STATUS,
+        status: nextProps.muted,
+      });
+    }
+    this.setState({
+      muted: nextProps.muted,
     });
   }
 

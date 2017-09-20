@@ -1426,7 +1426,7 @@ export class PowerZoneManager extends PIXI.Container {
 
   private backIntoPlace(dotSprite: DotSprite,
                         currentZone: DotsContainer): void {
-    console.log('backIntoPlace');
+    // console.log('backIntoPlace');
     this.soundManager.playSound(SoundManager.BACK_INTO_PLACE);
     this.isInteractive = false;
     TweenMax.to(

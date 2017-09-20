@@ -180,9 +180,9 @@ const dotsReducer = (state: IState | null = null,
       // console.log(ACTIONS.START_ACTIVITY);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = true;
-      if (stateCopy.machineState.usage_mode !== USAGE_MODE.EXERCISE) {
+      /*if (stateCopy.machineState.usage_mode !== USAGE_MODE.EXERCISE) {
         stateCopy.machineState.resetVisible = true;
-      }
+      }*/
       return stateCopy;
     case ACTIONS.START_ACTIVITY_DONE:
       // console.log(ACTIONS.START_ACTIVITY_DONE);
@@ -463,6 +463,10 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.SUCCESS:
       stateCopy = { ...state };
       stateCopy.machineState.success = true;
+      return stateCopy;
+    case ACTIONS.CHANGE_MUTE_STATUS:
+      stateCopy = { ...state };
+      stateCopy.machineState.muted = action.status;
       return stateCopy;
     default:
       return state;
