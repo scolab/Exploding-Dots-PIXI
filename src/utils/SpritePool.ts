@@ -401,22 +401,22 @@ export class SpritePool {
 
   private createExplodeAnimation(textures: TextureDictionary): void {
     this.positiveExplodeRedFrames = [];
-    for (let i: number = 1; i <= 7; i++) {
+    for (let i: number = 1; i <= 8; i++) {
       this.positiveExplodeRedFrames.push(textures[`dot_explode${i}.png`]);
     }
 
     this.positiveExplodeBlueFrames = [this.texturePosTwo];
-    for (let i: number = 1; i <= 7; i++) {
+    for (let i: number = 1; i <= 8; i++) {
       this.positiveExplodeBlueFrames.push(textures[`b_dot_explode${i}.png`]);
     }
 
     this.negativeExplodeRedFrames = [this.textureNegOne];
-    for (let i: number = 1; i <= 7; i++) {
+    for (let i: number = 1; i <= 8; i++) {
       this.negativeExplodeRedFrames.push(textures[`dot_explode${i}.png`]);
     }
 
     this.negativeExplodeBlueFrames = [this.textureNegTwo];
-    for (let i: number = 1; i <= 7; i++) {
+    for (let i: number = 1; i <= 8; i++) {
       this.negativeExplodeBlueFrames.push(textures[`b_dot_explode${i}.png`]);
     }
   }
