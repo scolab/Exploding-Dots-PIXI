@@ -1015,7 +1015,11 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   private addGhostDot(dotSprite: DotSprite): void {
-    // console.log('addGhostDot', dotSprite.dot.id);
+    // console.log('addGhostDot', dotSprite.dot.id, dotSprite.ghost);
+    if (dotSprite.ghost) {
+      TweenMax.killTweensOf(dotSprite.ghost);
+      this.removeGhostDot(dotSprite);
+    }
     const ghostSprite: DotSprite = this.spritePool.getOne(dotSprite.dot.color, dotSprite.dot.isPositive);
     ghostSprite.alpha = 0.2;
     ghostSprite.x = dotSprite.x;
@@ -1030,7 +1034,7 @@ export class PowerZoneManager extends PIXI.Container {
       dotSprite.ghost.alpha = 1;
       this.spritePool.dispose(dotSprite.ghost, dotSprite.dot.isPositive, dotSprite.dot.color);
     } else {
-      console.log('NO GHOST!!! NOT GOOD!!!');
+      console.log('NO GHOST!!! NOT GOOD!!!', dotSprite.dot.id);
     }
     dotSprite.ghost = null;
   }
