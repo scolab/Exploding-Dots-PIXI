@@ -162,8 +162,8 @@ export class PowerZone extends PIXI.Container {
       this.addChild(this.positiveDividerText);
 
       this.divisionGhostContainer = new DotsContainer();
-      this.divisionGhostContainer.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
-      this.divisionGhostContainer.y = BOX_INFO.BOX_Y;
+      this.divisionGhostContainer.x = (position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH)) + 5.5;
+      this.divisionGhostContainer.y = BOX_INFO.BOX_Y + 5;
       this.addChild(this.divisionGhostContainer);
     }
 

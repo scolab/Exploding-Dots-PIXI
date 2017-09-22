@@ -84,6 +84,13 @@ export class PowerZoneManager extends PIXI.Container {
   private successAction: (name: string) => any;
   private title: string;
   private isUserActionComplete: boolean; // Do not validate result in the middle of an operation
+  private divisionDots = ['grouped_dot1.png', 'grouped_dot2.png', 'grouped_dot3.png', 'grouped_dot4.png',
+    'grouped_dot5.png', 'grouped_dot6.png', 'grouped_dot7.png', 'grouped_dot8.png',
+    'grouped_dot9.png', 'grouped_dot10.png', 'grouped_dot11.png', 'grouped_dot12.png'];
+
+  private divisionAntiDots = ['grouped_antidot1.png', 'grouped_antidot2.png', 'grouped_antidot3.png', 'grouped_antidot4.png',
+    'grouped_antidot5.png', 'grouped_antidot6.png', 'grouped_antidot7.png', 'grouped_antidot8.png',
+    'grouped_antidot9.png', 'grouped_antidot10.png', 'grouped_antidot11.png', 'grouped_antidot12.png'];
 
   constructor(addDot: (zoneId: number,
                        position: number[],
@@ -712,16 +719,19 @@ export class PowerZoneManager extends PIXI.Container {
         // this is the ghost of dots to show group with specific color
         let groupSprite: Sprite;
         if (dot.isPositive) {
+          groupSprite = new Sprite(this.textures[this.divisionDots[randomFromTo(0, this.divisionDots.length - 1)]]);
           groupSprite = new Sprite(this.textures['grouped_dot.png']);
+          groupSprite.position.x = dot.sprite.position.x;
+          groupSprite.position.y = dot.sprite.position.y;
         } else {
+          groupSprite = new Sprite(this.textures[this.divisionAntiDots[randomFromTo(0, this.divisionAntiDots.length - 1)]]);
           groupSprite = new Sprite(this.textures['grouped_antidot.png']);
+          groupSprite.position.x = dot.sprite.position.x;
+          groupSprite.position.y = dot.sprite.position.y + BOX_INFO.HALF_BOX_HEIGHT - 4;
         }
         groupSprite.anchor.set(0.5);
         groupSprite.filters = [colorMatrix];
-        groupSprite.position.x = dot.sprite.position.x;
-        groupSprite.position.y = dot.sprite.position.y;
         this.allZones[dot.powerZone].divisionGhostContainer.addChild(groupSprite);
-
         const movingSprite: DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
         movingSprite.position.x = newPosition.x;
         movingSprite.position.y = newPosition.y;

@@ -115,6 +115,8 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
   private boundOnResize: EventListenerObject;
   private canvasDiv: HTMLDivElement;
 
+  private pj = require('./../../../package.json');
+
   constructor(props: ICanvasPixiProps) {
     super(props);
     this.isWebGL = false;
@@ -205,13 +207,13 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError);
-    this.loader.pre(this.addCacheKiller);
+    this.loader.pre(this.addCacheKiller.bind(this));
     this.loader.load();
     this.resize();
   }
 
   public addCacheKiller(resource, next): void {
-    resource.url += '?version=0.2.00';
+    resource.url += `?version=${this.pj.version}`;
     next();
   }
 

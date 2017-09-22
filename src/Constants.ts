@@ -137,14 +137,7 @@ ACQUA_FILTER.matrix = [.16, 0, 0, 0, 0,
                        0, 0, .78, 0, 0,
                        0, 0, 0, 0.5, 0];
 
-let COLOR_FILTERS: ColorMatrixFilter[] = [GREEN_FILTER, ORANGE_FILTER, PURPLE_FILTER, YELLOW_FILTER, ACQUA_FILTER];
-
 export const getAColorFilter = (): ColorMatrixFilter => {
-  /*if (COLOR_FILTERS.length === 0) {
-    COLOR_FILTERS = [GREEN_FILTER, ORANGE_FILTER, PURPLE_FILTER, YELLOW_FILTER, ACQUA_FILTER];
-    COLOR_FILTERS = _arrayShuffle(COLOR_FILTERS);
-  }
-  return COLOR_FILTERS.pop() as ColorMatrixFilter;*/
   const FILTER: ColorMatrixFilter = new ColorMatrixFilter();
   FILTER.matrix = [Math.random(), 0, 0, 0, 0,
                   0, Math.random(), 0, 0, 0,
