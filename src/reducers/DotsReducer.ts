@@ -432,7 +432,6 @@ const dotsReducer = (state: IState | null = null,
       if (action.machineState) { // we are at the start of an activity
         // This is a hack for receiving the bases in a string format.
         // Must be done here, before the props are read only
-        // TODO find a better way to do this
         if (typeof (action.machineState.allBases) === 'string') {
           // eslint-disable-next-line no-param-reassign
           action.machineState.allBases = BASE[action.machineState.allBases];

@@ -205,8 +205,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     }
     this.loader.once('complete', this.onAssetsLoaded.bind(this));
     this.loader.once('error', CanvasPIXI.onAssetsError);
+    this.loader.pre(this.addCacheKiller);
     this.loader.load();
     this.resize();
+  }
+
+  public addCacheKiller(resource, next): void {
+    resource.url += '?version=0.2.00';
+    next();
   }
 
   public shouldComponentUpdate(nextProps: ICanvasPixiProps): boolean {
