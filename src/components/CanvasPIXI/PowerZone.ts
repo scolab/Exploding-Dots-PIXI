@@ -53,6 +53,7 @@ export class PowerZone extends PIXI.Container {
   public zonePosition: number = 0;
   public positiveDivisionValue: number = 0;
   public negativeDivisionValue: number = 0;
+  public bgBox: PIXI.Sprite;
 
   private positiveProximityManager: ProximityManager;
   private negativeProximityManager: ProximityManager;
@@ -68,7 +69,6 @@ export class PowerZone extends PIXI.Container {
   /*private dotsCounterContainer: DotCounter;
   private negativeDotsCounterContainer: DotCounter;*/
   private spritePool: SpritePool;
-  private bgBox: PIXI.Sprite;
   private bgBoxTextures: PIXI.Texture[] = new Array<PIXI.Texture>();
   private placeValueText: PIXI.Text;
   private placeValueExponent: PIXI.Text;
@@ -94,7 +94,7 @@ export class PowerZone extends PIXI.Container {
     this.bgBoxTextures.push(textures['box.png']);
     this.bgBoxTextures.push(textures['box_yes.png']);
     this.bgBoxTextures.push(textures['box_no.png']);
-    this.bgBoxTextures.push(textures['div_box_pre.png']);
+    // this.bgBoxTextures.push(textures['div_box_pre.png']);
     this.bgBoxTextures.push(textures['box_unstable.png']);
     this.bgBox = new PIXI.Sprite(this.bgBoxTextures[0]);
     this.bgBox.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
@@ -258,21 +258,24 @@ export class PowerZone extends PIXI.Container {
       if (positiveZoneIsEmpty === true &&
         (this.negativePresent === false || negativeZoneIsEmpty === true)) {
         this.isActive = false;
-        this.bgBox.texture = this.bgBoxTextures[3];
+        this.bgBox.texture = this.bgBoxTextures[0];
+        this.bgBox.alpha = 0.5;
       } else {
         this.isActive = true;
         if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
-          this.bgBox.texture = this.bgBoxTextures[4];
+          this.bgBox.texture = this.bgBoxTextures[3];
         } else {
           this.bgBox.texture = this.bgBoxTextures[0];
+          this.bgBox.alpha = 1;
         }
       }
       return positiveZoneIsEmpty && negativeZoneIsEmpty;
     } else {
       if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1 || Object.keys(this.negativeDots).length > Number(this.base[1]) - 1) {
-        this.bgBox.texture = this.bgBoxTextures[4];
+        this.bgBox.texture = this.bgBoxTextures[3];
       } else {
         this.bgBox.texture = this.bgBoxTextures[0];
+        this.bgBox.alpha = 1;
       }
     }
     this.isActive = true;
@@ -503,7 +506,7 @@ export class PowerZone extends PIXI.Container {
     // console.log('checkOvercrowding', this.zonePosition);
     let dotOverload: boolean = false;
     if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1) {
-      this.bgBox.texture = this.bgBoxTextures[4];
+      this.bgBox.texture = this.bgBoxTextures[3];
       this.positiveDotsContainer.children.forEach((dotSprite: DotSprite) => {
         dotSprite.playOverload();
       });
@@ -517,7 +520,7 @@ export class PowerZone extends PIXI.Container {
 
     if (this.negativePresent) {
       if (Object.keys(this.negativeDots).length > Number(this.base[1]) - 1) {
-        this.bgBox.texture = this.bgBoxTextures[4];
+        this.bgBox.texture = this.bgBoxTextures[3];
         this.negativeDotsContainer.children.forEach((dotSprite: DotSprite) => {
           dotSprite.playOverload();
         });
@@ -597,6 +600,7 @@ export class PowerZone extends PIXI.Container {
       switch (status) {
         case PowerZone.BG_NEUTRAL:
           this.bgBox.texture = this.bgBoxTextures[0];
+          this.bgBox.alpha = 1;
           break;
         case PowerZone.BG_GREEN:
           this.bgBox.texture = this.bgBoxTextures[1];
@@ -606,9 +610,11 @@ export class PowerZone extends PIXI.Container {
           break;
         default:
           this.bgBox.texture = this.bgBoxTextures[0];
+          this.bgBox.alpha = 1;
       }
     } else {
-      this.bgBox.texture = this.bgBoxTextures[3];
+      this.bgBox.texture = this.bgBoxTextures[0];
+      this.bgBox.alpha = 0.5;
     }
   }
 
