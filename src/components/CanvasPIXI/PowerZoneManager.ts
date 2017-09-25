@@ -6,7 +6,7 @@ import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/Math
 // tslint:disable-next-line max-line-length
 import {
   BASE, USAGE_MODE, OPERATOR_MODE, POSITION_INFO, BOX_INFO, SPRITE_COLOR, ERROR_MESSAGE, IOPERATOR_MODE,
-  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME, ISPRITE_COLOR, getAColorFilter,
+  IUSAGE_MODE, DOT_ACTIONS, MOVE_IMPOSSIBLE, TWEEN_TIME, ISPRITE_COLOR,
 } from '../../Constants';
 import { DividerZoneManager } from './DividerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
@@ -22,7 +22,6 @@ import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
-import ColorMatrixFilter = PIXI.filters.ColorMatrixFilter;
 
 interface IZoneUnderCursor {
   droppedOnPowerZone: PIXI.Container | null;
@@ -84,13 +83,15 @@ export class PowerZoneManager extends PIXI.Container {
   private successAction: (name: string) => any;
   private title: string;
   private isUserActionComplete: boolean; // Do not validate result in the middle of an operation
-  private divisionDots = ['grouped_dot1.png', 'grouped_dot2.png', 'grouped_dot3.png', 'grouped_dot4.png',
+  private divisionDots: string[] = ['grouped_dot1.png', 'grouped_dot2.png', 'grouped_dot3.png', 'grouped_dot4.png',
     'grouped_dot5.png', 'grouped_dot6.png', 'grouped_dot7.png', 'grouped_dot8.png',
     'grouped_dot9.png', 'grouped_dot10.png', 'grouped_dot11.png', 'grouped_dot12.png'];
+  private divisionDotsCurrentArray: string[];
 
-  private divisionAntiDots = ['grouped_antidot1.png', 'grouped_antidot2.png', 'grouped_antidot3.png', 'grouped_antidot4.png',
+  private divisionAntiDots: string[] = ['grouped_antidot1.png', 'grouped_antidot2.png', 'grouped_antidot3.png', 'grouped_antidot4.png',
     'grouped_antidot5.png', 'grouped_antidot6.png', 'grouped_antidot7.png', 'grouped_antidot8.png',
     'grouped_antidot9.png', 'grouped_antidot10.png', 'grouped_antidot11.png', 'grouped_antidot12.png'];
+  private divisionAntiDotsCurrentArray: string[];
 
   constructor(addDot: (zoneId: number,
                        position: number[],
@@ -153,6 +154,8 @@ export class PowerZoneManager extends PIXI.Container {
     this.ticker = new PIXI.ticker.Ticker();
     this.ticker.stop();
     this.isUserActionComplete = true;
+    this.divisionDotsCurrentArray = this.divisionDots.slice();
+    this.divisionAntiDotsCurrentArray = this.divisionAntiDots.slice();
   }
 
   public init(textures: TextureDictionary,
@@ -557,26 +560,25 @@ export class PowerZoneManager extends PIXI.Container {
                                   isDragEnd = false): void {
         // console.log('checkIfDivisionPossible', allZonesValue);
     if (this.isInteractive) {
-      const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data) as IZoneUnderCursor;
-      const droppedOnPowerZone: PIXI.Container | null = zoneOverInfo.droppedOnPowerZone;
+      const zoneOverInfo: IZoneUnderCursor = this.getZoneUnderCursor(data, true) as IZoneUnderCursor;
       const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-
+      const actualPowerZone: PowerZone | null | undefined = zoneOverInfo.actualZone;
       this.allZones.forEach((zone) => {
         zone.setBackgroundColor(PowerZone.BG_NEUTRAL);
       });
       // console.log('droppedOnPowerZone', droppedOnPowerZone);
-      if (droppedOnPowerZone !== null) {
+      if (actualPowerZone !== null && actualPowerZone !== undefined) {
         // console.log(droppedOnPowerZoneIndex, allZonesValue.length, this.totalZoneCount);
         if ((this.totalZoneCount - droppedOnPowerZoneIndex >= allZonesValue.length) === false) {
           if (isDragEnd === false) {
-            (droppedOnPowerZone.parent as PowerZone).setBackgroundColor(PowerZone.BG_RED);
+            actualPowerZone.setBackgroundColor(PowerZone.BG_RED);
             for (let i = 0; i < allZonesValue.length; i += 1) {
               if (this.allZones[droppedOnPowerZoneIndex + i] !== undefined) {
                 this.allZones[droppedOnPowerZoneIndex + i].setBackgroundColor(PowerZone.BG_RED);
               }
             }
           } else {
-            (droppedOnPowerZone.parent as PowerZone).setBackgroundColor(PowerZone.BG_NEUTRAL);
+            actualPowerZone.setBackgroundColor(PowerZone.BG_NEUTRAL);
           }
         } else {
           let success: boolean = false;
@@ -620,9 +622,9 @@ export class PowerZoneManager extends PIXI.Container {
             }
           }
         }
-      } else if (isDragEnd === true) {
+      }/* else if (isDragEnd === true) {
         this.soundManager.playSound(SoundManager.DIVISION_BACKINTOPLACE);
-      }
+      }*/
     }
   }
 
@@ -710,8 +712,18 @@ export class PowerZoneManager extends PIXI.Container {
       dotsToMove = dotsToMove.concat(thisZoneDots);
       dotsRemovedByZone[droppedOnPowerZoneIndex + i] = dotsRemovedByZone[droppedOnPowerZoneIndex + i].concat(thisZoneDots); // tslint:disable-line  max-line-length
     }
-    const colorMatrix: ColorMatrixFilter = getAColorFilter();
+    // const colorMatrix: ColorMatrixFilter = getAColorFilter();
     if (dotsToMove.length > 0) {
+      if (this.divisionDotsCurrentArray.length === 0) {
+        this.divisionDotsCurrentArray = this.divisionDots.slice();
+      }
+      const dotName: string = this.divisionDotsCurrentArray.pop() as string;
+
+      if (this.divisionAntiDotsCurrentArray.length === 0) {
+        this.divisionAntiDotsCurrentArray = this.divisionAntiDots.slice();
+      }
+      const antidotName: string = this.divisionAntiDotsCurrentArray.pop() as string;
+
       dotsToMove.forEach((dot: DotVO) => {
         let newPosition: Point = dot.sprite.parent.toGlobal(dot.sprite.position as Point);
         newPosition = this.movingDotsContainer.toLocal(newPosition);
@@ -719,18 +731,16 @@ export class PowerZoneManager extends PIXI.Container {
         // this is the ghost of dots to show group with specific color
         let groupSprite: Sprite;
         if (dot.isPositive) {
-          groupSprite = new Sprite(this.textures[this.divisionDots[randomFromTo(0, this.divisionDots.length - 1)]]);
-          groupSprite = new Sprite(this.textures['grouped_dot.png']);
+          groupSprite = new Sprite(this.textures[dotName]);
           groupSprite.position.x = dot.sprite.position.x;
           groupSprite.position.y = dot.sprite.position.y;
         } else {
-          groupSprite = new Sprite(this.textures[this.divisionAntiDots[randomFromTo(0, this.divisionAntiDots.length - 1)]]);
-          groupSprite = new Sprite(this.textures['grouped_antidot.png']);
+          groupSprite = new Sprite(this.textures[antidotName]);
           groupSprite.position.x = dot.sprite.position.x;
           groupSprite.position.y = dot.sprite.position.y + BOX_INFO.HALF_BOX_HEIGHT - 4;
         }
         groupSprite.anchor.set(0.5);
-        groupSprite.filters = [colorMatrix];
+        // groupSprite.filters = [colorMatrix];
         this.allZones[dot.powerZone].divisionGhostContainer.addChild(groupSprite);
         const movingSprite: DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
         movingSprite.position.x = newPosition.x;
@@ -843,7 +853,7 @@ export class PowerZoneManager extends PIXI.Container {
       );
       delay += 0.1;
     });
-    this.soundManager.playSound(SoundManager.DIVISION_OVERLOAD);
+    // this.soundManager.playSound(SoundManager.DIVISION_OVERLOAD);
     TweenMax.delayedCall(
         delay + TWEEN_TIME.DIVISION_BALANCE_DIVIDER,
         this.setDividerValueAfterBalance,
@@ -1212,24 +1222,20 @@ export class PowerZoneManager extends PIXI.Container {
                          originalZoneIndex: number): void {
     // console.log('moveImpossible', type, this.displayUserMessageAction);
     if (type === MOVE_IMPOSSIBLE.POSITIVE_TO_NEGATIVE) {
-      // this.soundManager.playSound(SoundManager.INVALID_MOVE);
       if (this.displayUserMessageAction) {
         this.displayUserMessageAction(ERROR_MESSAGE.POSITIVE_NEGATIVE_DRAG);
       }
       this.isInteractive = false;
     } else if (type === MOVE_IMPOSSIBLE.BASE_X) {
-      // this.soundManager.playSound(SoundManager.INVALID_MOVE);
       if (this.displayUserMessageAction) {
         this.displayUserMessageAction(ERROR_MESSAGE.BASE_X_DRAG);
       }
       this.isInteractive = false;
     }else if (type === MOVE_IMPOSSIBLE.NOT_ENOUGH_DOTS) {
-      // this.soundManager.playSound(SoundManager.NOT_ENOUGH_DOTS);
       if (this.displayUserMessageAction) {
         this.displayUserMessageAction(ERROR_MESSAGE.NO_ENOUGH_DOTS);
       }
     }else if (type === MOVE_IMPOSSIBLE.MORE_THAN_ONE_BASE) {
-      // this.soundManager.playSound(SoundManager.INVALID_MOVE);
       if (this.displayUserMessageAction) {
         this.displayUserMessageAction(ERROR_MESSAGE.ONE_BOX_AT_A_TIME);
       }
@@ -1409,7 +1415,7 @@ export class PowerZoneManager extends PIXI.Container {
     }
   }
 
-  private getZoneUnderCursor(data): IZoneUnderCursor | null {
+  private getZoneUnderCursor(data: InteractionData, testGlobalZone: boolean = false): IZoneUnderCursor | null {
     let droppedOnPowerZone: PIXI.Container | null = null;
     let droppedOnPowerZoneIndex: number = -1;
     let actualZone: PowerZone | null = null;
@@ -1420,18 +1426,26 @@ export class PowerZoneManager extends PIXI.Container {
       return { droppedOnPowerZone, droppedOnPowerZoneIndex };
     }
     this.allZones.forEach((zone) => {
-      dataLocalZone = data.getLocalPosition(zone.positiveDotsContainer);
-      if (isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea as Rectangle)) {
-        droppedOnPowerZone = zone.positiveDotsContainer;
-        droppedOnPowerZoneIndex = zone.zonePosition;
-        actualZone = zone;
-      }
-      if (zone.negativeDotsContainer != null) {
-        dataLocalZone = data.getLocalPosition(zone.negativeDotsContainer);
-        if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea as Rectangle)) {
-          droppedOnPowerZone = zone.negativeDotsContainer;
+      if (testGlobalZone) {
+        if (zone.bgBox.containsPoint(data.global)) {
+          droppedOnPowerZone = zone.positiveDotsContainer;
           droppedOnPowerZoneIndex = zone.zonePosition;
           actualZone = zone;
+        }
+      } else {
+        dataLocalZone = data.getLocalPosition(zone.positiveDotsContainer);
+        if (isPointInRectangle(dataLocalZone, zone.positiveDotsContainer.hitArea as Rectangle)) {
+          droppedOnPowerZone = zone.positiveDotsContainer;
+          droppedOnPowerZoneIndex = zone.zonePosition;
+          actualZone = zone;
+        }
+        if (zone.negativeDotsContainer != null) {
+          dataLocalZone = data.getLocalPosition(zone.negativeDotsContainer);
+          if (isPointInRectangle(dataLocalZone, zone.negativeDotsContainer.hitArea as Rectangle)) {
+            droppedOnPowerZone = zone.negativeDotsContainer;
+            droppedOnPowerZoneIndex = zone.zonePosition;
+            actualZone = zone;
+          }
         }
       }
     });

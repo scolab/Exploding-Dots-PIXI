@@ -23,12 +23,12 @@ export class SoundManager {
   public static RESET: string = 'RESET';
   public static GO: string = 'GO';
 
-  public static GO_INVALID: string = 'GO_INVALID';
+  // public static GO_INVALID: string = 'GO_INVALID';
   public static DIVISION_SUCCESS: string = 'DIVISION_SUCCESS';
   public static DIVISION_IMPOSSIBLE: string = 'DIVISION_IMPOSSIBLE';
-  public static DIVISION_BACKINTOPLACE: string = 'DIVISION_BACKINTOPLACE';
-  public static DIVISION_OVERLOAD: string = 'DIVISION_OVERLOAD';
-  public static BOX_OVERLOAD: string = 'BOX_OVERLOAD';
+  // public static DIVISION_BACKINTOPLACE: string = 'DIVISION_BACKINTOPLACE';
+  // public static DIVISION_OVERLOAD: string = 'DIVISION_OVERLOAD';
+  // public static BOX_OVERLOAD: string = 'BOX_OVERLOAD';
 
   public static get instance(): SoundManager {
     // Do you need arguments? Make it a regular method instead.
@@ -72,9 +72,10 @@ export class SoundManager {
   private RESET: Howl;
   private GO: Howl;
 
-  /* private GO_INVALID: Howl;
   private DIVISION_SUCCESS: Howl;
   private DIVISION_IMPOSSIBLE: Howl;
+
+  /* private GO_INVALID: Howl;
   private DIVISION_BACKINTOPLACE: Howl;
   private DIVISION_OVERLOAD: Howl;*/
 
@@ -200,21 +201,21 @@ export class SoundManager {
     });
     this.allSounds.push(this.RESET);
 
+    this.DIVISION_SUCCESS = new Howl({
+      src: [`${this.baseURL}S03_Suction_03.mp3`],
+    });
+    this.allSounds.push(this.DIVISION_SUCCESS);
+
+    this.DIVISION_IMPOSSIBLE = new Howl({
+      src: [`${this.baseURL}S12_Error.mp3`],
+    });
+    this.allSounds.push(this.DIVISION_IMPOSSIBLE);
+
     /*
     this.GO_INVALID = new Howl({
       src: [`${this.baseURL}GO_INVALID.mp3`],
     });
     this.allSounds.push(this.GO_INVALID);
-
-    this.DIVISION_SUCCESS = new Howl({
-      src: [`${this.baseURL}DIVISION_SUCCESS.mp3`],
-    });
-    this.allSounds.push(this.DIVISION_SUCCESS);
-
-    this.DIVISION_IMPOSSIBLE = new Howl({
-      src: [`${this.baseURL}DIVISION_IMPOSSIBLE.mp3`],
-    });
-    this.allSounds.push(this.DIVISION_IMPOSSIBLE);
   */
   }
 

@@ -136,12 +136,3 @@ ACQUA_FILTER.matrix = [.16, 0, 0, 0, 0,
                        0, .81, 0, 0, 0,
                        0, 0, .78, 0, 0,
                        0, 0, 0, 0.5, 0];
-
-export const getAColorFilter = (): ColorMatrixFilter => {
-  const FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-  FILTER.matrix = [Math.random(), 0, 0, 0, 0,
-                  0, Math.random(), 0, 0, 0,
-                  0, 0, Math.random(), 0, 0,
-                  0, 0, 0, 0.2, 0];
-  return FILTER;
-};
