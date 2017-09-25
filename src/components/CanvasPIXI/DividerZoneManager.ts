@@ -22,6 +22,7 @@ export class DividerZoneManager extends PIXI.Container {
   private textures: PIXI.loaders.TextureDictionary;
   private origin: Point;
   private data: PIXI.interaction.InteractionData;
+  private clickPosition: Point;
 
   constructor() {
     super();
@@ -128,14 +129,14 @@ export class DividerZoneManager extends PIXI.Container {
   }
 
   private onDragStart(e: InteractionEvent): void {
-    // console.log('DividerZoneManager onDragStart');
     if (this.dragging === false && this.tweening === false) {
+      this.clickPosition = e.data.getLocalPosition(this);
       this.origin = new PIXI.Point(this.x, this.y);
       this.data = e.data;
       this.dragging = true;
       const newPosition: Point = this.data.getLocalPosition(this.parent);
-      this.position.x = newPosition.x - (this.width / 2);
-      this.position.y = newPosition.y - (this.height / 2);
+      this.position.x = newPosition.x - this.clickPosition.x;
+      this.position.y = newPosition.y - this.clickPosition.y;
       this.eventEmitter.emit(DividerZoneManager.START_DRAG);
     }
   }
@@ -144,8 +145,8 @@ export class DividerZoneManager extends PIXI.Container {
     if (this.dragging) {
       // console.log('onDragMove');
       const newPosition: Point = this.data.getLocalPosition(this.parent);
-      this.position.x = newPosition.x - (this.width / 2);
-      this.position.y = newPosition.y - (this.height / 2);
+      this.position.x = newPosition.x - this.clickPosition.x;
+      this.position.y = newPosition.y - this.clickPosition.y;
       this.eventEmitter.emit(DividerZoneManager.MOVED, e.data, this.allZonesValue.slice());
     }
   }
