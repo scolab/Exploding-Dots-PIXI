@@ -437,7 +437,7 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public checkResult(): void {
-    // console.log('checkResult', this.wantedResult);
+    console.log('checkResult', this.wantedResult);
     if (this.isUserActionComplete) { // Validate result only when all part of the operation are complete
       let zone: PowerZone;
       let zoneSuccess: number = 0;
@@ -448,21 +448,25 @@ export class PowerZoneManager extends PIXI.Container {
           let success = true;
           if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
             if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
+              console.log(i, 'positiveDots', this.wantedResult.positiveDots[i], zone.positiveDotCount)
               success = false;
             }
           }
           if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
             if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
+              console.log(i, 'negativeDots', this.wantedResult.negativeDots[i], zone.negativeDotCount);
               success = false;
             }
           }
           if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
-            if (this.wantedResult.positiveDivider[i] !== zone.positiveDivisionValue) {
+            if (this.wantedResult.positiveDivider[i] !== zone.positiveDivisionValue - zone.negativeDivisionValue) {
+              console.log(i, 'positiveDivider', this.wantedResult.positiveDivider[i], zone.positiveDivisionValue, zone.negativeDivisionValue);
               success = false;
             }
           }
           if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
-            if (this.wantedResult.negativeDivider[i] !== zone.negativeDivisionValue) {
+            if (this.wantedResult.negativeDivider[i] !== zone.negativeDivisionValue - zone.positiveDivisionValue) {
+              console.log(i, 'negativeDivider', this.wantedResult.negativeDivider[i], zone.negativeDivisionValue, zone.positiveDivisionValue);
               success = false;
             }
           }
@@ -901,6 +905,7 @@ export class PowerZoneManager extends PIXI.Container {
                 ((target.parent as PowerZone).negativeDotsContainer.hitArea as Rectangle).height - POSITION_INFO.DOT_RAYON),
           ];
           this.addDot(target.powerZone, dotPos, !target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
+          this.soundManager.playSound(`${SoundManager.ADD_DOT_ANTIDOT}_${target.powerZone + 1}`);
         } else {
           this.addDot(target.powerZone, position, target.isPositive, color, DOT_ACTIONS.NEW_DOT_ANTIDOT_FROM_CLICK);
           const dotPos: number[] = [

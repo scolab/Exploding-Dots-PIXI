@@ -327,16 +327,16 @@ storiesOf('Exploding Dots', module)
         usage_mode={USAGE_MODE.EXERCISE}
         allBases={BASE.ALGEBRA}
         base={BASE.ALGEBRA[0]}
-        operandA={'5x4+4x3+3x2+2x+1'}
-        operandB={'x+1'}
+        operandA={'x3-3x+2'}
+        operandB={'x+2'}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible
         wantedResult={{
-          positiveDots: [1, 0, 1, 0, 1],
+          positiveDots: [0, 0, 0, 0, 0],
           negativeDots: [0, 0, 0, 0, 0],
-          positiveDivider: [0, 4, 0, 2, 0],
-          negativeDivider: [0, 0, 0, 0, 0],
+          positiveDivider: [0, 0, 1, 0, 1],
+          negativeDivider: [0, 0, 0, 2, 0],
         }}
       />
     ))
