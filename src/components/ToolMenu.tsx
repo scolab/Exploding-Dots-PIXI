@@ -24,6 +24,7 @@ const ToolMenu = (props: IProps) => {
 const ToolMenuDiv = styled.div`
   display: block;
   margin-left: 6.5%;
+  padding-bottom: 2px;
   margin-top: ${(props: IDivProps) => (props.operatorMode === OPERATOR_MODE.DIVIDE ? '-15%' : '-4%')};
   position: relative;
   width: fit-content;
