@@ -437,7 +437,6 @@ export class PowerZoneManager extends PIXI.Container {
   }
 
   public checkResult(): void {
-    console.log('checkResult', this.wantedResult);
     if (this.isUserActionComplete) { // Validate result only when all part of the operation are complete
       let zone: PowerZone;
       let zoneSuccess: number = 0;
@@ -448,25 +447,21 @@ export class PowerZoneManager extends PIXI.Container {
           let success = true;
           if (this.wantedResult.positiveDots && this.wantedResult.positiveDots.length > 0) {
             if (this.wantedResult.positiveDots[i] !== zone.positiveDotCount) {
-              console.log(i, 'positiveDots', this.wantedResult.positiveDots[i], zone.positiveDotCount)
               success = false;
             }
           }
           if (this.wantedResult.negativeDots && this.wantedResult.negativeDots.length > 0) {
             if (this.wantedResult.negativeDots[i] !== zone.negativeDotCount) {
-              console.log(i, 'negativeDots', this.wantedResult.negativeDots[i], zone.negativeDotCount);
               success = false;
             }
           }
           if (this.wantedResult.positiveDivider && this.wantedResult.positiveDivider.length > 0) {
-            if (this.wantedResult.positiveDivider[i] !== zone.positiveDivisionValue - zone.negativeDivisionValue) {
-              console.log(i, 'positiveDivider', this.wantedResult.positiveDivider[i], zone.positiveDivisionValue, zone.negativeDivisionValue);
+            if (this.wantedResult.positiveDivider[i] !== Math.max(zone.positiveDivisionValue - zone.negativeDivisionValue, 0)) {
               success = false;
             }
           }
           if (this.wantedResult.negativeDivider && this.wantedResult.negativeDivider.length > 0) {
-            if (this.wantedResult.negativeDivider[i] !== zone.negativeDivisionValue - zone.positiveDivisionValue) {
-              console.log(i, 'negativeDivider', this.wantedResult.negativeDivider[i], zone.negativeDivisionValue, zone.positiveDivisionValue);
+            if (this.wantedResult.negativeDivider[i] !== Math.max(zone.negativeDivisionValue - zone.positiveDivisionValue, 0)) {
               success = false;
             }
           }
@@ -1623,7 +1618,7 @@ export class PowerZoneManager extends PIXI.Container {
     allRemovedDots = allRemovedDots.concat(notDisplayedDots);
     this.removeMultipleDots(originalZoneIndex, allRemovedDots, false);
     if (allRemovedDots.length > 0) {
-      switch (allRemovedDots.length){
+      switch (allRemovedDots.length) {
         case 1:
           this.soundManager.playSound(SoundManager.DOT_EXPLODE_1);
           break;
