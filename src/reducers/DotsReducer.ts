@@ -449,6 +449,7 @@ const dotsReducer = (state: IState | null = null,
       if (newState.machineState.operator_mode === OPERATOR_MODE.DISPLAY &&
         newState.machineState.usage_mode === USAGE_MODE.FREEPLAY) {
         newState.machineState.operandA = '0';
+        initialMachineState[action.title].startActivity = true;
       }
 
       return newState;
