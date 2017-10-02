@@ -3,7 +3,6 @@ import { TweenMax } from 'gsap';
 // eslint-disable-next-line import/prefer-default-export
 export class SoundManager {
 
-  public static DOT_EXPLODE_1: string = 'DOT_EXPLODE_1';
   public static DOT_EXPLODE_2: string = 'DOT_EXPLODE_2';
   public static DOT_EXPLODE_3: string = 'DOT_EXPLODE_3';
   public static DOT_EXPLODE_4: string = 'DOT_EXPLODE_4';
@@ -42,7 +41,6 @@ export class SoundManager {
   private baseURL: string;
   private allSounds: Howl[];
 
-  private DOT_EXPLODE_1: Howl;
   private DOT_EXPLODE_2: Howl;
   private DOT_EXPLODE_3: Howl;
   private DOT_EXPLODE_4: Howl;
@@ -87,9 +85,6 @@ export class SoundManager {
     this.muted = muted;
     this.baseURL = baseURL;
     this.baseURL += '/sounds/';
-    this.DOT_EXPLODE_1 = new Howl({
-      src: [`${this.baseURL}S01_Explosion_1pt.mp3`],
-    });
 
     this.DOT_EXPLODE_2 = new Howl({
       src: [`${this.baseURL}S01_Explosion_2pts.mp3`],

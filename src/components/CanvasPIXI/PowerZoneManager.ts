@@ -1620,18 +1620,15 @@ export class PowerZoneManager extends PIXI.Container {
     if (allRemovedDots.length > 0) {
       switch (allRemovedDots.length) {
         case 1:
-          this.soundManager.playSound(SoundManager.DOT_EXPLODE_1);
-          break;
-        case 2:
           this.soundManager.playSound(SoundManager.DOT_EXPLODE_2);
           break;
-        case 3:
+        case 2:
           this.soundManager.playSound(SoundManager.DOT_EXPLODE_3);
           break;
-        case 4:
+        case 3:
           this.soundManager.playSound(SoundManager.DOT_EXPLODE_4);
           break;
-        case 5:
+        case 4:
           this.soundManager.playSound(SoundManager.DOT_EXPLODE_5);
           break;
         default:
