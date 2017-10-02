@@ -43,6 +43,9 @@ class DotsMachine extends Component<IProps, {}> {
       this.machineDiv.style.overflow = 'visible';
       this.placeHolder.style.display = 'none';
     }
+    if (this.props.dotsMachine.machineState.isReady) {
+      this.props.dotsMachine.machineState.isReady();
+    }
   }
 
   public render(): JSX.Element {
@@ -301,6 +304,7 @@ interface IProps {
       successAction: (name: string) => any;
       resetAction: (name: string) => any;
       displayUserMessageAction: (message: string) => any;
+      isReady: () => any;
     };
   };
 }
