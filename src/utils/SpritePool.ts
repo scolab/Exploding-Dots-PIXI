@@ -334,7 +334,7 @@ export class SpritePool {
 
   private createOverloadAnimations(textures: TextureDictionary): void {
 
-    let normalFramesAdded: number = 80;
+    let normalFramesAdded: number = 10;
 
     this.positiveOverloadRedFrames = [this.texturePosOne];
     for (let i: number = 1; i <= 24; i++) {
@@ -350,7 +350,7 @@ export class SpritePool {
     for (let i: number = 1; i <= 24; i++) {
       this.positiveOverloadBlueFrames.push(textures[`b_dot${i}.png`]);
     }
-    normalFramesAdded = 80;
+    normalFramesAdded = 10;
     while (normalFramesAdded > 0) {
       this.positiveOverloadBlueFrames.push(this.texturePosTwo);
       normalFramesAdded -= 1;
@@ -360,7 +360,7 @@ export class SpritePool {
     for (let i: number = 1; i <= 24; i++) {
       this.negativeOverloadRedFrames.push(textures[`antidot${i}.png`]);
     }
-    normalFramesAdded = 80;
+    normalFramesAdded = 10;
     while (normalFramesAdded > 0) {
       this.negativeOverloadRedFrames.push(this.textureNegOne);
       normalFramesAdded -= 1;
@@ -370,7 +370,7 @@ export class SpritePool {
     for (let i: number = 1; i <= 24; i++) {
       this.negativeOverloadBlueFrames.push(textures[`b_antidot${i}.png`]);
     }
-    normalFramesAdded = 80;
+    normalFramesAdded = 10;
     while (normalFramesAdded > 0) {
       this.negativeOverloadBlueFrames.push(this.textureNegTwo);
       normalFramesAdded -= 1;
