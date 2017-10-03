@@ -48,6 +48,7 @@ interface IProps {
   success?: boolean;
   successAction?: (name: string) => any;
   resetAction?: (name: string) => any;
+  isReady?: () => any;
 }
 
 interface IState {
@@ -88,6 +89,7 @@ class ExplodingDots extends Component<IProps, IState> {
     success: false,
     successAction: undefined,
     resetAction: undefined,
+    isReady: undefined,
   };
 
   private store: Store<any>;

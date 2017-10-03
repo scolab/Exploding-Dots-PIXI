@@ -318,8 +318,6 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.powerZoneManager.createLeftmostTestZone();
       this.resize();
       this.powerZoneManager.start();
-      this.props.isReady();
-      this.canvasDiv.style.visibility = 'visible';
       if (this.textures) {
         const ico_infinite: Texture = this.textures['ico_infinite.png'];
         const infiniteDots: Sprite = new Sprite(ico_infinite);
@@ -330,11 +328,11 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       this.canvasDiv.style.paddingBottom = this.props.operator_mode ===
       OPERATOR_MODE.DIVIDE ? '48.8%' :
         '36.8%';
-      this.canvasDiv.style.overflow = 'visible';
       if (this.props.usage_mode === USAGE_MODE.EXERCISE ||
         this.props.usage_mode === USAGE_MODE.FREEPLAY) {
         this.props.startActivityFunc();
       }
+      this.props.isReady();
     }
   }
 
@@ -824,9 +822,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
 export default CanvasPIXI;
 
 const CanvasDivStyled = styled.div`
-  visibility: hidden;
   height: 1px;
-  overflow: hidden;
 `;
 
 const ContainerDiv = styled.div`
