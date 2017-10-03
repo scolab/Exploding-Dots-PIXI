@@ -5,6 +5,11 @@ import styled from 'styled-components';
 interface IProps {
   onClick: () => any;
   placeValueOn: boolean;
+  enabled: boolean;
+}
+
+interface IElemProps {
+  alpha: boolean;
 }
 
 const PlaceValueSwitch = (props: IProps): JSX.Element => {
@@ -13,7 +18,9 @@ const PlaceValueSwitch = (props: IProps): JSX.Element => {
   return (
     <GradientBackgroundButton
       type='button'
-      onClick={() => props.onClick()}
+      onClick={props.enabled ? () => props.onClick() : () => null}
+      disabled={!props.enabled}
+      alpha={!props.enabled}
     >
       <GradientBackgroundImg
         src={props.placeValueOn ? imgOff : img}
@@ -26,14 +33,15 @@ const PlaceValueSwitch = (props: IProps): JSX.Element => {
 export default PlaceValueSwitch;
 
 const GradientBackgroundButton = styled.button`
-    ${gradientBackground}
-    ${toolMenuElement}
-    width: 36px;
-    height: 36px;
-    vertical-align: middle;
-    border: none;
-    cursor: pointer;
-  `;
+  ${gradientBackground}
+  ${toolMenuElement}
+  width: 40px;
+  height: 40px;
+  vertical-align: middle;
+  border: none;
+  cursor: ${(props: IElemProps) => (props.alpha) ? 'normal' : 'pointer'};
+  opacity: ${(props: IElemProps) => (props.alpha) ? '0.5' : '1'};
+`;
 
 const GradientBackgroundImg = styled.img`
   margin-top: 3px;

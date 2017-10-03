@@ -954,6 +954,9 @@ export class PowerZoneManager extends PIXI.Container {
     if (this.world.isInteractive && this.dragging === false) {
       const oldParent: DisplayObjectContainer = this.parent;
       this.world.allZones[this.dot.powerZone].removeFromProximityManager(this);
+      this.world.allZones.forEach((zone: PowerZone) => {
+        zone.precalculateDotsForDivision();
+      });
       this.origin = new Point(this.x, this.y);
       this.data = e.data;
       this.dragging = true;
@@ -985,25 +988,36 @@ export class PowerZoneManager extends PIXI.Container {
       this.position.x = newPosition.x;
       this.position.y = newPosition.y;
       this.particleEmitter.updateOwnerPos(newPosition.x, newPosition.y);
+      const zoneOverInfo: IZoneUnderCursor = this.world.getZoneUnderCursor(e.data) as IZoneUnderCursor;
+      const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
+      const originalZoneIndex: number = this.dot.powerZone;
+      this.world.allZones.forEach((zone: PowerZone) => {
+        if (zone.isActive === false) {
+          zone.bgBox.alpha = 0.5;
+        }
+      });
       if (this.world.negativePresent) {
-        const zoneOverInfo: IZoneUnderCursor = this.world.getZoneUnderCursor(e.data) as IZoneUnderCursor;
-        const droppedOnPowerZoneIndex: number = zoneOverInfo.droppedOnPowerZoneIndex;
-        const originalZoneIndex: number = this.dot.powerZone;
         if (originalZoneIndex === droppedOnPowerZoneIndex) {
           const droppedOnPowerZone: DotsContainer = zoneOverInfo.droppedOnPowerZone as DotsContainer;
           if (this.dot.isPositive !== droppedOnPowerZone.isPositive) {
             // Select dot / anti dot for shaking
             this.world.dotAntidotSelect(this, originalZoneIndex);
-          }else {
+          } else {
             if (this.shakingDotForAnnihilation !== null) {
               this.shakingDotForAnnihilation.stopWiggle();
               this.shakingDotForAnnihilation = null;
             }
           }
-        }else {
+        } else {
           if (this.shakingDotForAnnihilation !== null) {
             this.shakingDotForAnnihilation.stopWiggle();
             this.shakingDotForAnnihilation = null;
+          }
+        }
+      } else if (originalZoneIndex !== droppedOnPowerZoneIndex) {
+        if (zoneOverInfo.actualZone) {
+          if (zoneOverInfo.actualZone.isActive === false) {
+            zoneOverInfo.actualZone.bgBox.alpha = 0.7;
           }
         }
       }
@@ -1016,8 +1030,10 @@ export class PowerZoneManager extends PIXI.Container {
     if (this.world.isInteractive && this.dragging) {
       this.dragging = false;
       this.particleEmitter.stop();
-      // dotSprite.data = null;
       this.world.verifyDroppedOnZone(this, e.data);
+      this.world.allZones.forEach((zone: PowerZone) => {
+        zone.checkTextAndAlpha(true);
+      });
       // dot may have been remove if dropped outside the boxes in freeplay,
       // Or destroyed on other occasions,
       // so verify if it's still have a sprite in dotVO

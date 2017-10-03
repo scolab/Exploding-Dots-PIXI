@@ -174,24 +174,22 @@ class DotsMachine extends Component<IProps, {}> {
         <ToolMenu
           operatorMode={this.props.dotsMachine.machineState.operator_mode}
         >
-          {this.props.dotsMachine.machineState.placeValueSwitchVisible === true &&
           <PlaceValueSwitch
             onClick={this.props.showHidePlaceValue}
             placeValueOn={this.props.dotsMachine.machineState.placeValueOn}
+            enabled={this.props.dotsMachine.machineState.placeValueSwitchVisible}
           />
-          }
           <ResetButton
             onClick={() => this.props.resetMachine(null, this.props.dotsMachine.machineState.title)}
             resetAction={this.props.dotsMachine.machineState.resetAction}
             title={this.props.dotsMachine.machineState.title}
             visible={this.props.dotsMachine.machineState.resetVisible}
           />
-          {this.props.dotsMachine.machineState.magicWandVisible === true &&
           <MagicWand
             onClick={this.props.activateMagicWand}
             hidden={this.props.dotsMachine.machineState.success}
+            enabled={this.props.dotsMachine.machineState.magicWandVisible}
           />
-          }
           {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
           <BaseSelector
             base={this.props.dotsMachine.machineState.base}

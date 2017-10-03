@@ -48,26 +48,21 @@ export class PowerZone extends PIXI.Container {
   public eventEmitter: EventEmitter;
   public positiveDotCount: number;
   public negativeDotCount: number;
-  /*public positiveDivideCounter: PIXI.Sprite;
-  public negativeDivideCounter: PIXI.Sprite;*/
   public zonePosition: number = 0;
   public positiveDivisionValue: number = 0;
   public negativeDivisionValue: number = 0;
   public bgBox: PIXI.Sprite;
+  public isActive: boolean = true;
 
   private positiveProximityManager: ProximityManager;
   private negativeProximityManager: ProximityManager;
   private positiveDotNotDisplayed: IDotVOHash<DotVO> = {};
   private negativeDotNotDisplayed: IDotVOHash<DotVO> = {};
   private positiveDividerText: PIXI.Text;
-  // private negativeDividerText: PIXI.Text;
   private negativePresent: boolean = false;
-  private isActive: boolean = true;
   private base: Array<number | string>;
   private totalZoneCount: number = 0;
   private maxDotsByZone: number = 0;
-  /*private dotsCounterContainer: DotCounter;
-  private negativeDotsCounterContainer: DotCounter;*/
   private spritePool: SpritePool;
   private bgBoxTextures: PIXI.Texture[] = new Array<PIXI.Texture>();
   private placeValueText: PIXI.Text;
@@ -94,7 +89,6 @@ export class PowerZone extends PIXI.Container {
     this.bgBoxTextures.push(textures['box.png']);
     this.bgBoxTextures.push(textures['box_yes.png']);
     this.bgBoxTextures.push(textures['box_no.png']);
-    // this.bgBoxTextures.push(textures['div_box_pre.png']);
     this.bgBoxTextures.push(textures['box_unstable.png']);
     this.bgBox = new PIXI.Sprite(this.bgBoxTextures[0]);
     this.bgBox.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
@@ -530,14 +524,8 @@ export class PowerZone extends PIXI.Container {
           dotSprite.returnToNormal();
           // console.log('returnToNormal 2', this.zonePosition);
         });
-        /*if (this.isActive) {
-          this.bgBox.texture = this.bgBoxTextures[0];
-        } else {
-          this.bgBox.texture = this.bgBoxTextures[3];
-        }*/
       }
     }
-    // console.log('checkOvercrowding', dotOverload, this.zonePosition);
     return dotOverload;
   }
 

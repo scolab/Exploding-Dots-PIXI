@@ -31,7 +31,7 @@ storiesOf('Exploding Dots', module)
         magicWandVisible={false}
         numberValueVisible={true}
         machineCodeVisible={true}
-        baseSwitchVisible={true}
+        baseSwitchVisible={false}
         cdnBaseUrl={''}
         wantedResult={{
           positiveDots: [0, 0, 0, 0, 2],

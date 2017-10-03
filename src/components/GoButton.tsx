@@ -47,8 +47,8 @@ const GradientBackgroundButton = styled.button`
   border: none;
   // box-shadow: 0 0 0 2px #fcfcfc;
   cursor: pointer;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   vertical-align: middle;
   margin-top: -6px;
   margin-left: 12px;

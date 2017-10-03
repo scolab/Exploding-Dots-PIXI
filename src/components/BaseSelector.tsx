@@ -53,7 +53,7 @@ const GradientBackgroundButton = styled.button`
   font-family: Nunito;
   font-size: 24px;
   width: 110px;
-  height: 36px;
+  height: 40px;
   vertical-align: middle;
   text-align: center;
   border: none;
@@ -72,7 +72,7 @@ const GradientBackgroundDiv = styled.div`
   font-family: Nunito;
   font-size: 24px;
   width: ${(props: IFakeButton) => (props.numChar >= 4 ? '110px;' : '100px;' )};
-  height: 36px;
+  height: 40px;
   vertical-align: middle;
   text-align: center;
   border: none;

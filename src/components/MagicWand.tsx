@@ -5,6 +5,7 @@ import styled from 'styled-components';
 interface IProps {
   onClick: (active: boolean) => any;
   hidden: boolean;
+  enabled: boolean;
 }
 
 interface IElemProps {
@@ -19,9 +20,9 @@ const MagicWand = (props: IProps): JSX.Element => {
     <GradientBackgroundButton
       type='button'
       onClick={() => props.onClick(true)}
-      alpha={props.hidden}
-      disabled={props.hidden}
-      >
+      alpha={props.hidden || !props.enabled}
+      disabled={props.hidden || !props.enabled}
+    >
       <GradientBackgroundImg
         src={img}
         role='presentation'
@@ -35,8 +36,8 @@ const GradientBackgroundButton = styled.button`
   ${toolMenuElement}
   border: none;
   cursor: ${(props: IElemProps) => (props.alpha) ? 'default' : 'pointer'};
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   vertical-align: middle;
   opacity: ${(props: IElemProps) => (props.alpha) ? '0.5' : '1'};
 `;
