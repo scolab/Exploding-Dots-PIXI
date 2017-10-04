@@ -260,8 +260,8 @@ export class PowerZone extends PIXI.Container {
           this.bgBox.texture = this.bgBoxTextures[3];
         } else {
           this.bgBox.texture = this.bgBoxTextures[0];
-          this.bgBox.alpha = 1;
         }
+        this.bgBox.alpha = 1;
       }
       return positiveZoneIsEmpty && negativeZoneIsEmpty;
     } else {
@@ -283,28 +283,15 @@ export class PowerZone extends PIXI.Container {
       if (doCheck) {
         // check before populate
         const dividerIsEmpty: boolean = this.getDividerTextStatus(this.positiveDividerText, false);
-        /*const negativeDividerIsEmpty: boolean = this.getDividerTextStatus(
-          this.negativeDividerText,
-          !dividerIsEmpty,
-        );
-        if (negativeDividerIsEmpty === false && dividerIsEmpty) {
-          dividerIsEmpty = this.getDividerTextStatus(
-            this.positiveDividerText,
-            true,
-          );
-        }*/
         if (dividerIsEmpty) {
           this.positiveDividerText.visible = false;
-          // this.negativeDividerText.visible = false;
         } else {
           this.positiveDividerText.visible = true;
-          // this.negativeDividerText.visible = true;
         }
         return dividerIsEmpty;
       }
       // force show
       this.positiveDividerText.visible = true;
-      // this.negativeDividerText.visible = true;
       return false;
     }
     return false;

@@ -1031,9 +1031,7 @@ export class PowerZoneManager extends PIXI.Container {
       this.dragging = false;
       this.particleEmitter.stop();
       this.world.verifyDroppedOnZone(this, e.data);
-      this.world.allZones.forEach((zone: PowerZone) => {
-        zone.checkTextAndAlpha(true);
-      });
+      this.world.setZoneTextAndAlphaStatus();
       // dot may have been remove if dropped outside the boxes in freeplay,
       // Or destroyed on other occasions,
       // so verify if it's still have a sprite in dotVO
