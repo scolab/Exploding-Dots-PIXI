@@ -180,9 +180,9 @@ const dotsReducer = (state: IState | null = null,
       // console.log(ACTIONS.START_ACTIVITY);
       stateCopy = { ...state };
       stateCopy.machineState.startActivity = true;
-      /*if (stateCopy.machineState.usage_mode !== USAGE_MODE.EXERCISE) {
+      if (stateCopy.machineState.usage_mode === USAGE_MODE.OPERATION) {
         stateCopy.machineState.resetVisible = true;
-      }*/
+      }
       return stateCopy;
     case ACTIONS.START_ACTIVITY_DONE:
       // console.log(ACTIONS.START_ACTIVITY_DONE);
