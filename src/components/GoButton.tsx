@@ -10,7 +10,7 @@ interface IProps {
 
 export default class GoButton extends Component<IProps, {}> {
 
-  private img = require('./images/arrow_right.png');
+  private img = require('./images/anim_arrow_right@2x.gif');
 
   public render(): JSX.Element {
     if (this.props.activityStarted) {
@@ -69,9 +69,9 @@ const InvisibleButton = styled.button`
 `;
 
 const ImgStyled = styled.img`
-   margin-top: 7px;
-   margin-left: 1px;
+   margin-top: 9px;
+   margin-right: 2px;
    vertical-align: top;
-   width: 45%;
+   width: 60%;
    height: auto;
 `;
