@@ -22,12 +22,11 @@ const ToolMenu = (props: IProps) => {
 };
 
 const ToolMenuDiv = styled.div`
-  display: block;
+  display: table;
   margin-left: 6.5%;
   padding: 4px;
   margin-top: ${(props: IDivProps) => (props.operatorMode === OPERATOR_MODE.DIVIDE ? '-15%' : '-4%')};
   position: relative;
-  width: fit-content;
 `;
 
 export default ToolMenu;
