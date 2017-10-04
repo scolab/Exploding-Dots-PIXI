@@ -739,7 +739,6 @@ export class PowerZoneManager extends PIXI.Container {
           groupSprite.position.y = dot.sprite.position.y + BOX_INFO.HALF_BOX_HEIGHT - 4;
         }
         groupSprite.anchor.set(0.5);
-        // groupSprite.filters = [colorMatrix];
         this.allZones[dot.powerZone].divisionGhostContainer.addChild(groupSprite);
         const movingSprite: DotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
         movingSprite.position.x = newPosition.x;
