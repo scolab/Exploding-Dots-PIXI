@@ -68,6 +68,7 @@ export class PowerZone extends PIXI.Container {
   private placeValueText: PIXI.Text;
   private placeValueExponent: PIXI.Text;
   private textures: PIXI.loaders.TextureDictionary;
+  private pointerDownPosition: Point | null;
 
   constructor(position: number,
               textures: TextureDictionary,
@@ -185,7 +186,7 @@ export class PowerZone extends PIXI.Container {
 
       if (usageMode === USAGE_MODE.FREEPLAY ||
         (operatorMode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X)) {
-        // Dot can ba added in division in base X
+        // Dot can be added in division in base X
         this.positiveDotsContainer.buttonMode = true;
         this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
       }
@@ -231,6 +232,7 @@ export class PowerZone extends PIXI.Container {
         && base[1] === BASE.BASE_X)) {
         // Dot can ba added in freeplay or in division in base X
         this.positiveDotsContainer.buttonMode = true;
+        this.positiveDotsContainer.on('pointerdown', this.pointerDown.bind(this));
         this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
       }
     }
@@ -702,27 +704,34 @@ export class PowerZone extends PIXI.Container {
     }
   }
 
+  private pointerDown(e: InteractionEvent): void {
+    this.pointerDownPosition = e.data.getLocalPosition(e.target);
+  }
+
   private createDot(e: InteractionEvent): void {
     // console.log('createDot', this.zonePosition);
-    const hitArea: Rectangle = e.target.hitArea as Rectangle;
     const clickPos: Point = e.data.getLocalPosition(e.target);
-    const clickModifiedPos: number[] = new Array<number>();
-    if (clickPos.x < POSITION_INFO.DOT_RAYON + 2) {
-      clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
-    } else if (clickPos.x > hitArea.width - POSITION_INFO.DOT_RAYON - 1) {
-      clickModifiedPos.push(hitArea.width - POSITION_INFO.DOT_RAYON - 1);
-    } else {
-      clickModifiedPos.push(clickPos.x);
-    }
+    if (this.pointerDownPosition && Math.hypot(this.pointerDownPosition.x - clickPos.x, this.pointerDownPosition.y - clickPos.y) < 10) {
+      const hitArea: Rectangle = e.target.hitArea as Rectangle;
+      const clickModifiedPos: number[] = new Array<number>();
+      if (clickPos.x < POSITION_INFO.DOT_RAYON + 2) {
+        clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
+      } else if (clickPos.x > hitArea.width - POSITION_INFO.DOT_RAYON - 1) {
+        clickModifiedPos.push(hitArea.width - POSITION_INFO.DOT_RAYON - 1);
+      } else {
+        clickModifiedPos.push(clickPos.x);
+      }
 
-    if (clickPos.y < POSITION_INFO.DOT_RAYON + 2) {
-      clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
-    } else if (clickPos.y > hitArea.height - POSITION_INFO.DOT_RAYON - 2) {
-      clickModifiedPos.push(hitArea.height - POSITION_INFO.DOT_RAYON - 2);
-    } else {
-      clickModifiedPos.push(clickPos.y);
+      if (clickPos.y < POSITION_INFO.DOT_RAYON + 2) {
+        clickModifiedPos.push(POSITION_INFO.DOT_RAYON + 2);
+      } else if (clickPos.y > hitArea.height - POSITION_INFO.DOT_RAYON - 2) {
+        clickModifiedPos.push(hitArea.height - POSITION_INFO.DOT_RAYON - 2);
+      } else {
+        clickModifiedPos.push(clickPos.y);
+      }
+      this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target, clickModifiedPos, SPRITE_COLOR.RED);
+      this.pointerDownPosition = null;
     }
-    this.eventEmitter.emit(PowerZone.CREATE_DOT, e.target, clickModifiedPos, SPRITE_COLOR.RED);
   }
 
   private getZoneTextAndAlphaStatus(dots: IDotVOHash<DotVO>): boolean {
