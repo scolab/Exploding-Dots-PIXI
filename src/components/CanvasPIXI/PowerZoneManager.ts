@@ -1016,7 +1016,7 @@ export class PowerZoneManager extends PIXI.Container {
       } else if (originalZoneIndex !== droppedOnPowerZoneIndex) {
         if (zoneOverInfo.actualZone) {
           if (zoneOverInfo.actualZone.isActive === false) {
-            zoneOverInfo.actualZone.bgBox.alpha = 0.7;
+            zoneOverInfo.actualZone.bgBox.alpha = 0.8;
           }
         }
       }
