@@ -21,6 +21,7 @@ import styled from 'styled-components';
 import ApplicationOptions = PIXI.ApplicationOptions;
 import Sprite = PIXI.Sprite;
 import Texture = PIXI.Texture;
+import { detect } from 'detect-browser';
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];
@@ -166,7 +167,16 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
       view: this.canvas,
     };
 
-    const preventWebGL: boolean = false;
+    let preventWebGL: boolean = false;
+    const browser = detect();
+    switch (browser && browser.name) {
+      case 'firefox':
+      case 'ie':
+      case 'android':
+        preventWebGL = true;
+        break;
+    }
+
     this.app = new PIXI.Application(
         SETTINGS.GAME_WIDTH,
         (this.props.operator_mode === OPERATOR_MODE.DIVIDE ?
@@ -196,9 +206,9 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     this.boundOnResize = this.resize.bind(this);
     window.addEventListener('resize', this.boundOnResize);
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
-    if (window.devicePixelRatio >= 1.50) {
+    if (window.devicePixelRatio >= 1.50 || window.innerWidth > 2000) {
       this.loader.add(this.loaderName, '/images/machine@4x.json');
-    } else if (window.devicePixelRatio >= 1.25) {
+    } else if (window.devicePixelRatio >= 1.25 || window.innerWidth >= 1920) {
       this.loader.add(this.loaderName, '/images/machine@3x.json');
     } else if (window.devicePixelRatio >= 1) {
       this.loader.add(this.loaderName, '/images/machine@2x.json');
