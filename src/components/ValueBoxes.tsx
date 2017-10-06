@@ -55,7 +55,7 @@ export default class ValueBoxes extends Component<IProps, {}> {
       const hasPositiveText: boolean = positiveText !== '0';
       const hasNegativeText: boolean = negativeText !== '0';
       if (i !== boxInOrder.length - 1) {
-        if (Object.keys(positiveHash).length === 0 && hasLeftValue === false) {
+        if (Object.keys(positiveHash).length === 0 && Object.keys(negativeHash).length === 0 && hasLeftValue === false) {
           boxes.push(
             <EmptyDiv
               key={i}
@@ -63,6 +63,7 @@ export default class ValueBoxes extends Component<IProps, {}> {
           );
         } else {
           hasLeftValue = true;
+          console.log(i, hasPositiveText, hasNegativeText, this.props.negativePresent);
           boxes.push(
             <NormalDiv
               key={i}
