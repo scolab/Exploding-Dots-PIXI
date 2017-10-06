@@ -203,6 +203,7 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
         );
     this.stage.addChild(this.powerZoneManager);
     this.isWebGL = this.renderer instanceof PIXI.WebGLRenderer;
+    this.renderer.plugins.interaction.autoPreventDefault = true;
     this.boundOnResize = this.resize.bind(this);
     window.addEventListener('resize', this.boundOnResize);
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);

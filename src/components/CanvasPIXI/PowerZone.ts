@@ -69,6 +69,8 @@ export class PowerZone extends PIXI.Container {
   private placeValueExponent: PIXI.Text;
   private textures: PIXI.loaders.TextureDictionary;
   private pointerDownPosition: Point | null;
+  private createDotFunc: () => any;
+  private pointerDownFunc: () => any;
 
   constructor(position: number,
               textures: TextureDictionary,
@@ -95,6 +97,9 @@ export class PowerZone extends PIXI.Container {
     this.bgBox.x = position * (BOX_INFO.BOX_WIDTH + BOX_INFO.GUTTER_WIDTH);
     this.bgBox.y = BOX_INFO.BOX_Y;
     this.addChild(this.bgBox);
+
+    this.createDotFunc = this.createDot.bind(this);
+    this.pointerDownFunc = this.pointerDown.bind(this);
 
     if (base[1] === BASE.BASE_X) {
       this.placeValueText = new PIXI.Text('X', {
@@ -188,7 +193,8 @@ export class PowerZone extends PIXI.Container {
         (operatorMode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X)) {
         // Dot can be added in division in base X
         this.positiveDotsContainer.buttonMode = true;
-        this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
+        this.positiveDotsContainer.on('pointerdown', this.pointerDownFunc);
+        this.positiveDotsContainer.on('pointerup', this.createDotFunc);
       }
 
       this.negativeDotsContainer = new DotsContainer();
@@ -209,7 +215,8 @@ export class PowerZone extends PIXI.Container {
         (operatorMode === OPERATOR_MODE.DIVIDE && base[1] === BASE.BASE_X)) {
         // Dot can be added in division in base X
         this.negativeDotsContainer.buttonMode = true;
-        this.negativeDotsContainer.on('pointerup', this.createDot.bind(this));
+        this.negativeDotsContainer.on('pointerdown', this.pointerDownFunc);
+        this.negativeDotsContainer.on('pointerup', this.createDotFunc);
       }
     } else {
       this.positiveDotsContainer = new DotsContainer();
@@ -232,8 +239,8 @@ export class PowerZone extends PIXI.Container {
         && base[1] === BASE.BASE_X)) {
         // Dot can ba added in freeplay or in division in base X
         this.positiveDotsContainer.buttonMode = true;
-        this.positiveDotsContainer.on('pointerdown', this.pointerDown.bind(this));
-        this.positiveDotsContainer.on('pointerup', this.createDot.bind(this));
+        this.positiveDotsContainer.on('pointerdown', this.pointerDownFunc);
+        this.positiveDotsContainer.on('pointerup', this.createDotFunc);
       }
     }
     this.x += BOX_INFO.LEFT_GUTTER;
@@ -681,7 +688,8 @@ export class PowerZone extends PIXI.Container {
           (sprite as AnimatedSprite).stop();
         }
       }
-      this.positiveDotsContainer.off('pointerup', this.createDot.bind(this));
+      this.positiveDotsContainer.off('pointerdown', this.pointerDownFunc);
+      this.positiveDotsContainer.off('pointerup', this.createDotFunc);
       this.positiveDotsContainer.destroy();
     }
     if (this.positiveProximityManager) {
@@ -695,7 +703,8 @@ export class PowerZone extends PIXI.Container {
             (sprite as AnimatedSprite).stop();
           }
         }
-        this.negativeDotsContainer.off('pointerup', this.createDot.bind(this));
+        this.positiveDotsContainer.off('pointerdown', this.pointerDownFunc);
+        this.negativeDotsContainer.off('pointerup', this.createDotFunc);
         this.negativeDotsContainer.destroy();
       }
       if (this.negativeProximityManager) {
@@ -709,7 +718,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   private createDot(e: InteractionEvent): void {
-    // console.log('createDot', this.zonePosition);
+    console.log('createDot', this.zonePosition);
     const clickPos: Point = e.data.getLocalPosition(e.target);
     if (this.pointerDownPosition && Math.hypot(this.pointerDownPosition.x - clickPos.x, this.pointerDownPosition.y - clickPos.y) < 10) {
       const hitArea: Rectangle = e.target.hitArea as Rectangle;
