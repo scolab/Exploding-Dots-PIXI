@@ -63,7 +63,6 @@ export default class ValueBoxes extends Component<IProps, {}> {
           );
         } else {
           hasLeftValue = true;
-          console.log(i, hasPositiveText, hasNegativeText, this.props.negativePresent);
           boxes.push(
             <NormalDiv
               key={i}
