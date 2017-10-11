@@ -207,11 +207,11 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     this.boundOnResize = this.resize.bind(this);
     window.addEventListener('resize', this.boundOnResize);
     this.loader = new PIXI.loaders.Loader(this.props.cdnBaseUrl);
-    if (window.devicePixelRatio >= 1.50 || window.innerWidth > 2000) {
+    if (window.devicePixelRatio >= 1.50 || window.screen.width > 2000) {
       this.loader.add(this.loaderName, '/images/machine@4x.json');
-    } else if (window.devicePixelRatio >= 1.25 || window.innerWidth >= 1920) {
+    } else if (window.devicePixelRatio >= 1.25 || window.screen.width >= 1920) {
       this.loader.add(this.loaderName, '/images/machine@3x.json');
-    } else if (window.devicePixelRatio >= 1) {
+    } else if (window.devicePixelRatio > 1) {
       this.loader.add(this.loaderName, '/images/machine@2x.json');
     } else {
       this.loader.add(this.loaderName, '/images/machine@1x.json');
