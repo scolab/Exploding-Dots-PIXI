@@ -718,7 +718,7 @@ export class PowerZone extends PIXI.Container {
   }
 
   private createDot(e: InteractionEvent): void {
-    console.log('createDot', this.zonePosition);
+    // console.log('createDot', this.zonePosition);
     const clickPos: Point = e.data.getLocalPosition(e.target);
     if (this.pointerDownPosition && Math.hypot(this.pointerDownPosition.x - clickPos.x, this.pointerDownPosition.y - clickPos.y) < 10) {
       const hitArea: Rectangle = e.target.hitArea as Rectangle;
@@ -868,11 +868,7 @@ export class PowerZone extends PIXI.Container {
     addedDots.forEach((dot: DotVO) => {
       this.removeDotFromNotDisplayedArray(dot);
       let dotSprite: DotSprite;
-      if (dot.color !== SPRITE_COLOR.BLUE) {
-        dotSprite = this.spritePool.getOne(SPRITE_COLOR.RED, true);
-      } else {
-        dotSprite = this.spritePool.getOne(SPRITE_COLOR.BLUE, true);
-      }
+      dotSprite = this.spritePool.getOne(dot.color, dot.isPositive);
       dot.sprite = dotSprite;
       dotSprite.dot = dot;
       addedDots.push(dot);
