@@ -56,8 +56,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.DISPLAY}
         usage_mode={USAGE_MODE.EXERCISE}
-        allBases={BASE.ARITHMOS}
-        base={BASE.ARITHMOS[0]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[0]}
         operandA={'12345'}
         placeValueSwitchVisible={false}
         placeValueOn={false}
@@ -166,14 +166,14 @@ storiesOf('Exploding Dots', module)
         usage_mode={USAGE_MODE.EXERCISE}
         allBases={BASE.ARITHMOS}
         base={BASE.ARITHMOS[0]}
-        operandA={'54321'}
-        operandB={'12345'}
+        operandA={'514'}
+        operandB={'347'}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible
         wantedResult={{
-          positiveDots: [4, 2, 0, 0, 0],
-          negativeDots: [0, 0, 0, 2, 4],
+          positiveDots: [0, 0, 2, 0, 0],
+          negativeDots: [0, 0, 0, 3, 5],
           positiveDivider: [0, 0, 0, 0, 0],
           negativeDivider: [0, 0, 0, 0, 0],
         }}

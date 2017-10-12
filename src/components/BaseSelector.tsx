@@ -1,11 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { gradientBackground, toolMenuElement } from './StylesForComponents';
+import { IUSAGE_MODE, USAGE_MODE } from '../Constants';
 
 interface IProps {
   onClick: () => any;
   base: Array<number | string>;
   allBase: any[];
+  usage_mode: IUSAGE_MODE;
 }
 
 interface IFakeButton {
@@ -14,7 +16,7 @@ interface IFakeButton {
 
 const BaseSelector = (props: IProps): JSX.Element => {
   const img = require('./images/left_arrow.png');
-  if (props.allBase.length > 1) {
+  if (props.allBase.length > 1 && props.usage_mode !== USAGE_MODE.EXERCISE) {
     return (
       <GradientBackgroundButton
         type='button'

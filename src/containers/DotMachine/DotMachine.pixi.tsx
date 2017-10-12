@@ -195,6 +195,7 @@ class DotsMachine extends Component<IProps, {}> {
             base={this.props.dotsMachine.machineState.base}
             onClick={this.props.changeBase}
             allBase={this.props.dotsMachine.machineState.allBases}
+            usage_mode={this.props.dotsMachine.machineState.usage_mode}
           />
           }
         </ToolMenu>
