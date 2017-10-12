@@ -65,7 +65,9 @@ export default class DivisionResult extends Component<IProps, {}> {
       }
 
       if (remainder.length > 0) {
-        resultValue += ' + ';
+        if (resultValue.length > 0) {
+          resultValue += ' + ';
+        }
         resultValue += `\\dfrac{${remainder}}{${superscriptToKatex(this.props.operandB)}}`;
       }
       const resultValueKatex = katex.renderToString(operandValue + resultValue);
