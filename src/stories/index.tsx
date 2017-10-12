@@ -149,6 +149,17 @@ storiesOf('Exploding Dots', module)
         }}
       />
     ))
+    .add('Antidotia Freeplay', () => (
+      <ExplodingDots
+        operator_mode={OPERATOR_MODE.SUBTRACT}
+        usage_mode={USAGE_MODE.FREEPLAY}
+        allBases={BASE.ARITHMOS}
+        base={BASE.ARITHMOS[0]}
+        placeValueSwitchVisible
+        placeValueOn
+        magicWandVisible
+      />
+    ))
     .add('Antidotia Operation', () => (
       <ExplodingDots
         operator_mode={OPERATOR_MODE.SUBTRACT}

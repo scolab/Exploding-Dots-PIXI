@@ -435,7 +435,7 @@ export class SpritePool {
 
     this.negativeImplodeRedFrames = [this.textureNegOne];
     for (let i: number = 1; i <= numFrame; i++) {
-      this.negativeImplodeRedFrames.push(textures[`antidot_implode1${i}.png`]);
+      this.negativeImplodeRedFrames.push(textures[`antidot_implode${i}.png`]);
     }
 
     this.negativeImplodeBlueFrames = [this.textureNegTwo];

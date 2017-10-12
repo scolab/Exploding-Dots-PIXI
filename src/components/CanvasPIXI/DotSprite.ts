@@ -154,13 +154,14 @@ export class DotSprite extends PIXI.Container {
   }
 
   public playImplode(): void {
-    // console.log('playImplode');
-    while (this.children.length > 0) {
-      this.removeChildAt(0);
+    if (this.getChildAt(0) !== this.implodeDot) {
+      while (this.children.length > 0) {
+        this.removeChildAt(0);
+      }
+      this.addChild(this.implodeDot);
+      this.implodeDot.onComplete = this.stopImplode.bind(this);
+      this.implodeDot.play();
     }
-    this.addChild(this.implodeDot);
-    this.implodeDot.onComplete = this.stopImplode.bind(this);
-    this.implodeDot.play();
   }
 
   public playDrip(): void {
