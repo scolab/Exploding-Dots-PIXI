@@ -26,7 +26,6 @@ interface IInputBox {
 export default class Operand extends Component<IProps, {}> {
 
   private inputText: HTMLInputElement;
-  private canvas: HTMLCanvasElement;
 
   public componentDidMount(): void {
     this.checkIfInputActive();
@@ -140,8 +139,8 @@ export default class Operand extends Component<IProps, {}> {
            - A maximum of 5 of those pattern
            */
           // tslint:disable-next-line max-line-length
-          reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})([-\+](\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})){0,4}[-\+]?$/);
-          stringToTest = superscriptToNormal(stringToTest);
+          reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}[xX]\d|\d{1,5}[xX]|[xX]\d|[xX]|\d{1,5})([-\+](\d{1,5}[xX]\d|\d{1,5}[xX]|[xX]\d|[xX]|\d{1,5})){0,4}[-\+]?$/);
+          stringToTest = superscriptToNormal(stringToTest.toLocaleLowerCase());
         }
       } else if (this.props.base[1] !== BASE.BASE_X) {
         reg = new RegExp('^$|^[|0-9]+$');
@@ -158,14 +157,14 @@ export default class Operand extends Component<IProps, {}> {
          - A maximum of 5 of those pattern
          */
         // tslint:disable-next-line max-line-length
-        reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})([-\+](\d{1,5}x\d|\d{1,5}x|x\d|x|\d{1,5})){0,4}[-\+]?$/);
+        reg = new RegExp(/^$|^[-\+]$|^[-\+]?(\d{1,5}[xX]\d|\d{1,5}[xX]|[xX]\d|[xX]|\d{1,5})([-\+](\d{1,5}[xX]\d|\d{1,5}[xX]|[xX]\d|[xX]|\d{1,5})){0,4}[-\+]?$/);
         stringToTest = superscriptToNormal(stringToTest);
       }
     } else {
       reg = new RegExp('^$|^[0-9]+$');
     }
     if (reg.test(stringToTest)) {
-      this.props.onChange(this.props.pos, stringToTest);
+      this.props.onChange(this.props.pos, stringToTest.toLocaleLowerCase());
     }
   }
 
