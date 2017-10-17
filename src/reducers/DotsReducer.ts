@@ -220,14 +220,14 @@ const dotsReducer = (state: IState | null = null,
         if (stateCopy.machineState.base[1] === BASE.BASE_X) {
           stateCopy.machineState.operandA = addSuperscriptWhereNeeded(action.totalA);
         } else {
-          stateCopy.machineState.operandA = action.totalA;
+          // stateCopy.machineState.operandA = action.totalA;
         }
       }
       if (action.totalB != null) {
         if (stateCopy.machineState.base[1] === BASE.BASE_X) {
           stateCopy.machineState.operandB = addSuperscriptWhereNeeded(action.totalB);
         } else {
-          stateCopy.machineState.operandB = action.totalB;
+          // stateCopy.machineState.operandB = action.totalB;
         }
       }
       return stateCopy;

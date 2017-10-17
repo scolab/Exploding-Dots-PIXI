@@ -123,8 +123,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.MULTIPLY}
         usage_mode={USAGE_MODE.OPERATION}
-        allBases={BASE.ARITHMOS}
-        base={BASE.ARITHMOS[0]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[1]}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible
@@ -164,8 +164,8 @@ storiesOf('Exploding Dots', module)
       <ExplodingDots
         operator_mode={OPERATOR_MODE.SUBTRACT}
         usage_mode={USAGE_MODE.OPERATION}
-        allBases={BASE.ARITHMOS}
-        base={BASE.ARITHMOS[0]}
+        allBases={BASE.MECHANIA}
+        base={BASE.MECHANIA[1]}
         placeValueSwitchVisible
         placeValueOn
         magicWandVisible
