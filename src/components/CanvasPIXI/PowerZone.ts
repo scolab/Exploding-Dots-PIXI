@@ -278,8 +278,8 @@ export class PowerZone extends PIXI.Container {
         this.bgBox.texture = this.bgBoxTextures[3];
       } else {
         this.bgBox.texture = this.bgBoxTextures[0];
-        this.bgBox.alpha = 1;
       }
+      this.bgBox.alpha = 1;
     }
     this.isActive = true;
     return false;
