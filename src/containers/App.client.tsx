@@ -1,5 +1,5 @@
 import 'pixi.js';
-import injectTapEventPlugin from 'react-tap-event-plugin';
+import initReactFastclick from 'react-fastclick';
 
 import React, {Component} from 'react';
 import {createStore, Store, StoreCreator} from 'redux';
@@ -11,9 +11,9 @@ import { ACTIONS } from '../actions/StoreConstants';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 try {
-  injectTapEventPlugin();
+  initReactFastclick();
 } catch (e) {
-  // Preventing error if injectTapEventPlugin() is already call.
+  // Preventing error if initReactFastclick() is already call.
 }
 
 const isDev: boolean = process.env.NODE_ENV === 'development';
