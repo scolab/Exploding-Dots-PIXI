@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as url from 'url';
-import { storiesOf } from '@kadira/storybook';
+import { storiesOf } from '@storybook/react';
 import ExplodingDots from '../containers/App.client';
 import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 

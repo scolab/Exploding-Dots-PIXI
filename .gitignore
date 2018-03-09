@@ -3,3 +3,5 @@ node_modules
 .idea
 dist
 ts-out
+package-lock.json
+package-lock.json.*
