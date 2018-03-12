@@ -4,7 +4,7 @@ import { superscriptToNormal } from '../utils/StringUtils';
 import styled from 'styled-components';
 import {operationItem} from './StylesForComponents';
 
-interface IProps {
+export interface IOperandProps {
   value: string;
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
@@ -23,7 +23,7 @@ interface IInputBox {
   textWidth: number;
 }
 
-export default class Operand extends Component<IProps, {}> {
+export default class Operand extends Component<IOperandProps, {}> {
 
   private inputText: HTMLInputElement;
 

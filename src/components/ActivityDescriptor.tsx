@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface IProps {
+export interface IActivityDescriptorProps {
   children: any;
 }
-const ActivityDescriptor = (props: IProps) => {
+const ActivityDescriptor = (props: IActivityDescriptorProps) => {
   return (
     <ActivityDescriptorDiv>
       {props.children}

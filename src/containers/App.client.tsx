@@ -8,6 +8,7 @@ import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
 import {OPERATOR_MODE, USAGE_MODE, BASE} from '../Constants';
 import { ACTIONS } from '../actions/StoreConstants';
+import { IWantedResult } from '../interfaces/IWantedResult';
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
 try {
@@ -20,7 +21,7 @@ const isDev: boolean = process.env.NODE_ENV === 'development';
 // 'https://exploding-dots.s3.ca-central-1.amazonaws.com'
 // const awsURL: string = process.env.AWS_URL || 'https://s3.amazonaws.com/exploding-dots-dev';
 
-interface IProps {
+export interface IExplodingDotsProps {
   title?: string;
   base?: Array<number | string>;
   allBases?: number[][] | any[][] | string;
@@ -51,13 +52,13 @@ interface IProps {
   isReady?: () => any;
 }
 
-interface IState {
+export interface IExplodingDotsState {
   muted: boolean | undefined;
 }
 
-class ExplodingDots extends Component<IProps, IState> {
+export class ExplodingDots extends Component<IExplodingDotsProps, IExplodingDotsState> {
 
-  public static defaultProps: Partial<IProps> = {
+  public static defaultProps: Partial<IExplodingDotsProps> = {
     title: 'default title',
     base: BASE.ARITHMOS[0],
     allBases: BASE.ARITHMOS,
@@ -94,8 +95,8 @@ class ExplodingDots extends Component<IProps, IState> {
 
   private store: Store<any>;
 
-  constructor(props: IProps) {
-    // console.log('App constructor', props);
+  constructor(props: IExplodingDotsProps) {
+    console.log('ExplodingDots App constructor', props);
     super(props);
     this.state = {
       muted: props.muted,
@@ -113,7 +114,8 @@ class ExplodingDots extends Component<IProps, IState> {
     });
   }
 
-  public componentWillReceiveProps(nextProps: IProps): void {
+  public componentWillReceiveProps(nextProps: IExplodingDotsProps): void {
+    console.log('ExplodingDots componentWillReceiveProps');
     if (nextProps.muted !== this.state.muted) {
       this.store.dispatch({
         type: ACTIONS.CHANGE_MUTE_STATUS,
@@ -126,6 +128,7 @@ class ExplodingDots extends Component<IProps, IState> {
   }
 
   public render(): JSX.Element {
+    console.log('ExplodingDots App.client render');
     return (
       <Provider store={this.store}>
           <div>
@@ -136,4 +139,4 @@ class ExplodingDots extends Component<IProps, IState> {
   }
 }
 
-export default ExplodingDots;
+// export default ExplodingDots;

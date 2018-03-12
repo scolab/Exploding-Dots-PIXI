@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { IOPERATOR_MODE, OPERATOR_MODE } from '../Constants';
 
-interface IProps {
+export interface IToolMenuProps {
   readonly children: any;
   readonly operatorMode: IOPERATOR_MODE;
 }
@@ -11,7 +11,7 @@ interface IDivProps {
   readonly operatorMode: IOPERATOR_MODE;
 }
 
-const ToolMenu = (props: IProps) => {
+const ToolMenu = (props: IToolMenuProps) => {
   return (
     <ToolMenuDiv
       operatorMode={props.operatorMode}

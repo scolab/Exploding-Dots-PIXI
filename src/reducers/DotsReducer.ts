@@ -6,8 +6,9 @@ import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUt
 import { DotVO } from '../VO/DotVO';
 import {MachineStateVO} from '../VO/MachineStateVO';
 import {DividerDotVO} from '../VO/DividerDotVO';
+import { IWantedResult } from '../interfaces/IWantedResult';
 
-interface IState {
+export interface IState {
   dots: DotVO[];
   positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   negativePowerZoneDots: Array<IDotVOHash<DotVO>>;

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { gradientBackground, toolMenuElement } from './StylesForComponents';
 import { IUSAGE_MODE, USAGE_MODE } from '../Constants';
 
-interface IProps {
+export interface IBaseSelectorProps {
   onClick: () => any;
   base: Array<number | string>;
   allBase: any[];
@@ -14,7 +14,7 @@ interface IFakeButton {
   numChar: number;
 }
 
-const BaseSelector = (props: IProps): JSX.Element => {
+const BaseSelector = (props: IBaseSelectorProps): JSX.Element => {
   const img = require('./images/left_arrow.png');
   if (props.allBase.length > 1 && props.usage_mode !== USAGE_MODE.EXERCISE) {
     return (

@@ -2,7 +2,7 @@ import React from 'react';
 import {gradientBackground, toolMenuElement} from './StylesForComponents';
 import styled from 'styled-components';
 
-interface IProps {
+export interface IMagicWandProps {
   onClick: (active: boolean) => any;
   hidden: boolean;
   enabled: boolean;
@@ -12,7 +12,7 @@ interface IElemProps {
   alpha: boolean;
 }
 
-const MagicWand = (props: IProps): JSX.Element => {
+const MagicWand = (props: IMagicWandProps): JSX.Element => {
 
   const img = require('./images/magic_wand.png');
 

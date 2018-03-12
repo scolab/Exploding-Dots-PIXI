@@ -5,7 +5,7 @@ import { BASE, IUSAGE_MODE, USAGE_MODE } from '../Constants';
 import { addSuperscriptWhereNeeded, superscriptToKatex, superscriptToNormal } from '../utils/StringUtils';
 import styled from 'styled-components';
 
-interface IProps {
+export interface IDivisionResultProps {
   readonly operandA: string;
   readonly operandB: string;
   readonly positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
@@ -18,7 +18,7 @@ interface IProps {
   readonly success: boolean;
 }
 
-export default class DivisionResult extends Component<IProps, {}> {
+export default class DivisionResult extends Component<IDivisionResultProps, {}> {
   public render(): JSX.Element | null {
     if ((this.props.usage_mode === USAGE_MODE.OPERATION && this.props.activityStarted) ||
         (this.props.usage_mode === USAGE_MODE.EXERCISE && this.props.success)) {

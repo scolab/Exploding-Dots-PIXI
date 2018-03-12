@@ -22,6 +22,7 @@ import ApplicationOptions = PIXI.ApplicationOptions;
 import Sprite = PIXI.Sprite;
 import Texture = PIXI.Texture;
 import { detect } from 'detect-browser';
+import { IWantedResult } from '../../interfaces/IWantedResult';
 
 interface IOperantProcessedArray {
   dotsPerZoneA: string[];

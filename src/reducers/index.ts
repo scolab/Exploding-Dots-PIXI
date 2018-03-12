@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers, AnyAction } from 'redux';
 import dotsReducer from './DotsReducer';
 
 const allReducers = combineReducers({

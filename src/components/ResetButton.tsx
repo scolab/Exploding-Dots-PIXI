@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {gradientBackground, toolMenuElement} from './StylesForComponents';
 import { SoundManager } from '../utils/SoundManager';
 
-interface IProps {
+export interface IResetButtonProps {
   onClick: () => any;
   resetAction: (name: string) => any;
   title: string;
@@ -14,7 +14,7 @@ interface IElemProps {
   visible: boolean;
 }
 
-export default class ResetButton extends Component<IProps, {}> {
+export default class ResetButton extends Component<IResetButtonProps, {}> {
 
   private img: any = require('./images/refresh.png');
 

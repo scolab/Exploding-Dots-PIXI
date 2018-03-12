@@ -1,5 +1,6 @@
 
 import { IMachineState} from '../reducers/DotsReducer';
+import { IWantedResult } from '../interfaces/IWantedResult';
 
 export class MachineStateVO implements IMachineState {
   public operandA: string;

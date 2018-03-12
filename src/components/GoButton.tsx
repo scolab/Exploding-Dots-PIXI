@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import {gradientBackground} from './StylesForComponents';
 import { SoundManager } from '../utils/SoundManager';
 
-interface IProps {
+export interface IGoButtonProps {
   onClick: () => any;
   activityStarted: boolean;
 }
 
-export default class GoButton extends Component<IProps, {}> {
+export default class GoButton extends Component<IGoButtonProps, {}> {
 
   private img = require('./images/anim_arrow_right@2x.gif');
 

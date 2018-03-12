@@ -3,13 +3,13 @@ import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from 
 import styled from 'styled-components';
 import {gradientBackground, operationItem} from './StylesForComponents';
 
-interface IProps {
+export interface IOperatorProps {
   operator_mode: IOPERATOR_MODE;
   usage_mode: IUSAGE_MODE;
   activityStarted: boolean;
 }
 
-export default class Operator extends Component<IProps, {}> {
+export default class Operator extends Component<IOperatorProps, {}> {
 
   public render(): JSX.Element | null {
 

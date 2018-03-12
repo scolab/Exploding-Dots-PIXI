@@ -25,6 +25,7 @@ import Point = PIXI.Point;
 import { IMachineState } from '../../reducers/DotsReducer';
 import styled from 'styled-components';
 import { operationItem } from '../../components/StylesForComponents';
+import { IWantedResult } from '../../interfaces/IWantedResult';
 
 class DotsMachine extends Component<IProps, {}> {
 

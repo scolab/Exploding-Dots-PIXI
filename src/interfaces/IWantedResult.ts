@@ -1,4 +1,4 @@
-interface IWantedResult {
+export interface IWantedResult {
   positiveDots: number[];
   negativeDots: number[];
   positiveDivider: number[];

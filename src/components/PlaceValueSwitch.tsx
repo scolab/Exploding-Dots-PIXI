@@ -2,7 +2,7 @@ import React from 'react';
 import {gradientBackground, toolMenuElement} from './StylesForComponents';
 import styled from 'styled-components';
 
-interface IProps {
+export interface IPlaceValueSwitchProps {
   onClick: () => any;
   placeValueOn: boolean;
   enabled: boolean;
@@ -12,7 +12,7 @@ interface IElemProps {
   alpha: boolean;
 }
 
-const PlaceValueSwitch = (props: IProps): JSX.Element => {
+const PlaceValueSwitch = (props: IPlaceValueSwitchProps): JSX.Element => {
   const img = require('./images/eye.png');
   const imgOff = require('./images/eye_not.png');
   return (

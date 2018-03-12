@@ -22,6 +22,7 @@ import {DividerDotVO} from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
+import { IWantedResult } from '../../interfaces/IWantedResult';
 
 interface IZoneUnderCursor {
   droppedOnPowerZone: PIXI.Container | null;

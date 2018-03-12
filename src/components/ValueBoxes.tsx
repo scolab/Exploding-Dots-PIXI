@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { DotVO } from '../VO/DotVO';
 import { convertBase } from '../utils/MathUtils';
 
-interface IProps {
+export interface IValueBoxProps {
   positivePowerZoneDots: Array<IDotVOHash<DotVO>>;
   negativePowerZoneDots: Array<IDotVOHash<DotVO>>;
   base: Array<number | string>;
@@ -29,7 +29,7 @@ interface IBoxContainer {
   isInline: boolean;
 }
 
-export default class ValueBoxes extends Component<IProps, {}> {
+export default class ValueBoxes extends Component<IValueBoxProps, {}> {
   public render(): JSX.Element {
     const boxes: any[] = new Array();
     const boxInOrder: Array<IDotVOHash<DotVO>> = this.props.positivePowerZoneDots.slice(0);
