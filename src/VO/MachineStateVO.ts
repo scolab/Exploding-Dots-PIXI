@@ -1,5 +1,5 @@
 
-import { IMachineState} from '../reducers/DotsReducer';
+import { IMachineState } from '../reducers/DotsReducer';
 import { IWantedResult } from '../interfaces/IWantedResult';
 
 export class MachineStateVO implements IMachineState {

@@ -18,8 +18,8 @@ import ValueBoxes from '../../components/ValueBoxes';
 import GoButton from '../../components/GoButton';
 import DivisionResult from '../../components/DivisionResult';
 import { USAGE_MODE, OPERAND_POS, IUSAGE_MODE, IOPERATOR_MODE, OPERATOR_MODE, BASE } from '../../Constants';
-import {DotVO} from '../../VO/DotVO';
-import {DividerDotVO} from '../../VO/DividerDotVO';
+import { DotVO } from '../../VO/DotVO';
+import { DividerDotVO } from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import Point = PIXI.Point;
 import { IMachineState } from '../../reducers/DotsReducer';
@@ -86,7 +86,7 @@ class DotsMachine extends Component<IProps, {}> {
             this.props.dotsMachine.machineState.numberValueVisible) &&
           <ArrowImg
             src={this.doubleArrow}
-            role='presentation'
+            role="presentation"
           />
           }
           {((this.props.dotsMachine.machineState.operator_mode === OPERATOR_MODE.DISPLAY ||
@@ -305,12 +305,12 @@ const mapDispatchToProps = (dispatch) => {
     showHidePlaceValue,
     activateMagicWand,
     operandChanged,
-    startActivityFunc: startActivity,
-    startActivityDoneFunc: startActivityDone,
     error,
     setDivisionResult,
     successFunction,
-  }, dispatch);
+    startActivityFunc: startActivity,
+    startActivityDoneFunc: startActivityDone,
+  },                        dispatch);
 };
 
 export default connect(

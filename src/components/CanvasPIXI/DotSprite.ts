@@ -1,12 +1,12 @@
-import {DotVO} from '../../VO/DotVO';
+import { DotVO } from '../../VO/DotVO';
 import Texture = PIXI.Texture;
-import {PowerZoneManager} from './PowerZoneManager';
+import { PowerZoneManager } from './PowerZoneManager';
 import Point = PIXI.Point;
 import { ParticleEmitter } from './ParticleEmitter';
 import Victor from 'victor';
 import Sprite = PIXI.Sprite;
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
-import {randomFromTo} from '../../utils/MathUtils';
+import { randomFromTo } from '../../utils/MathUtils';
 
 export class DotSprite extends PIXI.Container {
 

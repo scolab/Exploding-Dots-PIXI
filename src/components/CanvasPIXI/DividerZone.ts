@@ -1,6 +1,6 @@
 import Texture = PIXI.Texture;
 import Text = PIXI.Text;
-import {DividerDotVO} from '../../VO/DividerDotVO';
+import { DividerDotVO } from '../../VO/DividerDotVO';
 import Sprite = PIXI.Sprite;
 export class DividerZone extends PIXI.Container {
 
@@ -110,7 +110,7 @@ export class DividerZone extends PIXI.Container {
 
   private addDotToArray(dot: DividerDotVO): void {
     if (dot.isPositive) {
-      for (let i: number = 0; i < this.positiveDots.length; i++) {
+      for (let i: number = 0; i < this.positiveDots.length; i += 1) {
         if (this.positiveDots[i].length < 3) {
           this.positiveDots[i].push(dot);
           dot.sprite.x = (this.positiveDots[i].length * 15) + 1;
@@ -131,4 +131,3 @@ export class DividerZone extends PIXI.Container {
   }
 
 }
-

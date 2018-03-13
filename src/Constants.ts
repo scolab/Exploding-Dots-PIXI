@@ -108,31 +108,36 @@ export enum TWEEN_TIME {
 }
 
 const GREEN_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-GREEN_FILTER.matrix = [0, 0, 0, 0, 0,
-                       0, 1, 0, 0, 0,
-                       0, 0, 0, 0, 0,
-                       0, 0, 0, 0.5, 0];
+GREEN_FILTER.matrix = [
+  0, 0, 0, 0, 0,
+  0, 1, 0, 0, 0,
+  0, 0, 0, 0, 0,
+  0, 0, 0, 0.5, 0];
 
 const ORANGE_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-ORANGE_FILTER.matrix = [0.9, 0, 0, 0, 0,
-                      0, .51, 0, 0, 0,
-                      0, 0, 0.07, 0, 0,
-                      0, 0, 0, 0.5, 0];
+ORANGE_FILTER.matrix = [
+  0.9, 0, 0, 0, 0,
+  0, .51, 0, 0, 0,
+  0, 0, 0.07, 0, 0,
+  0, 0, 0, 0.5, 0];
 
 const PURPLE_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-PURPLE_FILTER.matrix = [1, 0, 0, 0, 0,
-                        0, 0, 0, 0, 0,
-                        0, 0, 1, 0, 0,
-                        0, 0, 0, 0.5, 0];
+PURPLE_FILTER.matrix = [
+  1, 0, 0, 0, 0,
+  0, 0, 0, 0, 0,
+  0, 0, 1, 0, 0,
+  0, 0, 0, 0.5, 0];
 
 const YELLOW_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-YELLOW_FILTER.matrix = [1, 0, 0, 0, 0,
-                        0, 1, 0, 0, 0,
-                        0, 0, 0, 0, 0,
-                        0, 0, 0, 0.5, 0];
+YELLOW_FILTER.matrix = [
+  1, 0, 0, 0, 0,
+  0, 1, 0, 0, 0,
+  0, 0, 0, 0, 0,
+  0, 0, 0, 0.5, 0];
 
 const ACQUA_FILTER: ColorMatrixFilter = new ColorMatrixFilter();
-ACQUA_FILTER.matrix = [.16, 0, 0, 0, 0,
-                       0, .81, 0, 0, 0,
-                       0, 0, .78, 0, 0,
-                       0, 0, 0, 0.5, 0];
+ACQUA_FILTER.matrix = [
+  .16, 0, 0, 0, 0,
+  0, .81, 0, 0, 0,
+  0, 0, .78, 0, 0,
+  0, 0, 0, 0.5, 0];

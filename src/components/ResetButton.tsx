@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import {gradientBackground, toolMenuElement} from './StylesForComponents';
+import { gradientBackground, toolMenuElement } from './StylesForComponents';
 import { SoundManager } from '../utils/SoundManager';
 
 export interface IResetButtonProps {
@@ -21,14 +21,14 @@ export default class ResetButton extends Component<IResetButtonProps, {}> {
   public render(): JSX.Element {
     return (
       <GradientBackgroundButton
-        type='button'
+        type="button"
         onClick={() => this.reset()}
         visible={this.props.visible}
         disabled={this.props.visible === false}
       >
         <GradientBackgroundImg
           src={this.img}
-          role='presentation'
+          role="presentation"
         />
       </GradientBackgroundButton>
     );

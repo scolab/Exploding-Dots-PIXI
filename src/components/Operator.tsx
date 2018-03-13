@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import {OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE} from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, TEXT_COPY, IOPERATOR_MODE, IUSAGE_MODE } from '../Constants';
 import styled from 'styled-components';
-import {gradientBackground, operationItem} from './StylesForComponents';
+import { gradientBackground, operationItem } from './StylesForComponents';
 
 export interface IOperatorProps {
   operator_mode: IOPERATOR_MODE;
@@ -20,7 +20,7 @@ export default class Operator extends Component<IOperatorProps, {}> {
         return (
           <ArrowImg
             src={doubleArrow}
-            role='presentation'
+            role="presentation"
           />
         );
       case OPERATOR_MODE.ADD:

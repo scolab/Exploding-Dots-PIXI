@@ -1,4 +1,4 @@
-import { combineReducers, AnyAction } from 'redux';
+import { combineReducers, AnyAction, Action } from 'redux';
 import dotsReducer from './DotsReducer';
 
 const allReducers = combineReducers({
@@ -6,4 +6,3 @@ const allReducers = combineReducers({
 });
 
 export default allReducers;
-

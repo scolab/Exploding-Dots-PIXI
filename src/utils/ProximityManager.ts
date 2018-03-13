@@ -1,9 +1,9 @@
 import Victor from 'victor';
 import { TweenMax } from 'gsap';
 import { constrain } from './MathUtils';
-import {POSITION_INFO, TWEEN_TIME} from '../Constants';
+import { POSITION_INFO, TWEEN_TIME } from '../Constants';
 import Rectangle = PIXI.Rectangle;
-import {DotSprite} from '../components/CanvasPIXI/DotSprite';
+import { DotSprite } from '../components/CanvasPIXI/DotSprite';
 
 export class ProximityManager {
 
@@ -123,4 +123,3 @@ export class ProximityManager {
     return new Victor(0, 0);
   }
 }
-

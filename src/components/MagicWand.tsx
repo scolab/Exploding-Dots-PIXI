@@ -1,5 +1,5 @@
 import React from 'react';
-import {gradientBackground, toolMenuElement} from './StylesForComponents';
+import { gradientBackground, toolMenuElement } from './StylesForComponents';
 import styled from 'styled-components';
 
 export interface IMagicWandProps {
@@ -18,14 +18,14 @@ const MagicWand = (props: IMagicWandProps): JSX.Element => {
 
   return (
     <GradientBackgroundButton
-      type='button'
+      type="button"
       onClick={() => props.onClick(true)}
       alpha={props.hidden || !props.enabled}
       disabled={props.hidden || !props.enabled}
     >
       <GradientBackgroundImg
         src={img}
-        role='presentation'
+        role="presentation"
       />
     </GradientBackgroundButton>
   );

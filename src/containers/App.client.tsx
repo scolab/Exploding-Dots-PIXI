@@ -1,12 +1,12 @@
 import 'pixi.js';
 import initReactFastclick from 'react-fastclick';
 
-import React, {Component} from 'react';
-import {createStore, Store, StoreCreator} from 'redux';
+import React, { Component } from 'react';
+import { createStore, Store, StoreCreator } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../reducers/index';
 import DotsMachine from './DotMachine/DotMachine.pixi';
-import {OPERATOR_MODE, USAGE_MODE, BASE} from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, BASE } from '../Constants';
 import { ACTIONS } from '../actions/StoreConstants';
 import { IWantedResult } from '../interfaces/IWantedResult';
 // Needed for onTouchTap
@@ -96,7 +96,7 @@ export class ExplodingDots extends Component<IExplodingDotsProps, IExplodingDots
   private store: Store<any>;
 
   constructor(props: IExplodingDotsProps) {
-    console.log('ExplodingDots App constructor', props);
+    // console.log('ExplodingDots App constructor', props);
     super(props);
     this.state = {
       muted: props.muted,
@@ -115,7 +115,7 @@ export class ExplodingDots extends Component<IExplodingDotsProps, IExplodingDots
   }
 
   public componentWillReceiveProps(nextProps: IExplodingDotsProps): void {
-    console.log('ExplodingDots componentWillReceiveProps');
+    // console.log('ExplodingDots componentWillReceiveProps');
     if (nextProps.muted !== this.state.muted) {
       this.store.dispatch({
         type: ACTIONS.CHANGE_MUTE_STATUS,
@@ -128,11 +128,11 @@ export class ExplodingDots extends Component<IExplodingDotsProps, IExplodingDots
   }
 
   public render(): JSX.Element {
-    console.log('ExplodingDots App.client render');
+    // console.log('ExplodingDots App.client render');
     return (
       <Provider store={this.store}>
           <div>
-            <DotsMachine id='0' />
+            <DotsMachine id="0" />
           </div>
       </Provider>
     );

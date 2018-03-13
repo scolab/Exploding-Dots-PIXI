@@ -8,8 +8,8 @@ import { ProximityManager } from '../../utils/ProximityManager';
 import { convertBase } from '../../utils/MathUtils';
 import { DotVO } from '../../VO/DotVO';
 import { SpritePool } from '../../utils/SpritePool';
-import {DotsContainer} from './DotsContainer';
-import {DotSprite} from './DotSprite';
+import { DotsContainer } from './DotsContainer';
+import { DotSprite } from './DotSprite';
 import AnimatedSprite = PIXI.extras.AnimatedSprite;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import Sprite = PIXI.Sprite;
@@ -273,7 +273,7 @@ export class PowerZone extends PIXI.Container {
         this.bgBox.alpha = 1;
       }
       return positiveZoneIsEmpty && negativeZoneIsEmpty;
-    } else {
+    } else { // tslint:disable-line no-else-after-return
       if (Object.keys(this.positiveDots).length > Number(this.base[1]) - 1 || Object.keys(this.negativeDots).length > Number(this.base[1]) - 1) {
         this.bgBox.texture = this.bgBoxTextures[3];
       } else {
@@ -812,7 +812,7 @@ export class PowerZone extends PIXI.Container {
         );
       }
       return dotSprite;
-    } else {
+    } else { // tslint:disable-line no-else-after-return
       notDisplayed[dot.id] = dot;
     }
     return null;

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import {gradientBackground} from './StylesForComponents';
 import { SoundManager } from '../utils/SoundManager';
 
 export interface IGoButtonProps {
@@ -20,12 +19,12 @@ export default class GoButton extends Component<IGoButtonProps, {}> {
     }
     return (
       <GradientBackgroundButton
-        type='button'
+        type="button"
         onClick={() => this.clicked()}
       >
         <ImgStyled
           src={this.img}
-          role='presentation'
+          role="presentation"
         />
       </GradientBackgroundButton>
     );
@@ -36,7 +35,6 @@ export default class GoButton extends Component<IGoButtonProps, {}> {
     SoundManager.instance.playSound(SoundManager.GO);
   }
 }
-
 
 const GradientBackgroundButton = styled.button`
   font-family: Nunito;

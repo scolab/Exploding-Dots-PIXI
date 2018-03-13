@@ -10,11 +10,11 @@ import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
 import { makeBothArrayTheSameLength } from '../../utils/ArrayUtils';
 import { randomFromTo } from '../../utils/MathUtils';
-import {removeLeadingZero, replaceAt, superscriptToNormal} from '../../utils/StringUtils';
+import { removeLeadingZero, replaceAt, superscriptToNormal } from '../../utils/StringUtils';
 import { TweenMax } from 'gsap';
 import VisibilitySensor from 'react-visibility-sensor';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
-import {DividerDotVO} from '../../VO/DividerDotVO';
+import { DividerDotVO } from '../../VO/DividerDotVO';
 import Point = PIXI.Point;
 import ObservablePoint = PIXI.ObservablePoint;
 import styled from 'styled-components';
@@ -665,14 +665,14 @@ class CanvasPIXI extends Component<ICanvasPixiProps, {}> {
     });
     if (inError === false) {
       // remove leading zeroes in the string in Base X
-      for (let i: number = 0; i < dotsPerZoneA.length; i++) {
+      for (let i: number = 0; i < dotsPerZoneA.length; i += 1) {
         dotsPerZoneA[i] = removeLeadingZero(dotsPerZoneA[i]);
       }
-      for (let i: number = 0; i < dotsPerZoneB.length; i++) {
+      for (let i: number = 0; i < dotsPerZoneB.length; i += 1) {
         dotsPerZoneB[i] = removeLeadingZero(dotsPerZoneB[i]);
       }
-      return {dotsPerZoneA, dotsPerZoneB};
-    }else {
+      return { dotsPerZoneA, dotsPerZoneB };
+    } else { // tslint:disable-line no-else-after-return
       // this.soundManager.playSound(SoundManager.GO_INVALID);
       if (this.props.displayUserMessageAction) {
         this.props.displayUserMessageAction(ERROR_MESSAGE.INVALID_ENTRY);

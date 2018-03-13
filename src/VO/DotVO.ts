@@ -1,4 +1,4 @@
-import {DotSprite} from '../components/CanvasPIXI/DotSprite';
+import { DotSprite } from '../components/CanvasPIXI/DotSprite';
 import Point = PIXI.Point;
 
 export class DotVO {

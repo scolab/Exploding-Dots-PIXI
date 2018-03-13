@@ -1,11 +1,11 @@
 import _array from 'lodash/array';
 import { makeUID } from '../utils/MathUtils';
 import { ACTIONS } from '../actions/StoreConstants';
-import {OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, DOT_ACTIONS} from '../Constants';
+import { OPERAND_POS, USAGE_MODE, OPERATOR_MODE, BASE, DOT_ACTIONS } from '../Constants';
 import { processSuperscript, addSuperscriptWhereNeeded } from '../utils/StringUtils';
 import { DotVO } from '../VO/DotVO';
-import {MachineStateVO} from '../VO/MachineStateVO';
-import {DividerDotVO} from '../VO/DividerDotVO';
+import { MachineStateVO } from '../VO/MachineStateVO';
+import { DividerDotVO } from '../VO/DividerDotVO';
 import { IWantedResult } from '../interfaces/IWantedResult';
 
 export interface IState {
@@ -59,8 +59,7 @@ function setDotsCount(state: IState): string {
     let dotsCount: number = 0;
     for (const zone of state.positivePowerZoneDots) {
       dotsCount += Object.keys(zone).length *
-        Math.pow(Number(state.machineState.base[1]) /
-          Number(state.machineState.base[0]), col);
+        Math.pow(Number(state.machineState.base[1]) / Number(state.machineState.base[0]), col);
       col += 1;
     }
     return dotsCount.toString();
@@ -157,13 +156,13 @@ function setInitialState(title: string): IState {
   }
 
   return {
-    dots: new Array<DotVO>(),
     positivePowerZoneDots,
     negativePowerZoneDots,
     positiveDividerDots,
     negativeDividerDots,
     positiveDividerResult,
     negativeDividerResult,
+    dots: new Array<DotVO>(),
     machineState: machineStateCopy,
   };
 }
@@ -260,16 +259,12 @@ const dotsReducer = (state: IState | null = null,
       stateCopy = { ...state };
       stateCopy.machineState.resetVisible = true;
       if (Object.prototype.hasOwnProperty.call(
-        stateCopy.positivePowerZoneDots[action.zoneId],
-          action.dotId)) {
-                // let dot = stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
+        stateCopy.positivePowerZoneDots[action.zoneId], action.dotId)) {
         delete stateCopy.positivePowerZoneDots[action.zoneId][action.dotId];
-                // ObjPool.dispose(dot);
       }
 
       if (Object.prototype.hasOwnProperty.call(
-          stateCopy.negativePowerZoneDots[action.zoneId],
-          action.dotId)
+          stateCopy.negativePowerZoneDots[action.zoneId], action.dotId)
       ) {
         delete stateCopy.negativePowerZoneDots[action.zoneId][action.dotId];
       }
@@ -300,12 +295,6 @@ const dotsReducer = (state: IState | null = null,
           stateCopy.negativePowerZoneDots[action.zoneId][dot.id] = dot;
         }
       });
-      /*if (action.updateValue) {
-        if (stateCopy.machineState.usage_mode === USAGE_MODE.FREEPLAY &&
-          stateCopy.machineState.operator_mode === OPERATOR_MODE.DISPLAY) {
-          stateCopy.machineState.operandA = setDotsCount(stateCopy).toString();
-        }
-      }*/
       return stateCopy;
 
     case ACTIONS.REMOVE_MULTIPLE_DOTS:
@@ -318,14 +307,12 @@ const dotsReducer = (state: IState | null = null,
           const dot: DotVO = action.dots[i];
           if (dot.isPositive) {
             if (Object.prototype.hasOwnProperty.call(
-              stateCopy.positivePowerZoneDots[action.zoneId],
-                dot.id)
+              stateCopy.positivePowerZoneDots[action.zoneId], dot.id)
             ) {
               delete stateCopy.positivePowerZoneDots[action.zoneId][dot.id];
             }
           } else if (Object.prototype.hasOwnProperty.call(
-            stateCopy.negativePowerZoneDots[action.zoneId],
-              dot.id)
+            stateCopy.negativePowerZoneDots[action.zoneId], dot.id)
           ) {
             delete stateCopy.negativePowerZoneDots[action.zoneId][dot.id];
           }
@@ -457,7 +444,6 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.ERROR:
       // console.log(ACTIONS.ERROR);
       stateCopy = { ...state };
-      // stateCopy.machineState.errorMessage = action.errorMessage;
       stateCopy.machineState.startActivity = false;
       stateCopy.machineState.activityStarted = false;
       return stateCopy;

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import {OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE, IOPERAND_POS} from '../Constants';
+import { OPERATOR_MODE, USAGE_MODE, OPERAND_POS, BASE, IOPERATOR_MODE, IUSAGE_MODE, IOPERAND_POS } from '../Constants';
 import { superscriptToNormal } from '../utils/StringUtils';
 import styled from 'styled-components';
-import {operationItem} from './StylesForComponents';
+import { operationItem } from './StylesForComponents';
 
 export interface IOperandProps {
   value: string;
@@ -69,7 +69,7 @@ export default class Operand extends Component<IOperandProps, {}> {
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
             <OperationInput
-              type='text'
+              type="text"
               onChange={this.onChange}
               value={displayText}
               innerRef={(inputText) => {
@@ -82,13 +82,13 @@ export default class Operand extends Component<IOperandProps, {}> {
           </form>
         </OperationDiv>
       );
-    } else {
+    } else { // tslint:disable-line no-else-after-return
       const textWidth: number = Math.floor(this.getTextWidth(displayText, 22, '800', 'Nunito')) + 10;
       return (
         <OperationDiv>
           <form onSubmit={this.onSubmit}>
             <OperationInput
-              type='text'
+              type="text"
               onChange={this.onChange}
               value={displayText}
               innerRef={(inputText) => {

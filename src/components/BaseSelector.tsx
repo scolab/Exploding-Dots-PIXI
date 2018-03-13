@@ -19,18 +19,18 @@ const BaseSelector = (props: IBaseSelectorProps): JSX.Element => {
   if (props.allBase.length > 1 && props.usage_mode !== USAGE_MODE.EXERCISE) {
     return (
       <GradientBackgroundButton
-        type='button'
+        type="button"
         onClick={props.onClick}
       >
         {props.base[0]}
         <ArrowImg
           src={img}
-          role='presentation'
+          role="presentation"
         />
           {props.base[1]}
       </GradientBackgroundButton>
     );
-  } else {
+  } else { // tslint:disable-line no-else-after-return
     return (
       <GradientBackgroundDiv
         numChar={props.base[0].toString().length + props.base[1].toString().length + 1}
@@ -38,7 +38,7 @@ const BaseSelector = (props: IBaseSelectorProps): JSX.Element => {
         {props.base[0]}
         <ArrowImg
           src={img}
-          role='presentation'
+          role="presentation"
         />
         {props.base[1]}
       </GradientBackgroundDiv>
@@ -73,7 +73,7 @@ const GradientBackgroundDiv = styled.div`
   border-radius: 25px;
   font-family: Nunito;
   font-size: 24px;
-  width: ${(props: IFakeButton) => (props.numChar >= 4 ? '110px;' : '100px;' )};
+  width: ${(props: IFakeButton) => (props.numChar >= 4 ? '110px;' : '100px;')};
   height: 40px;
   vertical-align: middle;
   text-align: center;

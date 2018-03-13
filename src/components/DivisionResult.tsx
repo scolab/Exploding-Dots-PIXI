@@ -24,7 +24,7 @@ export default class DivisionResult extends Component<IDivisionResultProps, {}> 
         (this.props.usage_mode === USAGE_MODE.EXERCISE && this.props.success)) {
       const positiveDots: number[] = new Array<number>();
       const negativeDots: number[] = new Array<number>();
-      for (let i: number = 0; i < this.props.positivePowerZoneDots.length; i++) {
+      for (let i: number = 0; i < this.props.positivePowerZoneDots.length; i += 1) {
         positiveDots.push(Object.keys(this.props.positivePowerZoneDots[i]).length);
         negativeDots.push(Object.keys(this.props.negativePowerZoneDots[i]).length);
       }
@@ -73,10 +73,10 @@ export default class DivisionResult extends Component<IDivisionResultProps, {}> 
       const resultValueKatex = katex.renderToString(operandValue + resultValue);
       return (
         <ContainerDiv>
-          <div dangerouslySetInnerHTML={{__html: resultValueKatex}}/>
+          <div dangerouslySetInnerHTML={{ __html: resultValueKatex }}/>
         </ContainerDiv>
       );
-    } else {
+    } else { // tslint:disable-line no-else-after-return
       return null;
     }
   }

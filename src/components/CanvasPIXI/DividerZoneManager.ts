@@ -2,9 +2,9 @@ import { TweenMax, Quint } from 'gsap';
 import { EventEmitter } from 'eventemitter3';
 import { DividerZone } from './DividerZone';
 import Point = PIXI.Point;
-import {TWEEN_TIME} from '../../Constants';
+import { TWEEN_TIME } from '../../Constants';
 import InteractionEvent = PIXI.interaction.InteractionEvent;
-import {DividerDotVO} from '../../VO/DividerDotVO';
+import { DividerDotVO } from '../../VO/DividerDotVO';
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 
 export class DividerZoneManager extends PIXI.Container {

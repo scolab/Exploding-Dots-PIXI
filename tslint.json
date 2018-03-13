@@ -1,7 +1,8 @@
 {
   "defaultSeverity": "error",
   "extends": [
-    "tslint:recommended"
+    "tslint:recommended",
+    "tslint-config-airbnb"
   ],
   "linterOptions": {
 
@@ -15,7 +16,7 @@
     "object-literal-sort-keys": false,
     "jsx-boolean-value": false,
     "max-line-length": 120,
-
+    "prefer-array-literal": false,
     // Recommended built-in rules
     "no-var-keyword": true,
     "typedef": [true, "call-signature"],

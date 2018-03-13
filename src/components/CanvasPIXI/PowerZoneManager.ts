@@ -1,5 +1,5 @@
 import { Point } from 'pixi.js';
-import { TweenMax, Power0, Power3, Power4} from 'gsap';
+import { TweenMax, Power0, Power3, Power4 } from 'gsap';
 import { PowerZone } from './PowerZone';
 import { ParticleEmitter } from './ParticleEmitter';
 import { isPointInRectangle, randomFromTo, findQuadrant } from '../../utils/MathUtils';
@@ -11,14 +11,14 @@ import {
 import { DividerZoneManager } from './DividerZoneManager';
 import { SoundManager } from '../../utils/SoundManager';
 import { SpritePool } from '../../utils/SpritePool';
-import {DotVO} from '../../VO/DotVO';
-import {DotSprite} from './DotSprite';
+import { DotVO } from '../../VO/DotVO';
+import { DotSprite } from './DotSprite';
 import Rectangle = PIXI.Rectangle;
-import {DotsContainer} from './DotsContainer';
+import { DotsContainer } from './DotsContainer';
 import Sprite = PIXI.Sprite;
 import InteractionData = PIXI.interaction.InteractionData;
 import InteractionEvent = PIXI.interaction.InteractionEvent;
-import {DividerDotVO} from '../../VO/DividerDotVO';
+import { DividerDotVO } from '../../VO/DividerDotVO';
 import ObservablePoint = PIXI.ObservablePoint;
 import TextureDictionary = PIXI.loaders.TextureDictionary;
 import DisplayObjectContainer = PIXI.core.DisplayObjectContainer;
@@ -209,14 +209,14 @@ export class PowerZoneManager extends PIXI.Container {
       this.dividerZoneManager = new DividerZoneManager();
       this.dividerZoneManager.init(this.textures);
       this.dividerZoneManager.eventEmitter.on(DividerZoneManager.START_DRAG,
-          this.precalculateForDivision,
-          this);
+                                              this.precalculateForDivision,
+                                              this);
       this.dividerZoneManager.eventEmitter.on(DividerZoneManager.MOVED,
-          this.checkIfDivisionPossible,
-          this);
+                                              this.checkIfDivisionPossible,
+                                              this);
       this.dividerZoneManager.eventEmitter.on(DividerZoneManager.END_DRAG,
-          this.checkIfDivisionPossible,
-          this);
+                                              this.checkIfDivisionPossible,
+                                              this);
     }
   }
 
@@ -544,14 +544,14 @@ export class PowerZoneManager extends PIXI.Container {
     if (this.dividerZoneManager) {
       this.dividerZoneManager.stop();
       this.dividerZoneManager.eventEmitter.off(DividerZoneManager.START_DRAG,
-        this.precalculateForDivision,
-        this);
+                                               this.precalculateForDivision,
+                                               this);
       this.dividerZoneManager.eventEmitter.off(DividerZoneManager.MOVED,
-        this.checkIfDivisionPossible,
-        this);
+                                               this.checkIfDivisionPossible,
+                                               this);
       this.dividerZoneManager.eventEmitter.off(DividerZoneManager.END_DRAG,
-        this.checkIfDivisionPossible,
-        this);
+                                               this.checkIfDivisionPossible,
+                                               this);
     }
   }
 
@@ -693,20 +693,20 @@ export class PowerZoneManager extends PIXI.Container {
       if (success) {
         thisZoneDots = thisZoneDots.concat(
           affectedZone.getDotsForDivision(allZonesValue[i][0],
-            true),
+                                          true),
         );
         thisZoneDots = thisZoneDots.concat(
           affectedZone.getDotsForDivision(allZonesValue[i][1],
-            false),
+                                          false),
         );
       } else if (antiSuccess) {
         thisZoneDots = thisZoneDots.concat(
           affectedZone.getDotsForDivision(allZonesValue[i][0],
-            false),
+                                          false),
         );
         thisZoneDots = thisZoneDots.concat(
           affectedZone.getDotsForDivision(allZonesValue[i][1],
-            true),
+                                          true),
         );
       }
       dotsToMove = dotsToMove.concat(thisZoneDots);
@@ -893,7 +893,7 @@ export class PowerZoneManager extends PIXI.Container {
             randomFromTo(
                 POSITION_INFO.DOT_RAYON,
               //  tslint:disable-next-line max-line-length
-              ((target.parent as PowerZone).negativeDotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON),
+                ((target.parent as PowerZone).negativeDotsContainer.hitArea as Rectangle).width - POSITION_INFO.DOT_RAYON),
             randomFromTo(
                 POSITION_INFO.DOT_RAYON,
               //  tslint:disable-next-line max-line-length
@@ -1067,8 +1067,6 @@ export class PowerZoneManager extends PIXI.Container {
       this.movingDotsContainer.removeChild(dotSprite.ghost);
       dotSprite.ghost.alpha = 1;
       this.spritePool.dispose(dotSprite.ghost, dotSprite.dot.isPositive, dotSprite.dot.color);
-    } else {
-      console.log('NO GHOST!!! NOT GOOD!!!', dotSprite.dot.id);
     }
     dotSprite.ghost = null;
   }

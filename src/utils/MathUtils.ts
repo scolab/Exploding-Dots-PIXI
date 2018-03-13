@@ -26,7 +26,7 @@ export const convertBase = (value: string, fromBase: number, toBase: number): st
       throw new Error(`Invalid digit \`${digit}\` for base ${fromBase}.`);
     }
     return carry + (fromRange.indexOf(digit) * (Math.pow(fromBase, index)));
-  }, 0);
+  },                                                      0);
 
   let newValue: string = '';
   while (decValue > 0) {
@@ -42,9 +42,9 @@ export const findQuadrant = (point: Point, rect: Rectangle): number => {
 
   if (point.x <= midWidth && point.y <= midHeight) {
     return 0;
-  } else if (point.x > midWidth && point.y <= midHeight) {
+  } else if (point.x > midWidth && point.y <= midHeight) { // tslint:disable-line no-else-after-return
     return 1;
-  } else if (point.x > midWidth && point.y > midHeight) {
+  } else if (point.x > midWidth && point.y > midHeight) { // tslint:disable-line no-else-after-return
     return 2;
   } else if (point.x <= midWidth && point.y > midHeight) {
     return 3;
