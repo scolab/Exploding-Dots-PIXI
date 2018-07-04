@@ -65,8 +65,9 @@ export const setDivisionResult = (zoneId: number,
                                     isPositive,
                                   });
 
-export const changeBase = () => ({
+export const changeBase = (index: number) => ({
   type: ACTIONS.BASE_CHANGED,
+  index,
 });
 
 export const resetMachine = (machineState: IMachineState,

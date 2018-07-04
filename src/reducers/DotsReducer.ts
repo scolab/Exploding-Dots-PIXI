@@ -403,10 +403,10 @@ const dotsReducer = (state: IState | null = null,
     case ACTIONS.BASE_CHANGED: {
       // console.log(ACTIONS.BASE_CHANGED);
       stateCopy = { ...state };
-      let index: number = _array.indexOf(state.machineState.allBases, state.machineState.base);
-      if (index < state.machineState.allBases.length - 1) {
-        index += 1;
-      } else {
+      let index = action.index;
+      if (index > state.machineState.allBases.length - 1) {
+        index = state.machineState.allBases.length - 1;
+      } else if (index < 0){
         index = 0;
       }
       stateCopy.machineState.base = state.machineState.allBases[index];

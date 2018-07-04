@@ -1,52 +1,127 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
-import { gradientBackground, toolMenuElement } from './StylesForComponents';
 import { IUSAGE_MODE, USAGE_MODE } from '../Constants';
 
 export interface IBaseSelectorProps {
-  onClick: () => any;
+  changeBase: (index: number) => any;
   base: Array<number | string>;
   allBase: any[];
   usage_mode: IUSAGE_MODE;
+}
+
+export interface IBaseSelectorState {
+  menuOpened: boolean;
 }
 
 interface IFakeButton {
   numChar: number;
 }
 
-const BaseSelector = (props: IBaseSelectorProps): JSX.Element => {
-  const img = require('./images/left_arrow.png');
-  if (props.allBase.length > 1 && props.usage_mode !== USAGE_MODE.EXERCISE) {
-    return (
-      <GradientBackgroundButton
-        type="button"
-        onClick={props.onClick}
-      >
-        {props.base[0]}
-        <ArrowImg
-          src={img}
-          role="presentation"
-        />
-          {props.base[1]}
-      </GradientBackgroundButton>
-    );
-  } else { // tslint:disable-line no-else-after-return
-    return (
-      <GradientBackgroundDiv
-        numChar={props.base[0].toString().length + props.base[1].toString().length + 1}
-      >
-        {props.base[0]}
-        <ArrowImg
-          src={img}
-          role="presentation"
-        />
-        {props.base[1]}
-      </GradientBackgroundDiv>
-    );
-  }
-};
+interface IMenuProps {
+  opened: boolean;
+  itemCount: number;
+}
 
-export default BaseSelector;
+export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSelectorState> {
+
+  public constructor(props: IBaseSelectorProps) {
+    super(props);
+    this.state = {
+      menuOpened: false,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.showMenu = this.showMenu.bind(this);
+  }
+
+  public render() {
+    const {
+      base,
+      allBase,
+      usage_mode,
+    } = this.props;
+    const img = require('./images/left_arrow.png');
+    if (allBase.length > 1 && usage_mode !== USAGE_MODE.EXERCISE) {
+      const newBases = allBase.concat();
+      const index = newBases.indexOf(base);
+      if (index !== -1) newBases.splice(index, 1);
+      const menuItems: any = newBases.map((value, index) =>
+        (
+          <MenuButton
+            key={index}
+            type="button"
+            onClick={() => this.handleChange(index)}
+          >
+            {value[0]}
+            <ArrowImg
+              src={img}
+              role="presentation"
+            />
+            {value[1]}
+          </MenuButton>
+        )
+      );
+      const menu: JSX.Element =
+        (
+          <Menu
+            opened={this.state.menuOpened}
+            itemCount={newBases.length}
+          >
+          {menuItems}
+        </Menu>
+        );
+      return (
+        <MenuHolder>
+          <GradientBackgroundButton
+            type="button"
+            onClick={this.showMenu}
+            // onClick={onClick}
+          >
+            {base[0]}
+            <ArrowImg
+              src={img}
+              role="presentation"
+            />
+            {base[1]}
+            {this.state.menuOpened ? '▾' : '▴' }
+          </GradientBackgroundButton>
+          {menu}
+        </MenuHolder>
+      );
+    } else { // tslint:disable-line no-else-after-return
+      return (
+        <GradientBackgroundDiv
+          numChar={base[0].toString().length + base[1].toString().length + 1}
+        >
+          {base[0]}
+          <ArrowImg
+            src={img}
+            role="presentation"
+          />
+          {base[1]}
+        </GradientBackgroundDiv>
+      );
+    }
+  };
+
+  private showMenu(e){
+    e.preventDefault();
+    if (this.state.menuOpened) {
+      document.removeEventListener('click', this.showMenu);
+      this.setState({ menuOpened: false });
+    } else {
+      document.addEventListener('click', this.showMenu);
+      this.setState({ menuOpened: true });
+    }
+  }
+
+  private handleChange(value: number){
+    this.props.changeBase(value);
+  }
+}
+
+const MenuHolder = styled.div`
+  display: inline-block;
+`;
 
 const GradientBackgroundButton = styled.button`
   margin: 2px;
@@ -54,7 +129,7 @@ const GradientBackgroundButton = styled.button`
   border-radius: 25px;
   font-family: Nunito;
   font-size: 24px;
-  width: 110px;
+  width: 120px;
   height: 40px;
   vertical-align: middle;
   text-align: center;
@@ -65,6 +140,13 @@ const GradientBackgroundButton = styled.button`
   &:hover { box-shadow: 0 0 0 1px #48209c; }
   &:active { box-shadow: 0 0 0 0; }
   &:focus { outline:0; };
+`;
+
+const MenuButton = styled(GradientBackgroundButton)`
+  border-radius: 0;
+  margin: 0;
+  &:hover { background: lightgrey; box-shadow: none; }
+  &:active { background: #FCFCFC; box-shadow: none; }
 `;
 
 const GradientBackgroundDiv = styled.div`
@@ -82,6 +164,24 @@ const GradientBackgroundDiv = styled.div`
   color: #48209c;
   display: inline-block;
   padding-top: 5px;
+`;
+
+const Menu = styled.div`
+  background: #FCFCFC;
+  bottom: 48px;
+  display: flex;
+  flex-direction: column-reverse;
+  height: ${(props: IMenuProps) => props.opened ? props.itemCount * 40: '0'}px;
+  margin-left: 20px;
+  overflow: hidden;
+  position: absolute;
+  transition: height 0.2s linear;
+  border-radius: 25px;
+  ${MenuButton} {
+    opacity: ${(props: IMenuProps) => props.opened ? 1 : 0};
+    transition: opacity 0.1s linear;
+    transition-delay: ${(props: IMenuProps) => props.opened ? '0.1s' : 0};
+  }
 `;
 
 const ArrowImg = styled.img`

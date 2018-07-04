@@ -194,7 +194,7 @@ class DotsMachine extends Component<IProps, {}> {
           {this.props.dotsMachine.machineState.baseSwitchVisible === true &&
           <BaseSelector
             base={this.props.dotsMachine.machineState.base}
-            onClick={this.props.changeBase}
+            changeBase={this.props.changeBase}
             allBase={this.props.dotsMachine.machineState.allBases}
             usage_mode={this.props.dotsMachine.machineState.usage_mode}
           />
@@ -227,7 +227,7 @@ interface IProps {
   readonly setDivisionResult: (zoneId: number,
                                divisionValue: number,
                                isPositive: boolean) => any;
-  readonly changeBase: () => any;
+  readonly changeBase: (index: number) => any;
   readonly resetMachine: (machineState: IMachineState | null,
                           title: string) => any;
   readonly showHidePlaceValue: () => any;
