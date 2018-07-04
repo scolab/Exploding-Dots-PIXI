@@ -41,30 +41,32 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
     } = this.props;
     const img = require('./images/left_arrow.png');
     if (allBase.length > 1 && usage_mode !== USAGE_MODE.EXERCISE) {
-      const newBases = allBase.concat();
-      const index = newBases.indexOf(base);
-      if (index !== -1) newBases.splice(index, 1);
-      const menuItems: any = newBases.map((value, index) =>
-        (
-          <MenuButton
-            key={index}
-            type="button"
-            onClick={() => this.handleChange(index)}
-          >
-            {value[0]}
-            <ArrowImg
-              src={img}
-              role="presentation"
-            />
-            {value[1]}
-          </MenuButton>
-        )
+      const menuItems: any = allBase.map((value, index) => {
+          if (value !== base) {
+            return (
+              <MenuButton
+                key={index}
+                type="button"
+                onClick={() => this.handleChange(index)}
+              >
+                {value[0]}
+                <ArrowImg
+                  src={img}
+                  role="presentation"
+                />
+                {value[1]}
+              </MenuButton>
+            )
+          }
+        }
       );
+      const index = menuItems.indexOf(undefined);
+      if (index !== -1) menuItems.splice(index, 1);
       const menu: JSX.Element =
         (
           <Menu
             opened={this.state.menuOpened}
-            itemCount={newBases.length}
+            itemCount={menuItems.length}
           >
           {menuItems}
         </Menu>
