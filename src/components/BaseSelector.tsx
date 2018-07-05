@@ -33,7 +33,7 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
     this.showMenu = this.showMenu.bind(this);
   }
 
-  public render() {
+  public render(): JSX.Element {
     const {
       base,
       allBase,
@@ -42,23 +42,23 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
     const img = require('./images/left_arrow.png');
     if (allBase.length > 1 && usage_mode !== USAGE_MODE.EXERCISE) {
       const menuItems: any = allBase.map((value, index) => {
-          if (value !== base) {
-            return (
-              <MenuButton
-                key={index}
-                type="button"
-                onClick={() => this.handleChange(index)}
-              >
-                {value[0]}
-                <ArrowImg
-                  src={img}
-                  role="presentation"
-                />
-                {value[1]}
-              </MenuButton>
-            )
-          }
+        if (value !== base) {
+          return (
+            <MenuButton
+              key={index}
+              type="button"
+              onClick={() => this.handleChange(index)}
+            >
+              {value[0]}
+              <ArrowImg
+                src={img}
+                role="presentation"
+              />
+              {value[1]}
+            </MenuButton>
+          );
         }
+      },
       );
       const index = menuItems.indexOf(undefined);
       if (index !== -1) menuItems.splice(index, 1);
@@ -84,7 +84,7 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
               role="presentation"
             />
             {base[1]}
-            {this.state.menuOpened ? '▾' : '▴' }
+            {this.state.menuOpened ? '▴' : '▾' }
           </GradientBackgroundButton>
           {menu}
         </MenuHolder>
@@ -103,9 +103,9 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
         </GradientBackgroundDiv>
       );
     }
-  };
+  }
 
-  private showMenu(e){
+  private showMenu(e): void{
     e.preventDefault();
     if (this.state.menuOpened) {
       document.removeEventListener('click', this.showMenu);
@@ -116,7 +116,7 @@ export default class BaseSelector extends Component<IBaseSelectorProps, IBaseSel
     }
   }
 
-  private handleChange(value: number){
+  private handleChange(value: number): void {
     this.props.changeBase(value);
   }
 }
