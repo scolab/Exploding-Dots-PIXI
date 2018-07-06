@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    # The primary container is an instance of the first image listed. The job's commands run in this container.
+    docker:
+      - image: circleci/node:8.6
+    steps:
+      - checkout
+      - run:
+          name: Install npm
+          command: npm install
+      - run:
+          name: Build storybook
+          command: npm run publish-storybook
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - ts-master
+              ignore:
+                - gh-pages
