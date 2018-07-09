@@ -10,8 +10,10 @@ echo "=> Transpiling 'src' into ES5 ..."
 echo ""
 rm -rf ./dist
 rm -rf ./ts-out
-NODE_ENV=production ./node_modules/typescript/bin/tsc --outDir ./ts-out
-NODE_ENV=production ./node_modules/.bin/babel --ignore tests,stories --plugins "transform-runtime,babel-plugin-transform-inline-environment-variables" ./ts-out --out-dir ./dist
+echo "----- Compile typescript -----"
+NODE_ENV=production npx tsc --outDir ./ts-out
+echo "----- Compile to es5 -----"
+NODE_ENV=production npx babel --ignore tests,stories --plugins "transform-runtime,babel-plugin-transform-inline-environment-variables" ./ts-out --out-dir ./dist
 rsync -av --include '*/' --include '*.json' --include '*.png' --include '*.jpg' --include '*.jpeg' --include '*.gif' --exclude '*' ./src/ ./dist/
 rm -rf ./ts-out
 echo ""
