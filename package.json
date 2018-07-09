@@ -1,7 +1,11 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.3.03",
+  "version": "0.3.4",
   "description": "Exploding dots component",
+  "engines": {
+    "node": ">=8.6.0",
+    "npm": "5.3.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/scolab/Exploding-Dots-PIXI.git"
@@ -15,7 +19,7 @@
     "test-watch": "npm run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -s ./static -p 9010",
     "publish-storybook": "bash .scripts/publish_storybook.sh",
-    "prepublish": "bash .scripts/prepublish.sh",
+    "prepublishOnly": "bash .scripts/prepublish.sh",
     "build": "rimraf ./dist/ && npm run .build-index.d.ts && npm run .build-dist",
     ".build-index.d.ts": "tsc && npm run .build-index.d.ts-clear",
     ".build-index.d.ts-clear": "node .scripts/cleandist.js",
@@ -90,9 +94,5 @@
     "victor": "^1.1.0"
   },
   "main": "dist/containers/App.server.js",
-  "browser": "dist/containers/App.client.js",
-  "engines": {
-    "node": "~6.11.1",
-    "npm": "~3.10.10"
-  }
+  "browser": "dist/containers/App.client.js"
 }
