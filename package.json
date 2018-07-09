@@ -1,6 +1,6 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Exploding dots component",
   "engines": {
     "node": ">=8.6.0",
