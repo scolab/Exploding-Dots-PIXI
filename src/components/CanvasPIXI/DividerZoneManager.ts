@@ -1,4 +1,4 @@
-import { TweenMax, Quint } from 'gsap';
+import { TweenMax, Power4 } from 'gsap';
 import { EventEmitter } from 'eventemitter3';
 import { DividerZone } from './DividerZone';
 import Point = PIXI.Point;
@@ -160,7 +160,7 @@ export class DividerZoneManager extends PIXI.Container {
         this,
         TWEEN_TIME.DIVIDER_BOX_BACK_INTO_PLACE,
         {
-          ease: Quint.easeOut,
+          ease: Power4.easeOut,
           onComplete: this.backIntoPlaceDone.bind(this),
           x: this.origin.x,
           y: this.origin.y,
