@@ -835,9 +835,11 @@ export default CanvasPIXI;
 
 const CanvasDivStyled = styled.div`
   height: 1px;
+  user-select: none;
 `;
 
 const ContainerDiv = styled.div`
   display: block;
   position: relative;
 `;
+
