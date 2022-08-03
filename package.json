@@ -1,6 +1,6 @@
 {
   "name": "@scolab/component-exploding-dots",
-  "version": "0.3.9",
+  "version": "0.3.11",
   "description": "Exploding dots component",
   "engines": {
     "node": ">=8.6.0",
@@ -15,13 +15,13 @@
     "lint": "eslint src",
     "lintfix": "eslint src --fix",
     "testonly": "mocha --require .scripts/mocha_runner src/**/tests/**/*.js",
-    "test": "npm run lint && npm run testonly",
-    "test-watch": "npm run testonly -- --watch --watch-extensions js",
+    "test": "yarn run lint && yarn run testonly",
+    "test-watch": "yarn run testonly -- --watch --watch-extensions js",
     "storybook": "start-storybook -s ./static -p 9010",
     "publish-storybook": "bash .scripts/publish_storybook.sh",
     "prepublishOnly": "bash .scripts/prepublish.sh",
-    "build": "rimraf ./dist/ && npm run .build-index.d.ts && npm run .build-dist",
-    ".build-index.d.ts": "tsc && npm run .build-index.d.ts-clear",
+    "build": "rimraf ./dist/ && yarn run .build-index.d.ts && yarn run .build-dist",
+    ".build-index.d.ts": "tsc && yarn run .build-index.d.ts-clear",
     ".build-index.d.ts-clear": "node .scripts/cleandist.js",
     ".build-dist": "set NODE_ENV=production && webpack --config webpack.dist.config.js"
   },
